@@ -12,13 +12,18 @@ function LCARS:BroadcastBeamEffect(ent, rematerialize)
 
     local players = {}
     for _, ply in pairs(player.GetHumans()) do
-        local trace = util.TraceLine({
-            start = ply:GetShootPos(),
-            endpos = ent:GetPos(),
-            filter = ply,
-        })
+        --local trace = util.TraceLine({
+        --    start = ply:GetShootPos(),
+        --    endpos = ent:GetPos(),
+        --    filter = ply,
+        --    mask = MASK_NPCWORLDSTATIC,
+        --})
 
-        if trace.Entity == ent then
+        --if not trace.Hit then
+        --    table.insert(players, ply)
+        --end
+
+        if ply:VisibleVec(ent:GetPos()) then
             table.insert(players, ply)
         end
     end
@@ -73,6 +78,7 @@ end
 function LCARS:OpenTransporterMenu()
     self:OpenMenuInternal(TRIGGER_PLAYER, CALLER, function(ply, panel_brush, panel, screenPos, screenAngle)
         local panelData = {
+            Type = "Transporter",
             Pos = screenPos + Vector(0, 0, 5),
             Angles = screenAngle,
             Width = 2000,
@@ -120,9 +126,18 @@ function LCARS:OpenTransporterMenu()
             },
         }
 
+        PrintTable(panelData)
+
         self:SendPanel(panel, panelData)
     end)
 end
+
+-- Call FireUser on all Presses
+hook.Add("LCARS.PressedCustom", "LCARS.Transporter.Pressed", function(ply, panelData, panel, panelBrush, windowId, buttonId)
+    if not panelData.Type == "Transporter" then return end
+
+    print(ply, panelData, panel, panelBrush, windowId, buttonId)
+end)
 
 hook.Add("Think", "LCARS.Tranporter.Cycle", function()
     local toBeRemoved = {}

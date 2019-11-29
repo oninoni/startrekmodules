@@ -30,9 +30,11 @@ function LCARS:ApplyTransporter(ent, rematerialize)
     transportData.Offset = offset / 2
 
     if rematerialize then
-        ParticleEffectAttach("beam_in", PATTACH_ABSORIGIN_FOLLOW, ent, 0)
+        local partEffect = CreateParticleSystem(ent, "beam_in", PATTACH_ABSORIGIN_FOLLOW)
+        partEffect:SetControlPoint(1, ent:GetPos() + Vector(0, 0, transportData.Offset))
     else
-        ParticleEffectAttach("beam_out", PATTACH_ABSORIGIN_FOLLOW, ent, 0)
+        local partEffect = CreateParticleSystem(ent, "beam_out", PATTACH_ABSORIGIN_FOLLOW)
+        partEffect:SetControlPoint(1, ent:GetPos() + Vector(0, 0, transportData.Offset))
     end
 
     table.insert(self.ActiveTransports, transportData)
@@ -69,6 +71,10 @@ hook.Add("PostDrawTranslucentRenderables", "Voyager.Testing", function()
     local toBeRemoved = {}
     for _, transportData in pairs(LCARS.ActiveTransports) do
         local ent = transportData.Object
+        if not IsValid(ent) then
+            table.insert(toBeRemoved, transportData)
+            continue
+        end
         
         transportData.EffectProgress = transportData.EffectProgress + frameTime / 2
 
@@ -139,11 +145,12 @@ hook.Add("PostDrawTranslucentRenderables", "Voyager.Testing", function()
 
     for _, transportData in pairs(toBeRemoved) do
         local ent = transportData.Object
-
-        if transportData.Rematerialize then
-            ent:SetColor(ColorAlpha(transportData.OldColor, 255))
-        else
-            ent.OldColor = transportData.OldColor
+        if IsValid(ent) then
+            if transportData.Rematerialize then
+                ent:SetColor(ColorAlpha(transportData.OldColor, 255))
+            else
+                ent.OldColor = transportData.OldColor
+            end
         end
 
         table.RemoveByValue(LCARS.ActiveTransports, transportData)

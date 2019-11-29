@@ -104,6 +104,8 @@ function LCARS:SendPanel(panel, panelData)
     if not IsValid(panel) then return end
     if not (istable(panelData) and table.Count(panelData) > 0) then return end
 
+    panelData.Type = panelData.Type or "Universal"
+
     panelData.Visible = panelData.Visible or false
 
     panelData.Scale = panelData.Scale or 20
@@ -212,23 +214,6 @@ hook.Add("Think", "LCARS.ThinkClose", function()
     end
 end)
 
--- Call FireUser on all Presses
-hook.Add("LCARS.Pressed", "LCARS.SimpleScreenPressed", function(ply, panel, panelBrush, i)
-    local logicCase = panelBrush:GetParent()
-    if IsValid(logicCase) then
-        if i >= 1 and i <= 4 then
-            panelBrush:Fire("InValue", i)
-        end
-    else
-        if i >= 1 and i <= 4 then
-            panelBrush:Fire("FireUser" .. i)
-        end
-    end
-    
-    timer.Simple(0.5, function()
-        LCARS:DisablePanel(panel)
-    end)
-end)
 
 -- Receive the pressed event from the client when a user presses his panel.
 net.Receive("LCARS.Screens.Pressed", function(len, ply)
@@ -236,18 +221,44 @@ net.Receive("LCARS.Screens.Pressed", function(len, ply)
     local windowId = net.ReadInt(32)
     local buttonId = net.ReadInt(32)
 
+    print("Boop")
+
     -- TODO: Replace Sound
     ply:EmitSound("buttons/blip1.wav")
+
+    local entId = tonumber(string.sub(panelId, 5))
+    local panel = ents.GetByIndex(entId)
+    if not IsValid(panel) then return end
+
+    print(panel)
     
-    if string.StartWith(panelId, "ENT_") then
-        local entId = tonumber(string.sub(panelId, 5))
-        local panel = ents.GetByIndex(entId)
+    local panelBrush = panel:GetParent()
+    if not IsValid(panelBrush) then return end
 
-        if not IsValid(panel) then return end
+    print(panelBrush)
 
-        local panelBrush = panel:GetParent()
-        hook.Run("LCARS.Pressed", ply, panel, panelBrush, buttonId)
+    local panelData = LCARS.ActivePanels[panel]
+    if not istable(panelData) then return end
+    
+    print(panelData)
+    print(panelData.Type)
+
+    if panelData.Type == "Universal" then
+        local logicCase = panelBrush:GetParent()
+        if IsValid(logicCase) then
+            if buttonId >= 1 and buttonId <= 4 then
+                panelBrush:Fire("InValue", buttonId)
+            end
+        else
+            if buttonId >= 1 and buttonId <= 4 then
+                panelBrush:Fire("FireUser" .. buttonId)
+            end
+        end
+        
+        timer.Simple(0.5, function()
+            LCARS:DisablePanel(panel)
+        end)
     else
-        hook.Run("LCARS.PressedCustom", ply, id, i)
+        hook.Run("LCARS.PressedCustom", ply, panelData, panel, panel_brush, windowId, buttonId)
     end
 end)
