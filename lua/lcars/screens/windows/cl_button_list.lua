@@ -4,8 +4,10 @@ local WINDOW = {}
 
 -- Calculate the scroll of the list.
 function WINDOW:GetOffset(window, n, y)
-    if n > math.floor(window.Height / 35) then
-        return ((y - window.Pos.y) + 17.5) / ((n - 2) * 35) * -((n + 2) * 35)
+    local max = math.floor(window.Height / 35) + 1
+
+    if n > max then
+        return -y + window.Pos.y-- / ((n - 2) * 35) * ((-n + 2) * 35)
     end
 
     return 0
@@ -13,12 +15,16 @@ end
 
 -- Calculate the y position of an element.
 function WINDOW:GetButtonYPos(window, i, n, offset, menuPos)
+    local max = math.floor(window.Height / 35) + 1
+
     local y = (i - (n / 2)) * 35 + offset + window.Pos.y
     y = math.min(
             math.max(
-                -(window.Height / 2)
-                , y)
-            , window.Height / 2)
+                window.Height / 2 - (n - i) * 35,
+                -window.Height / 2 + 35,
+                y),
+            -window.Height / 2 + (i) * 35,
+            window.Height / 2)
 
     return math.floor((y - 17.5) * menuPos)
 end
@@ -54,6 +60,8 @@ end
 -- @param Vector pos (2D Vector)
 function WINDOW:DrawWindow(panel, window, pos)
     local n = #(window.Buttons)
+
+    --draw.RoundedBox(0, window.Pos.x - window.Width / 2, window.Pos.y - window.Height / 2, window.Width, window.Height, Color(255, 255, 255, 255))
 
     local offset = self:GetOffset(window, n, pos.y)
 

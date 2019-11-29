@@ -82,21 +82,22 @@ function LCARS:OpenTransporterMenu()
             Pos = screenPos + Vector(0, 0, 5),
             Angles = screenAngle,
             Width = 2000,
-            Height = 200,
+            Height = 300,
             Windows = {
                 [1] = {
-                    Pos = Vector(),
-                    Type = "transport_slider",
-                    Width = 200,
-                    Height = 200,
-                    Buttons = {}
-                },
-                [2] = {
                     Pos = Vector(-300, 0, 0),
                     Type = "button_list",
-                    Width = 200,
-                    Height = 200,
+                    Width = 300,
+                    Height = 300,
                     Buttons = {
+                        {Name = "Test1", RandomS = "01", RandomL = "14-3123"},
+                        {Name = "Test2", RandomS = "01", RandomL = "14-3123"},
+                        {Name = "Test3", RandomS = "01", RandomL = "14-3123"},
+                        {Name = "Test4", RandomS = "01", RandomL = "14-3123"},
+                        {Name = "Test5", RandomS = "01", RandomL = "14-3123"},
+                        {Name = "Test6", RandomS = "01", RandomL = "14-3123"},
+                        {Name = "Test7", RandomS = "01", RandomL = "14-3123"},
+                        {Name = "Test8", RandomS = "01", RandomL = "14-3123"},
                         {Name = "Test1", RandomS = "01", RandomL = "14-3123"},
                         {Name = "Test2", RandomS = "01", RandomL = "14-3123"},
                         {Name = "Test3", RandomS = "01", RandomL = "14-3123"},
@@ -107,12 +108,20 @@ function LCARS:OpenTransporterMenu()
                         {Name = "Test8", RandomS = "01", RandomL = "14-3123"},
                     }
                 },
-                [3] = {
+                [2] = {
                     Pos = Vector(300, 0, 0),
                     Type = "button_list",
-                    Width = 200,
-                    Height = 200,
+                    Width = 300,
+                    Height = 300,
                     Buttons = {
+                        {Name = "Test1", RandomS = "01", RandomL = "14-3123"},
+                        {Name = "Test2", RandomS = "01", RandomL = "14-3123"},
+                        {Name = "Test3", RandomS = "01", RandomL = "14-3123"},
+                        {Name = "Test4", RandomS = "01", RandomL = "14-3123"},
+                        {Name = "Test5", RandomS = "01", RandomL = "14-3123"},
+                        {Name = "Test6", RandomS = "01", RandomL = "14-3123"},
+                        {Name = "Test7", RandomS = "01", RandomL = "14-3123"},
+                        {Name = "Test8", RandomS = "01", RandomL = "14-3123"},
                         {Name = "Test1", RandomS = "01", RandomL = "14-3123"},
                         {Name = "Test2", RandomS = "01", RandomL = "14-3123"},
                         {Name = "Test3", RandomS = "01", RandomL = "14-3123"},
