@@ -41,10 +41,10 @@ function WINDOW:DrawWindow(panel, window, pos)
     local yHeight = (hHeight) * panel.MenuPos
 
     for i=1,16,1 do
-        local yOffset = (window.Pos.y + (i - 8.5) * hHeightSteps + hHOffset) * panel.MenuPos
+        local yOffset = ((i - 8.5) * hHeightSteps + hHOffset) * panel.MenuPos
         
-        draw.RoundedBox(0, window.Pos.x - window.Width * (1/6) + hWOffset, yOffset, hWidth, yHeight, colorBlue)
-        draw.RoundedBox(0, window.Pos.x + window.Width * (1/6) + hWOffset, yOffset, hWidth, yHeight, colorBlue)
+        draw.RoundedBox(0, -window.Width * (1/6) + hWOffset, yOffset, hWidth, yHeight, colorBlue)
+        draw.RoundedBox(0, window.Width * (1/6) + hWOffset, yOffset, hWidth, yHeight, colorBlue)
     end
 
     local wWidthSteps = window.Width / 3
@@ -60,11 +60,11 @@ function WINDOW:DrawWindow(panel, window, pos)
 
     local y = -math.min(window.Height * 0.45, math.max(window.Height * -0.45, window.State or -window.Height / 2))
 
-    local yOffset = (window.Pos.y + wHOffset + y) * panel.MenuPos
+    local yOffset = (wHOffset + y) * panel.MenuPos
     local yHeight = (wHeight) * panel.MenuPos
 
     for i=1,3,1 do
-        draw.RoundedBox(0, window.Pos.x + (i - 2) * wWidthSteps + wWOffset , yOffset, wWidth, yHeight, colorYellow)
+        draw.RoundedBox(0, (i - 2) * wWidthSteps + wWOffset , yOffset, wWidth, yHeight, colorYellow)
     end
 end
 

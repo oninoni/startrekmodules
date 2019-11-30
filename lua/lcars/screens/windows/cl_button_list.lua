@@ -7,7 +7,7 @@ function WINDOW:GetOffset(window, n, y)
     local max = math.floor(window.Height / 35) + 1
 
     if n > max then
-        return -y + window.Pos.y-- / ((n - 2) * 35) * ((-n + 2) * 35)
+        return -y
     end
 
     return 0
@@ -17,13 +17,13 @@ end
 function WINDOW:GetButtonYPos(window, i, n, offset, menuPos)
     local max = math.floor(window.Height / 35) + 1
 
-    local y = (i - (n / 2)) * 35 + offset + window.Pos.y
+    local y = (i - (n / 2)) * 35 + offset
     y = math.min(
             math.max(
                 window.Height / 2 - (n - i) * 35,
                 -window.Height / 2 + 35,
                 y),
-            -window.Height / 2 + (i) * 35,
+            -window.Height / 2 + i * 35,
             window.Height / 2)
 
     return math.floor((y - 17.5) * menuPos)
@@ -44,7 +44,7 @@ function WINDOW:IsPressed(panel, window, pos)
         
         local y = self:GetButtonYPos(window, i, n, offset, panel.MenuPos)
 
-        if y < -130 or y > 130 then continue end
+        if y < -window.Height / 2 or y > window.Height / 2 then continue end
 
         if pos.y >= y - 15 and pos.y <= y + 15 then
             panel.MenuClosing = true
@@ -61,7 +61,7 @@ end
 function WINDOW:DrawWindow(panel, window, pos)
     local n = #(window.Buttons)
 
-    --draw.RoundedBox(0, window.Pos.x - window.Width / 2, window.Pos.y - window.Height / 2, window.Width, window.Height, Color(255, 255, 255, 255))
+    --draw.RoundedBox(0, -window.Width / 2, -window.Height / 2, window.Width, window.Height, Color(255, 255, 255, 255))
 
     local offset = self:GetOffset(window, n, pos.y)
 
@@ -81,7 +81,7 @@ function WINDOW:DrawWindow(panel, window, pos)
             selected = true
         end
 
-        LCARS:DrawButton(window.Pos.x, y - 15 , text, color, selected, button.RandomS, button.RandomL, panel.MenuPos * 255)
+        LCARS:DrawButton(0, y - 15, window.Width, text, color, selected, button.RandomS, button.RandomL, panel.MenuPos * 255)
     end
 end
 

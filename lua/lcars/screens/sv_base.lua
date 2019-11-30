@@ -7,6 +7,7 @@ LCARS.ActivePanels = LCARS.ActivePanels or {}
 util.AddNetworkString("LCARS.Screens.OpenMenu")
 util.AddNetworkString("LCARS.Screens.CloseMenu")
 util.AddNetworkString("LCARS.Screens.Pressed")
+util.AddNetworkString("LCARS.Screens.UpdateWindow")
 
 -- Returns the corrent menu Position and orientation for a given panel.
 --
@@ -66,7 +67,7 @@ function LCARS:OpenMenuInternal(ply, panel_brush, callback)
     local panel = LCARS:GetMenuProp(ply, panel_brush)
     if not IsValid(panel) then return end
 
-    if istable(self.ActivePanels[panel]) then return end
+    if istable(self.ActivePanels[panel]) then return panel end
 
     if panel:GetPos():Distance(ply:GetPos()) > 100 then return end
 
@@ -96,6 +97,18 @@ end
 
 -- TODO: Sync Active Panels to joining players
 
+function LCARS:UpdateWindow(panel, windowId, window)
+    local panelData = self.ActivePanels[panel]
+
+    panelData.Windows[windowId] = window
+
+    net.Start("LCARS.Screens.UpdateWindow")
+        net.WriteString("ENT_" .. panel:EntIndex())
+        net.WriteInt(windowId, 32)
+        net.WriteTable(window)
+    net.Broadcast()
+end
+
 -- Sends the panel and it's data to the client.
 --
 -- @param Entity panel
@@ -104,36 +117,65 @@ function LCARS:SendPanel(panel, panelData)
     if not IsValid(panel) then return end
     if not (istable(panelData) and table.Count(panelData) > 0) then return end
 
+    -- Only Error - Fix the values here that are actually needed serverside
     panelData.Type = panelData.Type or "Universal"
-
-    panelData.Visible = panelData.Visible or false
-
-    panelData.Scale = panelData.Scale or 20
-    
-    panelData.Width = panelData.Width or 300
-    panelData.Height = panelData.Height or 300
-
     panelData.Pos = panelData.Pos or Vector()
-    panelData.Angles = panelData.Angles or Angle()
 
-    panelData.Windows = panelData.Windows or {}
-    for _, window in pairs(panelData.Windows) do
-        window.Width = window.Width or 300
-        window.Height = window.Height or 300
-    end
-    
     self:ActivatePanel(panel, panelData)
+end
+
+-- Creates the data structure for a button.
+--
+-- @param? String name
+-- @param? Color color
+-- @param? Boolean disabled
+function LCARS:CreateButton(name, color, disabled)
+    local button = {
+        Name = name or "",
+        Disabled = disabled or false,
+    }
+
+    if IsColor(color) then
+        button.Color = color
+    else
+        button.Color = LCARS.Colors[math.random(1, #(LCARS.Colors))]
+    end
+
+    button.RandomS = "" .. math.random(1, 99)
+
+    local r = math.random(1, 99)
+    local d = math.random(1, 9999)
+    
+    local v
+    if r > 9 then
+        v = "" .. r .. "-"
+    else
+        v = "0" .. r .. "-"
+    end
+
+    if d > 999 then
+        v = v .. d
+    elseif d > 99 then
+        v = v .. "0" .. d
+    elseif d > 9 then
+        v = v .. "00" .. d
+    else
+        v = v .. "00" .. d
+    end
+
+    button.RandomL = v
+
+    return button
 end
 
 -- Open a General LCARS Menu using the keyvalues of an panel's func_button brush.
 function LCARS:OpenMenu()
     self:OpenMenuInternal(TRIGGER_PLAYER, CALLER, function(ply, panel_brush, panel, screenPos, screenAngle)
         local panelData = {
-            Pos = screenPos,
-            Angles = screenAngle,
             Windows = {
                 [1] = {
-                    Pos = Vector(),
+                    Pos = screenPos,
+                    Angles = screenAngle,
                     Type = "button_list",
                     Buttons = {}
                 }
@@ -145,39 +187,7 @@ function LCARS:OpenMenu()
         for i=1,4 do
             local name = keyValues["lcars_name_" .. i]
             if isstring(name) then
-                local button = {Name = name}
-
-                local disabled = keyValues["lcars_disabled_" .. i]
-                if disabled then
-                    button.Disabled = (disabled == "true")
-                end
-
-                button.Color = LCARS.Colors[math.random(1, #(LCARS.Colors))]
-
-                button.RandomS = "" .. math.random(1, 99)
-
-                local r = math.random(1, 99)
-                local d = math.random(1, 9999)
-                
-                local v
-                if r > 9 then
-                    v = "" .. r .. "-"
-                else
-                    v = "0" .. r .. "-"
-                end
-
-                if d > 999 then
-                    v = v .. d
-                elseif d > 99 then
-                    v = v .. "0" .. d
-                elseif d > 9 then
-                    v = v .. "00" .. d
-                else
-                    v = v .. "00" .. d
-                end
-
-                button.RandomL = v
-
+                local button = self:CreateButton(name, nil, keyValues["lcars_disabled_" .. i])
                 panelData.Windows[1].Buttons[i] = button
             else
                 break
@@ -221,8 +231,6 @@ net.Receive("LCARS.Screens.Pressed", function(len, ply)
     local windowId = net.ReadInt(32)
     local buttonId = net.ReadInt(32)
 
-    print("Boop")
-
     -- TODO: Replace Sound
     ply:EmitSound("buttons/blip1.wav")
 
@@ -230,19 +238,12 @@ net.Receive("LCARS.Screens.Pressed", function(len, ply)
     local panel = ents.GetByIndex(entId)
     if not IsValid(panel) then return end
 
-    print(panel)
-    
     local panelBrush = panel:GetParent()
     if not IsValid(panelBrush) then return end
-
-    print(panelBrush)
 
     local panelData = LCARS.ActivePanels[panel]
     if not istable(panelData) then return end
     
-    print(panelData)
-    print(panelData.Type)
-
     if panelData.Type == "Universal" then
         local logicCase = panelBrush:GetParent()
         if IsValid(logicCase) then
