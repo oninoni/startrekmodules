@@ -11,7 +11,7 @@ if CLIENT then
 
     include("lcars/screens/windows/cl_button_list.lua")
     include("lcars/screens/windows/cl_transport_slider.lua")
-
+    include("lcars/screens/windows/cl_transport_pad.lua")
 
     include("lcars/transporter/cl_base.lua")
 end
@@ -28,6 +28,7 @@ if SERVER then
     
     AddCSLuaFile("lcars/screens/windows/cl_button_list.lua")
     AddCSLuaFile("lcars/screens/windows/cl_transport_slider.lua")
+    AddCSLuaFile("lcars/screens/windows/cl_transport_pad.lua")
     
     include("lcars/screens/sh_config.lua")
     include("lcars/screens/sh_colors.lua")

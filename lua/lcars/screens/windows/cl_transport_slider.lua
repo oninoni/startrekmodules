@@ -29,7 +29,7 @@ end
 -- @param Window window
 -- @param Vector pos (2D Vector)
 function WINDOW:DrawWindow(panel, window, pos)
-    local colorBlue = ColorAlpha(LCARS.ColorDarkBlue, panel.MenuPos * 255)
+    local colorBlue = ColorAlpha(LCARS.ColorBlue, panel.MenuPos * 255)
     local colorYellow = ColorAlpha(LCARS.ColorYellow, panel.MenuPos * 255)
 
     local hWidth = window.Width / 32

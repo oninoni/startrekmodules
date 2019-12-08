@@ -44,16 +44,24 @@ function LCARS:BroadcastBeamEffect(ent, rematerialize)
     end)
 end
 
-function LCARS:BeamObject(ent, targetPos)
+// TODO: Relative Stuff + Parented Objects.
+// TODO: Model Bounds for Offset to Ground?
+function LCARS:BeamObject(ent, targetPos, sourcePad, targetPad)
     local transportData = {
         Object = ent,
-        TargetPos = targetPos,
+        TargetPos = targetPos or ent:GetPos(),
         StateTime = CurTime(),
         State = 0,
+        SourcePad = sourcePad,
+        TargetPad = targetPad,
     }
 
     for _, transportData in pairs(self.ActiveTransports) do
         if transportData.Object == ent then return end
+    end
+
+    if IsValid(sourcePad) then
+        sourcePad:SetSkin(1)
     end
     
     transportData.OldRenderMode = ent:GetRenderMode()
@@ -87,6 +95,13 @@ function LCARS:ReaplaceModeButtons(windowId, listWindow, objects)
 
         local button = LCARS:CreateButton(object.Name, color)
         button.Data = object.Data
+
+        if isstring(object.Type) then
+            button.Type = object.Type
+            button.X = object.X
+            button.Y = object.Y
+            button.Radius = object.Radius
+        end
         
         button.Selected = false
         button.DeselectedColor = color
@@ -97,43 +112,170 @@ function LCARS:ReaplaceModeButtons(windowId, listWindow, objects)
     end
 end
 
+function LCARS:GeneratePadButtons(listWindow, objects, padNumber)
+    listWindow.Type = "transport_pad"
+    
+    local radius = listWindow.Height / 8
+    local offset = radius * 2.5
+    local outerX = 0.5 * offset
+    local outerY = 0.866 * offset
+
+    for _, ent in pairs(ents.GetAll()) do
+        local name = ent:GetName()
+        if string.StartWith(name, "TRPad") then
+            local values = string.Split(string.sub(name, 6), "_")
+            local k = tonumber(values[1])
+            local n = tonumber(values[2])
+            
+            if n ~= padNumber then continue end
+            
+            local object = {
+                Name = ent:GetName(),
+                Data = ent,
+                Radius = radius,
+            }
+
+            if k == 7 then
+                object.X = 0
+                object.Y = 0
+                object.Type = "Round"
+            else
+                if k == 3 or k == 4 then
+                    if k == 3 then
+                        object.X = -offset
+                    else
+                        object.X =  offset
+                    end
+
+                    object.Y = 0
+                else
+                    if k == 1 or k == 2 then
+                        object.Y = outerY
+                    elseif k == 5 or k == 6 then
+                        object.Y = -outerY
+                    end
+
+                    if k == 1 or k == 5 then
+                        object.X = -outerX
+                    elseif k == 2 or k == 6 then
+                        object.X = outerX
+                    end
+                end
+
+                object.Type = "Hex"
+            end
+            
+            objects[k] = object
+        end
+    end
+
+    return objects
+end
+
 function LCARS:ReplaceButtons(windowId, listWindow, mode)
     local objects = {}
 
     if mode == 1 then
-        -- TODO Own Pad first
-
-        for _, ent in pairs(ents.GetAll()) do
-            local name = ent:GetName()
-            if string.StartWith(name, "TRPad") then
-                local values = string.Split(string.sub(name, 6), "_")
-                local k = values[2]
-                local n = values[1]
-                
-                local object = {
-                    Name = ent:GetName(),
-                    Data = ent,
-                }
-                table.insert(objects, object)
-            end
-        end
+        self:GeneratePadButtons(listWindow, objects, 1)
+        -- TODO: Replace 1 with Linking of Pad and Console
+        
     elseif mode == 2 then
+        listWindow.Type = "button_list"
         -- TODO: Maybe add NPC's?
-        for i=1,8,1 do
         for _, ply in pairs(player.GetHumans()) do
             local object = {
                 Name = ply:GetName(),
-                Data = ply:SteamID64(),
+                Data = ply,
             }
 
             table.insert(objects, object)
         end
-        end
     elseif mode == 3 then
+        listWindow.Type = "button_list"
         -- TODO: Add Markers
     end
 
     return self:ReaplaceModeButtons(windowId, listWindow, objects)
+end
+
+function LCARS:GetTransporterObjects(window, listWindow)
+    local objects = {}
+
+    local sourceMode = window.Selected
+        
+    for _, button in pairs(listWindow.Buttons) do
+        if button.Selected then
+            local object = nil
+
+            if sourceMode == 1 then
+                local pad = button.Data
+                local pos = button.Data:GetPos()
+                local attachmentId = pad:LookupAttachment("teleportPoint")
+                if attachmentId > 0 then
+                    local angPos = pad:GetAttachment(attachmentId)
+
+                    pos = angPos.Pos
+                end
+
+                object = {
+                    Objects = {},
+                    Pad = pad,
+                    Pos = pos,
+                    SourceCount = 1,
+                    TargetCount = 1,
+                }
+
+                local entities = ents.FindInSphere(pos, 35)
+                for _, ent in pairs(entities) do
+                    local name = ent:GetName()
+                    if not string.StartWith(name, "TRPad") then
+                        table.insert(object.Objects, ent)
+                    end
+                end
+            elseif sourceMode == 2 then
+                print(button.Name, button.Data)
+                object = {
+                    Objects = {button.Data},
+                    Pos = button.Data:GetPos(),
+                    SourceCount = 1,
+                    TargetCount = -1,
+                }
+            elseif sourceMode == 3 then
+                -- TODO: Add Markers
+            end
+
+            table.insert(objects, object)
+        end
+    end
+
+    return objects
+end
+
+function LCARS:ActivateTransporter(panelData)
+    local Sources = self:GetTransporterObjects(panelData.Windows[1], panelData.Windows[3])
+    local Targets = self:GetTransporterObjects(panelData.Windows[2], panelData.Windows[4])
+
+    print("---")
+    PrintTable(Sources)
+    print("---")
+    PrintTable(Targets)
+
+    for _, source in pairs(Sources) do
+        for _, sourceObject in pairs(source.Objects) do
+            for _, target in pairs(Targets) do
+                target.Count = target.Count or 0
+
+                if target.TargetCount == -1 or target.Count < target.TargetCount then
+                    self:BeamObject(sourceObject, target.Pos, source.Pad, target.Pad)
+
+                    target.Count = target.Count + 1
+                    break
+                end
+            end
+        end
+    end
+
+    return true
 end
 
 local targetNames = {
@@ -208,6 +350,11 @@ function LCARS:OpenTransporterMenu()
         panelData.Windows[2].Buttons[5] = LCARS:CreateButton("Direct Transport", LCARS.ColorOrange)
         panelData.Windows[2].Buttons[5].Selected = false
 
+        panelData.Windows[1].Buttons[6] = LCARS:CreateButton("Swap Sides", LCARS.ColorOrange)
+        panelData.Windows[1].Buttons[6].Selected = false
+        panelData.Windows[2].Buttons[6] = LCARS:CreateButton("Disable Console", LCARS.ColorRed)
+        panelData.Windows[2].Buttons[6].Selected = false
+
         for i=1,2,1 do
             LCARS:ReplaceButtons(i, panelData.Windows[2 + i], panelData.Windows[i].Selected)
         end
@@ -217,14 +364,18 @@ function LCARS:OpenTransporterMenu()
     end)
     
     if IsValid(panel) then
+        local panelData = self.ActivePanels[panel]
+        if not istable(panelData) then return end
         
+        local success = LCARS:ActivateTransporter(panelData)
+        if success then
+            local panel_brush = CALLER
+            panel_brush:Fire("FireUser1")
 
-        local panel_brush = CALLER
-        panel_brush:Fire("FireUser1")
-
-        timer.Simple(4, function()
-            panel_brush:Fire("FireUser2")
-        end)
+            timer.Simple(4, function()
+                panel_brush:Fire("FireUser2")
+            end)
+        end
     end
 end
 
@@ -301,17 +452,34 @@ hook.Add("Think", "LCARS.Tranporter.Cycle", function()
         if IsValid(ent) then
             if state == 0 and (stateTime + 3) < curTime then
                 ent:SetRenderMode(RENDERMODE_NONE)
+
+                -- TODO: Replace with Buffer
+                --ent:SetPos(transportData.TargetPos or ent:GetPos())
                 
                 transportData.StateTime = curTime
                 transportData.State = 1
+                
+                if IsValid(transportData.SourcePad) then
+                    transportData.SourcePad:SetSkin(0)
+                end
             elseif state == 1 and (stateTime + 4) < curTime then
                 ent:SetRenderMode(RENDERMODE_TRANSTEXTURE)
+                
+                ent:SetPos(transportData.TargetPos or ent:GetPos())
                 
                 LCARS:BroadcastBeamEffect(ent, true)
                 
                 transportData.StateTime = curTime
                 transportData.State = 2
+
+                if IsValid(transportData.TargetPad) then
+                    transportData.TargetPad:SetSkin(1)
+                end
             elseif state == 2 and (stateTime + 3) < curTime then
+                if IsValid(transportData.TargetPad) then
+                    transportData.TargetPad:SetSkin(0)
+                end
+
                 ent:SetRenderMode(transportData.OldRenderMode)
                 ent:SetCollisionGroup(transportData.OldCollisionGroup)
                     

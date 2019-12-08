@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "8427"
-	"mapversion" "25"
+	"mapversion" "30"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "25"
+	"mapversion" "30"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -6765,7 +6765,7 @@ entity
 	"locked_sentence" "0"
 	"locked_sound" "0"
 	"movedir" "0 0 0"
-	"origin" "-328 72 24"
+	"origin" "-328 72 32"
 	"renderamt" "255"
 	"rendercolor" "255 255 255"
 	"renderfx" "0"
@@ -6780,11 +6780,9 @@ entity
 	connections
 	{
 		"OnPressed" "TRLua,RunCode,,0,-1"
-		"OnPressed" "TRConsole_1,Skin,1,0,-1"
-		"OnPressed" "!self,Lock,,0,-1"
-		"OnUseLocked" "!self,Unlock,,0,-1"
-		"OnUseLocked" "TRConsole_1,Skin,0,0,-1"
-		"OnPressed" "TRConsoleMod_1,StartAnimSequence,0 7 8 1,0,-1"
+		"OnUser1" "TRConsoleMod_1,StartAnimSequence,0 7 8 0,0,-1"
+		"OnUser1" "TRConsole_1,Skin,1,0,-1"
+		"OnUser2" "TRConsole_1,Skin,0,0,-1"
 	}
 	solid
 	{
@@ -6792,7 +6790,7 @@ entity
 		side
 		{
 			"id" "906"
-			"plane" "(-336 80 32) (-320 80 32) (-320 64 32)"
+			"plane" "(-336 80 40) (-320 80 40) (-320 64 40)"
 			"material" "TOOLS/TOOLSNPCCLIP"
 			"uaxis" "[1 0 0 0] 0.25"
 			"vaxis" "[0 -1 0 0] 0.25"
@@ -6803,7 +6801,7 @@ entity
 		side
 		{
 			"id" "905"
-			"plane" "(-336 64 16) (-320 64 16) (-320 80 16)"
+			"plane" "(-336 64 24) (-320 64 24) (-320 80 24)"
 			"material" "TOOLS/TOOLSNPCCLIP"
 			"uaxis" "[1 0 0 0] 0.25"
 			"vaxis" "[0 -1 0 0] 0.25"
@@ -6814,10 +6812,10 @@ entity
 		side
 		{
 			"id" "904"
-			"plane" "(-336 80 32) (-336 64 32) (-336 64 16)"
+			"plane" "(-336 80 40) (-336 64 40) (-336 64 24)"
 			"material" "TOOLS/TOOLSNPCCLIP"
 			"uaxis" "[0 1 0 0] 0.25"
-			"vaxis" "[0 0 -1 0] 0.25"
+			"vaxis" "[0 0 -1 32] 0.25"
 			"rotation" "0"
 			"lightmapscale" "16"
 			"smoothing_groups" "0"
@@ -6825,10 +6823,10 @@ entity
 		side
 		{
 			"id" "903"
-			"plane" "(-320 80 16) (-320 64 16) (-320 64 32)"
+			"plane" "(-320 80 24) (-320 64 24) (-320 64 40)"
 			"material" "TOOLS/TOOLSNPCCLIP"
 			"uaxis" "[0 1 0 0] 0.25"
-			"vaxis" "[0 0 -1 0] 0.25"
+			"vaxis" "[0 0 -1 32] 0.25"
 			"rotation" "0"
 			"lightmapscale" "16"
 			"smoothing_groups" "0"
@@ -6836,10 +6834,10 @@ entity
 		side
 		{
 			"id" "902"
-			"plane" "(-320 80 32) (-336 80 32) (-336 80 16)"
+			"plane" "(-320 80 40) (-336 80 40) (-336 80 24)"
 			"material" "TOOLS/TOOLSNPCCLIP"
 			"uaxis" "[1 0 0 0] 0.25"
-			"vaxis" "[0 0 -1 0] 0.25"
+			"vaxis" "[0 0 -1 32] 0.25"
 			"rotation" "0"
 			"lightmapscale" "16"
 			"smoothing_groups" "0"
@@ -6847,10 +6845,10 @@ entity
 		side
 		{
 			"id" "901"
-			"plane" "(-320 64 16) (-336 64 16) (-336 64 32)"
+			"plane" "(-320 64 24) (-336 64 24) (-336 64 40)"
 			"material" "TOOLS/TOOLSNPCCLIP"
 			"uaxis" "[1 0 0 0] 0.25"
-			"vaxis" "[0 0 -1 0] 0.25"
+			"vaxis" "[0 0 -1 32] 0.25"
 			"rotation" "0"
 			"lightmapscale" "16"
 			"smoothing_groups" "0"
@@ -7598,7 +7596,7 @@ entity
 	"materialName" "models/KingPommes/startrek/voyager/TR_console_temp_anim"
 	"parentname" "TRConsole_1"
 	"targetname" "TRConsoleMod_1"
-	"origin" "-328 64 48"
+	"origin" "-328 72 48"
 	editor
 	{
 		"color" "220 30 220"
