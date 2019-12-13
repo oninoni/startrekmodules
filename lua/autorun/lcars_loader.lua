@@ -35,10 +35,9 @@ if SERVER then
     
     include("lcars/screens/sv_base.lua")
 
-
     AddCSLuaFile("lcars/transporter/cl_base.lua")
     include("lcars/transporter/sv_base.lua")
-
+    include("lcars/transporter/sv_console.lua")
     
     include("lcars/holodeck/sv_base.lua")
 end
