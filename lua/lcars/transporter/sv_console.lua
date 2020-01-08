@@ -106,19 +106,113 @@ function LCARS:ReplaceButtons(windowId, listWindow, mode)
             }
 
             table.insert(objects, object)
+            table.insert(objects, object)
+            table.insert(objects, object)
+            table.insert(objects, object)
+            table.insert(objects, object)
+            table.insert(objects, object)
+            table.insert(objects, object)
+            table.insert(objects, object)
+            table.insert(objects, object)
+            table.insert(objects, object)
+            table.insert(objects, object)
+            table.insert(objects, object)
+            table.insert(objects, object)
+            table.insert(objects, object)
+            table.insert(objects, object)
+            table.insert(objects, object)
+            table.insert(objects, object)
         end
     elseif mode == 3 then
         listWindow.Type = "button_list"
         -- TODO: Add Markers
+    elseif mode == 4 then
+        listWindow.Type = "button_list"
+        -- TODO: Add Buffer
     end
 
     return self:ReaplaceModeButtons(windowId, listWindow, objects)
 end
 
+function LCARS:GetTransporterObjects(window, listWindow)
+    local objects = {}
+
+    local sourceMode = window.Selected
+        
+    for _, button in pairs(listWindow.Buttons) do
+        if button.Selected then
+            local object = nil
+
+            if sourceMode == 1 then
+                local pad = button.Data
+                local pos = button.Data:GetPos()
+                local attachmentId = pad:LookupAttachment("teleportPoint")
+                if attachmentId > 0 then
+                    local angPos = pad:GetAttachment(attachmentId)
+
+                    pos = angPos.Pos
+                end
+
+                object = {
+                    Objects = {},
+                    Pad = pad,
+                    Pos = pos,
+                    SourceCount = 1,
+                    TargetCount = 1,
+                }
+
+                local entities = ents.FindInSphere(pos, 35)
+                for _, ent in pairs(entities) do
+                    local name = ent:GetName()
+                    if not string.StartWith(name, "TRPad") then
+                        table.insert(object.Objects, ent)
+                    end
+                end
+            elseif sourceMode == 2 then
+                object = {
+                    Objects = {button.Data},
+                    Pos = button.Data:GetPos(),
+                    SourceCount = 1,
+                    TargetCount = -1,
+                }
+            elseif sourceMode == 3 then
+                -- TODO: Add Markers
+            end
+
+            table.insert(objects, object)
+        end
+    end
+
+    return objects
+end
+
+function LCARS:ActivateTransporter(panelData)
+    local Sources = self:GetTransporterObjects(panelData.Windows[1], panelData.Windows[3])
+    local Targets = self:GetTransporterObjects(panelData.Windows[2], panelData.Windows[4])
+
+    for _, source in pairs(Sources) do
+        for _, sourceObject in pairs(source.Objects) do
+            for _, target in pairs(Targets) do
+                target.Count = target.Count or 0
+
+                if target.TargetCount == -1 or target.Count < target.TargetCount then
+                    self:BeamObject(sourceObject, target.Pos, source.Pad, target.Pad)
+
+                    target.Count = target.Count + 1
+                    break
+                end
+            end
+        end
+    end
+
+    return true
+end
+
 local targetNames = {
     "Transporter Pad",
     "Crew",
-    "Marker",
+    "External",
+    "Buffer",
 }
 function LCARS:OpenTransporterMenu()
     local panel = self:OpenMenuInternal(TRIGGER_PLAYER, CALLER, function(ply, panel_brush, panel, screenPos, screenAngle)
@@ -145,7 +239,7 @@ function LCARS:OpenTransporterMenu()
                     Buttons = {}
                 },
                 [3] = {
-                    Pos = screenPos + Vector(32, 12, 10),
+                    Pos = screenPos + Vector(35, 12, 10),
                     Angles = screenAngle - Angle(20, -45, 0),
                     Type = "button_list",
                     Width = 600,
@@ -153,7 +247,7 @@ function LCARS:OpenTransporterMenu()
                     Buttons = {}
                 },
                 [4] = {
-                    Pos = screenPos + Vector(-32, 12, 10),
+                    Pos = screenPos + Vector(-35, 12, 10),
                     Angles = screenAngle - Angle(20, 45, 0),
                     Type = "button_list",
                     Width = 600,
@@ -164,7 +258,7 @@ function LCARS:OpenTransporterMenu()
         }
 
         for i=1,2,1 do
-            for j=1,3,1 do
+            for j=1,#targetNames,1 do
                 local color = LCARS.ColorBlue
                 if (i + j)%2 == 0 then
                     color = LCARS.ColorLightBlue
@@ -182,15 +276,15 @@ function LCARS:OpenTransporterMenu()
         panelData.Windows[2].Selected = 1
         panelData.Windows[2].Buttons[1].Color = LCARS.ColorYellow
 
-        panelData.Windows[1].Buttons[5] = LCARS:CreateButton("Narrow Beam", LCARS.ColorOrange)
-        panelData.Windows[1].Buttons[5].Selected = false
-        panelData.Windows[2].Buttons[5] = LCARS:CreateButton("Direct Transport", LCARS.ColorOrange)
-        panelData.Windows[2].Buttons[5].Selected = false
-
-        panelData.Windows[1].Buttons[6] = LCARS:CreateButton("Swap Sides", LCARS.ColorOrange)
+        panelData.Windows[1].Buttons[6] = LCARS:CreateButton("Narrow Beam", LCARS.ColorOrange)
         panelData.Windows[1].Buttons[6].Selected = false
-        panelData.Windows[2].Buttons[6] = LCARS:CreateButton("Disable Console", LCARS.ColorRed)
+        panelData.Windows[2].Buttons[6] = LCARS:CreateButton("Direct Transport", LCARS.ColorOrange)
         panelData.Windows[2].Buttons[6].Selected = false
+
+        panelData.Windows[1].Buttons[7] = LCARS:CreateButton("Swap Sides", LCARS.ColorOrange)
+        panelData.Windows[1].Buttons[7].Selected = false
+        panelData.Windows[2].Buttons[7] = LCARS:CreateButton("Disable Console", LCARS.ColorRed)
+        panelData.Windows[2].Buttons[7].Selected = false
 
         for i=1,2,1 do
             LCARS:ReplaceButtons(i, panelData.Windows[2 + i], panelData.Windows[i].Selected)
@@ -227,10 +321,10 @@ hook.Add("LCARS.PressedCustom", "LCARS.Transporter.Pressed", function(ply, panel
     if not istable(button) then return end
 
     if windowId == 1 or windowId == 2 then
-        if buttonId >= 1 and buttonId <= 3 then
+        if buttonId >= 1 and buttonId <= #targetNames then
             local listWindow = panelData.Windows[2 + windowId]
 
-            for i=1,3,1 do
+            for i=1,#targetNames,1 do
                 window.Buttons[i].Color = window.Buttons[i].DeselectedColor
             end
 
@@ -241,7 +335,7 @@ hook.Add("LCARS.PressedCustom", "LCARS.Transporter.Pressed", function(ply, panel
 
             LCARS:UpdateWindow(panel, windowId, window)
             LCARS:UpdateWindow(panel, windowId + 2, listWindow)
-        elseif buttonId == 5 then
+        elseif buttonId == #targetNames + 2 then
             button.Selected = not button.Selected
             
             if button.Selected then
@@ -261,12 +355,12 @@ hook.Add("LCARS.PressedCustom", "LCARS.Transporter.Pressed", function(ply, panel
             end
 
             LCARS:UpdateWindow(panel, windowId, window)
-        elseif buttonId == 6 then
+        elseif buttonId == #targetNames + 3 then
             if windowId == 1 then
                 local leftWindow = panelData.Windows[1]
                 local rightWindow = panelData.Windows[2]
                 
-                for i=1,3,1 do
+                for i=1,#targetNames,1 do
                     leftWindow.Buttons[i].Color = leftWindow.Buttons[i].DeselectedColor
                     rightWindow.Buttons[i].Color = rightWindow.Buttons[i].DeselectedColor
                 end
@@ -319,9 +413,6 @@ hook.Add("LCARS.PressedCustom", "LCARS.Transporter.Pressed", function(ply, panel
                         end
                     end
                 end
-
-                PrintTable(leftListWindow.Buttons)
-                PrintTable(rightListWindow.Buttons)
 
                 LCARS:UpdateWindow(panel, 1, leftWindow)
                 LCARS:UpdateWindow(panel, 2, rightWindow)
