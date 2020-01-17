@@ -106,22 +106,6 @@ function LCARS:ReplaceButtons(windowId, listWindow, mode)
             }
 
             table.insert(objects, object)
-            table.insert(objects, object)
-            table.insert(objects, object)
-            table.insert(objects, object)
-            table.insert(objects, object)
-            table.insert(objects, object)
-            table.insert(objects, object)
-            table.insert(objects, object)
-            table.insert(objects, object)
-            table.insert(objects, object)
-            table.insert(objects, object)
-            table.insert(objects, object)
-            table.insert(objects, object)
-            table.insert(objects, object)
-            table.insert(objects, object)
-            table.insert(objects, object)
-            table.insert(objects, object)
         end
     elseif mode == 3 then
         listWindow.Type = "button_list"
@@ -136,9 +120,10 @@ end
 
 function LCARS:GetTransporterObjects(window, listWindow)
     local objects = {}
+    local objectEntities = {}
 
     local sourceMode = window.Selected
-        
+    
     for _, button in pairs(listWindow.Buttons) do
         if button.Selected then
             local object = nil
@@ -156,7 +141,7 @@ function LCARS:GetTransporterObjects(window, listWindow)
                 object = {
                     Objects = {},
                     Pad = pad,
-                    Pos = pos,
+                    Pos = pos - Vector(0, 0, 25), // Temporary Offset (Because Attachment Floats)
                     SourceCount = 1,
                     TargetCount = 1,
                 }
@@ -180,6 +165,29 @@ function LCARS:GetTransporterObjects(window, listWindow)
             end
 
             table.insert(objects, object)
+            for _, ent in pairs(object.Objects) do
+                table.insert(objectEntities, ent)
+            end
+        end
+    end
+
+    -- Detect any Parenting
+    local childEntities = {}
+    for _, ent in pairs(objectEntities) do
+        local parent = ent:GetParent()
+        if parent and IsValid(parent) then
+            table.insert(childEntities, ent)
+        end
+    end
+
+    -- Only Transport the Parent entities (If they are indeed in the selection)
+    for _, ent in pairs(childEntities) do
+        for _, object in pairs(objects) do
+            if table.HasValue(object.Objects, ent) then
+                table.RemoveByValue(object.Objects, ent)
+            end
+
+            -- TODO: Check for the Parent and add some effect functionality for child Entities
         end
     end
 
@@ -293,18 +301,23 @@ function LCARS:OpenTransporterMenu()
 
         self:SendPanel(panel, panelData)
     end)
-    
-    if IsValid(panel) then
+
+    if IsValid(panel) and not panel.ActiveTransporter then
         local panelData = self.ActivePanels[panel]
         if not istable(panelData) then return end
         
         local success = LCARS:ActivateTransporter(panelData)
         if success then
+            panel.ActiveTransporter = true
+
             local panel_brush = CALLER
             panel_brush:Fire("FireUser1")
 
-            timer.Simple(4, function()
+            timer.Simple(7, function()
                 panel_brush:Fire("FireUser2")
+                timer.Simple(3, function()
+                    panel.ActiveTransporter = false
+                end)
             end)
         end
     end

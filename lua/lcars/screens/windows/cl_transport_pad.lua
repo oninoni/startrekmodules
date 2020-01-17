@@ -55,7 +55,7 @@ function WINDOW:DrawRoundPad(x, y, radius, pos, selected)
         color = Color(255, 255, 255)
     end
 
-    draw.RoundedBox(radius, -(radius + 2), -(radius + 2), diameter + 4, diameter + 4, color)
+    draw.RoundedBox(radius, x - (radius + 2), y - (radius + 2), diameter + 4, diameter + 4, color)
 
     local color = LCARS.ColorBlue
     if selected then
@@ -97,6 +97,8 @@ function WINDOW:DrawWindow(panel, window, pos)
         elseif button.Type == "Hex" then
             WINDOW:DrawHexPad(button.X, button.Y, button.Radius, pos, button.Selected)
         end
+        
+        draw.SimpleText(i, "LCARSSmall", button.X, button.Y, Color(0, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
     end
 end
 

@@ -20,6 +20,16 @@ function LCARS:ApplyTranportEffectProperties(transportData, ent, mode)
             transportData.OldMotionEnabled = phys:IsMotionEnabled()
             phys:EnableMotion(false)
         end
+
+        local trace = util.TraceLine({
+            start = ent:GetPos(),
+            endpos = ent:GetPos() - Vector(0, 0, 200),
+            filter = ent
+        })
+        local distance = ent:GetPos():Distance(trace.HitPos)
+        transportData.ZOffset = distance
+
+        -- TODO: Fallback using Model Bounds?
         
         ent:DrawShadow(false)
 
@@ -37,6 +47,9 @@ function LCARS:ApplyTranportEffectProperties(transportData, ent, mode)
         ent:SetColor(Color(0, 0, 0, 0))
     elseif mode == 3 then
         ent:SetRenderMode(RENDERMODE_TRANSTEXTURE)
+
+        ent:SetPos((transportData.TargetPos or ent:GetPos()) + Vector(0, 0, transportData.ZOffset))
+        
     else
         ent:SetRenderMode(transportData.OldRenderMode)
         ent:SetCollisionGroup(transportData.OldCollisionGroup)
@@ -147,8 +160,6 @@ hook.Add("Think", "LCARS.Tranporter.Cycle", function()
             elseif state == 1 and (stateTime + 4) < curTime then
                 -- Object will now be removed from the buffer.
                 LCARS:ApplyTranportEffectProperties(transportData, ent, 3)
-                
-                ent:SetPos(transportData.TargetPos or ent:GetPos())
                 
                 LCARS:BroadcastBeamEffect(ent, true)
                 
