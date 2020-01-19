@@ -4,12 +4,12 @@ local WINDOW = {}
 
 -- Calculate the scroll of the list.
 function WINDOW:GetOffset(window, n, y)
-    local max = math.floor(window.Height / 35) + 1
+    local max = math.floor(window.Height / 35)
 
     if n > max then
-        return -y
+        return -y * ((n - max + 2) / max)
     end
-
+    
     return 0
 end
 
@@ -21,10 +21,10 @@ function WINDOW:GetButtonYPos(window, i, n, offset, menuPos)
     y = math.min(
             math.max(
                 window.Height / 2 - (n - i) * 35,
-                -window.Height / 2 + 35,
+                -window.Height / 2 - 35,
                 y),
             -window.Height / 2 + i * 35,
-            window.Height / 2)
+            window.Height / 2 + 70)
 
     return math.floor((y - 17.5) * menuPos)
 end
@@ -74,6 +74,11 @@ function WINDOW:DrawWindow(panel, window, pos)
             color = LCARS.ColorGrey
         end
 
+        local alpha = 255
+        if y < -window.Height / 2 or y > window.Height / 2 then
+            alpha = math.max(0, 40 - (math.abs(y) - (window.Height / 2))) / 40 * 255
+        end
+
         local text = button.Name or "[ERROR]"
 
         local selected = false
@@ -81,7 +86,7 @@ function WINDOW:DrawWindow(panel, window, pos)
             selected = true
         end
 
-        LCARS:DrawButton(0, y - 15, window.Width, text, color, selected, button.RandomS, button.RandomL, panel.MenuPos * 255)
+        LCARS:DrawButton(0, y - 15, window.Width, text, color, selected, button.RandomS, button.RandomL, panel.MenuPos * alpha)
     end
 end
 

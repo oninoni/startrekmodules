@@ -51,7 +51,6 @@ function LCARS:GeneratePadButtons(listWindow, objects, padNumber)
                 Radius = radius,
             }
 
-            // TODO: Use Entitiy Model and Position instead
             if k == 7 then
                 object.X = 0
                 object.Y = 0
@@ -104,15 +103,20 @@ function LCARS:ReplaceButtons(windowId, listWindow, mode)
                 Name = ply:GetName(),
                 Data = ply,
             }
-
+            
             table.insert(objects, object)
         end
     elseif mode == 3 then
         listWindow.Type = "button_list"
         -- TODO: Add Markers
     elseif mode == 4 then
-        listWindow.Type = "button_list"
-        -- TODO: Add Buffer
+        if windowId == 1 then
+            listWindow.Type = "button_list"
+            -- TODO: Add Buffer
+        elseif windowId == 2 then
+            listWindow.Type = "button_list"
+            -- TODO: Other Pads
+        end
     end
 
     return self:ReaplaceModeButtons(windowId, listWindow, objects)
@@ -130,7 +134,7 @@ function LCARS:GetTransporterObjects(window, listWindow)
 
             if sourceMode == 1 then
                 local pad = button.Data
-                local pos = button.Data:GetPos()
+                local pos = pad:GetPos()
                 local attachmentId = pad:LookupAttachment("teleportPoint")
                 if attachmentId > 0 then
                     local angPos = pad:GetAttachment(attachmentId)
@@ -141,7 +145,7 @@ function LCARS:GetTransporterObjects(window, listWindow)
                 object = {
                     Objects = {},
                     Pad = pad,
-                    Pos = pos - Vector(0, 0, 25), // Temporary Offset (Because Attachment Floats)
+                    Pos = pos,
                     SourceCount = 1,
                     TargetCount = 1,
                 }
@@ -218,9 +222,9 @@ end
 
 local targetNames = {
     "Transporter Pad",
-    "Crew",
-    "External",
-    "Buffer",
+    "Lifeforms",
+    "Locations",
+    {"Buffer", "Other Pads"},
 }
 function LCARS:OpenTransporterMenu()
     local panel = self:OpenMenuInternal(TRIGGER_PLAYER, CALLER, function(ply, panel_brush, panel, screenPos, screenAngle)
@@ -231,35 +235,35 @@ function LCARS:OpenTransporterMenu()
             Height = 300,
             Windows = {
                 [1] = {
-                    Pos = screenPos + Vector(14, 0, 10),
-                    Angles = screenAngle - Angle(20, -20, 0),
+                    Pos = screenPos + Vector(22, -3, 12),
+                    Angles = screenAngle - Angle(30, -25, 0),
                     Type = "button_list",
                     Width = 350,
                     Height = 300,
                     Buttons = {}
                 },
                 [2] = {
-                    Pos = screenPos + Vector(-14, 0, 10),
-                    Angles = screenAngle - Angle(20, 20, 0),
+                    Pos = screenPos + Vector(-22, -3, 12),
+                    Angles = screenAngle - Angle(30, 25, 0),
                     Type = "button_list",
                     Width = 350,
                     Height = 300,
                     Buttons = {}
                 },
                 [3] = {
-                    Pos = screenPos + Vector(35, 12, 10),
-                    Angles = screenAngle - Angle(20, -45, 0),
+                    Pos = screenPos + Vector(36, 13, 13),
+                    Angles = screenAngle - Angle(30, -65, 0),
                     Type = "button_list",
-                    Width = 600,
-                    Height = 300,
+                    Width = 500,
+                    Height = 500,
                     Buttons = {}
                 },
                 [4] = {
-                    Pos = screenPos + Vector(-35, 12, 10),
-                    Angles = screenAngle - Angle(20, 45, 0),
+                    Pos = screenPos + Vector(-36, 13, 13),
+                    Angles = screenAngle - Angle(30, 65, 0),
                     Type = "button_list",
-                    Width = 600,
-                    Height = 300,
+                    Width = 500,
+                    Height = 500,
                     Buttons = {}
                 },
             },
@@ -272,7 +276,12 @@ function LCARS:OpenTransporterMenu()
                     color = LCARS.ColorLightBlue
                 end
 
-                local button = LCARS:CreateButton(targetNames[j], color)
+                local targetName = targetNames[j]
+                if istable(targetName) then
+                    targetName = targetName[i]
+                end
+                
+                local button = LCARS:CreateButton(targetName, color)
                 button.DeselectedColor = color
 
                 table.insert(panelData.Windows[i].Buttons, button)
@@ -297,7 +306,6 @@ function LCARS:OpenTransporterMenu()
         for i=1,2,1 do
             LCARS:ReplaceButtons(i, panelData.Windows[2 + i], panelData.Windows[i].Selected)
         end
-
 
         self:SendPanel(panel, panelData)
     end)
@@ -373,6 +381,11 @@ hook.Add("LCARS.PressedCustom", "LCARS.Transporter.Pressed", function(ply, panel
                 local leftWindow = panelData.Windows[1]
                 local rightWindow = panelData.Windows[2]
                 
+                if leftWindow.Selected > 3 or rightWindow.Selected > 3 then
+                    -- TODO: Swap Error
+                    return
+                end
+
                 for i=1,#targetNames,1 do
                     leftWindow.Buttons[i].Color = leftWindow.Buttons[i].DeselectedColor
                     rightWindow.Buttons[i].Color = rightWindow.Buttons[i].DeselectedColor

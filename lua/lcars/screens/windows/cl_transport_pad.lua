@@ -86,6 +86,8 @@ end
 function WINDOW:DrawWindow(panel, window, pos)
     local padDiameter = window.Height / 4
     local padRadius = padDiameter / 2
+    
+    --draw.RoundedBox(0, -window.Width / 2, -window.Height / 2, window.Width, window.Height, Color(255, 255, 255, 255))
 
     local outerPadOffset = padDiameter + padRadius / 2
     local outerPadX = 0.5 * outerPadOffset
