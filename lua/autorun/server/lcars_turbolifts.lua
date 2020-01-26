@@ -12,7 +12,7 @@ LCARS.TurboliftMinTime = 2
 -- Players in targetLift getting moved away. (Pod can't resume CHECK!)
 -- Test leaving lift before teleport to pod.
 
-hook.Add("InitPostEntity", "LCARS.PostGamemodeLoaded", function()
+local setupTurbolifts = function()
     LCARS.Turbolifts = {}
     LCARS.Pods = {}
 
@@ -59,7 +59,10 @@ hook.Add("InitPostEntity", "LCARS.PostGamemodeLoaded", function()
     for _, turboliftData in SortedPairs(turbolifts) do
         table.insert(LCARS.Turbolifts, turboliftData)
     end
-end)
+end
+
+hook.Add("InitPostEntity", "LCARS.TurboliftInitPostEntity", setupTurbolifts)
+hook.Add("PostCleanupMap", "LCARS.TurboliftPostCleanupMap", setupTurbolifts)
 
 -- Open a Turbolift Control LCARS Menua.
 function LCARS:OpenTurboliftMenu()
