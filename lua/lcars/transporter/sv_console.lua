@@ -1,4 +1,11 @@
 
+local targetNames = {
+    "Transporter Pad",
+    "Lifeforms",
+    "Locations",
+    {"Buffer", "Other Pads"},
+}
+
 function LCARS:ReaplaceModeButtons(windowId, listWindow, objects)
     listWindow.Buttons = {}
 
@@ -94,7 +101,6 @@ function LCARS:ReplaceButtons(windowId, listWindow, mode)
     if mode == 1 then
         self:GeneratePadButtons(listWindow, objects, 1)
         -- TODO: Replace 1 with Linking of Pad and Console
-        
     elseif mode == 2 then
         listWindow.Type = "button_list"
         -- TODO: Maybe add NPC's?
@@ -146,11 +152,14 @@ function LCARS:GetTransporterObjects(window, listWindow)
                     Objects = {},
                     Pad = pad,
                     Pos = pos,
-                    SourceCount = 1,
-                    TargetCount = 1,
+                    TargetCount = 1, -- Only 1 Object per Pad
                 }
 
-                local entities = ents.FindInSphere(pos, 35)
+                local  lowerBounds = pos - Vector(25, 25, 0)
+                local higherBounds = pos + Vector(25, 25, 120)
+                --debugoverlay.Box(pos, -Vector(25, 25, 0), Vector(25, 25, 120), 10, Color(255, 255, 255, 63))
+
+                local entities = ents.FindInBox(lowerBounds, higherBounds)
                 for _, ent in pairs(entities) do
                     local name = ent:GetName()
                     if not string.StartWith(name, "TRPad") then
@@ -158,14 +167,37 @@ function LCARS:GetTransporterObjects(window, listWindow)
                     end
                 end
             elseif sourceMode == 2 then
+                local targetEnt = button.Data
+                local pos = targetEnt:GetPos()
+                
                 object = {
-                    Objects = {button.Data},
-                    Pos = button.Data:GetPos(),
-                    SourceCount = 1,
-                    TargetCount = -1,
+                    Objects = {targetEnt},
+                    Pos = pos,
+                    TargetCount = -1, -- Infinite Objects on beaming to player.
                 }
+
+                if window.Buttons[#targetNames + 2].Selected then
+                    local  lowerBounds = pos - Vector(60, 60, 0)
+                    local higherBounds = pos + Vector(60, 60, 120)
+                    debugoverlay.Box(pos, -Vector(60, 60, 0), Vector(60, 60, 120), 10, Color(255, 255, 255, 63))
+
+                    local entities = ents.FindInBox(lowerBounds, higherBounds)
+                    for _, ent in pairs(entities) do
+                        if ent:MapCreationID() ~= -1 then continue end
+
+                        local parent = ent:GetParent()
+                        if not IsValid(parent) then
+                            local phys = ent:GetPhysicsObject()
+                            if IsValid(phys) and phys:IsMotionEnabled() and ent ~= targetEnt then
+                                table.insert(object.Objects, ent)
+                            end
+                        end
+                    end
+                end
             elseif sourceMode == 3 then
                 -- TODO: Add Markers
+            elseif sourceMode == 4 then
+                -- TODO: Add Buffer/External Pads
             end
 
             table.insert(objects, object)
@@ -202,9 +234,9 @@ function LCARS:ActivateTransporter(panelData)
     local Sources = self:GetTransporterObjects(panelData.Windows[1], panelData.Windows[3])
     local Targets = self:GetTransporterObjects(panelData.Windows[2], panelData.Windows[4])
 
-    for _, source in pairs(Sources) do
-        for _, sourceObject in pairs(source.Objects) do
-            for _, target in pairs(Targets) do
+    for _, source in pairs(Sources or {}) do
+        for _, sourceObject in pairs(source.Objects or {}) do
+            for _, target in pairs(Targets or {}) do
                 target.Count = target.Count or 0
 
                 if target.TargetCount == -1 or target.Count < target.TargetCount then
@@ -219,20 +251,11 @@ function LCARS:ActivateTransporter(panelData)
 
     return true
 end
-
-local targetNames = {
-    "Transporter Pad",
-    "Lifeforms",
-    "Locations",
-    {"Buffer", "Other Pads"},
-}
 function LCARS:OpenTransporterMenu()
     local panel = self:OpenMenuInternal(TRIGGER_PLAYER, CALLER, function(ply, panel_brush, panel, screenPos, screenAngle)
         local panelData = {
             Type = "Transporter",
             Pos = screenPos + Vector(0, 0, 10),
-            Width = 2000,
-            Height = 300,
             Windows = {
                 [1] = {
                     Pos = screenPos + Vector(22, -3, 12),

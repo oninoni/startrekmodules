@@ -3,6 +3,7 @@
 LCARS.ActiveTransports = LCARS.ActiveTransports or {}
 
 util.AddNetworkString("LCARS.Tranporter.BeamObject")
+util.AddNetworkString("LCARS.Tranporter.BeamPlayer")
 
 function LCARS:ApplyTranportEffectProperties(transportData, ent, mode)
     if mode == 1 then
@@ -21,16 +22,9 @@ function LCARS:ApplyTranportEffectProperties(transportData, ent, mode)
             phys:EnableMotion(false)
         end
 
-        local trace = util.TraceLine({
-            start = ent:GetPos(),
-            endpos = ent:GetPos() - Vector(0, 0, 200),
-            filter = ent
-        })
-        local distance = ent:GetPos():Distance(trace.HitPos)
-        transportData.ZOffset = distance
+        local lowerBounds, higherBounds = ent:GetCollisionBounds()
+        transportData.ZOffset = -lowerBounds.Z + 2 -- Offset to prevent stucking in floor
 
-        -- TODO: Fallback using Model Bounds?
-        
         ent:DrawShadow(false)
 
         for _, child in pairs(ent:GetChildren()) do
@@ -39,6 +33,12 @@ function LCARS:ApplyTranportEffectProperties(transportData, ent, mode)
 
             child.OldColor = child:GetColor()
             child:SetColor(Color(255, 255, 255, 0))
+        end
+
+        if ent:IsPlayer() then
+            net.Start("LCARS.Tranporter.BeamPlayer")
+                net.WriteBool(true)
+            net.Send(ent)
         end
     elseif mode == 2 then
         ent:SetRenderMode(RENDERMODE_NONE)
@@ -50,6 +50,11 @@ function LCARS:ApplyTranportEffectProperties(transportData, ent, mode)
 
         ent:SetPos((transportData.TargetPos or ent:GetPos()) + Vector(0, 0, transportData.ZOffset))
         
+        if ent:IsPlayer() then
+            net.Start("LCARS.Tranporter.BeamPlayer")
+                net.WriteBool(false)
+            net.Send(ent)
+        end
     else
         ent:SetRenderMode(transportData.OldRenderMode)
         ent:SetCollisionGroup(transportData.OldCollisionGroup)
@@ -86,9 +91,13 @@ function LCARS:BroadcastBeamEffect(ent, rematerialize)
     local oldCollisionGroup = ent:GetCollisionGroup()
     ent:SetCollisionGroup(COLLISION_GROUP_NONE)
 
+    local lowerBounds, higherBounds = ent:GetCollisionBounds()
+    local midPos = ent:GetPos() + (higherBounds / 2) + (lowerBounds / 2)
+    --debugoverlay.Cross(midPos, 32, 10, true)
+
     local players = {}
     for _, ply in pairs(player.GetHumans()) do
-        if ply:VisibleVec(ent:GetPos()) then
+        if ply:VisibleVec(midPos) then
             table.insert(players, ply)
         end
     end
@@ -109,7 +118,6 @@ function LCARS:BroadcastBeamEffect(ent, rematerialize)
     end)
 end
 
-// TODO: Relative Stuff + Parented Objects.
 // TODO: Model Bounds for Offset to Ground?
 function LCARS:BeamObject(ent, targetPos, sourcePad, targetPad)
     local transportData = {
@@ -183,8 +191,6 @@ hook.Add("Think", "LCARS.Tranporter.Cycle", function()
         else
             table.insert(toBeRemoved, transportData)
         end
-
-        
     end
 
     for _, transportData in pairs(toBeRemoved) do

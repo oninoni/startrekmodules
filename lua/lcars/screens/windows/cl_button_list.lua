@@ -18,13 +18,22 @@ function WINDOW:GetButtonYPos(window, i, n, offset, menuPos)
     local max = math.floor(window.Height / 35) + 1
 
     local y = (i - (n / 2)) * 35 + offset
-    y = math.min(
-            math.max(
-                window.Height / 2 - (n - i) * 35,
-                -window.Height / 2 - 35,
-                y),
-            -window.Height / 2 + i * 35,
-            window.Height / 2 + 70)
+
+    if offset == 0 then
+        y = math.min(
+                math.max(
+                    -window.Height / 2 - 35,
+                    y),
+                window.Height / 2 + 70)
+    else
+        y = math.min(
+                math.max(
+                    window.Height / 2 - (n - i) * 35,
+                    -window.Height / 2 - 35,
+                    y),
+                -window.Height / 2 + i * 35,
+                window.Height / 2 + 70)
+    end
 
     return math.floor((y - 17.5) * menuPos)
 end

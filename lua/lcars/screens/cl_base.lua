@@ -72,9 +72,6 @@ function LCARS:OpenMenu(id, panelData)
 
         Scale = panelData.Scale or 20,
 
-        Width = panelData.Width or 300,
-        Height = panelData.Height or 300,
-
         MenuPos = 0,
         Closing = false,
     }
@@ -95,8 +92,8 @@ function LCARS:OpenMenu(id, panelData)
     for _, window in pairs(panel.Windows) do
         window.Scale = window.Scale or panel.Scale
         
-        window.Width = window.Width or panel.Width
-        window.Height = window.Height or panel.Height
+        window.Width = window.Width or 300
+        window.Height = window.Height or 300
         
         window.CenterPos = window.Pos or panel.CenterPos
         if window.Angles then
@@ -129,8 +126,8 @@ function LCARS:UpdateWindow(id, windowId, window)
     
     window.Scale = window.Scale or panel.Scale
     
-    window.Width = window.Width or panel.Width
-    window.Height = window.Height or panel.Height
+    window.Width = window.Width or 300
+    window.Height = window.Height or 300
     
     window.CenterPos = window.Pos or panel.CenterPos
     if window.Angles then

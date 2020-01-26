@@ -3,6 +3,9 @@
 -- List of active Transports.
 LCARS.ActiveTransports = LCARS.ActiveTransports or {}
 
+LCARS.SelfTransportActive = false
+LCARS.SelfTransportRefraction = 0
+
 -- Apply the transport Effect to the specified entity.
 --
 -- @param Entity ent
@@ -48,6 +51,22 @@ net.Receive("LCARS.Tranporter.BeamObject", function()
     LCARS:ApplyTransporter(ent, rematerialize)
 end)
 
+net.Receive("LCARS.Tranporter.BeamPlayer", function()
+    local active = net.ReadBool()
+
+    if active then
+        LCARS.SelfTransportActive = true
+
+        timer.Create("LCARS.Transporter.KillEffectFallback", 20, 1, function()
+            LCARS.SelfTransportActive = false
+        end) 
+    else
+        LCARS.SelfTransportActive = false
+
+        timer.Remove("LCARS.Transporter.KillEffectFallback")
+    end
+end)
+
 -- Shortcut function to draw the flares.
 local function drawFlare(pos, vec, size)
     render.DrawQuadEasy(
@@ -61,12 +80,24 @@ local function drawFlare(pos, vec, size)
 end
 
 local lastSysTime = SysTime()
-hook.Add("PostDrawTranslucentRenderables", "Voyager.Testing", function()
+hook.Add("RenderScreenspaceEffects", "Yoyager.Transporter.Effect", function()
+    if LCARS.SelfTransportRefraction > 0 then
+        DrawMaterialOverlay("effects/water_warp01", LCARS.SelfTransportRefraction)
+    end
+end)
+
+hook.Add("PostDrawTranslucentRenderables", "Voyager.Transporter.MainRender", function()
     local vec = EyeVector()
     vec.z = 0
 
     local frameTime = SysTime() - lastSysTime
     lastSysTime = SysTime()
+
+    if LCARS.SelfTransportActive then
+        LCARS.SelfTransportRefraction = math.min(1, LCARS.SelfTransportRefraction + 0.4 * frameTime)
+    else
+        LCARS.SelfTransportRefraction = math.max(0, LCARS.SelfTransportRefraction - 0.4 * frameTime)
+    end
 
     local toBeRemoved = {}
     for _, transportData in pairs(LCARS.ActiveTransports) do

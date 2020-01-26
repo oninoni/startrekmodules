@@ -132,7 +132,7 @@ end
 function LCARS:CreateButton(name, color, disabled)
     local button = {
         Name = name or "",
-        Disabled = disabled or false,
+        Disabled = tobool(disabled) or false,
     }
 
     if IsColor(color) then
@@ -171,7 +171,10 @@ end
 -- Open a General LCARS Menu using the keyvalues of an panel's func_button brush.
 function LCARS:OpenMenu()
     self:OpenMenuInternal(TRIGGER_PLAYER, CALLER, function(ply, panel_brush, panel, screenPos, screenAngle)
+        debugoverlay.Axis(screenPos, screenAngle, 10, 10, false)
+
         local panelData = {
+            Pos = screenPos,
             Windows = {
                 [1] = {
                     Pos = screenPos,

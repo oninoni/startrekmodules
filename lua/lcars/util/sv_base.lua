@@ -108,22 +108,6 @@ function LCARS:FindEmptyPosWithin(pos, lower, higher)
 	return false
 end
 
--- Block Doors aborting animations.
-hook.Add("AcceptInput", "LCARS.BlockDoorIfAlreadyDooring", function(ent, input, activator, caller, value)
-    if ent:GetModel() == "models/kingpommes/startrek/voyager/door_48_anim.mdl"
-    or ent:GetModel() == "models/kingpommes/startrek/voyager/door_80_anim.mdl"
-    or ent:GetModel() == "models/kingpommes/startrek/voyager/door_128_anim.mdl" then
-        if input == "SetAnimation" then
-            local sequenceId = ent:GetSequence()
-            local newSequenceId = ent:LookupSequence(value)
-            
-            if sequenceId and newSequenceId and sequenceId == newSequenceId then
-                return true
-            end
-        end
-    end
-end)
-
 -- Capture all Keyvalues so they can be read when needed.
 hook.Add("EntityKeyValue", "LCARS.CaptureKeyValues", function(ent, key, value)
     ent.LCARSKeyData = ent.LCARSKeyData or {}

@@ -56,7 +56,7 @@ hook.Add("InitPostEntity", "LCARS.PostGamemodeLoaded", function()
         end
     end
 
-    for _, turboliftData in pairs(turbolifts) do
+    for _, turboliftData in SortedPairs(turbolifts) do
         table.insert(LCARS.Turbolifts, turboliftData)
     end
 end)
@@ -64,6 +64,8 @@ end)
 -- Open a Turbolift Control LCARS Menua.
 function LCARS:OpenTurboliftMenu()
     self:OpenMenuInternal(TRIGGER_PLAYER, CALLER, function(ply, panel_brush, panel, screenPos, screenAngle)
+        print(ply, panel_brush, panel, screenPos, screenAngle)
+
         local panelData = {}
         local keyValues = panel_brush.LCARSKeyData
 

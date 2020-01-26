@@ -3,6 +3,8 @@
 LCARS = LCARS or {}
 
 if CLIENT then
+    include("lcars/linked_portal_window/cl_portal_window.lua")
+
     include("lcars/screens/sh_config.lua")
     include("lcars/screens/sh_colors.lua")
 
@@ -19,6 +21,10 @@ end
 if SERVER then
     include("lcars/util/sv_base.lua")
 
+    include("lcars/doors/sv_base.lua")
+
+    AddCSLuaFile("lcars/linked_portal_window/cl_portal_window.lua")
+    include("lcars/linked_portal_window/sv_portal_window.lua")
 
     AddCSLuaFile("lcars/screens/sh_config.lua")
     AddCSLuaFile("lcars/screens/sh_colors.lua")
