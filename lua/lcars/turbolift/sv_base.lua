@@ -1,17 +1,12 @@
-LCARS = LCARS or {}
-
-LCARS.Turbolifts = LCARS.Turbolifts or {}
-LCARS.Pods = LCARS.Pods or {}
 
 LCARS.NextTurboliftThink = CurTime()
 
-LCARS.TurboliftMaxTime = 10
-LCARS.TurboliftMinTime = 2
-
--- TODO: Testing
+-- TODO: 
+-- Testing
 -- Players in targetLift getting moved away. (Pod can't resume CHECK!)
 -- Test leaving lift before teleport to pod.
 
+-- Setting up Turbolifts
 local setupTurbolifts = function()
     LCARS.Turbolifts = {}
     LCARS.Pods = {}
@@ -69,26 +64,30 @@ function LCARS:OpenTurboliftMenu()
     self:OpenMenuInternal(TRIGGER_PLAYER, CALLER, function(ply, panel_brush, panel, screenPos, screenAngle)
         local panelData = {
             Pos = screenPos,
+            Type = "Turbolift",
             Windows = {
                 [1] = {
                     Pos = screenPos,
                     Angles = screenAngle,
                     Type = "button_list",
+                    Scale = 30,
+                    Width = 600,
+                    Height = 300,
                     Buttons = {}
                 }
             }
         }
-        local keyValues = panel_brush.LCARSKeyData
+        local keyValues = panel.LCARSKeyData
 
         local name
-        if panel_brush.IsTurbolift then
+        if panel.IsTurbolift then
             name = keyValues["lcars_name"]
             
             if not isstring(name) or name == "" then return end
-        elseif panel_brush.IsPod then
+        elseif panel.IsPod then
             name = ""
 
-            local podData = panel_brush.Data
+            local podData = panel.Data
             if podData.Stopped then
                 local button = LCARS:CreateButton("Resume Lift", nil, podData.TravelTarget == nil)
                 panelData.Windows[1].Buttons[0] = button
@@ -98,18 +97,18 @@ function LCARS:OpenTurboliftMenu()
             end
         end
 
-        
         for i, turboliftData in pairs(self.Turbolifts) do
             local button = LCARS:CreateButton(turboliftData.Name, nil, turboliftData.Name == name)
             panelData.Windows[1].Buttons[i] = button
         end
 
-        debugoverlay.Cross(screenPos, 10, 1, Color(255, 255, 255), true)
+        -- debugoverlay.Cross(screenPos, 10, 1, Color(255, 255, 255), true)
 
         LCARS:SendPanel(panel, panelData)
     end)
 end
 
+-- Return an empty Pod and Reserve it.
 function LCARS:GetUnusedPod()
     for _, podData in pairs(LCARS.Pods) do
         if not podData.InUse then
@@ -126,20 +125,17 @@ end
 function LCARS:GetTurboliftContents(turbolift)
     local objects = {}
 
-    local turboliftModel = turbolift:GetChildren()[1]
-    if not IsValid(turboliftModel) then return end
+    local attachmentId1 = turbolift:LookupAttachment("corner1")
+    local attachmentId2 = turbolift:LookupAttachment("corner2")
 
-    local attachmentId1 = turboliftModel:LookupAttachment("corner1")
-    local attachmentId2 = turboliftModel:LookupAttachment("corner2")
-
-    if isnumber(attachmentId1) and isnumber(attachmentId2) and attachmentId1 ~= -1 and attachmentId2 ~= -1 then
-        local attachmentPoint1 = turboliftModel:GetAttachment(attachmentId1)
-        local attachmentPoint2 = turboliftModel:GetAttachment(attachmentId2)
+    if isnumber(attachmentId1) and isnumber(attachmentId2) and attachmentId1 > 0 and attachmentId2 > 0 then
+        local attachmentPoint1 = turbolift:GetAttachment(attachmentId1)
+        local attachmentPoint2 = turbolift:GetAttachment(attachmentId2)
 
         local entities = ents.FindInBox(attachmentPoint1.Pos, attachmentPoint2.Pos)
 
         for _, ent in pairs(entities or {}) do
-            if ent:MapCreationID() == -1 then
+            if ent:MapCreationID() == -1 and not (ent:GetClass() == "phys_bone_follower" or ent:GetClass() == "predicted_viewmodel") then
                 table.insert(objects, ent)
             end
         end
@@ -148,23 +144,20 @@ function LCARS:GetTurboliftContents(turbolift)
     return objects
 end
 
+-- Teleport all given objects from the sourceLift into the targetLift.
 function LCARS:Teleport(sourceLift, targetLift, objects)
-    local sourceLiftModel = sourceLift:GetChildren()[1]
-    local targetLiftModel = targetLift:GetChildren()[1]
-    if not IsValid(sourceLiftModel) or not IsValid(targetLiftModel) then return end
-
     for _, ent in pairs(objects) do
-        local sourcePos = sourceLiftModel:WorldToLocal(ent:GetPos())
-        local targetPos = targetLiftModel:LocalToWorld(sourcePos)
+        local sourcePos = sourceLift:WorldToLocal(ent:GetPos())
+        local targetPos = targetLift:LocalToWorld(sourcePos)
 
         local sourceAngles
         if ent:IsPlayer() then
-            sourceAngles = sourceLiftModel:WorldToLocalAngles(ent:EyeAngles())
+            sourceAngles = sourceLift:WorldToLocalAngles(ent:EyeAngles())
         else
-            sourceAngles = sourceLiftModel:WorldToLocalAngles(ent:GetAngles())
+            sourceAngles = sourceLift:WorldToLocalAngles(ent:GetAngles())
         end
         
-        local targetAngles = targetLiftModel:LocalToWorldAngles(sourceAngles)
+        local targetAngles = targetLift:LocalToWorldAngles(sourceAngles)
 
         ent:SetPos(targetPos)
 
@@ -176,6 +169,7 @@ function LCARS:Teleport(sourceLift, targetLift, objects)
     end
 end
 
+-- Think for the Turbolift System.
 hook.Add("Think", "LCARS.ThinkTurbolift", function()
     if LCARS.NextTurboliftThink > CurTime() then return end
     LCARS.NextTurboliftThink = CurTime() + 1
@@ -216,12 +210,13 @@ hook.Add("Think", "LCARS.ThinkTurbolift", function()
                 podData.TravelTarget = nil
             end
 
-            -- TODO: Stop Animation / Stop Sound Loop
+            podData.Entity:SetSkin(0)
 
             continue
         else
             if podData.TravelTime > 0 then
-                -- TODO: Change Animation / Loop Sound
+                podData.Entity:SetSkin(math.random(1, 4))
+
 
                 podData.TravelTime = podData.TravelTime - 1
             else
@@ -234,7 +229,7 @@ hook.Add("Think", "LCARS.ThinkTurbolift", function()
 
                 if targetLiftData.Queue[1] == podData and not targetLiftData.InUse then
                     -- Close + Lock
-                    targetLiftData.Entity:Fire("FireUser1")
+                    LCARS:LockTurboliftDoors(targetLiftData.Entity)
                     targetLiftData.InUse = true
                     targetLiftData.ClosingTime = 2
                     targetLiftData.CloseCallback = function()
@@ -255,31 +250,55 @@ hook.Add("Think", "LCARS.ThinkTurbolift", function()
                             podData.InUse = false
                             podData.Stopped = false
                         end
+                        
+                        podData.Entity:SetSkin(0)
 
                         LCARS:Teleport(podData.Entity, targetLiftData.Entity, podObjects)
 
-                        targetLiftData.Entity:Fire("FireUser2")
+                        LCARS:OpenTurboliftDoors(targetLiftData.Entity)
                         targetLiftData.LeaveTime = 5
                     end
                 end
             end
         end
-        
     end
 end)
 
-hook.Add("LCARS.Pressed", "LCARS.TurboliftPressed", function(ply, currentPanel, currentBrush, i)
-    if currentBrush.IsTurbolift then
-        local sourceLift = currentBrush
+function LCARS:OpenTurboliftDoors(lift)
+    local door = lift:GetChildren()[1]
+    if IsValid(door) then
+        door:Fire("AddOutput", "lcars_locked 0")
+        door:Fire("SetAnimation", "open")
+    end
+end
+
+function LCARS:UnlockTurboliftDoors(lift)
+    local door = lift:GetChildren()[1]
+    if IsValid(door) then
+        door:Fire("AddOutput", "lcars_locked 0")
+    end
+end
+
+function LCARS:LockTurboliftDoors(lift)
+    local door = lift:GetChildren()[1]
+    if IsValid(door) then
+        door:Fire("AddOutput", "lcars_locked 1")
+    end
+end
+
+hook.Add("LCARS.PressedCustom", "LCARS.TurboliftPressed", function(ply, panelData, panel, panelBrush, windowId, buttonId)
+    if panelData.Type ~= "Turbolift" then return end
+
+    if panel.IsTurbolift then
+        local sourceLift = panel
         local sourceLiftData = sourceLift.Data
 
-        local targetLiftData = LCARS.Turbolifts[i]
+        local targetLiftData = LCARS.Turbolifts[buttonId]
         if targetLiftData then
             local podData = LCARS:GetUnusedPod()
-            
             if podData then
-                -- Close + Lock
-                sourceLift:Fire("FireUser1")
+                -- Close + Lock Doors
+                LCARS:LockTurboliftDoors(sourceLift)
                 sourceLiftData.InUse = true
                 sourceLiftData.ClosingTime = 2
                 sourceLiftData.CloseCallback = function()
@@ -300,16 +319,20 @@ hook.Add("LCARS.Pressed", "LCARS.TurboliftPressed", function(ply, currentPanel, 
                     podData.Stopped = false
 
                     -- Unlock
-                    sourceLift:Fire("FireUser3")
+                    LCARS:UnlockTurboliftDoors(sourceLift)
                     sourceLiftData.InUse = false
                 end
+                            
+                timer.Simple(0.5, function()
+                    LCARS:DisablePanel(panel)
+                end)
             else
                 print("Error")
                 -- TODO: Error Sound "Turbolift Busy" or sth like that
             end
         end
-    elseif currentBrush.IsPod then
-        local pod = currentBrush
+    elseif panel.IsPod then
+        local pod = panel
         local podData = pod.Data
 
         if i == 0 then
@@ -325,5 +348,9 @@ hook.Add("LCARS.Pressed", "LCARS.TurboliftPressed", function(ply, currentPanel, 
                 podData.TravelTime = math.random(LCARS.TurboliftMinTime, LCARS.TurboliftMaxTime)
             end
         end
+                        
+        timer.Simple(0.5, function()
+            LCARS:DisablePanel(panel)
+        end)
     end
 end)

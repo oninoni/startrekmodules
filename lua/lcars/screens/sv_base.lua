@@ -263,6 +263,6 @@ net.Receive("LCARS.Screens.Pressed", function(len, ply)
             LCARS:DisablePanel(panel)
         end)
     else
-        hook.Run("LCARS.PressedCustom", ply, panelData, panel, panel_brush, windowId, buttonId)
+        hook.Run("LCARS.PressedCustom", ply, panelData, panel, panelBrush, windowId, buttonId)
     end
 end)

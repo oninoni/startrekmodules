@@ -57,7 +57,9 @@ function LCARS:DrawButton(x, y, width, text, color, selected, s, l, alpha)
 end
 
 function LCARS:CloseMenu(id)
-    LCARS.ActivePanels[id].Closing = true
+    if LCARS.ActivePanels[id] then
+        LCARS.ActivePanels[id].Closing = true
+    end
 end
 
 net.Receive("LCARS.Screens.CloseMenu", function()

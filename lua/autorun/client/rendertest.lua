@@ -45,6 +45,7 @@ local rot = 0
 
 hook.Add("PostDrawTranslucentRenderables", "LCARS.Rendertest", function(bDrawingDepth, bDrawingSkybox )
     if not OVERRIDESTUFF then return end
+    if true then return end
 
     RenderBackground()
 

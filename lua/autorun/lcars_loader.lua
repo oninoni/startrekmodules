@@ -47,6 +47,9 @@ if SERVER then
     include("lcars/transporter/sv_console.lua")
     
     include("lcars/holodeck/sv_base.lua")
+    
+    include("lcars/turbolift/sv_config.lua")
+    include("lcars/turbolift/sv_base.lua")
 end
 
 game.AddParticles( "particles/voyager.pcf" )

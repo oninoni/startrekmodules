@@ -229,7 +229,7 @@ function LCARS:GetTransporterObjects(window, listWindow)
                     local parent = ent:GetParent()
                     if not IsValid(parent) then
                         local phys = ent:GetPhysicsObject()
-                        if IsValid(phys) and phys:IsMotionEnabled() and then
+                        if IsValid(phys) and phys:IsMotionEnabled() then
                             table.insert(object.Objects, ent)
                         end
                     end
@@ -394,7 +394,8 @@ end
 
 -- Call FireUser on all Presses
 hook.Add("LCARS.PressedCustom", "LCARS.Transporter.Pressed", function(ply, panelData, panel, panelBrush, windowId, buttonId)
-    if not panelData.Type == "Transporter" then return end
+    if panelData.Type ~= "Transporter" then return end
+    print(panelData.Type)
     
     local window = panelData.Windows[windowId]
     if not istable(window) then return end

@@ -114,6 +114,8 @@ hook.Add("EntityKeyValue", "LCARS.CaptureKeyValues", function(ent, key, value)
 
     if string.StartWith(key, "lcars") then
         ent.LCARSKeyData[key] = value
+
+		hook.Run("LCARS.ChangedKeyValue", ent, key, value)
     end
 end)
 

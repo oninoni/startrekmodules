@@ -1,4 +1,6 @@
 
+LCARS.NextDoorThink = CurTime()
+
 -- Setting up Doors.
 local setupDoors = function()
 	LCARS.Doors = {}
@@ -11,6 +13,8 @@ local setupDoors = function()
 end
 hook.Add("InitPostEntity", "LCARS.DoorInitPostEntity", setupDoors)
 hook.Add("PostCleanupMap", "LCARS.DoorPostCleanupMap", setupDoors)
+
+-- TODO: Storing failed animation changes for when they are valid.
 
 -- Block Doors aborting animations.
 hook.Add("AcceptInput", "LCARS.BlockDoorIfAlreadyDooring", function(ent, input, activator, caller, value)
@@ -32,6 +36,14 @@ hook.Add("AcceptInput", "LCARS.BlockDoorIfAlreadyDooring", function(ent, input, 
 				return true
 			end
 
+			-- Prevent opening a locked door.
+			if value == "open" and ent.LCARSKeyData then
+				local locked = ent.LCARSKeyData["lcars_locked"]
+				if isstring(locked) and locked == "1" then
+					return true
+				end
+			end
+
 			if value == "open" then
 				ent.Open = true
 			elseif value == "close" then
@@ -43,7 +55,6 @@ hook.Add("AcceptInput", "LCARS.BlockDoorIfAlreadyDooring", function(ent, input, 
 				if isstring(partnerDoorName) then
 					local partnerDoors = ents.FindByName(partnerDoorName)
 					for _, partnerDoor in pairs(partnerDoors) do
-						print(ent, partnerDoor, value)
 						partnerDoor:Fire("SetAnimation", value)
 					end
 				end
@@ -54,8 +65,12 @@ hook.Add("AcceptInput", "LCARS.BlockDoorIfAlreadyDooring", function(ent, input, 
     end
 end)
 
--- TODO: Locks
--- hook.Add("")
+-- Handle being locked. (Autoclose)
+hook.Add("LCARS.ChangedKeyValue", "LCARS.LockDoors", function(ent, key, value)
+	if key == "lcars_locked" and isstring(value) and value == "1" and table.HasValue(LCARS.Doors, ent) then
+		ent:Fire("SetAnimation", "close")
+	end
+end)
 
 -- Open door when pressing use on them.
 hook.Add("KeyPress", "LCARS.OpenDoors", function(ply, key)
@@ -90,40 +105,37 @@ end
 
 -- Think hook for auto-closing the doors.
 hook.Add("Think", "LCARS.DoorThink", function()
-	local diffTime = CurTime() - (LCARS.LastDoorThink or 0)
-	if diffTime > 0.1 then
-		for _, ent in pairs(LCARS.Doors) do
+    if LCARS.NextDoorThink > CurTime() then return end
+    LCARS.NextDoorThink = CurTime() + 0.1
 
-			if ent.Open then
-				if not checkPlayers(ent) then
-					if ent.LCARSKeyData then
-						local allDoorsFree = true
-						local partnerDoorName = ent.LCARSKeyData["lcars_partnerdoor"]
-						if isstring(partnerDoorName) then
-							local partnerDoors = ents.FindByName(partnerDoorName)
-							for _, partnerDoor in pairs(partnerDoors) do
-								if checkPlayers(partnerDoor) then
-									allDoorsFree = false
-								end
+	for _, ent in pairs(LCARS.Doors) do
+		if ent.Open then
+			if not checkPlayers(ent) then
+				if ent.LCARSKeyData then
+					local allDoorsFree = true
+					local partnerDoorName = ent.LCARSKeyData["lcars_partnerdoor"]
+					if isstring(partnerDoorName) then
+						local partnerDoors = ents.FindByName(partnerDoorName)
+						for _, partnerDoor in pairs(partnerDoors) do
+							if checkPlayers(partnerDoor) then
+								allDoorsFree = false
 							end
 						end
-
-						if not allDoorsFree then continue end
 					end
 
-					ent:Fire("SetAnimation", "close")
+					if not allDoorsFree then continue end
 				end
 
-				continue
+				ent:Fire("SetAnimation", "close")
 			end
 
-			if ent.LCARSKeyData and ent.LCARSKeyData["lcars_autoopen"] == "1" then
-				if checkPlayers(ent) then
-					ent:Fire("SetAnimation", "open")
-				end
+			continue
+		end
+
+		if ent.LCARSKeyData and ent.LCARSKeyData["lcars_autoopen"] == "1" then
+			if checkPlayers(ent) then
+				ent:Fire("SetAnimation", "open")
 			end
 		end
-		
-		LCARS.LastDoorThink = CurTime()
 	end
 end)
