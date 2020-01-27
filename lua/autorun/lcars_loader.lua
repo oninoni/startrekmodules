@@ -21,6 +21,7 @@ end
 if SERVER then
     include("lcars/util/sv_base.lua")
 
+    include("lcars/doors/sv_config.lua")
     include("lcars/doors/sv_base.lua")
 
     AddCSLuaFile("lcars/linked_portal_window/cl_portal_window.lua")

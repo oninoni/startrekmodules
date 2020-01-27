@@ -127,5 +127,7 @@ hook.Add("AcceptInput", "LCARS.CaptureKeyValuesLive", function(ent, input, activ
     local key = valueSplit[1]
     if string.StartWith(key, "lcars") then
         ent.LCARSKeyData[key] = valueSplit[2]
+
+		hook.Run("LCARS.ChangedKeyValue", ent, key, valueSplit[2])
     end
 end)

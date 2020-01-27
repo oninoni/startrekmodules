@@ -67,9 +67,17 @@ hook.Add("PostCleanupMap", "LCARS.TurboliftPostCleanupMap", setupTurbolifts)
 -- Open a Turbolift Control LCARS Menua.
 function LCARS:OpenTurboliftMenu()
     self:OpenMenuInternal(TRIGGER_PLAYER, CALLER, function(ply, panel_brush, panel, screenPos, screenAngle)
-        print(ply, panel_brush, panel, screenPos, screenAngle)
-
-        local panelData = {}
+        local panelData = {
+            Pos = screenPos,
+            Windows = {
+                [1] = {
+                    Pos = screenPos,
+                    Angles = screenAngle,
+                    Type = "button_list",
+                    Buttons = {}
+                }
+            }
+        }
         local keyValues = panel_brush.LCARSKeyData
 
         local name
@@ -82,31 +90,23 @@ function LCARS:OpenTurboliftMenu()
 
             local podData = panel_brush.Data
             if podData.Stopped then
-                panelData[0] = {
-                    Name = "Resume Lift",
-                    Disabled = podData.TravelTarget == nil,
-                }
+                local button = LCARS:CreateButton("Resume Lift", nil, podData.TravelTarget == nil)
+                panelData.Windows[1].Buttons[0] = button
             else
-                panelData[0] = {
-                    Name = "Stop Lift",
-                }
+                local button = LCARS:CreateButton("Stop Lift", nil, nil)
+                panelData.Windows[1].Buttons[0] = button
             end
         end
 
         
         for i, turboliftData in pairs(self.Turbolifts) do
-            local data = {
-                Name = turboliftData.Name,
-            }
-
-            if turboliftData.Name == name then
-                data.Disabled = true
-            end
-
-            panelData[i] = data
+            local button = LCARS:CreateButton(turboliftData.Name, nil, turboliftData.Name == name)
+            panelData.Windows[1].Buttons[i] = button
         end
 
-        LCARS:SendPanel(ply, panel, panelData, screenPos, screenAngle)
+        debugoverlay.Cross(screenPos, 10, 1, Color(255, 255, 255), true)
+
+        LCARS:SendPanel(panel, panelData)
     end)
 end
 

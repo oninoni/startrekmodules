@@ -114,7 +114,15 @@ function LCARS:ReplaceButtons(windowId, listWindow, mode)
         end
     elseif mode == 3 then
         listWindow.Type = "button_list"
-        -- TODO: Add Markers
+        
+        for _, ent in pairs(ents.FindByClass("info_target")) do
+            local object = {
+                Name = ent:GetName(),
+                Data = ent,
+            }
+            
+            table.insert(objects, object)
+        end
     elseif mode == 4 then
         if windowId == 1 then
             listWindow.Type = "button_list"
@@ -177,9 +185,10 @@ function LCARS:GetTransporterObjects(window, listWindow)
                 }
 
                 if window.Buttons[#targetNames + 2].Selected then
-                    local  lowerBounds = pos - Vector(60, 60, 0)
-                    local higherBounds = pos + Vector(60, 60, 120)
-                    debugoverlay.Box(pos, -Vector(60, 60, 0), Vector(60, 60, 120), 10, Color(255, 255, 255, 63))
+                    local range = 64
+                    local  lowerBounds = pos - Vector(range, range, 0)
+                    local higherBounds = pos + Vector(range, range, range * 2)
+                    debugoverlay.Box(pos, -Vector(range, range, 0), Vector(range, range, range * 2), 10, Color(255, 255, 255, 63))
 
                     local entities = ents.FindInBox(lowerBounds, higherBounds)
                     for _, ent in pairs(entities) do
@@ -195,7 +204,36 @@ function LCARS:GetTransporterObjects(window, listWindow)
                     end
                 end
             elseif sourceMode == 3 then
-                -- TODO: Add Markers
+                local targetEnt = button.Data
+                local pos = targetEnt:GetPos()
+
+                object = {
+                    Objects = {},
+                    Pos = pos,
+                    TargetCount = -1, -- Infinite Objects on beaming to player.
+                }
+
+                local range = 32
+                if window.Buttons[#targetNames + 2].Selected then
+                    range = 64
+                end
+            
+                local  lowerBounds = pos - Vector(range, range, 0)
+                local higherBounds = pos + Vector(range, range, range * 2)
+                debugoverlay.Box(pos, -Vector(range, range, 0), Vector(range, range, range * 2), 10, Color(255, 255, 255, 63))
+
+                local entities = ents.FindInBox(lowerBounds, higherBounds)
+                for _, ent in pairs(entities) do
+                    if ent:MapCreationID() ~= -1 then continue end
+
+                    local parent = ent:GetParent()
+                    if not IsValid(parent) then
+                        local phys = ent:GetPhysicsObject()
+                        if IsValid(phys) and phys:IsMotionEnabled() and then
+                            table.insert(object.Objects, ent)
+                        end
+                    end
+                end
             elseif sourceMode == 4 then
                 -- TODO: Add Buffer/External Pads
             end
