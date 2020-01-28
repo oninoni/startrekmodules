@@ -6,6 +6,8 @@ local setupDoors = function()
 	LCARS.Doors = {}
 
     for _, ent in pairs(ents.GetAll()) do
+		ent.DoorLastSequenceStart = CurTime()
+
 		if ent:GetClass() == "prop_dynamic" and table.HasValue(LCARS.DoorModels, ent:GetModel()) then
 			table.insert(LCARS.Doors, ent)
 		end
@@ -14,7 +16,8 @@ end
 hook.Add("InitPostEntity", "LCARS.DoorInitPostEntity", setupDoors)
 hook.Add("PostCleanupMap", "LCARS.DoorPostCleanupMap", setupDoors)
 
--- TODO: Storing failed animation changes for when they are valid.
+-- TODO: Add Manual Time Delay Option
+-- TODO: Add IsClosed IsOpen Checks (BOTH! and both false when currently moving)
 
 -- Block Doors aborting animations.
 hook.Add("AcceptInput", "LCARS.BlockDoorIfAlreadyDooring", function(ent, input, activator, caller, value)
@@ -30,11 +33,18 @@ hook.Add("AcceptInput", "LCARS.BlockDoorIfAlreadyDooring", function(ent, input, 
 			-- Prevent aborting the animation.
 			local duration = ent:SequenceDuration()
 			if value == "close" then
-				duration = duration + 5
+				duration = duration + 1
 			end
-			if CurTime() < (ent.DoorLastSequenceStart or 0) + duration then
+			local diff = CurTime() - (ent.DoorLastSequenceStart + duration)
+			if diff < 0 then
+				timer.Create("LCARS.DoorTimer." .. ent:EntIndex(), diff, 1, function()
+					ent:Fire("SetAnimation", value)
+				end)
+
 				return true
 			end
+			
+			timer.Remove("LCARS.DoorTimer." .. ent:EntIndex())
 
 			-- Prevent opening a locked door.
 			if value == "open" and ent.LCARSKeyData then
@@ -106,7 +116,7 @@ end
 -- Think hook for auto-closing the doors.
 hook.Add("Think", "LCARS.DoorThink", function()
     if LCARS.NextDoorThink > CurTime() then return end
-    LCARS.NextDoorThink = CurTime() + 0.1
+    LCARS.NextDoorThink = CurTime() + 0.2
 
 	for _, ent in pairs(LCARS.Doors) do
 		if ent.Open then

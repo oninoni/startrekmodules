@@ -5,6 +5,8 @@ LCARS.NextTurboliftThink = CurTime()
 -- Testing
 -- Players in targetLift getting moved away. (Pod can't resume CHECK!)
 -- Test leaving lift before teleport to pod.
+-- Add Check for is Door Open/Closed using current Animation and last animation set var. (In Door module)
+-- Add Manual Time Delay When opening the door on arrival
 
 -- Setting up Turbolifts
 local setupTurbolifts = function()
@@ -187,7 +189,7 @@ hook.Add("Think", "LCARS.ThinkTurbolift", function()
             if true then
                 turboliftData.ClosingTime = turboliftData.ClosingTime - 1
             else
-                turboliftData.ClosingTime = 2
+                turboliftData.ClosingTime = 1
             end
         else
             if isfunction(turboliftData.CloseCallback) then
@@ -208,6 +210,7 @@ hook.Add("Think", "LCARS.ThinkTurbolift", function()
                 podData.Stopped = false
                 podData.TravelTime = 0
                 podData.TravelTarget = nil
+                podData.TravelPath = nil
             end
 
             podData.Entity:SetSkin(0)
@@ -215,8 +218,23 @@ hook.Add("Think", "LCARS.ThinkTurbolift", function()
             continue
         else
             if podData.TravelTime > 0 then
-                podData.Entity:SetSkin(math.random(1, 4))
-
+                if podData.TravelPath and podData.TravelPath ~= "" then
+                    local currentDirection = podData.TravelPath[podData.TravelTime]
+                    if currentDirection == "U" then
+                        podData.Entity:SetSkin(1)
+                    end
+                    if currentDirection == "D" then
+                        podData.Entity:SetSkin(2)
+                    end
+                    if currentDirection == "L" then
+                        podData.Entity:SetSkin(3)
+                    end
+                    if currentDirection == "R" then
+                        podData.Entity:SetSkin(4)
+                    end
+                else
+                    podData.Entity:SetSkin(math.random(1, 4))
+                end
 
                 podData.TravelTime = podData.TravelTime - 1
             else
@@ -228,11 +246,16 @@ hook.Add("Think", "LCARS.ThinkTurbolift", function()
                 end
 
                 if targetLiftData.Queue[1] == podData and not targetLiftData.InUse then
+                    -- "Dock Animation"
+                    podData.Entity:SetSkin(3)
+                    
                     -- Close + Lock
                     LCARS:LockTurboliftDoors(targetLiftData.Entity)
                     targetLiftData.InUse = true
-                    targetLiftData.ClosingTime = 2
+                    targetLiftData.ClosingTime = 1
                     targetLiftData.CloseCallback = function()
+                        podData.Entity:SetSkin(0)
+                        
                         table.remove(targetLiftData.Queue, 1)
                         
                         local podObjects = LCARS:GetTurboliftContents(podData.Entity)
@@ -250,8 +273,6 @@ hook.Add("Think", "LCARS.ThinkTurbolift", function()
                             podData.InUse = false
                             podData.Stopped = false
                         end
-                        
-                        podData.Entity:SetSkin(0)
 
                         LCARS:Teleport(podData.Entity, targetLiftData.Entity, podObjects)
 
@@ -286,6 +307,139 @@ function LCARS:LockTurboliftDoors(lift)
     end
 end
 
+local ud = "UD"
+local lr = "LR"
+
+function LCARS:GetDeckNumber(liftData)
+    local name = liftData.Name
+    if isstring(name) then
+        local deckNumber = tonumber(string.sub(name, 6, 7))
+        if isnumber(deckNumber) then
+            return deckNumber
+        end
+    end
+end
+
+function LCARS:GetTurboliftPath(sourceDeck, targetDeck)
+    local deckDiff = math.abs(targetDeck - sourceDeck)
+    if deckDiff == 0 then
+        -- Same Deck Travel
+
+        -- Calculating time with Advantage! :D
+        local travelTime = math.min(
+            math.random(LCARS.TurboliftMinTime, LCARS.TurboliftMaxTime),
+            math.random(LCARS.TurboliftMinTime, LCARS.TurboliftMaxTime)    
+        )
+        
+        local evadeDirection = ud[math.random(1, 2)]
+        if sourceDeck == 1 or sourceDeck == 2 then
+            evadeDirection = "D"
+        end
+        if sourceDeck == 15 then
+            evadeDirection = "U"
+        end
+
+        local travelPath = "D"
+        if evadeDirection == "D" then
+            travelPath = "U"
+        end
+
+        for i=1,travelTime-2,1 do
+            if math.random(1, 2) == 1 or i == 1 then
+                travelPath = travelPath .. lr[math.random(1, 2)]
+            else
+                travelPath = travelPath .. travelPath[#travelPath]
+            end
+        end
+
+        travelPath = travelPath .. evadeDirection
+
+        return travelPath, #travelPath
+    else
+        -- Other Deck Travel
+
+        local travelTime = math.min(
+            LCARS.TurboliftMaxTime,
+            math.max(
+                LCARS.TurboliftMinTime,
+                math.random(deckDiff + 2, deckDiff * 2)
+            )
+        )
+
+        local travelDirection = "D"
+        if sourceDeck > targetDeck then
+            travelDirection = "U"
+        end
+
+        local travelPath = ""
+        local vertTravelled = 0
+
+        for i=1,travelTime,1 do
+            if vertTravelled == deckDiff then
+                travelPath = travelPath .. lr[math.random(1, 2)]
+            else
+                if (travelTime - i) > vertTravelled then
+                    if math.random(1, 2) == 1 then
+                        travelPath = travelPath .. travelDirection
+                        vertTravelled = vertTravelled + 1
+                    else
+                        travelPath = travelPath .. lr[math.random(1, 2)]
+                    end
+                else
+                    travelPath = travelPath .. travelDirection
+                    vertTravelled = vertTravelled + 1
+                end
+            end
+        end
+        
+        return travelPath, #travelPath
+    end
+    
+    -- Fallback
+    return "", self.TurboliftMinTime
+end
+
+function LCARS:GetFullTurboliftPath(sourceLiftData, targetLiftData)
+    local sourceDeck = LCARS:GetDeckNumber(sourceLiftData)
+    local targetDeck = LCARS:GetDeckNumber(targetLiftData)
+
+    return LCARS:GetTurboliftPath(sourceDeck, targetDeck)
+end
+
+function LCARS:GetCurrentDeck(targetLiftData, path, travelTimeLeft)
+    local totalTravelDistance = 0
+    local travelDirection = nil
+
+    for i=1,#path,1 do
+        local c = path[i]
+        if c == "D" or c == "U" then
+            if not travelDirection then
+                travelDirection = c
+            end
+            
+            totalTravelDistance = totalTravelDistance + 1
+        end
+    end
+
+    local traveledDistance = 0
+    for i=1,#path-travelTimeLeft,1 do
+        local c = path[i]
+        if c == "D" or c == "U" then
+            traveledDistance = traveledDistance + 1
+        end
+    end
+
+    local leftOverDistance = totalTravelDistance - traveledDistance
+    local targetDeck = LCARS:GetDeckNumber(targetLiftData)
+
+    local currentDeck = targetDeck - leftOverDistance
+    if travelDirection == "U" then
+        currentDeck = targetDeck + leftOverDistance
+    end
+
+    return currentDeck
+end
+
 hook.Add("LCARS.PressedCustom", "LCARS.TurboliftPressed", function(ply, panelData, panel, panelBrush, windowId, buttonId)
     if panelData.Type ~= "Turbolift" then return end
 
@@ -300,17 +454,16 @@ hook.Add("LCARS.PressedCustom", "LCARS.TurboliftPressed", function(ply, panelDat
                 -- Close + Lock Doors
                 LCARS:LockTurboliftDoors(sourceLift)
                 sourceLiftData.InUse = true
-                sourceLiftData.ClosingTime = 2
+                sourceLiftData.ClosingTime = 1
                 sourceLiftData.CloseCallback = function()
                     local sourceLiftObjects = LCARS:GetTurboliftContents(sourceLift)
 
                     if table.Count(sourceLiftObjects) > 0 then
                         LCARS:Teleport(sourceLift, podData.Entity, sourceLiftObjects)
 
-                        -- Target Pod and calc travel time.
-                        -- TODO: Travel time map?
+                        -- Target Pod and calc travel time/path.
                         podData.TravelTarget = targetLiftData
-                        podData.TravelTime = math.random(LCARS.TurboliftMinTime, LCARS.TurboliftMaxTime)
+                        podData.TravelPath, podData.TravelTime = LCARS:GetFullTurboliftPath(sourceLiftData, targetLiftData)
                     else
                         -- Disable Pod again when there's nobody traveling.
                         podData.InUse = false
@@ -335,17 +488,22 @@ hook.Add("LCARS.PressedCustom", "LCARS.TurboliftPressed", function(ply, panelDat
         local pod = panel
         local podData = pod.Data
 
-        if i == 0 then
+        if buttonId == 0 then
             podData.Stopped = not podData.Stopped
         else
             -- TODO: Handle Queing Aborting
 
-            local targetLiftData = LCARS.Turbolifts[i]
+            local targetLiftData = LCARS.Turbolifts[buttonId]
             if targetLiftData then
                 podData.InUse = true
                 podData.Stopped = false
+
+                local odlTargetDeck = podData.TravelTarget
+                local sourceDeck = LCARS:GetCurrentDeck(odlTargetDeck, podData.TravelPath, podData.TravelTime)
+                local targetDeck = LCARS:GetDeckNumber(targetLiftData)
+
                 podData.TravelTarget = targetLiftData
-                podData.TravelTime = math.random(LCARS.TurboliftMinTime, LCARS.TurboliftMaxTime)
+                podData.TravelPath, podData.TravelTime = LCARS:GetTurboliftPath(sourceDeck, targetDeck)
             end
         end
                         

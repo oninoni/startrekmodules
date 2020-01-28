@@ -1,3 +1,3 @@
 
-LCARS.TurboliftMaxTime = 10
-LCARS.TurboliftMinTime = 2
+LCARS.TurboliftMaxTime = 20
+LCARS.TurboliftMinTime = 5

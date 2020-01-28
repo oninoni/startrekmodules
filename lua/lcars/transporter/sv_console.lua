@@ -95,7 +95,8 @@ function LCARS:GeneratePadButtons(listWindow, objects, padNumber)
     return objects
 end
 
-function LCARS:ReplaceButtons(windowId, listWindow, mode)
+-- TODO: Prevent deletion of Selection if new selection == old Selection
+function LCARS:ReplaceButtons(panel, windowId, listWindow, mode, disabled)
     local objects = {}
 
     if mode == 1 then
@@ -114,19 +115,35 @@ function LCARS:ReplaceButtons(windowId, listWindow, mode)
         end
     elseif mode == 3 then
         listWindow.Type = "button_list"
-        
-        for _, ent in pairs(ents.FindByClass("info_target")) do
+
+        for _, ent in pairs(ents.FindByName("beamLocation")) do
             local object = {
                 Name = ent:GetName(),
                 Data = ent,
             }
+
+            if ent.LCARSKeyData then
+                object.Name = ent.LCARSKeyData["lcars_name"]
+            end
             
             table.insert(objects, object)
         end
     elseif mode == 4 then
         if windowId == 1 then
             listWindow.Type = "button_list"
-            -- TODO: Add Buffer
+            
+            for _, ent in pairs(panel.Buffer) do
+                local object = {
+                    Name = ent:GetName(),
+                    Data = ent,
+                }
+
+                if not isstring(object.Name) or object.Name == "" then
+                    object.Name = "Object " .. ent:EntIndex()
+                end
+                
+                table.insert(objects, object)
+            end
         elseif windowId == 2 then
             listWindow.Type = "button_list"
             -- TODO: Other Pads
@@ -210,7 +227,7 @@ function LCARS:GetTransporterObjects(window, listWindow)
                 object = {
                     Objects = {},
                     Pos = pos,
-                    TargetCount = -1, -- Infinite Objects on beaming to player.
+                    TargetCount = -1, -- Infinite Objects on beaming to location.
                 }
 
                 local range = 32
@@ -235,7 +252,14 @@ function LCARS:GetTransporterObjects(window, listWindow)
                     end
                 end
             elseif sourceMode == 4 then
-                -- TODO: Add Buffer/External Pads
+                local targetEnt = button.Data
+                local pos = targetEnt:GetPos()
+
+                object = {
+                    Objects = {targetEnt},
+                    Pos = pos,
+                    TargetCount = 0, -- Infinite Objects on beaming to location.
+                }
             end
 
             table.insert(objects, object)
@@ -268,29 +292,58 @@ function LCARS:GetTransporterObjects(window, listWindow)
     return objects
 end
 
-function LCARS:ActivateTransporter(panelData)
+function LCARS:ActivateTransporter(panelData, panel)
+    local leftWindow = panelData.Windows[1]
+    local rightWindow = panelData.Windows[2]
+    
     local Sources = self:GetTransporterObjects(panelData.Windows[1], panelData.Windows[3])
-    local Targets = self:GetTransporterObjects(panelData.Windows[2], panelData.Windows[4])
 
-    for _, source in pairs(Sources or {}) do
-        for _, sourceObject in pairs(source.Objects or {}) do
-            for _, target in pairs(Targets or {}) do
-                target.Count = target.Count or 0
+    local bufferModeButton = rightWindow.Buttons[#targetNames + 2]
+    if bufferModeButton.Selected and leftWindow.Selected ~= 4 then
+        -- Beam to Buffer
 
-                if target.TargetCount == -1 or target.Count < target.TargetCount then
-                    self:BeamObject(sourceObject, target.Pos, source.Pad, target.Pad)
+        for _, source in pairs(Sources or {}) do
+            for _, sourceObject in pairs(source.Objects or {}) do
+                table.insert(panel.Buffer, sourceObject)
+                self:BeamObject(sourceObject, Vector(), source.Pad) -- TODO Prevent Rematerialization.
+            end
+        end
+    else
+        -- TODO: If Source is Buffer, then there is no dematerialization.
+        local Targets = self:GetTransporterObjects(panelData.Windows[2], panelData.Windows[4])
 
-                    target.Count = target.Count + 1
-                    break
+        for _, source in pairs(Sources or {}) do
+            for _, sourceObject in pairs(source.Objects or {}) do
+                for _, target in pairs(Targets or {}) do
+                    target.Count = target.Count or 0
+
+                    if target.TargetCount == -1 or target.Count < target.TargetCount then
+                        self:BeamObject(sourceObject, target.Pos, source.Pad, target.Pad)
+
+                        if leftWindow.Selected == 4 then
+                            table.RemoveByValue(panel.Buffer, sourceObject)
+                        end
+
+                        target.Count = target.Count + 1
+                        break
+                    end
                 end
             end
         end
+
+        if leftWindow.Selected == 4 then
+            LCARS:CheckBufferMode(panelData, panel)
+        end
+        
+        -- TODO: Beam Overflow to Buffer
     end
 
     return true
 end
 function LCARS:OpenTransporterMenu()
     local panel = self:OpenMenuInternal(TRIGGER_PLAYER, CALLER, function(ply, panel_brush, panel, screenPos, screenAngle)
+        panel.Buffer = panel.Buffer or {}
+        
         local panelData = {
             Type = "Transporter",
             Pos = screenPos + Vector(0, 0, 10),
@@ -365,7 +418,7 @@ function LCARS:OpenTransporterMenu()
         panelData.Windows[2].Buttons[7].Selected = false
 
         for i=1,2,1 do
-            LCARS:ReplaceButtons(i, panelData.Windows[2 + i], panelData.Windows[i].Selected)
+            LCARS:ReplaceButtons(panel, i, panelData.Windows[2 + i], panelData.Windows[i].Selected)
         end
 
         self:SendPanel(panel, panelData)
@@ -375,7 +428,7 @@ function LCARS:OpenTransporterMenu()
         local panelData = self.ActivePanels[panel]
         if not istable(panelData) then return end
         
-        local success = LCARS:ActivateTransporter(panelData)
+        local success = LCARS:ActivateTransporter(panelData, panel)
         if success then
             panel.ActiveTransporter = true
 
@@ -390,6 +443,45 @@ function LCARS:OpenTransporterMenu()
             end)
         end
     end
+end
+
+function LCARS:CheckBufferMode(panelData, panel)
+    local leftWindow = panelData.Windows[1]
+    local rightWindow = panelData.Windows[2]
+
+    local bufferModeButton = rightWindow.Buttons[#targetNames + 2]
+
+    local disableAll = false
+    if bufferModeButton.Selected and leftWindow.Selected ~= 4 then
+        disableAll = true
+    end
+    
+    local leftListWindow = panelData.Windows[3]
+    local rightListWindow = panelData.Windows[4]
+
+    if disableAll then
+        rightWindow.Buttons[1].Disabled = true
+        rightWindow.Buttons[2].Disabled = true
+        rightWindow.Buttons[3].Disabled = true
+        rightWindow.Buttons[4].Disabled = true
+    else
+        rightWindow.Buttons[1].Disabled = false
+        rightWindow.Buttons[2].Disabled = false
+        rightWindow.Buttons[3].Disabled = false
+        rightWindow.Buttons[4].Disabled = false
+    end
+    
+    LCARS:ReplaceButtons(panel, 1, leftListWindow, leftWindow.Selected)
+    LCARS:ReplaceButtons(panel, 2, rightListWindow, rightWindow.Selected)
+
+    if disableAll then
+        rightListWindow.Type = ""
+    end
+
+    LCARS:UpdateWindow(panel, 1, leftWindow)
+    LCARS:UpdateWindow(panel, 2, rightWindow)
+    LCARS:UpdateWindow(panel, 3, leftListWindow)
+    LCARS:UpdateWindow(panel, 4, rightListWindow)
 end
 
 -- Call FireUser on all Presses
@@ -413,11 +505,6 @@ hook.Add("LCARS.PressedCustom", "LCARS.Transporter.Pressed", function(ply, panel
 
             window.Selected = buttonId
             window.Buttons[window.Selected].Color = LCARS.ColorYellow
-
-            LCARS:ReplaceButtons(windowId, listWindow, window.Selected)
-
-            LCARS:UpdateWindow(panel, windowId, window)
-            LCARS:UpdateWindow(panel, windowId + 2, listWindow)
         elseif buttonId == #targetNames + 2 then
             button.Selected = not button.Selected
             
@@ -436,8 +523,6 @@ hook.Add("LCARS.PressedCustom", "LCARS.Transporter.Pressed", function(ply, panel
                     button.Name = "Direct Transport"
                 end
             end
-
-            LCARS:UpdateWindow(panel, windowId, window)
         elseif buttonId == #targetNames + 3 then
             if windowId == 1 then
                 local leftWindow = panelData.Windows[1]
@@ -477,8 +562,10 @@ hook.Add("LCARS.PressedCustom", "LCARS.Transporter.Pressed", function(ply, panel
                     end
                 end
 
-                LCARS:ReplaceButtons(1, leftListWindow, leftWindow.Selected)
-                LCARS:ReplaceButtons(2, rightListWindow, rightWindow.Selected)
+                LCARS:ReplaceButtons(panel, 1, leftListWindow, leftWindow.Selected)
+                LCARS:ReplaceButtons(panel, 2, rightListWindow, rightWindow.Selected)
+
+                -- TODO: Redo Swapping with buffer Mode in place
 
                 for _, selectedData in pairs(leftSelected) do
                     for _, button in pairs(rightListWindow.Buttons) do
@@ -501,16 +588,13 @@ hook.Add("LCARS.PressedCustom", "LCARS.Transporter.Pressed", function(ply, panel
                         end
                     end
                 end
-
-                LCARS:UpdateWindow(panel, 1, leftWindow)
-                LCARS:UpdateWindow(panel, 2, rightWindow)
-                LCARS:UpdateWindow(panel, 3, leftListWindow)
-                LCARS:UpdateWindow(panel, 4, rightListWindow)
             else
                 LCARS:DisablePanel(panel)
+                return
             end
         end
         
+        LCARS:CheckBufferMode(panelData, panel)
     elseif windowId == 3 or windowId == 4 then
         button.Selected = not button.Selected
 

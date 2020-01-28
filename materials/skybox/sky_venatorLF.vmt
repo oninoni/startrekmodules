@@ -1,8 +1,0 @@
-"sky"
-//Created by kingPommes
-{
-	"$basetexture" "skybox/sky_venatorLF"
-	"$hdrbasetexture" "skybox/sky_venatorLF"
-	//"$nofog" "1"
-	//"$ignorez" "1"
-}
