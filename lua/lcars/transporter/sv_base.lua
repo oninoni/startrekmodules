@@ -5,7 +5,11 @@ LCARS.ActiveTransports = LCARS.ActiveTransports or {}
 util.AddNetworkString("LCARS.Tranporter.BeamObject")
 util.AddNetworkString("LCARS.Tranporter.BeamPlayer")
 
-function LCARS:ApplyTranportEffectProperties(transportData, ent, mode)
+function LCARS:ApplyTranportEffectProperties(transportData, ent)
+    local mode = transportData.State
+
+    print("Mode: " .. mode)
+
     if mode == 1 then
         transportData.OldRenderMode = ent:GetRenderMode()
         ent:SetRenderMode(RENDERMODE_TRANSTEXTURE)
@@ -118,15 +122,15 @@ function LCARS:BroadcastBeamEffect(ent, rematerialize)
     end)
 end
 
-// TODO: Model Bounds for Offset to Ground?
-function LCARS:BeamObject(ent, targetPos, sourcePad, targetPad)
+function LCARS:BeamObject(ent, targetPos, sourcePad, targetPad, toBuffer)
     local transportData = {
         Object = ent,
         TargetPos = targetPos or ent:GetPos(),
         StateTime = CurTime(),
-        State = 0,
+        State = 1,
         SourcePad = sourcePad,
         TargetPad = targetPad,
+        ToBuffer = toBuffer
     }
 
     for _, transportData in pairs(self.ActiveTransports) do
@@ -136,9 +140,19 @@ function LCARS:BeamObject(ent, targetPos, sourcePad, targetPad)
     if IsValid(sourcePad) then
         sourcePad:SetSkin(1)
     end
-    
-    self:ApplyTranportEffectProperties(transportData, ent, 1)
-    self:BroadcastBeamEffect(ent, false)
+    if ent.BufferData then
+        transportData = ent.BufferData
+        ent.BufferData = nil
+        print("From Buffer")
+        
+        transportData.TargetPos = targetPos or ent:GetPos()
+        transportData.TargetPad = targetPad
+        transportData.ToBuffer = false
+    else
+        self:ApplyTranportEffectProperties(transportData, ent)
+        self:BroadcastBeamEffect(ent, false)
+    end
+
     
     table.insert(self.ActiveTransports, transportData)
 end
@@ -152,36 +166,45 @@ hook.Add("Think", "LCARS.Tranporter.Cycle", function()
         local state = transportData.State
         local ent = transportData.Object
         if IsValid(ent) then
-            if state == 0 and (stateTime + 3) < curTime then
+            if state == 1 and (stateTime + 3) < curTime then
+                transportData.State = 2
+
                 -- Object is now dematerialized and moved to the buffer!
-                LCARS:ApplyTranportEffectProperties(transportData, ent, 2)
+                LCARS:ApplyTranportEffectProperties(transportData, ent)
 
                 -- TODO: Replace with Buffer
-                --ent:SetPos(transportData.TargetPos or ent:GetPos())
+                ent:SetPos(Vector(0, 0, 0))
                 
                 transportData.StateTime = curTime
-                transportData.State = 1
                 
                 if IsValid(transportData.SourcePad) then
                     transportData.SourcePad:SetSkin(0)
                 end
-            elseif state == 1 and (stateTime + 4) < curTime then
+
+                if transportData.ToBuffer then
+                    transportData.Object.BufferData = transportData
+
+                    table.insert(toBeRemoved, transportData)
+                end
+            elseif state == 2 and (stateTime + 4) < curTime then
+                transportData.State = 3
+
                 -- Object will now be removed from the buffer.
-                LCARS:ApplyTranportEffectProperties(transportData, ent, 3)
+                LCARS:ApplyTranportEffectProperties(transportData, ent)
                 
                 LCARS:BroadcastBeamEffect(ent, true)
                 
                 transportData.StateTime = curTime
-                transportData.State = 2
 
                 if IsValid(transportData.TargetPad) then
                     transportData.TargetPad:SetSkin(1)
                 end
-            elseif state == 2 and (stateTime + 3) < curTime then
-                -- Object is now visible again.
-                LCARS:ApplyTranportEffectProperties(transportData, ent, 4)
-                
+            elseif state == 3 and (stateTime + 3) < curTime then
+                transportData.State = 4
 
+                -- Object is now visible again.
+                LCARS:ApplyTranportEffectProperties(transportData, ent)
+                
                 if IsValid(transportData.TargetPad) then
                     transportData.TargetPad:SetSkin(0)
                 end

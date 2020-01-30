@@ -6,6 +6,8 @@ local targetNames = {
     {"Buffer", "Other Pads"},
 }
 
+LCARS.NextBufferThink = CurTime()
+
 function LCARS:ReaplaceModeButtons(windowId, listWindow, objects)
     listWindow.Buttons = {}
 
@@ -95,16 +97,16 @@ function LCARS:GeneratePadButtons(listWindow, objects, padNumber)
     return objects
 end
 
--- TODO: Prevent deletion of Selection if new selection == old Selection
 function LCARS:ReplaceButtons(panel, windowId, listWindow, mode, disabled)
+    if listWindow.CurrentMode == mode then return end
+
     local objects = {}
 
     if mode == 1 then
-        self:GeneratePadButtons(listWindow, objects, 1)
-        -- TODO: Replace 1 with Linking of Pad and Console
+        local padNumber = tonumber(string.sub(panel:GetName(), 11))
+        self:GeneratePadButtons(listWindow, objects, padNumber)
     elseif mode == 2 then
         listWindow.Type = "button_list"
-        -- TODO: Maybe add NPC's?
         for _, ply in pairs(player.GetHumans()) do
             local object = {
                 Name = ply:GetName(),
@@ -133,6 +135,8 @@ function LCARS:ReplaceButtons(panel, windowId, listWindow, mode, disabled)
             listWindow.Type = "button_list"
             
             for _, ent in pairs(panel.Buffer) do
+                if not IsValid(ent) then continue end
+
                 local object = {
                     Name = ent:GetName(),
                     Data = ent,
@@ -149,6 +153,8 @@ function LCARS:ReplaceButtons(panel, windowId, listWindow, mode, disabled)
             -- TODO: Other Pads
         end
     end
+
+    listWindow.CurrentMode = mode
 
     return self:ReaplaceModeButtons(windowId, listWindow, objects)
 end
@@ -305,11 +311,11 @@ function LCARS:ActivateTransporter(panelData, panel)
         for _, source in pairs(Sources or {}) do
             for _, sourceObject in pairs(source.Objects or {}) do
                 table.insert(panel.Buffer, sourceObject)
-                self:BeamObject(sourceObject, Vector(), source.Pad) -- TODO Prevent Rematerialization.
+
+                self:BeamObject(sourceObject, Vector(), source.Pad, nil, true)
             end
         end
     else
-        -- TODO: If Source is Buffer, then there is no dematerialization.
         local Targets = self:GetTransporterObjects(panelData.Windows[2], panelData.Windows[4])
 
         for _, source in pairs(Sources or {}) do
@@ -318,7 +324,7 @@ function LCARS:ActivateTransporter(panelData, panel)
                     target.Count = target.Count or 0
 
                     if target.TargetCount == -1 or target.Count < target.TargetCount then
-                        self:BeamObject(sourceObject, target.Pos, source.Pad, target.Pad)
+                        self:BeamObject(sourceObject, target.Pos, source.Pad, target.Pad, false)
 
                         if leftWindow.Selected == 4 then
                             table.RemoveByValue(panel.Buffer, sourceObject)
@@ -476,6 +482,7 @@ function LCARS:CheckBufferMode(panelData, panel)
 
     if disableAll then
         rightListWindow.Type = ""
+        rightListWindow.CurrentMode = nil
     end
 
     LCARS:UpdateWindow(panel, 1, leftWindow)
@@ -487,7 +494,6 @@ end
 -- Call FireUser on all Presses
 hook.Add("LCARS.PressedCustom", "LCARS.Transporter.Pressed", function(ply, panelData, panel, panelBrush, windowId, buttonId)
     if panelData.Type ~= "Transporter" then return end
-    print(panelData.Type)
     
     local window = panelData.Windows[windowId]
     if not istable(window) then return end
@@ -529,6 +535,12 @@ hook.Add("LCARS.PressedCustom", "LCARS.Transporter.Pressed", function(ply, panel
                 local rightWindow = panelData.Windows[2]
                 
                 if leftWindow.Selected > 3 or rightWindow.Selected > 3 then
+                    -- TODO: Swap Error
+                    return
+                end
+                
+                local bufferModeButton = rightWindow.Buttons[#targetNames + 2]
+                if bufferModeButton.Selected then
                     -- TODO: Swap Error
                     return
                 end

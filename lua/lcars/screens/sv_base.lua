@@ -30,7 +30,7 @@ function LCARS:GetMenuPos(panel)
         screenAngle:RotateAroundAxis(screenAngle:Right(), 90)
     end
 
-    local offset = 2
+    local offset = 0
     local modelSetting = self.ModelSettings[panel:GetModel()]
     if modelSetting then
         offset = modelSetting.Offset
@@ -186,14 +186,30 @@ function LCARS:OpenMenu()
         }
 
         local keyValues = panel_brush.LCARSKeyData
+        if istable(keyValues) then
+            local scale = tonumber(keyValues["lcars_scale"])
+            if isnumber(scale) then
+                panelData.Windows[1].Scale = scale
+            end
+            
+            local width = tonumber(keyValues["lcars_width"])
+            if isnumber(width) then
+                panelData.Windows[1].Width = width
+            end
+            
+            local height = tonumber(keyValues["lcars_height"])
+            if isnumber(height) then
+                panelData.Windows[1].Height = height
+            end
 
-        for i=1,4 do
-            local name = keyValues["lcars_name_" .. i]
-            if isstring(name) then
-                local button = self:CreateButton(name, nil, keyValues["lcars_disabled_" .. i])
-                panelData.Windows[1].Buttons[i] = button
-            else
-                break
+            for i=1,20 do
+                local name = keyValues["lcars_name_" .. i]
+                if isstring(name) then
+                    local button = self:CreateButton(name, nil, keyValues["lcars_disabled_" .. i])
+                    panelData.Windows[1].Buttons[i] = button
+                else
+                    break
+                end
             end
         end
 
@@ -248,15 +264,14 @@ net.Receive("LCARS.Screens.Pressed", function(len, ply)
     if not istable(panelData) then return end
     
     if panelData.Type == "Universal" then
-        local logicCase = panelBrush:GetParent()
-        if IsValid(logicCase) then
-            if buttonId >= 1 and buttonId <= 4 then
-                panelBrush:Fire("InValue", buttonId)
+        if buttonId > 4 then
+            local logicCase = panelBrush:GetParent()
+            print(panelBrush, logicCase)
+            if IsValid(logicCase) then
+                panelBrush:Fire("InValue", buttonId - 4)
             end
         else
-            if buttonId >= 1 and buttonId <= 4 then
-                panelBrush:Fire("FireUser" .. buttonId)
-            end
+            panelBrush:Fire("FireUser" .. buttonId)
         end
         
         timer.Simple(0.5, function()

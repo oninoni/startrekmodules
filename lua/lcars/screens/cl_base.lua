@@ -200,7 +200,7 @@ hook.Add("KeyPress", "LCARS.Screens.KeyPress", function(ply, key)
     local eyePos = LocalPlayer():EyePos()
     local eyeVector = EyeVector()
 
-    if key ~= IN_USE then return end
+    if key ~= IN_USE and key ~= IN_ATTACK then return end
 
     for panelId, panel in pairs(LCARS.ActivePanels) do
         if panel.Visible then

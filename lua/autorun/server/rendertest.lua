@@ -16,7 +16,7 @@ function LCARS:SpawnPortal(id)
     window:SetHeight(300)
 
     window:SetExit(ent)
-
+    
     window:Spawn()
     window:Activate()
 end
