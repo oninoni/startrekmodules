@@ -10,11 +10,13 @@ LCARS.SelfTransportRefraction = 0
 --
 -- @param Entity ent
 -- @param Boolean rematerialize
-function LCARS:ApplyTransporter(ent, rematerialize)
+-- @param Boolean replicator
+function LCARS:ApplyTransporter(ent, rematerialize, replicator)
     local transportData = {
         Object = ent,
         EffectProgress = 0,
         Rematerialize = rematerialize,
+        Replicator = replicator,
     }
 
     transportData.OldColor = ent:GetColor()
@@ -47,8 +49,11 @@ end
 net.Receive("LCARS.Tranporter.BeamObject", function()
     local ent = net.ReadEntity()
     local rematerialize = net.ReadBool()
+    local replicator = net.ReadBool()
 
-    LCARS:ApplyTransporter(ent, rematerialize)
+    print(ent, rematerialize, replicator)
+
+    LCARS:ApplyTransporter(ent, rematerialize, replicator)
 end)
 
 net.Receive("LCARS.Tranporter.BeamPlayer", function()
@@ -140,22 +145,24 @@ hook.Add("PostDrawTranslucentRenderables", "Voyager.Transporter.MainRender", fun
             ent:SetColor(ColorAlpha(transportData.OldColor, 255 - 255 * math.min(1, transportData.EffectProgress - 0.3)))
         end
 
-        cam.IgnoreZ(true)
-        local mat = Material("oninoni/startrek/flare_blue")
-        render.SetMaterial(mat)
+        if not transportData.Replicator then
+            cam.IgnoreZ(true)
+            local mat = Material("oninoni/startrek/flare_blue")
+            render.SetMaterial(mat)
 
-        mat:SetVector( "$alpha", Vector(midAlpha, 0, 0))
-        drawFlare(pos - upHeight * midEffectProgress, vec, size)
-        drawFlare(pos + upHeight * midEffectProgress, vec, size)
-        drawFlare(pos - (upHeight * midEffectProgress + Vector(0, 0, 0.3)), vec, smallSize)
-        drawFlare(pos + (upHeight * midEffectProgress + Vector(0, 0, 0.3)), vec, smallSize)
+            mat:SetVector( "$alpha", Vector(midAlpha, 0, 0))
+            drawFlare(pos - upHeight * midEffectProgress, vec, size)
+            drawFlare(pos + upHeight * midEffectProgress, vec, size)
+            drawFlare(pos - (upHeight * midEffectProgress + Vector(0, 0, 0.3)), vec, smallSize)
+            drawFlare(pos + (upHeight * midEffectProgress + Vector(0, 0, 0.3)), vec, smallSize)
 
-        mat:SetVector( "$alpha", Vector(maxAlpha, 0, 0))
-        drawFlare(pos - upHeight * maxEffectProgress, vec, size)
-        drawFlare(pos + upHeight * maxEffectProgress, vec, size)
-        drawFlare(pos - (upHeight * maxEffectProgress + Vector(0, 0, 0.3)), vec, smallSize)
-        drawFlare(pos + (upHeight * maxEffectProgress + Vector(0, 0, 0.3)), vec, smallSize)
-        cam.IgnoreZ(false)
+            mat:SetVector( "$alpha", Vector(maxAlpha, 0, 0))
+            drawFlare(pos - upHeight * maxEffectProgress, vec, size)
+            drawFlare(pos + upHeight * maxEffectProgress, vec, size)
+            drawFlare(pos - (upHeight * maxEffectProgress + Vector(0, 0, 0.3)), vec, smallSize)
+            drawFlare(pos + (upHeight * maxEffectProgress + Vector(0, 0, 0.3)), vec, smallSize)
+            cam.IgnoreZ(false)
+        end
         
         local dLight = DynamicLight(ent:EntIndex(), false)
         if ( dLight ) then

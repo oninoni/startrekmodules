@@ -8,8 +8,6 @@ util.AddNetworkString("LCARS.Tranporter.BeamPlayer")
 function LCARS:ApplyTranportEffectProperties(transportData, ent)
     local mode = transportData.State
 
-    print("Mode: " .. mode)
-
     if mode == 1 then
         transportData.OldRenderMode = ent:GetRenderMode()
         ent:SetRenderMode(RENDERMODE_TRANSTEXTURE)
@@ -51,6 +49,10 @@ function LCARS:ApplyTranportEffectProperties(transportData, ent)
         ent:SetColor(Color(0, 0, 0, 0))
     elseif mode == 3 then
         ent:SetRenderMode(RENDERMODE_TRANSTEXTURE)
+        
+        if transportData.OldColor ~= nil then
+            ent:SetColor(transportData.OldColor)
+        end
 
         ent:SetPos((transportData.TargetPos or ent:GetPos()) + Vector(0, 0, transportData.ZOffset))
         
@@ -60,10 +62,17 @@ function LCARS:ApplyTranportEffectProperties(transportData, ent)
             net.Send(ent)
         end
     else
-        ent:SetRenderMode(transportData.OldRenderMode)
-        ent:SetCollisionGroup(transportData.OldCollisionGroup)
-        ent:SetMoveType(transportData.OldMoveType)
-        ent:SetColor(transportData.OldColor)
+        if transportData.OldRenderMode ~= nil then
+            ent:SetRenderMode(transportData.OldRenderMode)
+        end
+
+        if transportData.OldCollisionGroup ~= nil then
+            ent:SetCollisionGroup(transportData.OldCollisionGroup)
+        end
+
+        if transportData.OldMoveType ~= nil then
+            ent:SetMoveType(transportData.OldMoveType)
+        end
         
         -- Make sure Position is set properly.
         -- Looks strange but is needed. (Probably a bug with setting the Move Type back)
@@ -71,14 +80,20 @@ function LCARS:ApplyTranportEffectProperties(transportData, ent)
         
         local phys = ent:GetPhysicsObject()
         if IsValid(phys) then
-            phys:EnableMotion(transportData.OldMotionEnabled)
+            if transportData.OldMotionEnabled ~= nil then
+                phys:EnableMotion(transportData.OldMotionEnabled)
+            end
+            
             phys:Wake()
         end
 
         ent:DrawShadow(true)
         
         for _, child in pairs(ent:GetChildren()) do
-            child:SetRenderMode(child.OldRenderMode)
+            if child.OldRenderMode ~= nil then
+                child:SetRenderMode(child.OldRenderMode)
+            end
+            
             child.OldRenderMode = nil
 
             child:SetColor(child.OldColor)
@@ -89,7 +104,7 @@ function LCARS:ApplyTranportEffectProperties(transportData, ent)
     end
 end
 
-function LCARS:BroadcastBeamEffect(ent, rematerialize)
+function LCARS:BroadcastBeamEffect(ent, rematerialize, replicator)
     if not IsValid(ent) then return end
     
     local oldCollisionGroup = ent:GetCollisionGroup()
@@ -108,16 +123,21 @@ function LCARS:BroadcastBeamEffect(ent, rematerialize)
 
     ent:SetCollisionGroup(oldCollisionGroup)
 
-    if rematerialize then
-        ent:EmitSound("voyager.beam_down")
+    if replicator then
+        ent:EmitSound("voyager.tng_replicator")
     else
-        ent:EmitSound("voyager.beam_up")
+        if rematerialize then
+            ent:EmitSound("voyager.beam_down")
+        else
+            ent:EmitSound("voyager.beam_up")
+        end
     end
 
     timer.Simple(0.5, function()
         net.Start("LCARS.Tranporter.BeamObject")
             net.WriteEntity(ent)
             net.WriteBool(rematerialize)
+            net.WriteBool(replicator or false)
         net.Send(players)
     end)
 end
@@ -143,7 +163,6 @@ function LCARS:BeamObject(ent, targetPos, sourcePad, targetPad, toBuffer)
     if ent.BufferData then
         transportData = ent.BufferData
         ent.BufferData = nil
-        print("From Buffer")
         
         transportData.TargetPos = targetPos or ent:GetPos()
         transportData.TargetPad = targetPad
@@ -152,7 +171,35 @@ function LCARS:BeamObject(ent, targetPos, sourcePad, targetPad, toBuffer)
         self:ApplyTranportEffectProperties(transportData, ent)
         self:BroadcastBeamEffect(ent, false)
     end
+    
+    table.insert(self.ActiveTransports, transportData)
+end
 
+function LCARS:ReplicateObject(ent, rematerialize)
+    local transportData = {
+        Object = ent,
+        TargetPos = ent:GetPos(),
+        StateTime = CurTime(),
+        ToBuffer = true,
+        Replicator = true
+    }
+
+    for _, transportData in pairs(self.ActiveTransports) do
+        if transportData.Object == ent then return end
+    end
+
+    if rematerialize then
+        transportData.State = 2
+        transportData.StateTime = CurTime() - 3
+    else
+        transportData.State = 1
+    end
+    
+    self:ApplyTranportEffectProperties(transportData, ent)
+
+    if not rematerialize then
+        self:BroadcastBeamEffect(ent, false, true)
+    end
     
     table.insert(self.ActiveTransports, transportData)
 end
@@ -181,6 +228,10 @@ hook.Add("Think", "LCARS.Tranporter.Cycle", function()
                     transportData.SourcePad:SetSkin(0)
                 end
 
+                if transportData.Replicator then
+                    table.insert(toBeRemoved, transportData)
+                end
+
                 if transportData.ToBuffer then
                     transportData.Object.BufferData = transportData
 
@@ -192,7 +243,7 @@ hook.Add("Think", "LCARS.Tranporter.Cycle", function()
                 -- Object will now be removed from the buffer.
                 LCARS:ApplyTranportEffectProperties(transportData, ent)
                 
-                LCARS:BroadcastBeamEffect(ent, true)
+                LCARS:BroadcastBeamEffect(ent, true, transportData.Replicator)
                 
                 transportData.StateTime = curTime
 

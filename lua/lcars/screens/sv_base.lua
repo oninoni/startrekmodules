@@ -265,10 +265,12 @@ net.Receive("LCARS.Screens.Pressed", function(len, ply)
     
     if panelData.Type == "Universal" then
         if buttonId > 4 then
-            local logicCase = panelBrush:GetParent()
-            print(panelBrush, logicCase)
-            if IsValid(logicCase) then
-                panelBrush:Fire("InValue", buttonId - 4)
+            local name = panelBrush:GetName()
+            local caseEntities = ents.FindByName(name .. "_case")
+            for _, caseEnt in pairs(caseEntities) do
+                if IsValid(caseEnt) then
+                    caseEnt:Fire("InValue", buttonId - 4)
+                end
             end
         else
             panelBrush:Fire("FireUser" .. buttonId)
