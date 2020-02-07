@@ -18,6 +18,11 @@ function LCARS:GetMenuPos(panel)
     local pos = panel:GetPos()
     local screenAngle = panel:GetAngles()
 
+    local moveDirAngle = panel:GetKeyValues()["movedir"]
+    if isvector(moveDirAngle) then
+        screenAngle = moveDirAngle:Angle()
+    end
+
     local attachmentID = panel:LookupAttachment("button")
     if isnumber(attachmentID) and attachmentID > 0 then
         local attachmentPoint = panel:GetAttachment(attachmentID)
@@ -26,8 +31,7 @@ function LCARS:GetMenuPos(panel)
         
         screenAngle:RotateAroundAxis(screenAngle:Up(), 180)
     else
-        screenAngle:RotateAroundAxis(screenAngle:Forward(), 180)
-        screenAngle:RotateAroundAxis(screenAngle:Right(), 90)
+        screenAngle:RotateAroundAxis(screenAngle:Up(), 180)
     end
 
     local offset = 0
@@ -65,16 +69,28 @@ end
 -- @param Function callback
 function LCARS:OpenMenuInternal(ply, panel_brush, callback)
     local panel = LCARS:GetMenuProp(ply, panel_brush)
-    if not IsValid(panel) then return end
+    if IsValid(panel) then 
+        // Model Based LCARS
+        if istable(self.ActivePanels[panel]) then return panel end
 
-    if istable(self.ActivePanels[panel]) then return panel end
+        if panel:GetPos():Distance(ply:GetPos()) > 100 then return end
 
-    if panel:GetPos():Distance(ply:GetPos()) > 100 then return end
+        local screenPos, screenAngle = self:GetMenuPos(panel)
 
-    local screenPos, screenAngle = self:GetMenuPos(panel)
+        if isfunction(callback) then
+            callback(ply, panel_brush, panel, screenPos, screenAngle)
+        end
+    else
+        // Model Based LCARS
+        if istable(self.ActivePanels[panel_brush]) then return panel_brush end
 
-    if isfunction(callback) then
-        callback(ply, panel_brush, panel, screenPos, screenAngle)
+        if panel_brush:GetPos():Distance(ply:GetPos()) > 100 then return end
+
+        local screenPos, screenAngle = self:GetMenuPos(panel_brush)
+
+        if isfunction(callback) then
+            callback(ply, panel_brush, panel_brush, screenPos, screenAngle)
+        end
     end
 end
 
@@ -171,7 +187,7 @@ end
 -- Open a General LCARS Menu using the keyvalues of an panel's func_button brush.
 function LCARS:OpenMenu()
     self:OpenMenuInternal(TRIGGER_PLAYER, CALLER, function(ply, panel_brush, panel, screenPos, screenAngle)
-        debugoverlay.Axis(screenPos, screenAngle, 10, 10, false)
+        --debugoverlay.Axis(screenPos, screenAngle, 10, 10, false)
 
         local panelData = {
             Pos = screenPos,
@@ -236,6 +252,7 @@ hook.Add("Think", "LCARS.ThinkClose", function()
         if not playersFound then
             table.insert(toBeClosed, panel)
         end
+
     end
 
     for _, panel in pairs(toBeClosed) do
@@ -250,6 +267,8 @@ net.Receive("LCARS.Screens.Pressed", function(len, ply)
     local windowId = net.ReadInt(32)
     local buttonId = net.ReadInt(32)
 
+    print(panelId, windowId, buttonId)
+
     -- TODO: Replace Sound
     ply:EmitSound("buttons/blip1.wav")
 
@@ -258,11 +277,13 @@ net.Receive("LCARS.Screens.Pressed", function(len, ply)
     if not IsValid(panel) then return end
 
     local panelBrush = panel:GetParent()
-    if not IsValid(panelBrush) then return end
+    if not IsValid(panelBrush) then 
+        panelBrush = panel
+    end
 
     local panelData = LCARS.ActivePanels[panel]
     if not istable(panelData) then return end
-    
+
     if panelData.Type == "Universal" then
         if buttonId > 4 then
             local name = panelBrush:GetName()

@@ -51,8 +51,6 @@ net.Receive("LCARS.Tranporter.BeamObject", function()
     local rematerialize = net.ReadBool()
     local replicator = net.ReadBool()
 
-    print(ent, rematerialize, replicator)
-
     LCARS:ApplyTransporter(ent, rematerialize, replicator)
 end)
 

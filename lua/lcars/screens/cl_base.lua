@@ -197,6 +197,8 @@ end)
 
 -- Recording interact presses and checking interaction with panel
 hook.Add("KeyPress", "LCARS.Screens.KeyPress", function(ply, key)
+    if not (game.SinglePlayer() or IsFirstTimePredicted()) then return end
+
     local eyePos = LocalPlayer():EyePos()
     local eyeVector = EyeVector()
 

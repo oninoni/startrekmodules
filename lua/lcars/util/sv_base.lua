@@ -60,10 +60,10 @@ function LCARS:FindEmptyPosWithin(pos, lower, higher)
 		return pos
 	end
 	
-	-- Look in steps of 10 for an empty position.
+	-- Look in steps of 8 for an empty position.
 	-- Modify x and y coordinates in every possible combination
 	-- until an empty position is found.
-	for i = 10, 200, 10 do
+	for i = 8, 200, 8 do
 		apos = Vector(x + i, y, z)
 		if self:IsEmptyPos(apos, lower, higher) then
 			return apos
@@ -107,6 +107,23 @@ function LCARS:FindEmptyPosWithin(pos, lower, higher)
 
 	return false
 end
+
+local function setupChairs()
+    for _, ent in pairs(ents.FindByClass("prop_vehicle_prisoner_pod")) do
+        if ent:MapCreationID() ~= -1 then
+            ent:SetCollisionGroup(COLLISION_GROUP_PASSABLE_DOOR)
+        end
+    end
+end
+
+hook.Add("InitPostEntity", "LCARS.ChairsInitPostEntity", setupChairs)
+hook.Add("PostCleanupMap", "LCARS.ChairsPostCleanupMap", setupChairs)
+
+hook.Add("PlayerLeaveVehicle", "LCARS.LeaveChair", function(ply, chair)
+	if chair:GetClass() == "prop_vehicle_prisoner_pod" and chair:MapCreationID() ~= -1 then
+		ply:SetPos(chair:GetPos())
+	end
+end)
 
 -- Capture all Keyvalues so they can be read when needed.
 hook.Add("EntityKeyValue", "LCARS.CaptureKeyValues", function(ent, key, value)

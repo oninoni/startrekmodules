@@ -5,4 +5,6 @@ LCARS.DoorModels = {
 	"models/kingpommes/startrek/voyager/door_104.mdl",
 	"models/kingpommes/startrek/voyager/door_80.mdl",
 	"models/kingpommes/startrek/voyager/door_48.mdl",
+	"models/kingpommes/startrek/voyager/jef_doorhorizontal.mdl",
+	"models/kingpommes/startrek/voyager/jef_doorvertical.mdl"
 }

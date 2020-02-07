@@ -29,7 +29,7 @@ function LCARS:CompressPlayers(outerName, innerName)
         if table.HasValue(outerEnts, ent) then
             table.RemoveByValue(outerEnts, ent)
         else
-            print(ent, "is inside, but not outside! WTF?")
+            print("[[HOLODECK]] " .. ent .. " is inside, but not outside! WTF?")
         end
     end
 

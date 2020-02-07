@@ -65,6 +65,8 @@ hook.Add("AcceptInput", "LCARS.BlockDoorIfAlreadyDooring", function(ent, input, 
 				if isstring(partnerDoorName) then
 					local partnerDoors = ents.FindByName(partnerDoorName)
 					for _, partnerDoor in pairs(partnerDoors) do
+						if partnerDoor == ent then continue end
+						
 						partnerDoor:Fire("SetAnimation", value)
 					end
 				end
@@ -85,9 +87,10 @@ end)
 -- Open door when pressing use on them.
 hook.Add("KeyPress", "LCARS.OpenDoors", function(ply, key)
 	if key == IN_USE then
-		local ent = ply:GetEyeTrace().Entity
+		local trace = ply:GetEyeTrace()
+		local ent = trace.Entity
 		if IsValid(ent) and table.HasValue(LCARS.Doors, ent) then
-			local distance = ent:GetPos():Distance(ply:GetPos())
+			local distance = trace.HitPos:Distance(ply:GetPos())
 			if distance < 64 then
 				ent:Fire("SetAnimation", "open")
 			end
