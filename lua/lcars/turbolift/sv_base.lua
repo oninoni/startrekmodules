@@ -18,24 +18,27 @@ local setupTurbolifts = function()
     for _, ent in pairs(ents.GetAll()) do
         if string.StartWith(ent:GetName(), "tlBut") or string.StartWith(ent:GetName(), "TLBut") then
             local number = tonumber(string.sub(ent:GetName(), 6))
-            local name = ent.LCARSKeyData["lcars_name"]
-            if isstring(name) then
-                ent.IsTurbolift = true
+            if istable(ent.LCARSKeyData) then
+                local name = ent.LCARSKeyData["lcars_name"]
+                if isstring(name) then
+                    ent.IsTurbolift = true
 
-                local turboliftData = {
-                    Name = name,
-                    Entity = ent,
-                    InUse = false,
-                    Queue = {},
-                    LeaveTime = 0,
-                    ClosingTime = 0,
-                    CloseCallback = nil
-                }
+                    local turboliftData = {
+                        Name = name,
+                        Entity = ent,
+                        InUse = false,
+                        Queue = {},
+                        LeaveTime = 0,
+                        ClosingTime = 0,
+                        CloseCallback = nil
+                    }
 
-                ent.Data = turboliftData
+                    ent.Data = turboliftData
 
-                turbolifts[number] = turboliftData
+                    turbolifts[number] = turboliftData
+                end
             end
+            
         elseif string.StartWith(ent:GetName(), "tlPodBut") or string.StartWith(ent:GetName(), "TLPodBut") then
             ent.IsPod = true
 
@@ -84,7 +87,7 @@ function LCARS:OpenTurboliftMenu()
         local name
         if panel.IsTurbolift then
             name = keyValues["lcars_name"]
-            
+
             if not isstring(name) or name == "" then return end
         elseif panel.IsPod then
             name = ""

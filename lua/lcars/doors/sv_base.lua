@@ -121,7 +121,7 @@ hook.Add("Think", "LCARS.DoorThink", function()
     if LCARS.NextDoorThink > CurTime() then return end
     LCARS.NextDoorThink = CurTime() + 0.2
 
-	for _, ent in pairs(LCARS.Doors) do
+	for _, ent in pairs(LCARS.Doors or {}) do
 		if ent.Open then
 			if not checkPlayers(ent) then
 				if ent.LCARSKeyData then

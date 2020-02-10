@@ -16,7 +16,7 @@ util.AddNetworkString("LCARS.Screens.UpdateWindow")
 -- @return Angle screenAngle
 function LCARS:GetMenuPos(panel)
     local pos = panel:GetPos()
-    local screenAngle = panel:GetAngles()
+    local screenAngle = panel:GetUp():Angle()
 
     local moveDirAngle = panel:GetKeyValues()["movedir"]
     if isvector(moveDirAngle) then
@@ -68,12 +68,12 @@ end
 -- @param Entity panel_brush
 -- @param Function callback
 function LCARS:OpenMenuInternal(ply, panel_brush, callback)
+    print("Internal:", ply, panel_brush, callback)
     local panel = LCARS:GetMenuProp(ply, panel_brush)
-    if IsValid(panel) then 
+    print("Panel:", panel)
+    if IsValid(panel) then
         // Model Based LCARS
         if istable(self.ActivePanels[panel]) then return panel end
-
-        if panel:GetPos():Distance(ply:GetPos()) > 100 then return end
 
         local screenPos, screenAngle = self:GetMenuPos(panel)
 
@@ -83,8 +83,6 @@ function LCARS:OpenMenuInternal(ply, panel_brush, callback)
     else
         // Model Based LCARS
         if istable(self.ActivePanels[panel_brush]) then return panel_brush end
-
-        if panel_brush:GetPos():Distance(ply:GetPos()) > 100 then return end
 
         local screenPos, screenAngle = self:GetMenuPos(panel_brush)
 
@@ -186,8 +184,10 @@ end
 
 -- Open a General LCARS Menu using the keyvalues of an panel's func_button brush.
 function LCARS:OpenMenu()
+    print(TRIGGER_PLAYER, CALLER)
     self:OpenMenuInternal(TRIGGER_PLAYER, CALLER, function(ply, panel_brush, panel, screenPos, screenAngle)
-        --debugoverlay.Axis(screenPos, screenAngle, 10, 10, false)
+        print(panel_brush, panel)
+        debugoverlay.Axis(screenPos, screenAngle, 10, 10, true)
 
         local panelData = {
             Pos = screenPos,
@@ -233,12 +233,47 @@ function LCARS:OpenMenu()
     end)
 end
 
+-- Detect Updates in _name, _disabled.
+hook.Add("LCARS.ChangedKeyValue", "LCARS.Screens.ValueChanged", function(ent, key, value)
+    if string.StartWith(key, "lcars_name_") or string.StartWith(key, "lcars_disabled_") then
+        local keyValues = ent.LCARSKeyData
+        if istable(keyValues) and keyValues["lcars_keep_open"] then
+            ent.LCARSMenuHasChanged = true
+        end
+    end
+end)
+
+-- Capture closeLcars Input
+hook.Add("AcceptInput", "LCARS.Screen.CaptureClose", function(ent, input, activator, caller, value)
+    if LCARS.ActivePanels[ent] then
+        
+    if input ~= "CloseLcars" then return end
+        LCARS:DisablePanel(ent)
+    end
+end)
+
 -- Closing the panel when you are too far away.
 -- This is also done clientside so we don't need to network.
 hook.Add("Think", "LCARS.ThinkClose", function()
     local toBeClosed = {}
     
     for panel, panelData in pairs(LCARS.ActivePanels) do
+        if panel.LCARSMenuHasChanged then
+            panelData.Windows[1].Buttons = {}
+
+            for i=1,20 do
+                local name = keyValues["lcars_name_" .. i]
+                if isstring(name) then
+                    local button = self:CreateButton(name, nil, keyValues["lcars_disabled_" .. i])
+                    panelData.Windows[1].Buttons[i] = button
+                else
+                    break
+                end
+            end
+
+            -- TODO: Update PanelData to the active Panel
+        end
+
         local pos = panelData.Pos
 
         local entities = ents.FindInSphere(pos, 200)
@@ -252,7 +287,6 @@ hook.Add("Think", "LCARS.ThinkClose", function()
         if not playersFound then
             table.insert(toBeClosed, panel)
         end
-
     end
 
     for _, panel in pairs(toBeClosed) do
@@ -267,8 +301,6 @@ net.Receive("LCARS.Screens.Pressed", function(len, ply)
     local windowId = net.ReadInt(32)
     local buttonId = net.ReadInt(32)
 
-    print(panelId, windowId, buttonId)
-
     -- TODO: Replace Sound
     ply:EmitSound("buttons/blip1.wav")
 
@@ -276,9 +308,9 @@ net.Receive("LCARS.Screens.Pressed", function(len, ply)
     local panel = ents.GetByIndex(entId)
     if not IsValid(panel) then return end
 
-    local panelBrush = panel:GetParent()
-    if not IsValid(panelBrush) then 
-        panelBrush = panel
+    local panel_brush = panel:GetParent()
+    if not IsValid(panel_brush) then 
+        panel_brush = panel
     end
 
     local panelData = LCARS.ActivePanels[panel]
@@ -286,7 +318,7 @@ net.Receive("LCARS.Screens.Pressed", function(len, ply)
 
     if panelData.Type == "Universal" then
         if buttonId > 4 then
-            local name = panelBrush:GetName()
+            local name = panel_brush:GetName()
             local caseEntities = ents.FindByName(name .. "_case")
             for _, caseEnt in pairs(caseEntities) do
                 if IsValid(caseEnt) then
@@ -294,12 +326,15 @@ net.Receive("LCARS.Screens.Pressed", function(len, ply)
                 end
             end
         else
-            panelBrush:Fire("FireUser" .. buttonId)
+            panel_brush:Fire("FireUser" .. buttonId)
         end
         
-        timer.Simple(0.5, function()
-            LCARS:DisablePanel(panel)
-        end)
+        local keyValues = panel_brush.LCARSKeyData
+        if istable(keyValues) and not keyValues["lcars_keep_open"] then
+            timer.Simple(0.5, function()
+                LCARS:DisablePanel(panel)
+            end)
+        end
     else
         hook.Run("LCARS.PressedCustom", ply, panelData, panel, panelBrush, windowId, buttonId)
     end
