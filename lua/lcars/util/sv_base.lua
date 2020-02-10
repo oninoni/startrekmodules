@@ -108,22 +108,7 @@ function LCARS:FindEmptyPosWithin(pos, lower, higher)
 	return false
 end
 
-local function setupChairs()
-    for _, ent in pairs(ents.FindByClass("prop_vehicle_prisoner_pod")) do
-        if ent:MapCreationID() ~= -1 then
-            ent:SetCollisionGroup(COLLISION_GROUP_PASSABLE_DOOR)
-        end
-    end
-end
-
-hook.Add("InitPostEntity", "LCARS.ChairsInitPostEntity", setupChairs)
-hook.Add("PostCleanupMap", "LCARS.ChairsPostCleanupMap", setupChairs)
-
-hook.Add("PlayerLeaveVehicle", "LCARS.LeaveChair", function(ply, chair)
-	if chair:GetClass() == "prop_vehicle_prisoner_pod" and chair:MapCreationID() ~= -1 then
-		ply:SetPos(chair:GetPos())
-	end
-end)
+-- Keyvalues
 
 -- Capture all Keyvalues so they can be read when needed.
 hook.Add("EntityKeyValue", "LCARS.CaptureKeyValues", function(ent, key, value)
@@ -149,4 +134,38 @@ hook.Add("AcceptInput", "LCARS.CaptureKeyValuesLive", function(ent, input, activ
 
 		hook.Run("LCARS.ChangedKeyValue", ent, key, valueSplit[2])
     end
+end)
+
+-- Chairs
+
+-- Set up all chairs from the map with their collision group.
+local function setupChairs()
+    for _, ent in pairs(ents.FindByClass("prop_vehicle_prisoner_pod")) do
+        if ent:MapCreationID() ~= -1 then
+            ent:SetCollisionGroup(COLLISION_GROUP_PASSABLE_DOOR)
+        end
+    end
+end
+hook.Add("InitPostEntity", "LCARS.ChairsInitPostEntity", setupChairs)
+hook.Add("PostCleanupMap", "LCARS.ChairsPostCleanupMap", setupChairs)
+
+-- Save View Angle when leaving a chair.
+hook.Add("CanExitVehicle", "LCARS.CheckLeaveChair", function(chair, ply)
+	if chair:GetClass() == "prop_vehicle_prisoner_pod" and chair:MapCreationID() ~= -1 then
+		ply.LCARSPrevViewAngle = ply:EyeAngles()
+	end
+end)
+
+-- Set Position and View Angle after leaving a chair.
+hook.Add("PlayerLeaveVehicle", "LCARS.LeaveChair", function(ply, chair)
+	if chair:GetClass() == "prop_vehicle_prisoner_pod" and chair:MapCreationID() ~= -1 then
+		ply:SetPos(chair:GetPos())
+		ply:SetEyeAngles(ply.LCARSPrevViewAngle)
+	end
+end)
+
+hook.Add("PlayerEnteredVehicle", "LCARS.EnterConsoleChair", function(ply, chair, role)
+	if chair:GetClass() == "prop_vehicle_prisoner_pod" and chair:MapCreationID() ~= -1 then
+		ply:CrosshairEnable()
+	end
 end)

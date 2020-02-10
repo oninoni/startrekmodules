@@ -65,10 +65,11 @@ local function RenderWarpTrails()
     })
 end
 
+--[[
 hook.Add("PostDrawTranslucentRenderables", "LCARS.Rendertest", function(bDrawingDepth, bDrawingSkybox )
     if not OVERRIDESTUFF then return end
 
-    RenderBackground()
+    --RenderBackground()
 
     --render.SetColorMaterialIgnoreZ()
     --RenderWarpTrails()
@@ -87,3 +88,4 @@ hook.Add("wp-postrender", "LCARS.Viewscreen.PostRender", function(portal, exitPo
 
 	OVERRIDESTUFF = nil
 end)
+]]
