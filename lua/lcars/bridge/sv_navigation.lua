@@ -1,0 +1,5 @@
+
+
+function LCARS:OpenNavComputerMenu()
+
+end

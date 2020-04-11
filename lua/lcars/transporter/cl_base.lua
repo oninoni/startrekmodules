@@ -85,6 +85,8 @@ end
 local lastSysTime = SysTime()
 hook.Add("RenderScreenspaceEffects", "Yoyager.Transporter.Effect", function()
     if LCARS.SelfTransportRefraction > 0 then
+        draw.RoundedBox(0, 0, 0, ScrW(), ScrH(), Color(31, 127, 255, LCARS.SelfTransportRefraction * 127) )
+
         DrawMaterialOverlay("effects/water_warp01", LCARS.SelfTransportRefraction)
     end
 end)
@@ -166,7 +168,7 @@ hook.Add("PostDrawTranslucentRenderables", "Voyager.Transporter.MainRender", fun
         if ( dLight ) then
             dLight.pos = ent:GetPos()
             dLight.r = 31
-            dLight.g = 63
+            dLight.g = 127
             dLight.b = 255
             dLight.brightness = 1
             dLight.Decay = 1000

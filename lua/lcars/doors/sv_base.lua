@@ -56,8 +56,14 @@ hook.Add("AcceptInput", "LCARS.BlockDoorIfAlreadyDooring", function(ent, input, 
 
 			if value == "open" then
 				ent.Open = true
+				
+				timer.Simple(ent:SequenceDuration(value) / 2, function()
+					ent:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+				end)
 			elseif value == "close" then
 				ent.Open = false
+
+				ent:SetCollisionGroup(COLLISION_GROUP_NONE)
 			end
 
 			if ent.LCARSKeyData then

@@ -64,7 +64,7 @@ end
 
 net.Receive("LCARS.Screens.CloseMenu", function()
     local id = net.ReadString()
-    
+
     LCARS:CloseMenu(id)
 end)
 
@@ -118,7 +118,7 @@ end
 net.Receive("LCARS.Screens.OpenMenu", function()
     local id = net.ReadString()
     local panelData = net.ReadTable()
-
+    
     LCARS:OpenMenu(id, panelData)
 end)
 
@@ -152,7 +152,7 @@ net.Receive("LCARS.Screens.UpdateWindow", function()
     local id = net.ReadString()
     local windowId = net.ReadInt(32)
     local window = net.ReadTable()
-
+    
     LCARS:UpdateWindow(id, windowId, window)
 end)
 

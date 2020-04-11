@@ -51,15 +51,20 @@ end
 -- @param Entity panel_brush
 -- @return Entity panel
 function LCARS:GetMenuProp(ply, panel_brush)
-    if not (IsValid(ply) and ply:IsPlayer()) then return end
-    if not IsValid(panel_brush) then return end
+    if not IsValid(panel_brush) then return false end
 
-    local panel = ply:GetEyeTrace().Entity
-    if not IsValid(panel) then return end
     local children = panel_brush:GetChildren()
-    if not table.HasValue(children, panel) then return end
+    if table.Count(children) == 0 then return panel_brush end
 
-    return panel
+    if IsValid(ply) and ply:IsPlayer() then
+        local panel = ply:GetEyeTrace().Entity
+        if not (IsValid(panel) or panel:IsWorld()) then return false end
+        if not table.HasValue(children, panel) then return false end
+
+        return panel
+    end
+
+    return true -- TODO: What?
 end
 
 -- Validates panel and brush for using a menu on it.
@@ -68,26 +73,14 @@ end
 -- @param Entity panel_brush
 -- @param Function callback
 function LCARS:OpenMenuInternal(ply, panel_brush, callback)
-    print("Internal:", ply, panel_brush, callback)
     local panel = LCARS:GetMenuProp(ply, panel_brush)
-    print("Panel:", panel)
-    if IsValid(panel) then
-        // Model Based LCARS
+    if panel then 
         if istable(self.ActivePanels[panel]) then return panel end
 
         local screenPos, screenAngle = self:GetMenuPos(panel)
 
         if isfunction(callback) then
             callback(ply, panel_brush, panel, screenPos, screenAngle)
-        end
-    else
-        // Model Based LCARS
-        if istable(self.ActivePanels[panel_brush]) then return panel_brush end
-
-        local screenPos, screenAngle = self:GetMenuPos(panel_brush)
-
-        if isfunction(callback) then
-            callback(ply, panel_brush, panel_brush, screenPos, screenAngle)
         end
     end
 end
@@ -184,11 +177,7 @@ end
 
 -- Open a General LCARS Menu using the keyvalues of an panel's func_button brush.
 function LCARS:OpenMenu()
-    print(TRIGGER_PLAYER, CALLER)
     self:OpenMenuInternal(TRIGGER_PLAYER, CALLER, function(ply, panel_brush, panel, screenPos, screenAngle)
-        print(panel_brush, panel)
-        debugoverlay.Axis(screenPos, screenAngle, 10, 10, true)
-
         local panelData = {
             Pos = screenPos,
             Windows = {
@@ -261,17 +250,26 @@ hook.Add("Think", "LCARS.ThinkClose", function()
         if panel.LCARSMenuHasChanged then
             panelData.Windows[1].Buttons = {}
 
-            for i=1,20 do
-                local name = keyValues["lcars_name_" .. i]
-                if isstring(name) then
-                    local button = self:CreateButton(name, nil, keyValues["lcars_disabled_" .. i])
-                    panelData.Windows[1].Buttons[i] = button
-                else
-                    break
+            local panel_brush = panel:GetParent()
+            if not IsValid(panel_brush) then 
+                panel_brush = panel
+            end
+
+            local keyValues = panel_brush.LCARSKeyData
+            if istable(keyValues) then
+                for i=1,20 do
+                    local name = keyValues["lcars_name_" .. i]
+                    if isstring(name) then
+                        local button = LCARS:CreateButton(name, nil, keyValues["lcars_disabled_" .. i])
+                        panelData.Windows[1].Buttons[i] = button
+                    else
+                        break
+                    end
                 end
             end
 
-            -- TODO: Update PanelData to the active Panel
+            LCARS:UpdateWindow(panel, 1, panelData.Windows[1])
+            panel.LCARSMenuHasChanged = false
         end
 
         local pos = panelData.Pos
@@ -301,12 +299,12 @@ net.Receive("LCARS.Screens.Pressed", function(len, ply)
     local windowId = net.ReadInt(32)
     local buttonId = net.ReadInt(32)
 
-    -- TODO: Replace Sound
-    ply:EmitSound("buttons/blip1.wav")
-
     local entId = tonumber(string.sub(panelId, 5))
     local panel = ents.GetByIndex(entId)
     if not IsValid(panel) then return end
+
+    -- TODO: Replace Sound
+    panel:EmitSound("buttons/blip1.wav")
 
     local panel_brush = panel:GetParent()
     if not IsValid(panel_brush) then 

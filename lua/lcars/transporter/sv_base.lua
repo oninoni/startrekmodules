@@ -5,6 +5,13 @@ LCARS.ActiveTransports = LCARS.ActiveTransports or {}
 util.AddNetworkString("LCARS.Tranporter.BeamObject")
 util.AddNetworkString("LCARS.Tranporter.BeamPlayer")
 
+local setupBuffer = function()
+    LCARS.BeamBuffer = ents.FindByName("beamBuffer")[1]
+end
+hook.Add("InitPostEntity", "LCARS.BufferInitPostEntity", setupBuffer)
+hook.Add("PostCleanupMap", "LCARS.BufferPostCleanupMap", setupBuffer)
+
+
 function LCARS:ApplyTranportEffectProperties(transportData, ent)
     local mode = transportData.State
 
@@ -22,6 +29,10 @@ function LCARS:ApplyTranportEffectProperties(transportData, ent)
         if IsValid(phys) then
             transportData.OldMotionEnabled = phys:IsMotionEnabled()
             phys:EnableMotion(false)
+        end
+
+        if ent:IsPlayer() then
+            ent:Lock()
         end
 
         local lowerBounds, higherBounds = ent:GetCollisionBounds()
@@ -85,6 +96,10 @@ function LCARS:ApplyTranportEffectProperties(transportData, ent)
             end
             
             phys:Wake()
+        end
+
+        if ent:IsPlayer() then
+            ent:UnLock()
         end
 
         ent:DrawShadow(true)
@@ -220,7 +235,7 @@ hook.Add("Think", "LCARS.Tranporter.Cycle", function()
                 LCARS:ApplyTranportEffectProperties(transportData, ent)
 
                 -- TODO: Replace with Buffer
-                ent:SetPos(Vector(0, 0, 0))
+                ent:SetPos(LCARS.BeamBuffer:GetPos())
                 
                 transportData.StateTime = curTime
                 

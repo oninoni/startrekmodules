@@ -133,10 +133,10 @@ hook.Add("AcceptInput", "LCARS.CaptureKeyValuesLive", function(ent, input, activ
 		local realValue = ""
 		for i, splitString in pairs(valueSplit) do
 			if i == 1 then continue end
+			realValue = realValue .. splitString
 			if i ~= #valueSplit then 
 				realValue = realValue .. " "
 			end
-			realValue = realValue .. splitString
 		end
         ent.LCARSKeyData[key] = realValue
 

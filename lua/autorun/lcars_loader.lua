@@ -44,12 +44,17 @@ if SERVER then
 
     AddCSLuaFile("lcars/transporter/cl_base.lua")
     include("lcars/transporter/sv_base.lua")
+    include("lcars/transporter/sv_core.lua")
     include("lcars/transporter/sv_console.lua")
     
     include("lcars/holodeck/sv_base.lua")
     
     include("lcars/turbolift/sv_config.lua")
     include("lcars/turbolift/sv_base.lua")
+
+    include("lcars/bridge/sv_navigation.lua")
+    include("lcars/bridge/sv_security.lua")
+    include("lcars/bridge/sv_transporter.lua")
 end
 
 game.AddParticles( "particles/voyager.pcf" )

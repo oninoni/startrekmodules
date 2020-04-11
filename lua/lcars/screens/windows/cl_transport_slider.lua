@@ -14,7 +14,7 @@ function WINDOW:IsPressed(panel, window, pos)
         window.TargetState = window.Height / 2
         window.Lerp = 0
 
-        timer.Simple(3, function()
+        timer.Simple(9, function()
             window.TargetState = -window.Height / 2
             window.Lerp = 0
         end)
