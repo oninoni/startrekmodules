@@ -76,6 +76,7 @@ hook.Add("PostDrawTranslucentRenderables", "LCARS.Rendertest", function(bDrawing
     
     --render.DrawSphere(Vector(0, 0, 0), 1000, 8, 8, Color(255, 255, 255))
 end)
+]]
 
 hook.Add("wp-prerender", "LCARS.Viewscreen.PreRender", function(portal, exitPortal, plyOrigin)
 	if portal:GetClass() ~= "linked_portal_window" then return end
@@ -88,4 +89,3 @@ hook.Add("wp-postrender", "LCARS.Viewscreen.PostRender", function(portal, exitPo
 
 	OVERRIDESTUFF = nil
 end)
-]]

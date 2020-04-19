@@ -20,3 +20,7 @@ function LCARS:SpawnPortal(id)
     window:Spawn()
     window:Activate()
 end
+
+--timer.Create("Testing", 0, 0, function()
+--    ents.GetAll()[181]:SetAngles(ents.GetAll()[181]:GetAngles() + Angle(0,0.2,0))
+--end)

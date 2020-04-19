@@ -59,14 +59,8 @@ net.Receive("LCARS.Tranporter.BeamPlayer", function()
 
     if active then
         LCARS.SelfTransportActive = true
-
-        timer.Create("LCARS.Transporter.KillEffectFallback", 20, 1, function()
-            LCARS.SelfTransportActive = false
-        end) 
     else
         LCARS.SelfTransportActive = false
-
-        timer.Remove("LCARS.Transporter.KillEffectFallback")
     end
 end)
 
@@ -85,9 +79,9 @@ end
 local lastSysTime = SysTime()
 hook.Add("RenderScreenspaceEffects", "Yoyager.Transporter.Effect", function()
     if LCARS.SelfTransportRefraction > 0 then
-        draw.RoundedBox(0, 0, 0, ScrW(), ScrH(), Color(31, 127, 255, LCARS.SelfTransportRefraction * 127) )
-
         DrawMaterialOverlay("effects/water_warp01", LCARS.SelfTransportRefraction)
+        
+        draw.RoundedBox(0, 0, 0, ScrW(), ScrH(), Color(31, 127, 255, LCARS.SelfTransportRefraction * 255) )
     end
 end)
 

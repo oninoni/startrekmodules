@@ -44,7 +44,7 @@ end
 -- @param Window window
 -- @param Vector pos (2D Vector)
 function WINDOW:IsPressed(panel, window, pos)
-    local n = #(window.Buttons)
+    local n = table.maxn(window.Buttons)
 
     local offset = self:GetOffset(window, n, pos.y)
 
@@ -68,9 +68,9 @@ end
 -- @param Window window
 -- @param Vector pos (2D Vector)
 function WINDOW:DrawWindow(panel, window, pos)
-    local n = #(window.Buttons)
+    local n = table.maxn(window.Buttons)
 
-    --draw.RoundedBox(0, -window.Width / 2, -window.Height / 2, window.Width, window.Height, Color(255, 255, 255, 255))
+    draw.RoundedBox(0, -window.Width / 2, -window.Height / 2, window.Width, window.Height, Color(255, 255, 255, 255))
 
     local offset = self:GetOffset(window, n, pos.y)
 

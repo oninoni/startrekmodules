@@ -1,5 +1,5 @@
--- TODO: Add Multiple Spots on all areas to support Multi-Beam without autoselecting free areas? Alternative Area Select? Dann halt Ziel random finden. Am besten wre beides auf einmal.
-
+-- TODO: Add Other Pads Menu Option (Hide linked Pad, but show all others.) Will use Table Pos like Locations do now with multiple points being linked.
+-- TODO: Add the Error Message Window. (Window 6)
 
 -- Replace a given window's buttons with the new object list.
 --
@@ -138,16 +138,19 @@ function LCARS:ReplaceButtons(panel, window, mode, targetMenu)
     if modeName == "Locations" then
         window.Type = "button_list"
 
+        local categories = {}
         for _, ent in pairs(ents.FindByName("beamLocation")) do
+            local name = ent.LCARSKeyData["lcars_name"]
+            categories[name] = categories[name] or {}
+            table.insert(categories[name], ent)
+        end
+
+        for name, data in SortedPairs(categories) do
             local object = {
-                Name = ent:GetName(),
-                Data = ent,
+                Name = name,
+                Data = data,
             }
 
-            if ent.LCARSKeyData then
-                object.Name = ent.LCARSKeyData["lcars_name"]
-            end
-            
             table.insert(objects, object)
         end
     end
@@ -173,7 +176,29 @@ function LCARS:ReplaceButtons(panel, window, mode, targetMenu)
 
     if modeName == "Other Pads" or modeName == "Transporter Pads"  then
         window.Type = "button_list"
-        -- TODO: Other Pads
+        
+        local categories = {}
+        for _, ent in pairs(ents.GetAll()) do
+            local name = ent:GetName()
+            if isstring(name) and string.StartWith(name, "TRPad") then
+                local idString = string.sub(name, 6)
+                local split = string.Split(idString, "_")
+                local id = split[2]
+
+                local padName = "Transporter Room " .. id
+                categories[padName] = categories[padName] or {}
+                table.insert(categories[padName], ent)
+            end
+        end
+
+        for name, data in SortedPairs(categories) do
+            local object = {
+                Name = name,
+                Data = data,
+            }
+
+            table.insert(objects, object)
+        end
     end
 
     return self:ReaplaceModeButtons(window, objects)
@@ -380,12 +405,14 @@ hook.Add("LCARS.PressedCustom", "LCARS.Transporter.Pressed", function(ply, panel
                 local leftWindow = panelData.Windows[1]
                 local rightWindow = panelData.Windows[2]
                 
-                if leftWindow.Selected > 3 or rightWindow.Selected > 3 then
+                if istable(panel.TargetNames[leftWindow.Selected]) or istable(panel.TargetNames[rightWindow.Selected]) then
+                    print("Swap Error")
                     -- TODO: Swap Error
                     return
                 end
                 
                 if rightWindow.BufferTransport then
+                    print("Buffer Error")
                     -- TODO: Swap Error
                     return
                 end
@@ -409,6 +436,7 @@ hook.Add("LCARS.PressedCustom", "LCARS.Transporter.Pressed", function(ply, panel
                 for i, button in pairs(leftListWindow.Buttons) do
                     if button.Selected then 
                         table.insert(leftSelected, button.Data)
+                        button.Data.SwapId = i
                     end
                 end
                 
@@ -416,6 +444,7 @@ hook.Add("LCARS.PressedCustom", "LCARS.Transporter.Pressed", function(ply, panel
                 for i, button in pairs(rightListWindow.Buttons) do
                     if button.Selected then 
                         table.insert(rightSelected, button.Data)
+                        button.Data.SwapId = i
                     end
                 end
 
@@ -425,23 +454,41 @@ hook.Add("LCARS.PressedCustom", "LCARS.Transporter.Pressed", function(ply, panel
                 -- TODO: Redo Swapping with buffer Mode in place
 
                 for _, selectedData in pairs(leftSelected) do
-                    for _, button in pairs(rightListWindow.Buttons) do
+                    for i, button in pairs(rightListWindow.Buttons) do
                         if button.Data == selectedData then
                             button.Selected = true
                             button.Color = LCARS.ColorYellow
 
                             break
                         end
+
+                        if istable(button.Data) and istable(selectedData) then
+                            if i == selectedData.SwapId then
+                                button.Selected = true
+                                button.Color = LCARS.ColorYellow
+
+                                break
+                            end
+                        end
                     end
                 end
                 
                 for _, selectedData in pairs(rightSelected) do
-                    for _, button in pairs(leftListWindow.Buttons) do
-                        if button.Data == selectedData then
+                    for i, button in pairs(leftListWindow.Buttons) do
+                            if i == selectedData.SwapId then
                             button.Selected = true
                             button.Color = LCARS.ColorYellow
 
                             break
+                        end
+
+                        if istable(button.Data) and istable(selectedData) then
+                            if i == j then
+                                button.Selected = true
+                                button.Color = LCARS.ColorYellow
+
+                                break
+                            end
                         end
                     end
                 end

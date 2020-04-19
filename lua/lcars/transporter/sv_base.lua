@@ -234,7 +234,6 @@ hook.Add("Think", "LCARS.Tranporter.Cycle", function()
                 -- Object is now dematerialized and moved to the buffer!
                 LCARS:ApplyTranportEffectProperties(transportData, ent)
 
-                -- TODO: Replace with Buffer
                 ent:SetPos(LCARS.BeamBuffer:GetPos())
                 
                 transportData.StateTime = curTime

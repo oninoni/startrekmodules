@@ -12,11 +12,11 @@ function LCARS:OpenBridgeTransporter()
 
         local panelData = {
             Type = "Transporter",
-            Pos = screenPos + Vector(0, 20, 0),
+            Pos = screenPos,
             Windows = {
                 [1] = {
                     Pos = screenPos + fOffset*5 - rOffset*20 - uOffset*28,
-                    Angles = screenAngle - Angle(-35, 0, 0),
+                    Angles = screenAngle - Angle(-40, 0, 0),
                     Type = "button_list",
                     Width = 350,
                     Height = 300,
@@ -24,7 +24,7 @@ function LCARS:OpenBridgeTransporter()
                 },
                 [2] = {
                     Pos = screenPos + fOffset*5 + rOffset*20 - uOffset*28,
-                    Angles = screenAngle - Angle(-35, 0, 0),
+                    Angles = screenAngle - Angle(-40, 0, 0),
                     Type = "button_list",
                     Width = 350,
                     Height = 300,

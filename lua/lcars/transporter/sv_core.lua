@@ -1,5 +1,10 @@
 LCARS.NextBufferThink = CurTime()
 
+-- TODO: Check Vacancy of Beaming at the Target
+-- TODO: Also Check if transport in Progress at that location (No 2 Beams at the same pos at the same time.)
+
+-- TODO: Beam Overflow to Buffer
+
 -- Determine the Objects, that should be beamed.
 function LCARS:GetTransporterObjects(panel, window, listWindow)
     local objects = {}
@@ -73,33 +78,43 @@ function LCARS:GetTransporterObjects(panel, window, listWindow)
                 end
             elseif modeName == "Locations" then
                 -- Beam from Location
-                local targetEnt = button.Data
-                local pos = targetEnt:GetPos()
+                local targetEntities = button.Data
+                
+                for i, targetEnt in pairs(targetEntities) do
+                    local pos = targetEnt:GetPos()
+                
+                    object = {
+                        Objects = {},
+                        Pos = pos,
+                        TargetCount = 1,
+                    }
 
-                object = {
-                    Objects = {},
-                    Pos = pos,
-                    TargetCount = -1, -- Infinite Objects on beaming to location.
-                }
+                    local range = 32
+                    if window.WideBeam then 
+                        range = targetEnt.LCARSKeyData["lcars_beamrange"] or 64
+                    end
 
-                local range = 32
-                if window.WideBeam then
-                    range = 64
-                end
-            
-                local  lowerBounds = pos - Vector(range, range, 0)
-                local higherBounds = pos + Vector(range, range, range * 2)
-                debugoverlay.Box(pos, -Vector(range, range, 0), Vector(range, range, range * 2), 10, Color(255, 255, 255, 63))
+                    local  lowerBounds = pos - Vector(range, range, 0)
+                    local higherBounds = pos + Vector(range, range, range * 2)
+                    debugoverlay.Box(pos, -Vector(range, range, 0), Vector(range, range, range * 2), 10, Color(255, 255, 255, 63))
 
-                local entities = ents.FindInBox(lowerBounds, higherBounds)
-                for _, ent in pairs(entities) do
-                    if ent:MapCreationID() ~= -1 then continue end
+                    local entities = ents.FindInBox(lowerBounds, higherBounds)
+                    for _, ent in pairs(entities) do
+                        if ent:MapCreationID() ~= -1 then continue end
 
-                    local parent = ent:GetParent()
-                    if not IsValid(parent) then
-                        local phys = ent:GetPhysicsObject()
-                        if IsValid(phys) and phys:IsMotionEnabled() then
-                            table.insert(object.Objects, ent)
+                        local parent = ent:GetParent()
+                        if not IsValid(parent) then
+                            local phys = ent:GetPhysicsObject()
+                            if IsValid(phys) and phys:IsMotionEnabled() then
+                                table.insert(object.Objects, ent)
+                            end
+                        end
+                    end
+
+                    if i < #targetEntities then
+                        table.insert(objects, object)
+                        for _, ent in pairs(object.Objects) do
+                            table.insert(objectEntities, ent)
                         end
                     end
                 end
@@ -142,6 +157,8 @@ function LCARS:GetTransporterObjects(panel, window, listWindow)
             -- TODO: Check for the Parent and add some effect functionality for child Entities
         end
     end
+
+    -- TODO: Check Locations for Transports in progress.
 
     return objects
 end
