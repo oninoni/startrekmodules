@@ -6,7 +6,6 @@ AccessorFunc( ENT, "shouldDrawaNextFrame", "ShouldDrawNextFrame" )
 
 -- Draw world portals
 function ENT:Draw()
-
 	if wp.drawing then return end
 	local shouldrender,drawblack=wp.shouldrender(self)
 	if not (shouldrender or drawblack) then return end

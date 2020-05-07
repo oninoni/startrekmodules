@@ -70,7 +70,7 @@ end
 function WINDOW:DrawWindow(panel, window, pos)
     local n = table.maxn(window.Buttons)
 
-    draw.RoundedBox(0, -window.Width / 2, -window.Height / 2, window.Width, window.Height, Color(255, 255, 255, 255))
+    --draw.RoundedBox(0, -window.Width / 2, -window.Height / 2, window.Width, window.Height, Color(255, 255, 255, 255))
 
     local offset = self:GetOffset(window, n, pos.y)
 

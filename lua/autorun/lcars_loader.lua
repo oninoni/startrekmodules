@@ -3,6 +3,8 @@
 LCARS = LCARS or {}
 
 if CLIENT then
+    include("lcars/doors/cl_base.lua")
+
     include("lcars/linked_portal_window/cl_portal_window.lua")
 
     include("lcars/screens/sh_config.lua")
@@ -16,11 +18,14 @@ if CLIENT then
     include("lcars/screens/windows/cl_transport_pad.lua")
 
     include("lcars/transporter/cl_base.lua")
+    
+    include("lcars/bridge/cl_impulse.lua")
 end
 
 if SERVER then
     include("lcars/util/sv_base.lua")
 
+    AddCSLuaFile("lcars/doors/cl_base.lua")
     include("lcars/doors/sv_config.lua")
     include("lcars/doors/sv_base.lua")
 
@@ -51,6 +56,9 @@ if SERVER then
     
     include("lcars/turbolift/sv_config.lua")
     include("lcars/turbolift/sv_base.lua")
+    
+    AddCSLuaFile("lcars/bridge/cl_impulse.lua")
+    include("lcars/bridge/sv_impulse.lua")
 
     include("lcars/bridge/sv_navigation.lua")
     include("lcars/bridge/sv_security.lua")

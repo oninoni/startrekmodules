@@ -37,7 +37,7 @@ function LCARS:GetTransporterObjects(panel, window, listWindow)
 
                 local  lowerBounds = pos - Vector(25, 25, 0)
                 local higherBounds = pos + Vector(25, 25, 120)
-                --debugoverlay.Box(pos, -Vector(25, 25, 0), Vector(25, 25, 120), 10, Color(255, 255, 255, 63))
+                debugoverlay.Box(pos, -Vector(25, 25, 0), Vector(25, 25, 120), 10, Color(255, 255, 255, 63))
 
                 local entities = ents.FindInBox(lowerBounds, higherBounds)
                 for _, ent in pairs(entities) do
@@ -128,13 +128,51 @@ function LCARS:GetTransporterObjects(panel, window, listWindow)
                     TargetCount = 0, -- Infinite Objects on beaming to location.
                 }
             elseif modeName == "Other Pads" or modeName == "Transporter Pads" then
+                -- Beam from Location
+                local targetEntities = button.Data
+                
+                for i, targetEnt in pairs(targetEntities) do
+                    local pos = targetEnt:GetPos()
+                    local attachmentId = targetEnt:LookupAttachment("teleportPoint")
+                    if attachmentId > 0 then
+                        local angPos = targetEnt:GetAttachment(attachmentId)
 
+                        pos = angPos.Pos
+                    end
+                
+                    object = {
+                        Objects = {},
+                        Pos = pos,
+                        TargetCount = 1,
+                    }
+
+                    local  lowerBounds = pos - Vector(25, 25, 0)
+                    local higherBounds = pos + Vector(25, 25, 120)
+                    debugoverlay.Box(pos, -Vector(25, 25, 0), Vector(25, 25, 120), 10, Color(255, 255, 255, 63))
+
+                    local entities = ents.FindInBox(lowerBounds, higherBounds)
+                    for _, ent in pairs(entities) do
+                        local name = ent:GetName()
+                        if not string.StartWith(name, "TRPad") then
+                            table.insert(object.Objects, ent)
+                        end
+                    end
+
+                    if i < #targetEntities then
+                        table.insert(objects, object)
+                        for _, ent in pairs(object.Objects) do
+                            table.insert(objectEntities, ent)
+                        end
+                    end
+                end
             end
 
             table.insert(objects, object)
             for _, ent in pairs(object.Objects) do
                 table.insert(objectEntities, ent)
             end
+
+            PrintTable(objectEntities)
         end
     end
 

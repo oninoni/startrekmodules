@@ -177,6 +177,13 @@ function LCARS:ReplaceButtons(panel, window, mode, targetMenu)
     if modeName == "Other Pads" or modeName == "Transporter Pads"  then
         window.Type = "button_list"
         
+        local consoleId = false
+        local consoleName = panel:GetName()
+        if isstring(consoleName) and string.StartWith(consoleName, "TRConsole") then
+            local split = string.Split(consoleName, "_")
+            consoleId = split[2]
+        end
+
         local categories = {}
         for _, ent in pairs(ents.GetAll()) do
             local name = ent:GetName()
@@ -184,6 +191,8 @@ function LCARS:ReplaceButtons(panel, window, mode, targetMenu)
                 local idString = string.sub(name, 6)
                 local split = string.Split(idString, "_")
                 local id = split[2]
+
+                if consoleId and consoleId == id then continue end
 
                 local padName = "Transporter Room " .. id
                 categories[padName] = categories[padName] or {}
@@ -211,7 +220,8 @@ function LCARS:OpenTransporterMenu()
             "Transporter Pad",
             "Lifeforms",
             "Locations",
-            {"Buffer", "Other Pads"},
+            "Other Pads",
+            {"Buffer", false},
         }
 
         local xOffset = -panel:GetForward()
@@ -269,7 +279,7 @@ function LCARS:OpenTransporterMenu()
                     targetName = targetName[i]
                 end
                 
-                local button = LCARS:CreateButton(targetName, color)
+                button = LCARS:CreateButton(targetName or "", color)
                 button.DeselectedColor = color
 
                 table.insert(panelData.Windows[i].Buttons, button)
@@ -281,15 +291,15 @@ function LCARS:OpenTransporterMenu()
         panelData.Windows[2].Selected = 1
         panelData.Windows[2].Buttons[1].Color = LCARS.ColorYellow
 
-        panelData.Windows[1].Buttons[6] = LCARS:CreateButton("Narrow Beam", LCARS.ColorOrange)
-        panelData.Windows[1].Buttons[6].Selected = false
-        panelData.Windows[2].Buttons[6] = LCARS:CreateButton("Direct Transport", LCARS.ColorOrange)
-        panelData.Windows[2].Buttons[6].Selected = false
+        panelData.Windows[1].Buttons[#panel.TargetNames + 2] = LCARS:CreateButton("Narrow Beam", LCARS.ColorOrange)
+        panelData.Windows[1].Buttons[#panel.TargetNames + 2].Selected = false
+        panelData.Windows[2].Buttons[#panel.TargetNames + 2] = LCARS:CreateButton("Direct Transport", LCARS.ColorOrange)
+        panelData.Windows[2].Buttons[#panel.TargetNames + 2].Selected = false
 
-        panelData.Windows[1].Buttons[7] = LCARS:CreateButton("Swap Sides", LCARS.ColorOrange)
-        panelData.Windows[1].Buttons[7].Selected = false
-        panelData.Windows[2].Buttons[7] = LCARS:CreateButton("Disable Console", LCARS.ColorRed)
-        panelData.Windows[2].Buttons[7].Selected = false
+        panelData.Windows[1].Buttons[#panel.TargetNames + 3] = LCARS:CreateButton("Swap Sides", LCARS.ColorOrange)
+        panelData.Windows[1].Buttons[#panel.TargetNames + 3].Selected = false
+        panelData.Windows[2].Buttons[#panel.TargetNames + 3] = LCARS:CreateButton("Disable Console", LCARS.ColorRed)
+        panelData.Windows[2].Buttons[#panel.TargetNames + 3].Selected = false
 
         for i=1,2,1 do
             LCARS:ReplaceButtons(panel, panelData.Windows[2 + i], panelData.Windows[i].Selected, i == 2)
@@ -406,14 +416,10 @@ hook.Add("LCARS.PressedCustom", "LCARS.Transporter.Pressed", function(ply, panel
                 local rightWindow = panelData.Windows[2]
                 
                 if istable(panel.TargetNames[leftWindow.Selected]) or istable(panel.TargetNames[rightWindow.Selected]) then
-                    print("Swap Error")
-                    -- TODO: Swap Error
                     return
                 end
                 
                 if rightWindow.BufferTransport then
-                    print("Buffer Error")
-                    -- TODO: Swap Error
                     return
                 end
 
