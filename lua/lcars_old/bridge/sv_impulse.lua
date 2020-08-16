@@ -15,6 +15,7 @@ hook.Add("Think", "LCARS.FlyShipThink", function()
     local ply = LCARS.ConnSeat:GetDriver()
     if IsValid(ply) and ply:IsPlayer() then
         local data = ply.FlyData
+        if not istable(data) then return end
 
         local ent = ents.FindByName("skybox_3")[1]
 

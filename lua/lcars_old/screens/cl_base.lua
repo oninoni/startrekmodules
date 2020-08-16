@@ -1,5 +1,3 @@
-
-
 -- List of active Paneln.
 -- Filled via Networking.
 LCARS.ActivePanels = LCARS.ActivePanels or {}

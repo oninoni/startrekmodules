@@ -17,6 +17,8 @@ function LCARS:GetTransporterObjects(panel, window, listWindow)
         if button.Selected then
             local object = nil
 
+            print(modeName)
+
             if modeName == "Transporter Pad" then
                 -- Beam from Pad
                 local pad = button.Data
@@ -206,7 +208,7 @@ function LCARS:ActivateTransporter(panelData, panel)
     local rightWindow = panelData.Windows[2]
     
     local Sources = self:GetTransporterObjects(panel, panelData.Windows[1], panelData.Windows[3])
-
+    
     if rightWindow.BufferTransport and leftWindow.Selected ~= 4 then
         -- Beam to Buffer
 

@@ -76,8 +76,8 @@ function LCARS:OpenBridgeTransporter()
             end
         end
 
-        panelData.Windows[1].Selected = 2
-        panelData.Windows[1].Buttons[2].Color = LCARS.ColorYellow
+        panelData.Windows[1].Selected = 3
+        panelData.Windows[1].Buttons[3].Color = LCARS.ColorYellow
         panelData.Windows[2].Selected = 1
         panelData.Windows[2].Buttons[1].Color = LCARS.ColorYellow
 

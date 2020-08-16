@@ -266,7 +266,7 @@ function LCARS:OpenTransporterMenu()
                 },
             },
         }
-
+        
         for i=1,2,1 do
             for j=1,#(panel.TargetNames),1 do
                 local color = LCARS.ColorBlue
