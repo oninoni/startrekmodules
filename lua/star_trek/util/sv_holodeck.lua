@@ -1,5 +1,3 @@
-
-
 -- Compresses players between 2 named brush areas.
 --
 -- @param String outerName
