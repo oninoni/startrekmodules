@@ -1,16 +1,34 @@
+---------------------------------------
+---------------------------------------
+--        Star Trek Utilities        --
+--                                   --
+--            Created by             --
+--       Jan 'Oninoni' Ziegler       --
+--                                   --
+-- This software can be used freely, --
+--    but only distributed by me.    --
+--                                   --
+--    Copyright © 2020 Jan Ziegler   --
+---------------------------------------
+---------------------------------------
+
+---------------------------------------
+--         Keyvalues | Server        --
+---------------------------------------
+
 -- Capture all Keyvalues so they can be read when needed.
-hook.Add("EntityKeyValue", "LCARS.CaptureKeyValues", function(ent, key, value)
+hook.Add("EntityKeyValue", "Star_Trek.CaptureKeyValues", function(ent, key, value)
     ent.LCARSKeyData = ent.LCARSKeyData or {}
 
     if string.StartWith(key, "lcars") then
         ent.LCARSKeyData[key] = value
 
-		hook.Run("LCARS.ChangedKeyValue", ent, key, value)
+		hook.Run("Star_Trek.ChangedKeyValue", ent, key, value)
     end
 end)
 
 -- Capture Live Changes to lcars convars.
-hook.Add("AcceptInput", "LCARS.CaptureKeyValuesLive", function(ent, input, activator, caller, value)
+hook.Add("AcceptInput", "Star_Trek.CaptureKeyValuesLive", function(ent, input, activator, caller, value)
     if input ~= "AddOutput" then return end
 
     local valueSplit = string.Split(value, " ")
@@ -28,6 +46,6 @@ hook.Add("AcceptInput", "LCARS.CaptureKeyValuesLive", function(ent, input, activ
 		end
         ent.LCARSKeyData[key] = realValue
 
-		hook.Run("LCARS.ChangedKeyValue", ent, key, realValue)
+		hook.Run("Star_Trek.ChangedKeyValue", ent, key, realValue)
     end
 end)

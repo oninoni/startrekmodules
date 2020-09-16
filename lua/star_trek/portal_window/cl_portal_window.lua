@@ -1,6 +1,23 @@
+---------------------------------------
+---------------------------------------
+--        Star Trek Utilities        --
+--                                   --
+--            Created by             --
+--       Jan 'Oninoni' Ziegler       --
+--                                   --
+-- This software can be used freely, --
+--    but only distributed by me.    --
+--                                   --
+--    Copyright © 2020 Jan Ziegler   --
+---------------------------------------
+---------------------------------------
+
+---------------------------------------
+--       Portal Window | Client      --
+---------------------------------------
 
 -- Render views from the portals
-hook.Add( "RenderScene", "LCARS.RenderWindow", function( plyOrigin, plyAngle )
+hook.Add( "RenderScene", "Star_Trek.RenderWindow", function( plyOrigin, plyAngle )
 
 	wp.portals = ents.FindByClass( "linked_portal_window" )
 

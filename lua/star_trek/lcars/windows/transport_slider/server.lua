@@ -1,7 +1,11 @@
-function WINDOW.OnPress()
+function WINDOW.OnCreate(windowData, ...)
 
 end
 
-function WINDOW.OnTick()
+function WINDOW.OnPress(self)
+
+end
+
+function WINDOW.OnTick(self)
 
 end

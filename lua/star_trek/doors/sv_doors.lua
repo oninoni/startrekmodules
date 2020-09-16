@@ -1,27 +1,44 @@
+---------------------------------------
+---------------------------------------
+--        Star Trek Utilities        --
+--                                   --
+--            Created by             --
+--       Jan 'Oninoni' Ziegler       --
+--                                   --
+-- This software can be used freely, --
+--    but only distributed by me.    --
+--                                   --
+--    Copyright © 2020 Jan Ziegler   --
+---------------------------------------
+---------------------------------------
 
-LCARS.NextDoorThink = CurTime()
+---------------------------------------
+--           Doors | Server          --
+---------------------------------------
+
+Star_Trek.Doors.NextThink = CurTime()
 
 -- Setting up Doors.
 local setupDoors = function()
-	LCARS.Doors = {}
+	Star_Trek.Doors.Doors = {}
 
     for _, ent in pairs(ents.GetAll()) do
 		ent.DoorLastSequenceStart = CurTime()
 
-		if ent:GetClass() == "prop_dynamic" and table.HasValue(LCARS.DoorModels, ent:GetModel()) then
-			table.insert(LCARS.Doors, ent)
+		if ent:GetClass() == "prop_dynamic" and table.HasValue(Star_Trek.Doors.Models, ent:GetModel()) then
+			table.insert(Star_Trek.Doors.Doors, ent)
 		end
 	end
 end
-hook.Add("InitPostEntity", "LCARS.DoorInitPostEntity", setupDoors)
-hook.Add("PostCleanupMap", "LCARS.DoorPostCleanupMap", setupDoors)
+hook.Add("InitPostEntity", "Star_Trek.DoorInitPostEntity", setupDoors)
+hook.Add("PostCleanupMap", "Star_Trek.DoorPostCleanupMap", setupDoors)
 
 -- TODO: Add Manual Time Delay Option
 -- TODO: Add IsClosed IsOpen Checks (BOTH! and both false when currently moving)
 
 -- Block Doors aborting animations.
-hook.Add("AcceptInput", "LCARS.BlockDoorIfAlreadyDooring", function(ent, input, activator, caller, value)
-	if table.HasValue(LCARS.Doors, ent) then
+hook.Add("AcceptInput", "Star_Trek.BlockDoorIfAlreadyDooring", function(ent, input, activator, caller, value)
+	if table.HasValue(Star_Trek.Doors.Doors, ent) then
         if input == "SetAnimation" then
 			-- Prevent the same animation again.
 			local currentSequence = ent:GetSequence()
@@ -37,14 +54,14 @@ hook.Add("AcceptInput", "LCARS.BlockDoorIfAlreadyDooring", function(ent, input, 
 			end
 			local diff = CurTime() - (ent.DoorLastSequenceStart + duration)
 			if diff < 0 then
-				timer.Create("LCARS.DoorTimer." .. ent:EntIndex(), diff, 1, function()
+				timer.Create("Star_Trek.DoorTimer." .. ent:EntIndex(), diff, 1, function()
 					ent:Fire("SetAnimation", value)
 				end)
 
 				return true
 			end
 			
-			timer.Remove("LCARS.DoorTimer." .. ent:EntIndex())
+			timer.Remove("Star_Trek.DoorTimer." .. ent:EntIndex())
 
 			-- Prevent opening a locked door.
 			if value == "open" and ent.LCARSKeyData then
@@ -86,18 +103,18 @@ hook.Add("AcceptInput", "LCARS.BlockDoorIfAlreadyDooring", function(ent, input, 
 end)
 
 -- Handle being locked. (Autoclose)
-hook.Add("LCARS.ChangedKeyValue", "LCARS.LockDoors", function(ent, key, value)
-	if key == "lcars_locked" and isstring(value) and value == "1" and table.HasValue(LCARS.Doors, ent) then
+hook.Add("Star_Trek.ChangedKeyValue", "Star_Trek.LockDoors", function(ent, key, value)
+	if key == "lcars_locked" and isstring(value) and value == "1" and table.HasValue(Star_Trek.Doors.Doors, ent) then
 		ent:Fire("SetAnimation", "close")
 	end
 end)
 
 -- Open door when pressing use on them.
-hook.Add("KeyPress", "LCARS.OpenDoors", function(ply, key)
+hook.Add("KeyPress", "Star_Trek.OpenDoors", function(ply, key)
 	if key == IN_USE then
 		local trace = ply:GetEyeTrace()
 		local ent = trace.Entity
-		if IsValid(ent) and table.HasValue(LCARS.Doors, ent) then
+		if IsValid(ent) and table.HasValue(Star_Trek.Doors.Doors, ent) then
 			local distance = trace.HitPos:Distance(ply:GetPos())
 			if distance < 64 then
 				ent:Fire("SetAnimation", "open")
@@ -125,11 +142,11 @@ local function checkPlayers(door)
 end
 
 -- Think hook for auto-closing the doors.
-hook.Add("Think", "LCARS.DoorThink", function()
-    if LCARS.NextDoorThink > CurTime() then return end
-    LCARS.NextDoorThink = CurTime() + 0.2
+hook.Add("Think", "Star_Trek.DoorThink", function()
+    if Star_Trek.Doors.NextThink > CurTime() then return end
+    Star_Trek.Doors.NextThink = CurTime() + 0.2
 
-	for _, ent in pairs(LCARS.Doors or {}) do
+	for _, ent in pairs(Star_Trek.Doors.Doors or {}) do
 		if ent.Open then
 			if not checkPlayers(ent) then
 				if ent.LCARSKeyData then

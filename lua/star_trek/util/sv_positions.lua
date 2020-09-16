@@ -1,3 +1,21 @@
+---------------------------------------
+---------------------------------------
+--        Star Trek Utilities        --
+--                                   --
+--            Created by             --
+--       Jan 'Oninoni' Ziegler       --
+--                                   --
+-- This software can be used freely, --
+--    but only distributed by me.    --
+--                                   --
+--    Copyright © 2020 Jan Ziegler   --
+---------------------------------------
+---------------------------------------
+
+---------------------------------------
+--         Positions | Server        --
+---------------------------------------
+
 -- TODO: Improve Code a lot!
 -- Needs some real magic code, to be a better version of this!
 
@@ -5,7 +23,7 @@
 -- 
 -- @param Vector pos
 -- @param? Number radius - defaults to 35 which is good for checking players positions.
-function LCARS:IsEmptyPos(pos, lower, higher, radius)
+function Star_Trek.Util:IsEmptyPos(pos, lower, higher, radius)
 	radius = radius or 35
 
     if pos.x < lower.x
@@ -51,7 +69,7 @@ end
 --
 -- @param Vector pos
 -- @return Vector pos or Boolean false if no empty position was found.
-function LCARS:FindEmptyPosWithin(pos, lower, higher)
+function Star_Trek.Util:FindEmptyPosWithin(pos, lower, higher)
 	local x = pos.x
 	local y = pos.y
 	local z = pos.z

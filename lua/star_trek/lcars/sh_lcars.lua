@@ -1,4 +1,23 @@
+---------------------------------------
+---------------------------------------
+--        Star Trek Utilities        --
+--                                   --
+--            Created by             --
+--       Jan 'Oninoni' Ziegler       --
+--                                   --
+-- This software can be used freely, --
+--    but only distributed by me.    --
+--                                   --
+--    Copyright © 2020 Jan Ziegler   --
+---------------------------------------
+---------------------------------------
+
+---------------------------------------
+--           LCARS | Shared          --
+---------------------------------------
+
 Star_Trek.LCARS.Windows = {}
+Star_Trek.LCARS.ActiveInterfaces = Star_Trek.LCARS.ActiveInterfaces or {}
 
 function Star_Trek.LCARS:LoadWindow(name)
     WINDOW = {}

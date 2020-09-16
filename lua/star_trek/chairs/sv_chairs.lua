@@ -25,31 +25,33 @@ local function setupChairs()
         end
     end
 end
-hook.Add("InitPostEntity", "LCARS.ChairsInitPostEntity", setupChairs)
-hook.Add("PostCleanupMap", "LCARS.ChairsPostCleanupMap", setupChairs)
+hook.Add("InitPostEntity", "Star_Trek.ChairsInitPostEntity", setupChairs)
+hook.Add("PostCleanupMap", "Star_Trek.ChairsPostCleanupMap", setupChairs)
 
 -- TODO: Add Entity Spawning aswell.
 
 -- Save View Angle when leaving a chair.
 -- TODO: Add Chair Models instead of Map ID Check
-hook.Add("CanExitVehicle", "LCARS.CheckLeaveChair", function(chair, ply)
+hook.Add("CanExitVehicle", "Star_Trek.CheckLeaveChair", function(chair, ply)
 	if chair:GetClass() == "prop_vehicle_prisoner_pod" and chair:MapCreationID() ~= -1 then
-		ply.LCARSPrevViewAngle = ply:EyeAngles()
+		ply.STPrevViewAngle = ply:EyeAngles()
 	end
 end)
 
 -- Set Position and View Angle after leaving a chair.
 -- TODO: Add Chair Models instead of Map ID Check
-hook.Add("PlayerLeaveVehicle", "LCARS.LeaveChair", function(ply, chair)
+hook.Add("PlayerLeaveVehicle", "Star_Trek.LeaveChair", function(ply, chair)
 	if chair:GetClass() == "prop_vehicle_prisoner_pod" and chair:MapCreationID() ~= -1 then
-		ply:SetPos(chair:GetPos())
-		ply:SetEyeAngles(ply.LCARSPrevViewAngle)
+		timer.Simple(0, function()
+			ply:SetPos(chair:GetPos())
+			ply:SetEyeAngles(ply.STPrevViewAngle)
+		end)
 	end
 end)
 
 -- Enable crosshair in chair.
 -- TODO: Add Chair Models instead of Map ID Check
-hook.Add("PlayerEnteredVehicle", "LCARS.EnterConsoleChair", function(ply, chair, role)
+hook.Add("PlayerEnteredVehicle", "Star_Trek.EnterConsoleChair", function(ply, chair, role)
 	if chair:GetClass() == "prop_vehicle_prisoner_pod" and chair:MapCreationID() ~= -1 then
 		ply:CrosshairEnable()
 	end

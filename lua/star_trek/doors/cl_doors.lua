@@ -1,4 +1,22 @@
-hook.Add("wp-shouldrender", "LCARS.HidePortalInDoors", function(portal, exitPortal )
+---------------------------------------
+---------------------------------------
+--        Star Trek Utilities        --
+--                                   --
+--            Created by             --
+--       Jan 'Oninoni' Ziegler       --
+--                                   --
+-- This software can be used freely, --
+--    but only distributed by me.    --
+--                                   --
+--    Copyright © 2020 Jan Ziegler   --
+---------------------------------------
+---------------------------------------
+
+---------------------------------------
+--           Doors | Client          --
+---------------------------------------
+
+hook.Add("wp-shouldrender", "Star_Trek.HidePortalInDoors", function(portal, exitPortal )
 	local camOrigin = LocalPlayer():EyePos()
 	local distance = camOrigin:Distance( portal:GetPos() )
 	local disappearDist = portal:GetDisappearDist()

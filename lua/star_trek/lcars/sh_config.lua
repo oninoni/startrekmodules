@@ -13,13 +13,17 @@
 ---------------------------------------
 
 ---------------------------------------
---           Main | Config           --
+--           LCARS | Config          --
 ---------------------------------------
 
--- Modules
-Star_Trek.Modules["util"] = true
-Star_Trek.Modules["portal_window"] = true
-Star_Trek.Modules["chairs"] = true
-Star_Trek.Modules["doors"] = true
+Star_Trek.LCARS.ModelSettings = {}
 
-Star_Trek.Modules["lcars"] = true
+Star_Trek.LCARS.ModelSettings["models/dav0r/buttons/button.mdl"] = {
+    Offset = -4,
+}
+Star_Trek.LCARS.ModelSettings["models/maxofs2d/button_05.mdl"] = {
+    Offset = 8,
+}
+Star_Trek.LCARS.ModelSettings["models/kingpommes/startrek/voyager/turbolift_button.mdl"] = {
+    Offset = 2,
+}

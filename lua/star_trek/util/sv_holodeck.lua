@@ -1,8 +1,28 @@
+---------------------------------------
+---------------------------------------
+--        Star Trek Utilities        --
+--                                   --
+--            Created by             --
+--       Jan 'Oninoni' Ziegler       --
+--                                   --
+-- This software can be used freely, --
+--    but only distributed by me.    --
+--                                   --
+--    Copyright © 2020 Jan Ziegler   --
+---------------------------------------
+---------------------------------------
+
+---------------------------------------
+--         Holodeck | Server         --
+---------------------------------------
+
+-- TODO: Own Module with disintegration code.
+
 -- Compresses players between 2 named brush areas.
 --
 -- @param String outerName
 -- @param String innerName
-function LCARS:CompressPlayers(outerName, innerName)
+function Star_Trek.Util:CompressPlayers(outerName, innerName)
     local outer = ents.FindByName(outerName)[1]
     local inner = ents.FindByName(innerName)[1]
     
