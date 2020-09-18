@@ -1,11 +1,14 @@
-function WINDOW.OnCreate(windowData, buttons)
+function WINDOW.OnCreate(windowData, buttons, title)
     windowData.Buttons = {}
+
+    windowData.Title = title or ""
 
     if not istable(buttons) then
         return false
     end
 
     for i, button in pairs(buttons) do
+    --for j=1,4,1 do
         local buttonData = {
             Name = button.Name or "MISSING",
             Disabled = button.Disabled or false,
@@ -61,6 +64,7 @@ function WINDOW.OnCreate(windowData, buttons)
         buttonData.RandomL = string.sub(buttonData.RandomL, 1, 2) .. "-" .. string.sub(buttonData.RandomL, 3)
 
         table.insert(windowData.Buttons, buttonData)
+    --end
     end
 
     return windowData

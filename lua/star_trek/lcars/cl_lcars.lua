@@ -162,10 +162,14 @@ net.Receive("Star_Trek.LCARS.Update", function()
         return 
     end
     
+    local oldVisible = interface.Windows[windowId].WVis
+
     local window = Star_Trek.LCARS:LoadWindowData(windowData, interface.IPos, interface.IAng)
     if istable(window) then
         table.Merge(interface.Windows[windowId], window)
     end
+    
+    interface.Windows[windowId].WVis = oldVisible
 end)
 
 -- Recording interact presses and checking interaction with panel

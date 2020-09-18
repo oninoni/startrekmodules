@@ -67,7 +67,7 @@ function Star_Trek.LCARS:OpenTurboliftMenu()
                 Star_Trek.LCARS:CloseInterface(ent)
             end
         end
-    end, buttons)
+    end, buttons, "Turbolift")
     if not success then
         print("[Star Trek] " .. data)
         return

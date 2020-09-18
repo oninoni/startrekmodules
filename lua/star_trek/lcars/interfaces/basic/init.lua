@@ -40,6 +40,7 @@ function Star_Trek.LCARS:OpenMenu()
     local scale = tonumber(keyValues["lcars_scale"])
     local width = tonumber(keyValues["lcars_width"])
     local height = tonumber(keyValues["lcars_height"])
+    local title = keyValues["lcars_title"]
 
     local success, data = self:CreateWindow("button_list", Vector(), Angle(), scale, width, height, function(windowData, interfaceData, ent, buttonId)
         local triggerEntity = ent:GetParent()
@@ -65,7 +66,7 @@ function Star_Trek.LCARS:OpenMenu()
         end
         
         Star_Trek.LCARS:CloseInterface(ent)
-    end, buttons)
+    end, buttons, title)
     if not success then
         print("[Star Trek] " .. data)
     end
