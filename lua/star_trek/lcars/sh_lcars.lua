@@ -23,11 +23,11 @@ function Star_Trek.LCARS:LoadWindow(name)
     WINDOW = {}
 
     if SERVER then
-        AddCSLuaFile("windows/" .. name .. "/client.lua")
-        include("windows/" .. name .. "/server.lua")
+        AddCSLuaFile("windows/" .. name .. "/cl_init.lua")
+        include("windows/" .. name .. "/init.lua")
     end
     if CLIENT then
-        include("windows/" .. name .. "/client.lua")
+        include("windows/" .. name .. "/cl_init.lua")
     end
 
     self.Windows[name] = WINDOW

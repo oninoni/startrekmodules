@@ -31,6 +31,34 @@ net.Receive("Star_Trek.LCARS.Close", function()
     Star_Trek.LCARS:CloseInterface(id)
 end)
 
+function Star_Trek.LCARS:LoadWindowData(windowData, IPos, IAng)
+    local windowFunctions = self.Windows[windowData.WindowType]
+    if not istable(windowFunctions) then
+        return
+    end
+
+    local pos, ang = LocalToWorld(windowData.WindowPos, windowData.WindowAngles, IPos, IAng)
+
+    local window = {
+        WType = windowData.WindowType,
+
+        WPos = pos,
+        WAng = ang,
+        
+        WVis = false,
+        
+        WVU = ang:Up(),
+        WVR = ang:Right(),
+        WVF = ang:Forward(),
+
+        WScale = windowData.WindowScale,
+        WWidth = windowData.WindowWidth,
+        WHeight = windowData.WindowHeight,
+    }
+
+    return windowFunctions.OnCreate(window, windowData)
+end
+
 function Star_Trek.LCARS:OpenMenu(id, interfaceData)
     local interface = {
         IPos = interfaceData.InterfacePos,
@@ -49,36 +77,10 @@ function Star_Trek.LCARS:OpenMenu(id, interfaceData)
     }
 
     for i, windowData in pairs(interfaceData.Windows) do
-        local windowFunctions = self.Windows[windowData.WindowType]
-        if not istable(windowFunctions) then
-            continue
+        local window = Star_Trek.LCARS:LoadWindowData(windowData, interface.IPos, interface.IAng)
+        if istable(window) then
+            interface.Windows[i] = window
         end
-
-        local pos, ang = LocalToWorld(windowData.WindowPos, windowData.WindowAngles, interface.IPos, interface.IAng)
-
-        local window = {
-            WType = windowData.WindowType,
-
-            WPos = pos,
-            WAng = ang,
-            
-            WVis = false,
-            
-            WVU = ang:Up(),
-            WVR = ang:Right(),
-            WVF = ang:Forward(),
-
-            WScale = windowData.WindowScale,
-            WWidth = windowData.WindowWidth,
-            WHeight = windowData.WindowHeight,
-        }
-
-        window = windowFunctions.OnCreate(window, windowData)
-        if not istable(window) then
-            continue
-        end
-
-        interface.Windows[i] = window
     end
 
     self.ActiveInterfaces[id] = interface
@@ -150,6 +152,69 @@ hook.Add("Think", "Star_Trek.LCARS.Think", function()
     lastThink = curTime
 end)
 
+net.Receive("Star_Trek.LCARS.Update", function()
+    local id = net.ReadInt(32)
+    local windowId = net.ReadInt(32)
+    local windowData = net.ReadTable()
+
+    local interface = Star_Trek.LCARS.ActiveInterfaces[id]
+    if not istable(interface) then
+        return 
+    end
+    
+    local window = Star_Trek.LCARS:LoadWindowData(windowData, interface.IPos, interface.IAng)
+    if istable(window) then
+        table.Merge(interface.Windows[windowId], window)
+    end
+end)
+
+-- Recording interact presses and checking interaction with panel
+hook.Add("KeyPress", "Star_Trek.LCARS.KeyPress", function(ply, key)
+    if not (game.SinglePlayer() or IsFirstTimePredicted()) then return end
+
+    if key ~= IN_USE and key ~= IN_ATTACK then return end
+
+    local eyePos = LocalPlayer():EyePos()
+    local eyeDir = EyeVector()
+
+    for id, interface in pairs(Star_Trek.LCARS.ActiveInterfaces) do
+        if not interface.IVis then
+            continue
+        end
+
+        if interface.Closing and interface.AnimPos ~= 1 then
+            continue
+        end
+
+        for i, window in pairs(interface.Windows) do
+            if not window.WVis then
+                continue
+            end
+
+            local width = window.WWidth
+            local height = window.WHeight
+            local pos = Star_Trek.LCARS:Get3D2DMousePos(window, eyePos, eyeDir)
+            if pos.x > -width / 2 and pos.x < width / 2
+            and pos.y > -height / 2 and pos.y < height / 2 then
+                local windowFunctions = Star_Trek.LCARS.Windows[window.WType]
+                if not istable(windowFunctions) then
+                    continue
+                end
+
+                local buttonId = windowFunctions.OnPress(window, pos, interface.AnimPos)
+                if buttonId then
+                    net.Start("Star_Trek.LCARS.Pressed")
+                        net.WriteInt(id, 32)
+                        net.WriteInt(i, 32)
+                        net.WriteInt(buttonId, 32)
+                    net.SendToServer()
+                end
+            end
+        end
+    end
+end)
+
+
 -- Main Render Hook for all LCARS Screens
 hook.Add("PostDrawOpaqueRenderables", "Star_Trek.LCARS.Draw", function()
     local eyePos = LocalPlayer():EyePos()
@@ -161,26 +226,24 @@ hook.Add("PostDrawOpaqueRenderables", "Star_Trek.LCARS.Draw", function()
         end
 
         for _, window in pairs(interface.Windows) do
-            local width = window.WWidth
-            local height = window.WHeight
-
             if not window.WVis then
                 continue
             end
 
+            local width = window.WWidth
+            local height = window.WHeight
+            local pos = Star_Trek.LCARS:Get3D2DMousePos(window, eyePos, eyeDir)
+            if pos.x > -width / 2 and pos.x < width / 2
+            and pos.y > -height / 2 and pos.y < height / 2 then
+                window.LastPos = pos
+            end
+
+            local windowFunctions = Star_Trek.LCARS.Windows[window.WType]
+            if not istable(windowFunctions) then
+                continue
+            end
+
             cam.Start3D2D(window.WPos, window.WAng, 1 / window.WScale)
-                local pos = Star_Trek.LCARS:Get3D2DMousePos(window, eyePos, eyeDir)
-
-                if pos.x > -width / 2 and pos.x < width / 2
-                and pos.y > -height / 2 and pos.y < height / 2 then
-                    window.LastPos = pos
-                end
-
-                local windowFunctions = Star_Trek.LCARS.Windows[window.WType]
-                if not istable(windowFunctions) then
-                    continue
-                end
-
                 windowFunctions.OnDraw(window, window.LastPos or Vector(), interface.AnimPos)
             cam.End3D2D()
         end

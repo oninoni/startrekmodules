@@ -63,10 +63,16 @@ function WINDOW.OnCreate(windowData, buttons)
     return windowData
 end
 
-function WINDOW.OnPress(self)
+function WINDOW.OnPress(windowData, interfaceData, ent, buttonId, callback)
+    ent:EmitSound("buttons/blip1.wav")
+    -- TODO: Replace Sound
 
-end
+    if isfunction(callback) then
+        local updated = callback(windowData, interfaceData, ent, buttonId)
+        if updated then 
+            return true
+        end
+    end
 
-function WINDOW.OnTick(self)
-
+    return false
 end

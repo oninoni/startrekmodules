@@ -118,9 +118,14 @@ function Star_Trek.LCARS:OpenInterface(ent, windows)
         Windows         = windows,
     }
 
+    local interfaceDataClient = table.Copy(interfaceData)
+    for _, windowData in pairs(interfaceDataClient.Windows) do
+        windowData.Callback = nil
+    end
+
     net.Start("Star_Trek.LCARS.Open")
         net.WriteInt(ent:EntIndex(), 32)
-        net.WriteTable(interfaceData)
+        net.WriteTable(interfaceDataClient)
     net.Broadcast()
 
     self.ActiveInterfaces[ent] = interfaceData
@@ -173,7 +178,7 @@ end
 -- @param? vararg ...
 -- @return Boolean Success
 -- @return? String/Table error/windowData
-function Star_Trek.LCARS:CreateWindow(windowType, pos, angles, scale, width, height, ...)
+function Star_Trek.LCARS:CreateWindow(windowType, pos, angles, scale, width, height, callback, ...)
     local windowFunctions = self.Windows[windowType]
     if not istable(windowFunctions) then
         return false, "Invalid Window Type!"
@@ -188,6 +193,8 @@ function Star_Trek.LCARS:CreateWindow(windowType, pos, angles, scale, width, hei
         WindowScale = scale or 20,
         WindowWidth = width or 300,
         WindowHeight = height or 300,
+
+        Callback = callback,
     }
 
     windowData = windowFunctions.OnCreate(windowData, ...)
@@ -198,58 +205,6 @@ function Star_Trek.LCARS:CreateWindow(windowType, pos, angles, scale, width, hei
     return true, windowData
 end
 
--- Opening a general Purpose Menu
-function Star_Trek.LCARS:OpenMenu()
-    local success, ent = self:GetInterfaceEntity(TRIGGER_PLAYER, CALLER)
-    if not success then 
-        -- Error Message
-        print("[Star Trek] " .. ent)
-    end
-
-    local keyValues = ent.LCARSKeyData
-    if not istable(keyValues) then
-        print("[Star Trek] Invalid Key Values on OpenMenu")
-    end
-
-    local buttons = {}
-    for i=1,20 do
-        local name = keyValues["lcars_name_" .. i]
-        if isstring(name) then
-            local disabled = keyValues["lcars_disabled_" .. i]
-
-            buttons[i] = {
-                Name = name,
-                Disabled = disabled,
-            }
-        else
-            break
-        end
-    end
-
-    local scale = tonumber(keyValues["lcars_scale"])
-    local width = tonumber(keyValues["lcars_width"])
-    local height = tonumber(keyValues["lcars_height"])
-
-    local success, data = self:CreateWindow("button_list", Vector(), Angle(), scale, width, height, buttons)
-    if not success then
-        print("[Star Trek] " .. data)
-    end
-
-    local windows = {
-        [1] = data
-    }
-
-    local success, error = self:OpenInterface(ent, windows)
-    if not success then
-        print("[Star Trek] " .. error)
-    end
-end
-
-LCARS = LCARS or {}
-function LCARS:OpenMenu()
-    Star_Trek.LCARS:OpenMenu()
-end
-
 -- TODO: Sync on Join Active Interfaces
 
 -- Closing the panel when you are too far away.
@@ -257,32 +212,6 @@ end
 hook.Add("Think", "Star_Trek.LCARS.ThinkClose", function()
     local removeInterfaces = {}
     for ent, interfaceData in pairs(Star_Trek.LCARS.ActiveInterfaces) do
-        --[[
-        if panel.LCARSMenuHasChanged then
-            panelData.Windows[1].Buttons = {}
-
-            local panel_brush = panel:GetParent()
-            if not IsValid(panel_brush) then 
-                panel_brush = panel
-            end
-
-            local keyValues = panel_brush.LCARSKeyData
-            if istable(keyValues) then
-                for i=1,20 do
-                    local name = keyValues["lcars_name_" .. i]
-                    if isstring(name) then
-                        local button = LCARS:CreateButton(name, nil, keyValues["lcars_disabled_" .. i])
-                        panelData.Windows[1].Buttons[i] = button
-                    else
-                        break
-                    end
-                end
-            end
-
-            LCARS:UpdateWindow(panel, 1, panelData.Windows[1])
-            panel.LCARSMenuHasChanged = false
-        end]]
-
         local entities = ents.FindInSphere(interfaceData.InterfacePos, 200)
         local playersFound = false
         for _, ent in pairs(entities or {}) do
@@ -301,3 +230,62 @@ hook.Add("Think", "Star_Trek.LCARS.ThinkClose", function()
     end
 end)
 
+function Star_Trek.LCARS:UpdateWindow(ent, windowId)
+    local interfaceData = self.ActiveInterfaces[ent]
+
+    local windowDataClient = table.Copy(interfaceData.Windows[windowId])
+    windowDataClient.Callback = nil
+
+    net.Start("Star_Trek.LCARS.Update")
+        net.WriteInt(ent:EntIndex(), 32)
+        net.WriteInt(windowId, 32)
+        net.WriteTable(windowDataClient)
+    net.Broadcast()
+end
+
+-- Receive the pressed event from the client when a user presses his panel.
+net.Receive("Star_Trek.LCARS.Pressed", function(len, ply)
+    local id = net.ReadInt(32)
+    local windowId = net.ReadInt(32)
+    local buttonId = net.ReadInt(32)
+
+    local ent = ents.GetByIndex(id)
+    if not IsValid(ent) then
+        return
+    end
+
+    local interfaceData = Star_Trek.LCARS.ActiveInterfaces[ent]
+    if not istable(interfaceData) then
+        return
+    end
+
+    local windowData = interfaceData.Windows[windowId]
+    if not istable(windowData) then
+        return
+    end
+
+    local windowFunctions = Star_Trek.LCARS.Windows[windowData.WindowType]
+    if not istable(windowFunctions) then
+        return
+    end
+
+    local updated = windowFunctions.OnPress(windowData, interfaceData, ent, buttonId, windowData.Callback)
+    if updated then
+        self:UpdateWindow(ent, windowId)
+    end
+end)
+
+function Star_Trek.LCARS:LoadInterface(name)
+    include("interfaces/" .. name .. "/init.lua")
+    print("[Star Trek] Loaded LCARS Interface \"" .. name .. "\"")
+end
+
+function Star_Trek.LCARS:LoadInterfaces()
+    local _, directories = file.Find("star_trek/lcars/interfaces/*", "LUA")
+
+    for _, interfaceName in pairs(directories) do
+        self:LoadInterface(interfaceName)
+    end
+end
+
+Star_Trek.LCARS:LoadInterfaces()

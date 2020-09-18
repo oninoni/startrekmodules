@@ -4,14 +4,6 @@ function WINDOW.OnCreate(self, windowData)
     return self
 end
 
-function WINDOW.OnPress(self, pos)
-
-end
-
-function WINDOW.OnTick(self, pos)
-
-end
-
 -- Calculate the scroll of the list.
 local function getOffset(height, n, y)
     local max = math.floor(height / 35)
@@ -46,6 +38,23 @@ local function getButtonYPos(height, i, n, offset, animPos)
     end
 
     return math.floor((y - 17.5) * animPos)
+end
+
+function WINDOW.OnPress(self, pos, animPos)
+    local buttons = self.Buttons
+    local n = table.maxn(buttons)
+
+    local height = self.WHeight
+
+    local offset = getOffset(height, n, pos.y)
+    for i, button in pairs(buttons) do
+        if button.Disabled then continue end
+        
+        local y = getButtonYPos(height, i, n, offset, animPos)
+        if pos.y >= y - 16 and pos.y <= y + 16 then
+            return i
+        end
+    end
 end
 
 -- Drawing a normal LCARS panel button. (2D Rendering Context)
@@ -97,12 +106,12 @@ function WINDOW.OnDraw(self, pos, animPos)
 
     local offset = getOffset(height, n, pos.y)
     for i, button in pairs(buttons) do
-        local y = getButtonYPos(height, i, n, offset, animPos)
-
         local color = button.Color or colors[(i - 1) % nColors + 1]
         if button.Disabled then
             color = color_grey
         end
+
+        local y = getButtonYPos(height, i, n, offset, animPos)
 
         local alpha = 255
         if y < -height / 2 or y > height / 2 then
