@@ -13,15 +13,27 @@
 ---------------------------------------
 
 ---------------------------------------
---           Main | Config           --
+--      Turbolift Doors | Server     --
 ---------------------------------------
 
--- Modules
-Star_Trek.Modules["util"] = true
-Star_Trek.Modules["portal_window"] = true
-Star_Trek.Modules["chairs"] = true
-Star_Trek.Modules["doors"] = true
+function Star_Trek.Turbolift:OpenDoors(ent)
+    local door = ent:GetChildren()[1]
+    if IsValid(door) then
+        door:Fire("AddOutput", "lcars_locked 0")
+        door:Fire("SetAnimation", "open")
+    end
+end
 
-Star_Trek.Modules["lcars"] = true
+function Star_Trek.Turbolift:UnlockDoors(ent)
+    local door = ent:GetChildren()[1]
+    if IsValid(door) then
+        door:Fire("AddOutput", "lcars_locked 0")
+    end
+end
 
-Star_Trek.Modules["turbolift"] = true
+function Star_Trek.Turbolift:LockDoors(ent)
+    local door = ent:GetChildren()[1]
+    if IsValid(door) then
+        door:Fire("AddOutput", "lcars_locked 1")
+    end
+end

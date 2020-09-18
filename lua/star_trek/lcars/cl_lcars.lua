@@ -82,7 +82,7 @@ function Star_Trek.LCARS:OpenMenu(id, interfaceData)
             interface.Windows[i] = window
         end
     end
-
+    
     self.ActiveInterfaces[id] = interface
 end
 
@@ -116,7 +116,7 @@ hook.Add("Think", "Star_Trek.LCARS.Think", function()
     local eyePos = ply:EyePos()
 
     local removeInterfaces = {}
-    for i, interface in pairs(Star_Trek.LCARS.ActiveInterfaces) do
+    for id, interface in pairs(Star_Trek.LCARS.ActiveInterfaces) do
         interface.IVis = false
         
         for _, window in pairs(interface.Windows) do
@@ -138,15 +138,15 @@ hook.Add("Think", "Star_Trek.LCARS.Think", function()
             interface.AnimPos = math.max(0, interface.AnimPos - diff * 2)
 
             if interface.AnimPos == 0 then
-                table.insert(removeInterfaces, i)
+                table.insert(removeInterfaces, id)
             end
         else
             interface.AnimPos = math.min(1, interface.AnimPos + diff * 2)
         end
     end
 
-    for _, i in pairs(removeInterfaces) do
-        Star_Trek.LCARS.ActiveInterfaces[i] = nil
+    for _, id in pairs(removeInterfaces) do
+        Star_Trek.LCARS.ActiveInterfaces[id] = nil
     end
     
     lastThink = curTime

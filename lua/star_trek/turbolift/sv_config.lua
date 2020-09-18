@@ -13,15 +13,11 @@
 ---------------------------------------
 
 ---------------------------------------
---           Main | Config           --
+--         Turbolift | Config        --
 ---------------------------------------
 
--- Modules
-Star_Trek.Modules["util"] = true
-Star_Trek.Modules["portal_window"] = true
-Star_Trek.Modules["chairs"] = true
-Star_Trek.Modules["doors"] = true
+-- Maximum time, that a turbolift can take, to reach its destination.
+Star_Trek.Turbolift.MaxTime = 20
 
-Star_Trek.Modules["lcars"] = true
-
-Star_Trek.Modules["turbolift"] = true
+-- Minimum time, that a turbolift can take, to reach its destination.
+Star_Trek.Turbolift.MinTime = 5

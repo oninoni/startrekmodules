@@ -17,8 +17,6 @@ function LCARS:GetTransporterObjects(panel, window, listWindow)
         if button.Selected then
             local object = nil
 
-            print(modeName)
-
             if modeName == "Transporter Pad" then
                 -- Beam from Pad
                 local pad = button.Data

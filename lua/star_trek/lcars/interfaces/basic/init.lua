@@ -82,19 +82,21 @@ end
 
 hook.Add("Think", "Star_Trek.LCARS.BasicInterface", function()
     for ent, interfaceData in pairs(Star_Trek.LCARS.ActiveInterfaces) do
-        local triggerEntity = ent:GetParent()
-        if not IsValid(triggerEntity) then
-            triggerEntity = ent
-        end
-        
-        if triggerEntity.LCARSMenuChanged then
-            local buttons = generateButtons(ent, triggerEntity, triggerEntity.LCARSKeyData)
+        if IsValid(ent) then
+            local triggerEntity = ent:GetParent()
+            if not IsValid(triggerEntity) then
+                triggerEntity = ent
+            end
+            
+            if triggerEntity.LCARSMenuChanged then
+                local buttons = generateButtons(ent, triggerEntity, triggerEntity.LCARSKeyData)
 
-            interfaceData.Windows[1].Buttons = buttons
+                interfaceData.Windows[1].Buttons = buttons
 
-            Star_Trek.LCARS:UpdateWindow(ent, 1)
+                Star_Trek.LCARS:UpdateWindow(ent, 1)
 
-            triggerEntity.LCARSMenuChanged = false
+                triggerEntity.LCARSMenuChanged = false
+            end
         end
     end
 end)

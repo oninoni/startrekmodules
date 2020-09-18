@@ -32,11 +32,18 @@ function Star_Trek.LCARS:CloseInterface(ent)
         return false, "Invalid Interface Entity!"
     end
 
+    if timer.Exists("Star_Trek.LCARS." .. ent:EntIndex()) then
+        return true
+    end
+
     net.Start("Star_Trek.LCARS.Close")
         net.WriteInt(ent:EntIndex(), 32)
     net.Broadcast()
 
-    Star_Trek.LCARS.ActiveInterfaces[ent] = nil
+    timer.Create("Star_Trek.LCARS." .. ent:EntIndex(), 1, 1, function()
+        Star_Trek.LCARS.ActiveInterfaces[ent] = nil
+        timer.Remove("Star_Trek.LCARS." .. ent:EntIndex())
+    end)
 
     return true
 end
@@ -70,17 +77,16 @@ function Star_Trek.LCARS:GetInterfacePosAngle(ent)
     -- If an "button" attachment exists on the model of the entity, then that is used instead.
     local attachmentID = ent:LookupAttachment("button")
     if isnumber(attachmentID) and attachmentID > 0 then
-        local attachmentPoint = panel:GetAttachment(attachmentID)
+        local attachmentPoint = ent:GetAttachment(attachmentID)
         interfacePos = attachmentPoint.Pos
         interfaceAngle = attachmentPoint.Ang
-    else
-        -- Model offset, when there is no "button" attachment.
-        local modelSetting = self.ModelSettings[ent:GetModel()]
-        if istable(modelSetting) then
-            interfacePos = interfacePos + interfaceAngle:Forward() * modelSetting.Offset 
-        end
     end
-    
+
+    local modelSetting = self.ModelSettings[ent:GetModel()]
+    if istable(modelSetting) then
+        interfacePos = interfacePos + interfaceAngle:Forward() * modelSetting.Offset 
+    end
+
     interfaceAngle:RotateAroundAxis(interfaceAngle:Right(), -90)
     interfaceAngle:RotateAroundAxis(interfaceAngle:Up(), 90)
 
@@ -129,7 +135,7 @@ function Star_Trek.LCARS:OpenInterface(ent, windows)
     net.Broadcast()
 
     self.ActiveInterfaces[ent] = interfaceData
-
+    
     return true
 end
 
@@ -212,7 +218,12 @@ end
 hook.Add("Think", "Star_Trek.LCARS.ThinkClose", function()
     local removeInterfaces = {}
     for ent, interfaceData in pairs(Star_Trek.LCARS.ActiveInterfaces) do
-        local entities = ents.FindInSphere(interfaceData.InterfacePos, 200)
+        if not IsValid(ent) then
+            table.insert(removeInterfaces, ent)
+            continue
+        end
+
+        local entities = ents.FindInSphere(interfaceData.InterfacePos, 100)
         local playersFound = false
         for _, ent in pairs(entities or {}) do
             if ent:IsPlayer() then

@@ -43,6 +43,7 @@ function WINDOW.OnCreate(windowData, buttons)
         else
             l = math.random(0, 999999)
         end
+
         if l < 10 then
             buttonData.RandomL = "00000" .. tostring(l)
         elseif l < 100 then
@@ -56,6 +57,8 @@ function WINDOW.OnCreate(windowData, buttons)
         else
             buttonData.RandomL = tostring(l)
         end
+
+        buttonData.RandomL = string.sub(buttonData.RandomL, 1, 2) .. "-" .. string.sub(buttonData.RandomL, 3)
 
         table.insert(windowData.Buttons, buttonData)
     end

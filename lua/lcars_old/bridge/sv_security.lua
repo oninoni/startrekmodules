@@ -28,8 +28,6 @@ local setupSecurity = function()
     end
 
     for _, scanner in pairs(scanners) do
-        print("---")
-        print(scanner.Name)
         PrintTable(scanner.Positions)
     end
 end

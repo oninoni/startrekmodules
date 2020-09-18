@@ -17,6 +17,7 @@
 ---------------------------------------
 
 Star_Trek.Doors.NextThink = CurTime()
+Star_Trek.Doors.Doors = Star_Trek.Doors.Doors or {}
 
 -- Setting up Doors.
 local setupDoors = function()

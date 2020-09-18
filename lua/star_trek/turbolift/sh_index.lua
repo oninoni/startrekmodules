@@ -13,15 +13,14 @@
 ---------------------------------------
 
 ---------------------------------------
---           Main | Config           --
+--         Turbolift | Index         --
 ---------------------------------------
 
--- Modules
-Star_Trek.Modules["util"] = true
-Star_Trek.Modules["portal_window"] = true
-Star_Trek.Modules["chairs"] = true
-Star_Trek.Modules["doors"] = true
+Star_Trek.Turbolift = Star_Trek.Turbolift or {}
 
-Star_Trek.Modules["lcars"] = true
-
-Star_Trek.Modules["turbolift"] = true
+if SERVER then
+    include("sv_config.lua")
+    include("sv_doors.lua")
+    include("sv_path.lua")
+    include("sv_turbolift.lua")
+end
