@@ -25,6 +25,41 @@ function Star_Trek.LCARS:CloseInterface(id)
     end
 end
 
+function Star_Trek.LCARS:DrawFrame(x, y, width, wd2, hd2, title, alpha)
+    -- Bottom Yellow Bars
+    draw.RoundedBox(0, -wd2   ,        0, 50, hd2    , Color(0, 0, 0, alpha))
+    draw.RoundedBox(0, -wd2 +1,        0, 48, hd2    , ColorAlpha(Star_Trek.LCARS.ColorOrange, alpha))
+    
+    -- Middle Red Bars
+    draw.RoundedBox( 0, -wd2    , -hd2 +74,       50, hd2 -74, Color(0, 0, 0, alpha))
+    draw.RoundedBox(25, -wd2    , -hd2 +48,       50,      50, Color(0, 0, 0, alpha))
+    draw.RoundedBox( 0, -wd2 +25, -hd2 +48,       25,      25, Color(0, 0, 0, alpha))
+    draw.RoundedBox( 0, -wd2 +25, -hd2 +48, width-25,      11, Color(0, 0, 0, alpha))
+
+    draw.RoundedBox( 0, -wd2  +1, -hd2 +74,       48, hd2 -74, ColorAlpha(Star_Trek.LCARS.ColorLightRed, alpha))
+    draw.RoundedBox(24, -wd2  +1, -hd2 +49,       48,      48, ColorAlpha(Star_Trek.LCARS.ColorLightRed, alpha))
+    draw.RoundedBox( 0, -wd2 +25, -hd2 +49,       24,      24, ColorAlpha(Star_Trek.LCARS.ColorLightRed, alpha))
+    draw.RoundedBox( 0, -wd2 +25, -hd2 +49, width-25,       9, ColorAlpha(Star_Trek.LCARS.ColorLightRed, alpha))
+
+    -- Top Red Bars
+    draw.RoundedBox( 0, -wd2    , -hd2  -3,       50,      25, Color(0, 0, 0, alpha))
+    draw.RoundedBox(25, -wd2    , -hd2  -3,       50,      50, Color(0, 0, 0, alpha))
+    draw.RoundedBox( 0, -wd2 +25, -hd2 +22,       25,      25, Color(0, 0, 0, alpha))
+    draw.RoundedBox( 0, -wd2 +25, -hd2 +36, width-25,      11, Color(0, 0, 0, alpha))
+
+    draw.RoundedBox( 0, -wd2  +1, -hd2  -3,       48,      25, ColorAlpha(Star_Trek.LCARS.ColorOrange, alpha))
+    draw.RoundedBox(24, -wd2  +1, -hd2  -2,       48,      48, ColorAlpha(Star_Trek.LCARS.ColorOrange, alpha))
+    draw.RoundedBox( 0, -wd2 +25, -hd2 +22,       24,      24, ColorAlpha(Star_Trek.LCARS.ColorOrange, alpha))
+    draw.RoundedBox( 0, -wd2 +25, -hd2 +37, width-25,       9, ColorAlpha(Star_Trek.LCARS.ColorOrange, alpha))
+
+    -- Small Black Bars
+    draw.RoundedBox(0, -wd2, -61, 50, 2, Color(0, 0, 0, alpha))
+    draw.RoundedBox(0, -wd2,  -1, 50, 2, Color(0, 0, 0, alpha))
+    draw.RoundedBox(0, -wd2,  11, 50, 2, Color(0, 0, 0, alpha))
+    
+    draw.DrawText(title, "LCARSBig", wd2 -8, -hd2 -2, color_white, TEXT_ALIGN_RIGHT)
+end
+
 net.Receive("Star_Trek.LCARS.Close", function()
     local id = net.ReadInt(32)
 
@@ -126,6 +161,8 @@ hook.Add("Think", "Star_Trek.LCARS.Think", function()
                 filter = ply
             })
 
+            --debugoverlay.Cross(trace.HitPos, 10)
+
             if trace.Hit then
                 window.WVis = false
             else
@@ -162,13 +199,15 @@ net.Receive("Star_Trek.LCARS.Update", function()
         return 
     end
     
+    -- TODO: Just Call Visibility Check once, to support Position changes.
     local oldVisible = interface.Windows[windowId].WVis
 
     local window = Star_Trek.LCARS:LoadWindowData(windowData, interface.IPos, interface.IAng)
     if istable(window) then
-        table.Merge(interface.Windows[windowId], window)
+        interface.Windows[windowId] = window
+        -- table.Merge(interface.Windows[windowId], window)
     end
-    
+
     interface.Windows[windowId].WVis = oldVisible
 end)
 
@@ -234,8 +273,8 @@ hook.Add("PostDrawOpaqueRenderables", "Star_Trek.LCARS.Draw", function()
                 continue
             end
 
-            local width = window.WWidth
-            local height = window.WHeight
+            local width = window.WWidth +100
+            local height = window.WHeight +100
             local pos = Star_Trek.LCARS:Get3D2DMousePos(window, eyePos, eyeDir)
             if pos.x > -width / 2 and pos.x < width / 2
             and pos.y > -height / 2 and pos.y < height / 2 then

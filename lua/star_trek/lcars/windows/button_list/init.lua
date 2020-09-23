@@ -1,14 +1,13 @@
-function WINDOW.OnCreate(windowData, buttons, title)
+function WINDOW.OnCreate(windowData, buttons, title, toggle)
     windowData.Buttons = {}
-
     windowData.Title = title or ""
+    windowData.Toggle = toggle
 
     if not istable(buttons) then
         return false
     end
 
     for i, button in pairs(buttons) do
-    --for j=1,4,1 do
         local buttonData = {
             Name = button.Name or "MISSING",
             Disabled = button.Disabled or false,
@@ -17,7 +16,15 @@ function WINDOW.OnCreate(windowData, buttons, title)
         if IsColor(button.Color) then
             buttonData.Color = button.Color
         else            
-            buttonData.Color = table.Random(Star_Trek.LCARS.Colors)
+            if windowData.Toggle then
+                if i%2 == 0 then
+                    buttonData.Color = Star_Trek.LCARS.ColorLightBlue
+                else
+                    buttonData.Color = Star_Trek.LCARS.ColorBlue
+                end
+            else
+                buttonData.Color = table.Random(Star_Trek.LCARS.Colors)
+            end
         end
 
         local s
@@ -63,8 +70,7 @@ function WINDOW.OnCreate(windowData, buttons, title)
 
         buttonData.RandomL = string.sub(buttonData.RandomL, 1, 2) .. "-" .. string.sub(buttonData.RandomL, 3)
 
-        table.insert(windowData.Buttons, buttonData)
-    --end
+        windowData.Buttons[i] = buttonData
     end
 
     return windowData
@@ -74,12 +80,22 @@ function WINDOW.OnPress(windowData, interfaceData, ent, buttonId, callback)
     ent:EmitSound("buttons/blip1.wav")
     -- TODO: Replace Sound
 
-    if isfunction(callback) then
-        local updated = callback(windowData, interfaceData, ent, buttonId)
-        if updated then 
-            return true
+    local shouldUpdate = false
+
+    if windowData.Toggle then
+        local pad = windowData.Pads[buttonId]
+        if istable(pad) then
+            pad.Selected = not (pad.Selected or false)
+            shouldUpdate = true
         end
     end
 
-    return false
+    if isfunction(callback) then
+        local updated = callback(windowData, interfaceData, ent, buttonId)
+        if updated then 
+            shouldUpdate = true
+        end
+    end
+
+    return shouldUpdate
 end

@@ -40,7 +40,7 @@ function Star_Trek.LCARS:CloseInterface(ent)
         net.WriteInt(ent:EntIndex(), 32)
     net.Broadcast()
 
-    timer.Create("Star_Trek.LCARS." .. ent:EntIndex(), 1, 1, function()
+    timer.Create("Star_Trek.LCARS." .. ent:EntIndex(), 0.5, 1, function()
         Star_Trek.LCARS.ActiveInterfaces[ent] = nil
         timer.Remove("Star_Trek.LCARS." .. ent:EntIndex())
     end)
@@ -211,6 +211,17 @@ function Star_Trek.LCARS:CreateWindow(windowType, pos, angles, scale, width, hei
     return true, windowData
 end
 
+function Star_Trek.LCARS:CombineWindows(...)
+    local windows = {}
+
+    for i, windowData in ipairs({...}) do
+        windows[i] = windowData
+        windowData.WindowId = i
+    end
+
+    return windows
+end
+
 -- TODO: Sync on Join Active Interfaces
 
 -- Closing the panel when you are too far away.
@@ -223,7 +234,7 @@ hook.Add("Think", "Star_Trek.LCARS.ThinkClose", function()
             continue
         end
 
-        local entities = ents.FindInSphere(interfaceData.InterfacePos, 100)
+        local entities = ents.FindInSphere(interfaceData.InterfacePos, 128)
         local playersFound = false
         for _, ent in pairs(entities or {}) do
             if ent:IsPlayer() then
@@ -282,7 +293,7 @@ net.Receive("Star_Trek.LCARS.Pressed", function(len, ply)
 
     local updated = windowFunctions.OnPress(windowData, interfaceData, ent, buttonId, windowData.Callback)
     if updated then
-        self:UpdateWindow(ent, windowId)
+        Star_Trek.LCARS:UpdateWindow(ent, windowId)
     end
 end)
 

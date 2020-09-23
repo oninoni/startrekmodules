@@ -70,17 +70,24 @@ end
 -- @param Number width (min 300)
 -- @param Text text
 -- @param Color color
--- @param? Boolean selected
 -- @param? String s
 -- @param? String l
 -- @param? Number alpha
-function drawButton(x, y, width, text, color, selected, s, l, alpha)
+local function drawButton(x, y, width, text, color, s, l, alpha, pos)
     local lcars_white = Color(255, 255, 255, alpha)
     local lcars_black = Color(0, 0, 0, alpha)
     color = ColorAlpha(color, alpha)
 
+    s = s or ""
+    l = l or ""
+
     local widthDiff = math.max(0, width - 300)
     local widthOffset = widthDiff / 2
+
+    local selected = false
+    if pos.x >= (x -123 -widthOffset) and pos.x <= (width /2) and pos.y >= (y -1) and pos.y <= (y +32) then
+        selected = true
+    end
 
     draw.RoundedBox(16, -123 + x - widthOffset, y - 1, 240 + widthDiff, 32, selected and lcars_white or lcars_black)
     draw.RoundedBox(15, -122 + x - widthOffset, y, 238 + widthDiff, 30, color)
@@ -117,6 +124,8 @@ function WINDOW.OnDraw(self, pos, animPos)
         local color = button.Color or colors[(i - 1) % nColors + 1]
         if button.Disabled then
             color = color_grey
+        elseif button.Selected then
+            color = Star_Trek.LCARS.ColorYellow
         end
 
         local y = getButtonYPos(height, i, n, offset)
@@ -124,9 +133,9 @@ function WINDOW.OnDraw(self, pos, animPos)
         local alpha = 255
         if y < -68 or y > 125 then
             if y < -68 then
-                alpha = -y-68
+                alpha =-y -(hd2 -80)
             else
-                alpha = y-125
+                alpha = y -(hd2 -16)
             end
             
             alpha = math.min(math.max(0, 255 - alpha * 10), 255)
@@ -135,46 +144,8 @@ function WINDOW.OnDraw(self, pos, animPos)
 
         local text = button.Name or "[ERROR]"
 
-        local selected = false
-        if animPos == 1 and pos.y >= y - 16 and pos.y <= y + 16 then
-            selected = true
-        end
-
-        drawButton(26, y - 15, width, text, color, selected, button.RandomS, button.RandomL, alpha)
+        drawButton(26, y - 15, width, text, color, button.RandomS, button.RandomL, alpha, pos)
     end
 
-    local alpha = 255 * animPos    
-
-    -- Bottom Yellow Bars
-    draw.RoundedBox(0, -wd2   ,        0, 50, hd2    , Color(0, 0, 0, alpha))
-    draw.RoundedBox(0, -wd2 +1,        0, 48, hd2    , ColorAlpha(Star_Trek.LCARS.ColorOrange, alpha))
-    
-    -- Middle Red Bars
-    draw.RoundedBox( 0, -wd2    , -hd2 +74,       50, hd2 -74, Color(0, 0, 0, alpha))
-    draw.RoundedBox(25, -wd2    , -hd2 +48,       50,      50, Color(0, 0, 0, alpha))
-    draw.RoundedBox( 0, -wd2 +25, -hd2 +48,       25,      25, Color(0, 0, 0, alpha))
-    draw.RoundedBox( 0, -wd2 +25, -hd2 +48, width-25,      11, Color(0, 0, 0, alpha))
-
-    draw.RoundedBox( 0, -wd2  +1, -hd2 +74,       48, hd2 -74, ColorAlpha(Star_Trek.LCARS.ColorLightRed, alpha))
-    draw.RoundedBox(24, -wd2  +1, -hd2 +49,       48,      48, ColorAlpha(Star_Trek.LCARS.ColorLightRed, alpha))
-    draw.RoundedBox( 0, -wd2 +25, -hd2 +49,       24,      24, ColorAlpha(Star_Trek.LCARS.ColorLightRed, alpha))
-    draw.RoundedBox( 0, -wd2 +25, -hd2 +49, width-25,       9, ColorAlpha(Star_Trek.LCARS.ColorLightRed, alpha))
-
-    -- Top Red Bars
-    draw.RoundedBox( 0, -wd2    , -hd2  -3,       50,      25, Color(0, 0, 0, alpha))
-    draw.RoundedBox(25, -wd2    , -hd2  -3,       50,      50, Color(0, 0, 0, alpha))
-    draw.RoundedBox( 0, -wd2 +25, -hd2 +22,       25,      25, Color(0, 0, 0, alpha))
-    draw.RoundedBox( 0, -wd2 +25, -hd2 +36, width-25,      11, Color(0, 0, 0, alpha))
-
-    draw.RoundedBox( 0, -wd2  +1, -hd2  -3,       48,      25, ColorAlpha(Star_Trek.LCARS.ColorOrange, alpha))
-    draw.RoundedBox(24, -wd2  +1, -hd2  -2,       48,      48, ColorAlpha(Star_Trek.LCARS.ColorOrange, alpha))
-    draw.RoundedBox( 0, -wd2 +25, -hd2 +22,       24,      24, ColorAlpha(Star_Trek.LCARS.ColorOrange, alpha))
-    draw.RoundedBox( 0, -wd2 +25, -hd2 +37, width-25,       9, ColorAlpha(Star_Trek.LCARS.ColorOrange, alpha))
-
-    -- Small Black Bars
-    draw.RoundedBox(0, -wd2, -61, 50, 2, Color(0, 0, 0, alpha))
-    draw.RoundedBox(0, -wd2,  -1, 50, 2, Color(0, 0, 0, alpha))
-    draw.RoundedBox(0, -wd2,  11, 50, 2, Color(0, 0, 0, alpha))
-    
-    draw.DrawText(self.Title, "LCARSBig", wd2 -8, -hd2 -2, color_white, TEXT_ALIGN_RIGHT)
+    Star_Trek.LCARS:DrawFrame(x, y, width, wd2, hd2, self.Title, 255 * animPos)
 end

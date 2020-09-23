@@ -13,16 +13,32 @@
 ---------------------------------------
 
 ---------------------------------------
---           Main | Config           --
+--    Transporter Sounds | Shared    --
 ---------------------------------------
 
--- Modules
-Star_Trek.Modules["util"] = true
-Star_Trek.Modules["portal_window"] = true
-Star_Trek.Modules["chairs"] = true
-Star_Trek.Modules["doors"] = true
+sound.Add({
+	name = "star_trek.voy_beam_up",
+    channel = CHAN_BODY,
+    volume = .8,
+    level = 70,
+    pitch = 100,
+	sound = "oninoni/startrek/voyager_beam_up.wav"
+})
 
-Star_Trek.Modules["lcars"] = true
+sound.Add({
+	name = "star_trek.voy_beam_down",
+    channel = CHAN_BODY,
+    volume = .8,
+    level = 70,
+    pitch = 100,
+	sound = "oninoni/startrek/voyager_beam_down.wav"
+})
 
-Star_Trek.Modules["turbolift"] = true
-Star_Trek.Modules["transporter"] = true
+sound.Add({
+	name = "star_trek.tng_replicator",
+    channel = CHAN_BODY,
+    volume = .8,
+    level = 70,
+    pitch = 100,
+	sound = "oninoni/startrek/tng_replicator.mp3"
+})

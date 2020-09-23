@@ -16,6 +16,7 @@ local function generateButtons(ent, keyValues)
         else
             controlButton.Name = "Stop Lift"
         end
+        controlButton.Color = Star_Trek.LCARS.ColorRed
 
         buttons[1] = controlButton
     end
@@ -49,7 +50,7 @@ function Star_Trek.LCARS:OpenTurboliftMenu()
 
     local buttons = generateButtons(ent, keyValues)
 
-    local success, data = self:CreateWindow("button_list", Vector(), Angle(), 30, 600, 300, function(windowData, interfaceData, ent, buttonId)
+    local success, window = self:CreateWindow("button_list", Vector(), Angle(), 30, 600, 300, function(windowData, interfaceData, ent, buttonId)
         if ent.IsTurbolift then
             Star_Trek.Turbolift:StartLift(ent, buttonId)
             Star_Trek.LCARS:CloseInterface(ent)
@@ -61,7 +62,7 @@ function Star_Trek.LCARS:OpenTurboliftMenu()
                     windowData.Buttons[1].Name = "Stop Lift"
                 end
 
-                Star_Trek.LCARS:UpdateWindow(ent, 1)
+                return true
             else
                 Star_Trek.Turbolift:ReRoutePod(ent, buttonId - 1)
                 Star_Trek.LCARS:CloseInterface(ent)
@@ -69,13 +70,11 @@ function Star_Trek.LCARS:OpenTurboliftMenu()
         end
     end, buttons, "Turbolift")
     if not success then
-        print("[Star Trek] " .. data)
+        print("[Star Trek] " .. window)
         return
     end
 
-    local windows = {
-        [1] = data
-    }
+    local windows = Star_Trek.LCARS:CombineWindows(window)
 
     local success, error = self:OpenInterface(ent, windows)
     if not success then

@@ -1,18 +1,31 @@
+---------------------------------------
+---------------------------------------
+--        Star Trek Utilities        --
+--                                   --
+--            Created by             --
+--       Jan 'Oninoni' Ziegler       --
+--                                   --
+-- This software can be used freely, --
+--    but only distributed by me.    --
+--                                   --
+--    Copyright © 2020 Jan Ziegler   --
+---------------------------------------
+---------------------------------------
 
--- List of active Transports.
-LCARS.ActiveTransports = LCARS.ActiveTransports or {}
+---------------------------------------
+--     Transporter Cycle | Server    --
+---------------------------------------
 
-util.AddNetworkString("LCARS.Tranporter.BeamObject")
-util.AddNetworkString("LCARS.Tranporter.BeamPlayer")
+Star_Trek.Transporter.ActiveTransports = Star_Trek.Transporter.ActiveTransports or {}
 
-local setupBuffer = function()
-    LCARS.BeamBuffer = ents.FindByName("beamBuffer")[1]
-end
-hook.Add("InitPostEntity", "LCARS.BufferInitPostEntity", setupBuffer)
-hook.Add("PostCleanupMap", "LCARS.BufferPostCleanupMap", setupBuffer)
+util.AddNetworkString("Star_Trek.Transporter.TriggerEffect")
+util.AddNetworkString("Star_Trek.Transporter.TriggerPlayerEffect")
 
-
-function LCARS:ApplyTranportEffectProperties(transportData, ent)
+-- Applies the serverside effects to the entity depending on the current state of the transport cycle.
+--
+-- @param Table transportData
+-- @param Entity ent
+function Star_Trek.Transporter:TriggerEffect(transportData, ent)
     local mode = transportData.State
 
     if mode == 1 then
@@ -49,7 +62,7 @@ function LCARS:ApplyTranportEffectProperties(transportData, ent)
         end
 
         if ent:IsPlayer() then
-            net.Start("LCARS.Tranporter.BeamPlayer")
+            net.Start("Star_Trek.Transporter.TriggerPlayerEffect")
                 net.WriteBool(true)
             net.Send(ent)
         end
@@ -68,7 +81,7 @@ function LCARS:ApplyTranportEffectProperties(transportData, ent)
         ent:SetPos((transportData.TargetPos or ent:GetPos()) + Vector(0, 0, transportData.ZOffset))
         
         if ent:IsPlayer() then
-            net.Start("LCARS.Tranporter.BeamPlayer")
+            net.Start("Star_Trek.Transporter.TriggerPlayerEffect")
                 net.WriteBool(false)
             net.Send(ent)
         end
@@ -119,7 +132,11 @@ function LCARS:ApplyTranportEffectProperties(transportData, ent)
     end
 end
 
-function LCARS:BroadcastBeamEffect(ent, rematerialize, replicator)
+-- Sets up and executes the clientside transporter effect.
+--
+-- @param Entity ent
+-- @param Boolean remat
+function Star_Trek.Transporter:BroadcastEffect(ent, remat)
     if not IsValid(ent) then return end
     
     local oldCollisionGroup = ent:GetCollisionGroup()
@@ -138,26 +155,28 @@ function LCARS:BroadcastBeamEffect(ent, rematerialize, replicator)
 
     ent:SetCollisionGroup(oldCollisionGroup)
 
-    if replicator then
-        ent:EmitSound("voyager.tng_replicator")
+    if remat then
+        ent:EmitSound("voyager.beam_down")
     else
-        if rematerialize then
-            ent:EmitSound("voyager.beam_down")
-        else
-            ent:EmitSound("voyager.beam_up")
-        end
+        ent:EmitSound("voyager.beam_up")
     end
 
     timer.Simple(0.5, function()
-        net.Start("LCARS.Tranporter.BeamObject")
+        net.Start("Star_Trek.Transporter.TriggerEffect")
             net.WriteEntity(ent)
-            net.WriteBool(rematerialize)
-            net.WriteBool(replicator or false)
+            net.WriteBool(remat)
         net.Send(players)
     end)
 end
 
-function LCARS:BeamObject(ent, targetPos, sourcePad, targetPad, toBuffer)
+-- Beaming a given object from point a to b.
+--
+-- @param Entity ent
+-- @param Vector targetPos
+-- @param? Entity sourcePad
+-- @param? Entity targetPad
+-- @param? Boolean toBuffer
+function Star_Trek.Transporter:BeamObject(ent, targetPos, sourcePad, targetPad, toBuffer)
     local transportData = {
         Object = ent,
         TargetPos = targetPos or ent:GetPos(),
@@ -179,49 +198,25 @@ function LCARS:BeamObject(ent, targetPos, sourcePad, targetPad, toBuffer)
         transportData = ent.BufferData
         ent.BufferData = nil
         
+    -- TODO: Remove from actual buffer list, when beaming from buffer!
+    --if leftWindow.Selected == 4 then
+    --    table.RemoveByValue(panel.Buffer, sourceObject)
+    --end
+
         transportData.TargetPos = targetPos or ent:GetPos()
         transportData.TargetPad = targetPad
         transportData.ToBuffer = false
     else
-        self:ApplyTranportEffectProperties(transportData, ent)
-        self:BroadcastBeamEffect(ent, false)
+        self:TriggerEffect(transportData, ent)
+        self:BroadcastEffect(ent, false)
     end
     
     table.insert(self.ActiveTransports, transportData)
 end
 
-function LCARS:ReplicateObject(ent, rematerialize)
-    local transportData = {
-        Object = ent,
-        TargetPos = ent:GetPos(),
-        StateTime = CurTime(),
-        ToBuffer = true,
-        Replicator = true
-    }
-
-    for _, transportData in pairs(self.ActiveTransports) do
-        if transportData.Object == ent then return end
-    end
-
-    if rematerialize then
-        transportData.State = 2
-        transportData.StateTime = CurTime() - 3
-    else
-        transportData.State = 1
-    end
-    
-    self:ApplyTranportEffectProperties(transportData, ent)
-
-    if not rematerialize then
-        self:BroadcastBeamEffect(ent, false, true)
-    end
-    
-    table.insert(self.ActiveTransports, transportData)
-end
-
-hook.Add("Think", "LCARS.Tranporter.Cycle", function()
+hook.Add("Think", "Star_Trek.Tranporter.Think", function()
     local toBeRemoved = {}
-    for _, transportData in pairs(LCARS.ActiveTransports) do
+    for _, transportData in pairs(Star_Trek.Transporter.ActiveTransports) do
         local curTime = CurTime()
 
         local stateTime = transportData.StateTime
@@ -232,9 +227,9 @@ hook.Add("Think", "LCARS.Tranporter.Cycle", function()
                 transportData.State = 2
 
                 -- Object is now dematerialized and moved to the buffer!
-                LCARS:ApplyTranportEffectProperties(transportData, ent)
+                Star_Trek.Transporter:TriggerEffect(transportData, ent)
 
-                ent:SetPos(LCARS.BeamBuffer:GetPos())
+                ent:SetPos(Star_Trek.Transporter.Buffer.Pos)
                 
                 transportData.StateTime = curTime
                 
@@ -255,9 +250,9 @@ hook.Add("Think", "LCARS.Tranporter.Cycle", function()
                 transportData.State = 3
 
                 -- Object will now be removed from the buffer.
-                LCARS:ApplyTranportEffectProperties(transportData, ent)
+                Star_Trek.Transporter:TriggerEffect(transportData, ent)
                 
-                LCARS:BroadcastBeamEffect(ent, true, transportData.Replicator)
+                Star_Trek.Transporter:BroadcastEffect(ent, true, transportData.Replicator)
                 
                 transportData.StateTime = curTime
 
@@ -268,7 +263,7 @@ hook.Add("Think", "LCARS.Tranporter.Cycle", function()
                 transportData.State = 4
 
                 -- Object is now visible again.
-                LCARS:ApplyTranportEffectProperties(transportData, ent)
+                Star_Trek.Transporter:TriggerEffect(transportData, ent)
                 
                 if IsValid(transportData.TargetPad) then
                     transportData.TargetPad:SetSkin(0)
@@ -282,6 +277,6 @@ hook.Add("Think", "LCARS.Tranporter.Cycle", function()
     end
 
     for _, transportData in pairs(toBeRemoved) do
-        table.RemoveByValue(LCARS.ActiveTransports, transportData)
+        table.RemoveByValue(Star_Trek.Transporter.ActiveTransports, transportData)
     end
 end)

@@ -13,16 +13,22 @@
 ---------------------------------------
 
 ---------------------------------------
---           Main | Config           --
+--        Transporter | Index        --
 ---------------------------------------
 
--- Modules
-Star_Trek.Modules["util"] = true
-Star_Trek.Modules["portal_window"] = true
-Star_Trek.Modules["chairs"] = true
-Star_Trek.Modules["doors"] = true
+Star_Trek.Transporter = Star_Trek.Transporter or {}
 
-Star_Trek.Modules["lcars"] = true
+if SERVER then
+    AddCSLuaFile("sh_sounds.lua")
+    AddCSLuaFile("cl_transporter.lua")
 
-Star_Trek.Modules["turbolift"] = true
-Star_Trek.Modules["transporter"] = true
+    include("sh_sounds.lua")
+    include("sv_transporter_cycle.lua")
+    include("sv_transporter_pattern.lua")
+    include("sv_transporter.lua")
+end
+
+if CLIENT then
+    include("sh_sounds.lua")
+    include("cl_transporter.lua")
+end

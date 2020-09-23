@@ -42,7 +42,7 @@ function Star_Trek.LCARS:OpenMenu()
     local height = tonumber(keyValues["lcars_height"])
     local title = keyValues["lcars_title"]
 
-    local success, data = self:CreateWindow("button_list", Vector(), Angle(), scale, width, height, function(windowData, interfaceData, ent, buttonId)
+    local success, window = self:CreateWindow("button_list", Vector(), Angle(), scale, width, height, function(windowData, interfaceData, ent, buttonId)
         local triggerEntity = ent:GetParent()
         if not IsValid(triggerEntity) then
             triggerEntity = ent
@@ -68,12 +68,10 @@ function Star_Trek.LCARS:OpenMenu()
         Star_Trek.LCARS:CloseInterface(ent)
     end, buttons, title)
     if not success then
-        print("[Star Trek] " .. data)
+        print("[Star Trek] " .. window)
     end
 
-    local windows = {
-        [1] = data
-    }
+    local windows = Star_Trek.LCARS:CombineWindows(window)
 
     local success, error = self:OpenInterface(ent, windows)
     if not success then
@@ -91,8 +89,10 @@ hook.Add("Think", "Star_Trek.LCARS.BasicInterface", function()
             
             if triggerEntity.LCARSMenuChanged then
                 local buttons = generateButtons(ent, triggerEntity, triggerEntity.LCARSKeyData)
-
-                interfaceData.Windows[1].Buttons = buttons
+                for i, button in pairs(buttons) do
+                    interfaceData.Windows[1].Buttons[i].Name = button.Name
+                    interfaceData.Windows[1].Buttons[i].Disabled = button.Disabled
+                end
 
                 Star_Trek.LCARS:UpdateWindow(ent, 1)
 
