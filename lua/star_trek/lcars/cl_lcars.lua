@@ -199,7 +199,6 @@ net.Receive("Star_Trek.LCARS.Update", function()
         return 
     end
     
-    -- TODO: Just Call Visibility Check once, to support Position changes.
     local oldVisible = interface.Windows[windowId].WVis
 
     local window = Star_Trek.LCARS:LoadWindowData(windowData, interface.IPos, interface.IAng)

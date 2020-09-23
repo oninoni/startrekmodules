@@ -94,7 +94,8 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
                     local sourceMenuSelectionName = menuTable.MenuTypes[menuTable.Selection]
                     local targetMenuSelectionName = menuTable.MenuTypes[targetMenuTable.Selection]
                     if istable(sourceMenuSelectionName) or istable(targetMenuSelectionName) then
-                        -- TODO: Error Sound
+                        ent:EmitSound("buttons/combine_button_locked.wav")
+                        -- TODO: Replace Sound
                         return
                     else
                         local sourceWindowFunctions = Star_Trek.LCARS.Windows[menuTable.MainWindow.WindowType]

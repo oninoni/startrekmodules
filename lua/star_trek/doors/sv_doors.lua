@@ -34,9 +34,6 @@ end
 hook.Add("InitPostEntity", "Star_Trek.DoorInitPostEntity", setupDoors)
 hook.Add("PostCleanupMap", "Star_Trek.DoorPostCleanupMap", setupDoors)
 
--- TODO: Add Manual Time Delay Option
--- TODO: Add IsClosed IsOpen Checks (BOTH! and both false when currently moving)
-
 -- Block Doors aborting animations.
 hook.Add("AcceptInput", "Star_Trek.BlockDoorIfAlreadyDooring", function(ent, input, activator, caller, value)
 	if table.HasValue(Star_Trek.Doors.Doors, ent) then

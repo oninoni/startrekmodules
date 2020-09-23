@@ -154,7 +154,6 @@ function Star_Trek.Turbolift:GetCurrentDeck(targetLiftData, path, travelTimeLeft
 
     local leftOverDistance = totalTravelDistance - traveledDistance
     local targetDeck = self:GetDeckNumber(targetLiftData)
-    -- TODO: Validation check if set.
 
     local currentDeck = targetDeck - leftOverDistance
     if travelDirection == "U" then

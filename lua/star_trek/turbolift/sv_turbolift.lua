@@ -20,13 +20,6 @@ Star_Trek.Turbolift.NextThink = CurTime()
 Star_Trek.Turbolift.Lifts = Star_Trek.Turbolift.Lifts or {}
 Star_Trek.Turbolift.Pods  = Star_Trek.Turbolift.Pods  or {}
 
--- TODO (Old): 
--- Testing
--- Players in targetLift getting moved away. (Pod can't resume CHECK!)
--- Test leaving lift before teleport to pod.
--- Add Check for is Door Open/Closed using current Animation and last animation set var. (In Door module)
--- Add Manual Time Delay When opening the door on arrival
-
 -- Setting up Turbolifts
 local setupTurbolifts = function()
     Star_Trek.Turbolift.Lifts = {}
@@ -182,8 +175,8 @@ function Star_Trek.Turbolift:StartLift(sourceLift, targetLiftId)
                 sourceLiftData.InUse = false
             end
         else
-            print("Error")
-            -- TODO: Error Sound "Turbolift Busy" or sth like that
+            sourceLift:EmitSound("buttons/combine_button_locked.wav")
+            -- TODO: Replace Sound
         end
     end
 end
@@ -219,7 +212,6 @@ function Star_Trek.Turbolift:ReRoutePod(pod, targetLiftId)
         local odlTargetDeck = podData.TravelTarget
         local sourceDeck = self:GetCurrentDeck(odlTargetDeck, podData.TravelPath, podData.TravelTime)
         local targetDeck = self:GetDeckNumber(targetLiftData)
-        -- TODO: Validation check if set.
 
         podData.TravelTarget = targetLiftData
         podData.TravelPath = self:GetPath(sourceDeck, targetDeck)
@@ -243,7 +235,6 @@ hook.Add("Think", "Star_Trek.Turbolift.Think", function()
         end
         
         if turboliftData.ClosingTime > 0 then
-            -- TODO: Add Door Blockage Detection here
             if true then
                 turboliftData.ClosingTime = turboliftData.ClosingTime - 1
             else

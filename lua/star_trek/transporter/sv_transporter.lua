@@ -16,10 +16,8 @@
 --        Transporter | Server       --
 ---------------------------------------
 
--- TODO: Check Vacancy of Beaming at the Target
--- TODO: Also Check if transport in Progress at that location (No 2 Beams at the same pos at the same time.)
+-- TODO: Check if transport in Progress at target location (No 2 Beams at the same pos at the same time.)
 -- TODO: Buffer Decay
--- TODO: Beam Overflow to Buffer
 
 local setupBuffer = function()
     for _, ent in pairs(ents.GetAll()) do
@@ -39,26 +37,6 @@ hook.Add("PostCleanupMap", "Star_Trek.Transporter.Setup", setupBuffer)
 hook.Add("SetupPlayerVisibility", "Star_Trek.Transporter.PVS", function(ply, viewEntity)
     AddOriginToPVS(Star_Trek.Transporter.Buffer.Pos)
 end)
-
---[[
-function Star_Trek.Transporter:GetObjects(menuType, data, wideField)
-    local objects
-
-    if menuType == "Transporter Pad" or menuType == "Other Pads" or menuType == "Transporter Pads" then -- Beam from Pad
-        pattern = self:GetPatternFromPad(data, wideField)
-    elseif menuType == "Lifeforms" then -- Beam Player
-        pattern = self:GetPatternFromPlayer(data, wideField)
-    elseif menuType == "Locations" then -- Beam from Locations
-        pattern = self:GetPatternFromLocation(data, wideField)
-    elseif menuType == "Buffer" then
-        pattern = self:GetPatternFromBuffer(ent, wideField)
-    end
-end
-]]
-
---[[
-TODO: Buffer needs to save on entity what buffer so pattern can contain target for buffer.
-]]
 
 function Star_Trek.Transporter:CleanUpSourcePatterns(patterns)
     if not istable(patterns) then return patterns end

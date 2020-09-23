@@ -197,11 +197,6 @@ function Star_Trek.Transporter:BeamObject(ent, targetPos, sourcePad, targetPad, 
     if ent.BufferData then
         transportData = ent.BufferData
         ent.BufferData = nil
-        
-    -- TODO: Remove from actual buffer list, when beaming from buffer!
-    --if leftWindow.Selected == 4 then
-    --    table.RemoveByValue(panel.Buffer, sourceObject)
-    --end
 
         transportData.TargetPos = targetPos or ent:GetPos()
         transportData.TargetPad = targetPad
