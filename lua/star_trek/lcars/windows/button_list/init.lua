@@ -11,6 +11,7 @@ function WINDOW.OnCreate(windowData, buttons, title, toggle)
         local buttonData = {
             Name = button.Name or "MISSING",
             Disabled = button.Disabled or false,
+            Data = button.Data,
         }
 
         if IsColor(button.Color) then
@@ -76,6 +77,26 @@ function WINDOW.OnCreate(windowData, buttons, title, toggle)
     return windowData
 end
 
+function WINDOW.GetData(windowData)
+    local data = {}
+    for _, button in pairs(windowData.Buttons) do
+        data[button.Name] = button.Selected
+    end
+
+    return data
+end
+
+function WINDOW.SetData(windowData, data)
+    for name, selected in pairs(data) do
+        for _, button in pairs(windowData.Buttons) do
+            if button.Name == name then
+    	        button.Selected = selected
+                break
+            end
+        end
+    end
+end
+
 function WINDOW.OnPress(windowData, interfaceData, ent, buttonId, callback)
     ent:EmitSound("buttons/blip1.wav")
     -- TODO: Replace Sound
@@ -83,9 +104,9 @@ function WINDOW.OnPress(windowData, interfaceData, ent, buttonId, callback)
     local shouldUpdate = false
 
     if windowData.Toggle then
-        local pad = windowData.Pads[buttonId]
-        if istable(pad) then
-            pad.Selected = not (pad.Selected or false)
+        local button = windowData.Buttons[buttonId]
+        if istable(button) then
+            button.Selected = not (button.Selected or false)
             shouldUpdate = true
         end
     end

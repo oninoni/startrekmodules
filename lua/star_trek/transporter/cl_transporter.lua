@@ -79,12 +79,24 @@ end)
 local lastSysTime = SysTime()
 -- First Effect for beaming yourself.
 hook.Add("RenderScreenspaceEffects", "Star_Trek.Transporter.Effect", function()
-    if Star_Trek.Transporter.SelfActive then
-        DrawMaterialOverlay("effects/water_warp01", Star_Trek.Transporter.SelfActive)
+    if Star_Trek.Transporter.SelfRefrac > 0 then
+        DrawMaterialOverlay("effects/water_warp01", Star_Trek.Transporter.SelfRefrac)
         
         draw.RoundedBox(0, 0, 0, ScrW(), ScrH(), Color(31, 127, 255, Star_Trek.Transporter.SelfRefrac) )
     end
 end)
+
+-- Shortcut function to draw the flares.
+local function drawFlare(pos, vec, size)
+    render.DrawQuadEasy(
+        pos,
+        vec,
+        size,
+        size,
+        Color(0, 0, 0, 0),
+        0
+    )
+end
 
 hook.Add("PostDrawTranslucentRenderables", "Voyager.Transporter.MainRender", function()
     local vec = EyeVector()

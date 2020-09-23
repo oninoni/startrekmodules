@@ -68,16 +68,12 @@ function Star_Trek.Transporter:TriggerEffect(transportData, ent)
         end
     elseif mode == 2 then
         ent:SetRenderMode(RENDERMODE_NONE)
-
+        
         transportData.OldColor = ent:GetColor()
         ent:SetColor(Color(0, 0, 0, 0))
     elseif mode == 3 then
         ent:SetRenderMode(RENDERMODE_TRANSTEXTURE)
         
-        if transportData.OldColor ~= nil then
-            ent:SetColor(transportData.OldColor)
-        end
-
         ent:SetPos((transportData.TargetPos or ent:GetPos()) + Vector(0, 0, transportData.ZOffset))
         
         if ent:IsPlayer() then
@@ -86,6 +82,10 @@ function Star_Trek.Transporter:TriggerEffect(transportData, ent)
             net.Send(ent)
         end
     else
+        if transportData.OldColor ~= nil then
+            ent:SetColor(transportData.OldColor)
+        end
+
         if transportData.OldRenderMode ~= nil then
             ent:SetRenderMode(transportData.OldRenderMode)
         end
@@ -156,9 +156,9 @@ function Star_Trek.Transporter:BroadcastEffect(ent, remat)
     ent:SetCollisionGroup(oldCollisionGroup)
 
     if remat then
-        ent:EmitSound("voyager.beam_down")
+        sound.Play("star_trek.voy_beam_down", ent:GetPos(), 75, 100, 0.8)
     else
-        ent:EmitSound("voyager.beam_up")
+        sound.Play("star_trek.voy_beam_up"  , ent:GetPos(), 75, 100, 0.8)
     end
 
     timer.Simple(0.5, function()

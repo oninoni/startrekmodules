@@ -90,7 +90,7 @@ function Star_Trek.Transporter:GetPatternFromPad(pad)
         end
     end
     
-    debugoverlay.Box(pos, -Vector(25, 25, 0), Vector(25, 25, 120), 10, Color(255, 255, 255, 63))
+    --debugoverlay.Box(pos, -Vector(25, 25, 0), Vector(25, 25, 120), 2, Color(255, 255, 255, 63))
 
     pattern.Pad = pad
     return pattern
@@ -144,7 +144,7 @@ function Star_Trek.Transporter:GetPatternFromPlayer(ply, wideField)
             end
         end
         
-        debugoverlay.Box(pos, -Vector(range, range, 0), Vector(range, range, range * 2), 10, Color(255, 255, 255, 63))
+        --debugoverlay.Box(pos, -Vector(range, range, 0), Vector(range, range, range * 2), 2, Color(255, 255, 255, 63))
     end
 
     return pattern
@@ -158,7 +158,7 @@ function Star_Trek.Transporter:GetPatternsFromPlayers(players, wideField)
     local patterns = {}
 
     for i, ply in pairs(players) do
-        local pattern = self:GetPatternFromPad(ply, wideField)
+        local pattern = self:GetPatternFromPlayer(ply, wideField)
         patterns[i] = pattern
     end
 
@@ -193,12 +193,12 @@ function Star_Trek.Transporter:GetPatternFromLocation(pos, wideField)
         if not IsValid(parent) then
             local phys = ent:GetPhysicsObject()
             if IsValid(phys) and phys:IsMotionEnabled() then
-                table.insert(pattern.Objects, ent)
+                table.insert(pattern.Entities, ent)
             end
         end
     end
 
-    debugoverlay.Box(pos, -Vector(range, range, 0), Vector(range, range, range * 2), 10, Color(255, 255, 255, 63))
+    --debugoverlay.Box(pos, -Vector(range, range, 0), Vector(range, range, range * 2), 2, Color(255, 255, 255, 63))
 
     return pattern
 end

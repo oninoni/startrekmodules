@@ -36,6 +36,10 @@ end
 hook.Add("InitPostEntity", "Star_Trek.Transporter.Setup", setupBuffer)
 hook.Add("PostCleanupMap", "Star_Trek.Transporter.Setup", setupBuffer)
 
+hook.Add("SetupPlayerVisibility", "Star_Trek.Transporter.PVS", function(ply, viewEntity)
+    AddOriginToPVS(Star_Trek.Transporter.Buffer.Pos)
+end)
+
 --[[
 function Star_Trek.Transporter:GetObjects(menuType, data, wideField)
     local objects
@@ -98,12 +102,6 @@ function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPattern
     local sourcePatterns = self:CleanUpSourcePatterns(sourcePatterns)
     local targetPatterns = self:CleanUpTargetPatterns(targetPatterns)
 
-    print("Source: ")
-    PrintTable(sourcePatterns)
-    
-    print("Target: ")
-    PrintTable(targetPatterns)
-
     local remainingEntities = {}
     if not istable(targetPatterns) then
         for _, sourcePattern in pairs(sourcePatterns) do
@@ -115,7 +113,7 @@ function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPattern
         end
     else
         if targetPatterns.SingleTarget then
-            local i = 0
+            local i = 1
 
             for _, sourcePattern in pairs(sourcePatterns) do
                 if istable(sourcePattern) then
@@ -141,7 +139,32 @@ function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPattern
                 end
             end
         else
-            -- TODO: Needs positional verification.
+            local i = 1
+            local targetPatternCount = #targetPatterns
+
+            for _, sourcePattern in pairs(sourcePatterns) do
+                if istable(sourcePattern) then
+                    for _, ent in pairs(sourcePattern.Entities) do
+                        local targetPattern = targetPatterns[i%targetPatternCount]
+                        if istable(targetPattern) then
+                            local pos = targetPattern.Pos
+                            pos = Star_Trek.Util:FindEmptyPosWithin(pos, pos - Vector(200, 200, 200), pos + Vector(200, 200, 200))
+                            if pos then
+                                self:BeamObject(ent, pos, sourcePattern.Pad, targetPattern.Pad, false)
+                                
+                                if sourcePattern.IsBuffer then
+                                    table.RemoveByValue(Star_Trek.Transporter.Buffer.Entities, ent)
+                                end
+                            else
+                                table.insert(remainingEntities, ent)
+                                ent.Pad = sourcePattern.Pad
+                            end
+                            
+                            i = i + 1
+                        end
+                    end
+                end
+            end
         end
     end
 

@@ -18,7 +18,8 @@ function WINDOW.OnCreate(windowData, padNumber, title)
             if n ~= padNumber then continue end
             
             local pad = {
-                Data = ent
+                Name = k .. "_" .. n,
+                Data = ent,
             }
 
             if k == 7 then
@@ -57,6 +58,26 @@ function WINDOW.OnCreate(windowData, padNumber, title)
     end
 
     return windowData
+end
+
+function WINDOW.GetData(windowData)
+    local data = {}
+    for _, pad in pairs(windowData.Pads) do
+        data[pad.Name] = pad.Selected
+    end
+
+    return data
+end
+
+function WINDOW.SetData(windowData, data)
+    for name, selected in pairs(data) do
+        for _, pad in pairs(windowData.Pads) do
+            if pad.Name == name then
+    	        pad.Selected = selected
+                break
+            end
+        end
+    end
 end
 
 function WINDOW.OnPress(windowData, interfaceData, ent, buttonId, callback)

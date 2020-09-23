@@ -73,15 +73,15 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
 
                 if menuTable.Target then
                     if button.SelectedCustom then
-                        button.Name = "Direct Transport"
+                        button.Name = "Buffer Transport" -- TODO: Block Types non-compatible source and target types
                     else
-                        button.Name = "Buffer Transport" -- TODO: Block Types
+                        button.Name = "Direct Transport"
                     end
                 else
                     if button.SelectedCustom then
-                        button.Name = "Narrow Beam"
-                    else
                         button.Name = "Wide Beam"
+                    else
+                        button.Name = "Narrow Beam"
                     end
                 end
 
@@ -90,7 +90,51 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
                 if menuTable.Target then
                     Star_Trek.LCARS:CloseInterface(ent)
                 else
-                    -- TODO: Swap Sides
+                    local targetMenuTable = interfaceData.TargetMenuTable
+                    local sourceMenuSelectionName = menuTable.MenuTypes[menuTable.Selection]
+                    local targetMenuSelectionName = menuTable.MenuTypes[targetMenuTable.Selection]
+                    if istable(sourceMenuSelectionName) or istable(targetMenuSelectionName) then
+                        -- TODO: Error Sound
+                        return
+                    else
+                        local sourceWindowFunctions = Star_Trek.LCARS.Windows[menuTable.MainWindow.WindowType]
+                        if not istable(sourceWindowFunctions) then
+                            print("[Star Trek] Invalid Source Window Type!")
+                        end
+
+                        local targetWindowFunctions = Star_Trek.LCARS.Windows[targetMenuTable.MainWindow.WindowType]
+                        if not istable(targetWindowFunctions) then
+                            print("[Star Trek] Invalid Target Window Type!")
+                        end
+                        
+                        local sourceMenuData = sourceWindowFunctions.GetData(menuTable.MainWindow)
+                        local targetMenuData = targetWindowFunctions.GetData(targetMenuTable.MainWindow)
+
+                        local sourceMenuSelection = menuTable.MenuWindow.Selection
+                        local success, error = menuTable:SelectType(targetMenuTable.MenuWindow.Selection)
+                        if not success then
+                            print("[Star Trek] " .. error)
+                        end
+                        
+                        local success, error = targetMenuTable:SelectType(sourceMenuSelection)
+                        if not success then
+                            print("[Star Trek] " .. error)
+                        end
+
+                        sourceWindowFunctions.SetData(targetMenuTable.MainWindow, sourceMenuData)
+                        targetWindowFunctions.SetData(menuTable.MainWindow, targetMenuData)
+
+                        interfaceData.Windows[targetMenuTable.MenuWindow.WindowId] = targetMenuTable.MenuWindow
+                        Star_Trek.LCARS:UpdateWindow(ent, targetMenuTable.MenuWindow.WindowId)
+
+                        interfaceData.Windows[targetMenuTable.MainWindow.WindowId] = targetMenuTable.MainWindow
+                        Star_Trek.LCARS:UpdateWindow(ent, targetMenuTable.MainWindow.WindowId)
+
+                        interfaceData.Windows[menuTable.MainWindow.WindowId] = menuTable.MainWindow
+                        Star_Trek.LCARS:UpdateWindow(ent, menuTable.MainWindow.WindowId)
+
+                        return true
+                    end
                 end
             end
         else 
@@ -360,9 +404,10 @@ function Star_Trek.LCARS:OpenTransporterMenu()
     local interfaceData = self.ActiveInterfaces[ent]
     if istable(interfaceData) then
         triggerTransporter(interfaceData)
+        return
     end
 
-    local success, sourceMenuTable = createWindowTable(Vector(-12, 0, 4), Angle(5, 15, 30), Vector(-30, -10, 18), Angle(15, 45, 60), false, nil, padNumber)
+    local success, sourceMenuTable = createWindowTable(Vector(-13, 0, 4), Angle(5, 15, 30), Vector(-30, -10, 18), Angle(15, 45, 60), false, nil, padNumber)
     if not success then
         print("[Star Trek] " .. sourceMenuTable)
         return
@@ -372,7 +417,7 @@ function Star_Trek.LCARS:OpenTransporterMenu()
         print("[Star Trek] " .. error)
     end
     
-    local success, targetMenuTable = createWindowTable(Vector(12, 0, 4), Angle(-5, -15, 30), Vector(30, -10, 18), Angle(-15, -45, 60), true, nil, padNumber)
+    local success, targetMenuTable = createWindowTable(Vector(13, 0, 4), Angle(-5, -15, 30), Vector(30, -10, 18), Angle(-15, -45, 60), true, nil, padNumber)
     if not success then
         print("[Star Trek] " .. targetMenuTable)
         return

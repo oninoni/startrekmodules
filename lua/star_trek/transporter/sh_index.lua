@@ -32,3 +32,7 @@ if CLIENT then
     include("sh_sounds.lua")
     include("cl_transporter.lua")
 end
+
+game.AddParticles( "particles/voyager.pcf" )
+PrecacheParticleSystem("beam_out")
+PrecacheParticleSystem("beam_in")
