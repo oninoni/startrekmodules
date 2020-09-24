@@ -34,6 +34,7 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
     if menuTable.Target then
         utilButtonData.Name = "Direct Transport"
         utilButtonData.Color = Star_Trek.LCARS.ColorOrange
+        utilButtonData.Disabled = true -- TODO: Beaming from Buffer does not work, Menu needs to hide non-compatible settings in buffer mode.
     else
         utilButtonData.Name = "Narrow Beam"
         utilButtonData.Color = Star_Trek.LCARS.ColorOrange

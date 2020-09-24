@@ -21,6 +21,10 @@ if not string.StartWith(game.GetMap(), "rp_voyager") then return end
 Star_Trek = Star_Trek or {}
 
 local function loadModule(name)
+    if SERVER then
+        AddCSLuaFile("star_trek/" .. name .. "/sh_index.lua")
+    end
+
     include("star_trek/" .. name .. "/sh_index.lua")
 
     print("[Star Trek] Loaded Module \"" .. name .. "\"")
@@ -28,6 +32,10 @@ end
 
 hook.Add("PostGamemodeLoaded", "Star_Trek.Load", function()
     Star_Trek.Modules = Star_Trek.Modules or {}
+
+    if SERVER then
+        AddCSLuaFile("star_trek/config.lua")
+    end
 
     include("star_trek/config.lua")
 

@@ -209,8 +209,11 @@ function Star_Trek.Turbolift:ReRoutePod(pod, targetLiftId)
         podData.InUse = true
         podData.Stopped = false
 
+        local sourceDeck = podData.CurrentDeck
         local odlTargetDeck = podData.TravelTarget
-        local sourceDeck = self:GetCurrentDeck(odlTargetDeck, podData.TravelPath, podData.TravelTime)
+        if istable(odlTargetDeck) then
+            local sourceDeck = self:GetCurrentDeck(odlTargetDeck, podData.TravelPath, podData.TravelTime)
+        end
         local targetDeck = self:GetDeckNumber(targetLiftData)
 
         podData.TravelTarget = targetLiftData
@@ -318,6 +321,7 @@ hook.Add("Think", "Star_Trek.Turbolift.Think", function()
 
                             podData.InUse = true
                             podData.Stopped = true
+                            podData.CurrentDeck = self:GetDeckNumber(targetLiftData)
                         else
                             podData.InUse = false
                             podData.Stopped = false

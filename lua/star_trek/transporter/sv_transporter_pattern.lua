@@ -181,7 +181,8 @@ function Star_Trek.Transporter:GetPatternFromLocation(pos, wideField)
 
     local range = 32
     if wideField then 
-        range = ent.LCARSKeyData["lcars_beamrange"] or 64
+        --range = ent.LCARSKeyData["lcars_beamrange"] or 64 <- TODO: Needs ENtities instead of vectors
+        range = 64
     end
 
     local  lowerBounds = pos - Vector(range, range, 0)
