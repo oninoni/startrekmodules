@@ -47,7 +47,7 @@ function Star_Trek.Util:CompressPlayers(outerName, innerName)
         if table.HasValue(outerEnts, ent) then
             table.RemoveByValue(outerEnts, ent)
         else
-            print("[[HOLODECK]] " .. ent .. " is inside, but not outside! WTF?")
+            Star_Trek:Message(ent .. " is inside the holodeck, but not outside! WTF?")
         end
     end
 
@@ -62,8 +62,9 @@ function Star_Trek.Util:CompressPlayers(outerName, innerName)
             if emptyPos then
                 ent:SetPos(emptyPos)
             else
-                print("[[HOLODECK]] No Empty Pos Found, Dumping into other Player/Object")
                 ent:SetPos(pos)
+                
+                Star_Trek:Message("No Empty Pos Found, Dumping into other Player/Object")
             end
         end 
     end

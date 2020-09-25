@@ -146,26 +146,19 @@ function Star_Trek.Transporter:BroadcastEffect(ent, remat)
     local midPos = ent:GetPos() + (higherBounds / 2) + (lowerBounds / 2)
     --debugoverlay.Cross(midPos, 32, 10, true)
 
-    local players = {}
-    for _, ply in pairs(player.GetHumans()) do
-        if ply:VisibleVec(midPos) then
-            table.insert(players, ply)
-        end
-    end
-
     ent:SetCollisionGroup(oldCollisionGroup)
 
     if remat then
-        sound.Play("star_trek.voy_beam_down", ent:GetPos(), 75, 100, 0.8)
+        sound.Play("star_trek.voy_beam_down", ent:GetPos(), 10, 100, 0.8)
     else
-        sound.Play("star_trek.voy_beam_up"  , ent:GetPos(), 75, 100, 0.8)
+        sound.Play("star_trek.voy_beam_up"  , ent:GetPos(), 10, 100, 0.8)
     end
 
     timer.Simple(0.5, function()
         net.Start("Star_Trek.Transporter.TriggerEffect")
             net.WriteEntity(ent)
             net.WriteBool(remat)
-        net.Send(players)
+        net.Broadcast()
     end)
 end
 
@@ -217,6 +210,8 @@ hook.Add("Think", "Star_Trek.Tranporter.Think", function()
         local stateTime = transportData.StateTime
         local state = transportData.State
         local ent = transportData.Object
+        
+        debugoverlay.Cross(ent:GetPos(), 10, 0.2, Color(255, 0, 0), true)
         if IsValid(ent) then
             if state == 1 and (stateTime + 3) < curTime then
                 transportData.State = 2

@@ -1,4 +1,3 @@
-
 include( "shared.lua" )
 
 AccessorFunc( ENT, "texture", "Texture" )

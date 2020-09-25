@@ -152,7 +152,6 @@ hook.Add("PostDrawTranslucentRenderables", "Voyager.Transporter.MainRender", fun
             ent:SetColor(ColorAlpha(transportData.OldColor, 255 - 255 * math.min(1, transportData.AnimPos - 0.3)))
         end
 
-        cam.IgnoreZ(true)
         local mat = Material("oninoni/startrek/flare_blue")
         render.SetMaterial(mat)
 
@@ -167,7 +166,6 @@ hook.Add("PostDrawTranslucentRenderables", "Voyager.Transporter.MainRender", fun
         drawFlare(pos + upHeight * maxEffectProgress, vec, size)
         drawFlare(pos - (upHeight * maxEffectProgress + Vector(0, 0, 0.3)), vec, smallSize)
         drawFlare(pos + (upHeight * maxEffectProgress + Vector(0, 0, 0.3)), vec, smallSize)
-        cam.IgnoreZ(false)
         
         local dLight = DynamicLight(ent:EntIndex(), false)
         if ( dLight ) then

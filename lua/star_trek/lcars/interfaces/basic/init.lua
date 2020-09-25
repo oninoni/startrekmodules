@@ -22,7 +22,7 @@ function Star_Trek.LCARS:OpenMenu()
     local success, ent = self:GetInterfaceEntity(TRIGGER_PLAYER, CALLER)
     if not success then 
         -- Error Message
-        print("[Star Trek] " .. ent)
+        Star_Trek:Message(ent)
     end
 
     local triggerEntity = ent:GetParent()
@@ -32,7 +32,7 @@ function Star_Trek.LCARS:OpenMenu()
 
     local keyValues = triggerEntity.LCARSKeyData
     if not istable(keyValues) then
-        print("[Star Trek] Invalid Key Values on OpenMenu")
+        Star_Trek:Message("Invalid Key Values on OpenMenu")
     end
 
     local buttons = generateButtons(ent, triggerEntity, keyValues)
@@ -68,14 +68,14 @@ function Star_Trek.LCARS:OpenMenu()
         Star_Trek.LCARS:CloseInterface(ent)
     end, buttons, title)
     if not success then
-        print("[Star Trek] " .. window)
+        Star_Trek:Message(window)
     end
 
     local windows = Star_Trek.LCARS:CombineWindows(window)
 
     local success, error = self:OpenInterface(ent, windows)
     if not success then
-        print("[Star Trek] " .. error)
+        Star_Trek:Message(error)
     end
 end
 

@@ -241,7 +241,7 @@ function Star_Trek.Transporter:GetPatternsFromBuffers(entities)
     local patterns = {}
 
     for i, ent in pairs(entities) do
-        local pattern = self:GetPatternFromBuffer(pos)
+        local pattern = self:GetPatternFromBuffer(ent)
         patterns[i] = pattern
     end
 

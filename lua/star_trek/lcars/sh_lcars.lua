@@ -32,7 +32,7 @@ function Star_Trek.LCARS:LoadWindow(name)
 
     self.Windows[name] = WINDOW
 
-    print("[Star Trek] Loaded LCARS Window Type \"" .. name .. "\"")
+    Star_Trek:Message("Loaded LCARS Window Type \"" .. name .. "\"")
 end
 
 function Star_Trek.LCARS:LoadWindows()

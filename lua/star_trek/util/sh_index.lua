@@ -19,7 +19,14 @@
 Star_Trek.Util = Star_Trek.Util or {}
 
 if SERVER then
+    AddCSLuaFile("sh_message.lua")
+
+    include("sh_message.lua")
     include("sv_positions.lua")
     include("sv_keyvalues.lua")
     include("sv_holodeck.lua")
+end
+
+if CLIENT then
+    include("sh_message.lua")
 end

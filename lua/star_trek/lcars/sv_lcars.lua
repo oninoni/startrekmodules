@@ -299,7 +299,7 @@ end)
 
 function Star_Trek.LCARS:LoadInterface(name)
     include("interfaces/" .. name .. "/init.lua")
-    print("[Star Trek] Loaded LCARS Interface \"" .. name .. "\"")
+    Star_Trek:Message("Loaded LCARS Interface \"" .. name .. "\"")
 end
 
 function Star_Trek.LCARS:LoadInterfaces()

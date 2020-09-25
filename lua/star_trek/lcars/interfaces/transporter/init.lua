@@ -34,7 +34,7 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
     if menuTable.Target then
         utilButtonData.Name = "Direct Transport"
         utilButtonData.Color = Star_Trek.LCARS.ColorOrange
-        utilButtonData.Disabled = true -- TODO: Beaming from Buffer does not work, Menu needs to hide non-compatible settings in buffer mode.
+        -- TODO: Menu needs to hide non-compatible settings in buffer mode.
     else
         utilButtonData.Name = "Narrow Beam"
         utilButtonData.Color = Star_Trek.LCARS.ColorOrange
@@ -101,12 +101,14 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
                     else
                         local sourceWindowFunctions = Star_Trek.LCARS.Windows[menuTable.MainWindow.WindowType]
                         if not istable(sourceWindowFunctions) then
-                            print("[Star Trek] Invalid Source Window Type!")
+                            Star_Trek:Message("Invalid Source Window Type!")
+                            return
                         end
 
                         local targetWindowFunctions = Star_Trek.LCARS.Windows[targetMenuTable.MainWindow.WindowType]
                         if not istable(targetWindowFunctions) then
-                            print("[Star Trek] Invalid Target Window Type!")
+                            Star_Trek:Message("Invalid Target Window Type!")
+                            return
                         end
                         
                         local sourceMenuData = sourceWindowFunctions.GetData(menuTable.MainWindow)
@@ -115,12 +117,14 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
                         local sourceMenuSelection = menuTable.MenuWindow.Selection
                         local success, error = menuTable:SelectType(targetMenuTable.MenuWindow.Selection)
                         if not success then
-                            print("[Star Trek] " .. error)
+                            Star_Trek:Message(error)
+                            return
                         end
                         
                         local success, error = targetMenuTable:SelectType(sourceMenuSelection)
                         if not success then
-                            print("[Star Trek] " .. error)
+                            Star_Trek:Message(error)
+                            return
                         end
 
                         sourceWindowFunctions.SetData(targetMenuTable.MainWindow, sourceMenuData)
@@ -142,7 +146,8 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
         else 
             local success, error = menuTable:SelectType(buttonId)
             if not success then
-                print("[Star Trek] " .. error)
+                Star_Trek:Message(error)
+                return
             end
 
             interfaceData.Windows[menuTable.MainWindow.WindowId] = menuTable.MainWindow
@@ -223,8 +228,18 @@ local function createMainWindow(pos, angle, menuTable, padNumber)
         end
     elseif selectionName == "Buffer" then
         for _, ent in pairs(Star_Trek.Transporter.Buffer.Entities) do
+            local name = "Unknown Pattern"
+            if ent:IsPlayer() or ent:IsNPC() then
+                name = "Organic Pattern"
+            end
+            local className = ent:GetClass()
+            if className == "prop_physics" then
+                name = "Pattern"
+            end
+            -- TODO: Scanner implementation to identify stuff?
+
             table.insert(buttons, {
-                Name = ent:GetName(),
+                Name = name,
                 Data = ent,
             })
         end
@@ -386,13 +401,35 @@ local function triggerTransporter(interfaceData)
     else
         Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPatterns)
     end
+
+    -- Force Update of Buffer Table, by just switching.
+    -- Updating would require a callback (TODO)
+    if sourcePatterns.IsBuffer then
+        local success, error = sourceMenuTable:SelectType(1)
+        if not success then
+            Star_Trek:Message(error)
+            return
+        end
+    
+        local ent = table.KeyFromValue(Star_Trek.LCARS.ActiveInterfaces, interfaceData)
+        if not IsValid(ent) then
+            Star_Trek:Message("Invalid Entity on Buffer Menu Update")
+            return
+        end
+
+        interfaceData.Windows[sourceMenuTable.MenuWindow.WindowId] = sourceMenuTable.MenuWindow
+        Star_Trek.LCARS:UpdateWindow(ent, sourceMenuTable.MenuWindow.WindowId)
+
+        interfaceData.Windows[sourceMenuTable.MainWindow.WindowId] = sourceMenuTable.MainWindow
+        Star_Trek.LCARS:UpdateWindow(ent, sourceMenuTable.MainWindow.WindowId)
+    end
 end
 
 -- Opening a turbolift control menu.
 function Star_Trek.LCARS:OpenTransporterMenu()
     local success, ent = self:GetInterfaceEntity(TRIGGER_PLAYER, CALLER)
     if not success then 
-        print("[Star Trek] " .. ent)
+        Star_Trek:Message(ent)
         return
     end
 
@@ -411,22 +448,24 @@ function Star_Trek.LCARS:OpenTransporterMenu()
 
     local success, sourceMenuTable = createWindowTable(Vector(-13, 0, 4), Angle(5, 15, 30), Vector(-30, -10, 18), Angle(15, 45, 60), false, nil, padNumber)
     if not success then
-        print("[Star Trek] " .. sourceMenuTable)
+        Star_Trek:Message(sourceMenuTable)
         return
     end
     local success, error = sourceMenuTable:SelectType(1)
     if not success then
-        print("[Star Trek] " .. error)
+        Star_Trek:Message(error)
+        return
     end
     
     local success, targetMenuTable = createWindowTable(Vector(13, 0, 4), Angle(-5, -15, 30), Vector(30, -10, 18), Angle(-15, -45, 60), true, nil, padNumber)
     if not success then
-        print("[Star Trek] " .. targetMenuTable)
+        Star_Trek:Message(targetMenuTable)
         return
     end
     local success, error = targetMenuTable:SelectType(2)
     if not success then
-        print("[Star Trek] " .. error)
+        Star_Trek:Message(error)
+        return
     end
 
     local windows = Star_Trek.LCARS:CombineWindows(
@@ -438,7 +477,7 @@ function Star_Trek.LCARS:OpenTransporterMenu()
 
     local success, error = self:OpenInterface(ent, windows)
     if not success then
-        print("[Star Trek] " .. error)
+        Star_Trek:Message(error)
         return
     end
     

@@ -98,17 +98,17 @@ function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPattern
                     for _, ent in pairs(sourcePattern.Entities) do
                         local targetPattern = targetPatterns[i]
                         if istable(targetPattern) then
-                            self:BeamObject(ent, targetPattern.Pos, sourcePattern.Pad, targetPattern.Pad, false)
-
-                            if sourcePattern.IsBuffer then
+                            if sourcePatterns.IsBuffer then
                                 table.RemoveByValue(Star_Trek.Transporter.Buffer.Entities, ent)
                             end
+
+                            self:BeamObject(ent, targetPattern.Pos, sourcePattern.Pad, targetPattern.Pad, false)
 
                             i = i + 1
                         elseif isbool(targetPattern) then
                             continue
                         else
-                            if not sourcePattern.IsBuffer then
+                            if not sourcePatterns.IsBuffer then
                                 table.insert(remainingEntities, ent)
                                 ent.Pad = sourcePattern.Pad
                             end
@@ -128,11 +128,11 @@ function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPattern
                             local pos = targetPattern.Pos
                             pos = Star_Trek.Util:FindEmptyPosWithin(pos, pos - Vector(200, 200, 200), pos + Vector(200, 200, 200))
                             if pos then
-                                self:BeamObject(ent, pos, sourcePattern.Pad, targetPattern.Pad, false)
-                                
                                 if sourcePattern.IsBuffer then
                                     table.RemoveByValue(Star_Trek.Transporter.Buffer.Entities, ent)
                                 end
+
+                                self:BeamObject(ent, pos, sourcePattern.Pad, targetPattern.Pad, false)
                             else
                                 table.insert(remainingEntities, ent)
                                 ent.Pad = sourcePattern.Pad
@@ -146,8 +146,10 @@ function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPattern
         end
     end
 
-    for _, ent in pairs(remainingEntities) do
-        table.insert(Star_Trek.Transporter.Buffer.Entities, ent)
-        self:BeamObject(ent, Vector(), ent.Pad, nil, true)
+    if not sourcePatterns.IsBuffer then
+        for _, ent in pairs(remainingEntities) do
+            table.insert(Star_Trek.Transporter.Buffer.Entities, ent)
+            self:BeamObject(ent, Vector(), ent.Pad, nil, true)
+        end
     end
 end

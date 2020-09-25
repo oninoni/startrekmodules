@@ -38,13 +38,13 @@ function Star_Trek.LCARS:OpenTurboliftMenu()
     local success, ent = self:GetInterfaceEntity(TRIGGER_PLAYER, CALLER)
     if not success then 
         -- Error Message
-        print("[Star Trek] " .. ent)
+        Star_Trek:Message(ent)
         return
     end
 
     local keyValues = ent.LCARSKeyData
     if not istable(keyValues) then
-        print("[Star Trek] Invalid Key Values on OpenTLMenu")
+        Star_Trek:Message("Invalid Key Values on OpenTLMenu")
         return
     end
 
@@ -70,7 +70,7 @@ function Star_Trek.LCARS:OpenTurboliftMenu()
         end
     end, buttons, "Turbolift")
     if not success then
-        print("[Star Trek] " .. window)
+        Star_Trek:Message(window)
         return
     end
 
@@ -78,7 +78,7 @@ function Star_Trek.LCARS:OpenTurboliftMenu()
 
     local success, error = self:OpenInterface(ent, windows)
     if not success then
-        print("[Star Trek] " .. error)
+        Star_Trek:Message(error)
         return
     end
 end

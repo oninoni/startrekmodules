@@ -1,4 +1,3 @@
-
 AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "shared.lua" )
 
@@ -8,7 +7,6 @@ AccessorFunc( ENT, "partnername", "PartnerName" )
 
 -- Collect properties
 function ENT:KeyValue( key, value )
-
 	if ( key == "partnername" ) then
 		self:SetPartnerName( value )
 		self:SetExit( ents.FindByName( value )[1] )
