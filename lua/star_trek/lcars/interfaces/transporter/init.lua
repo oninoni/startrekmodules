@@ -442,11 +442,25 @@ function Star_Trek.LCARS:OpenTransporterMenu()
 
     local interfaceData = self.ActiveInterfaces[ent]
     if istable(interfaceData) then
+        if interfaceData.TransportActive then
+            ent:EmitSound("buttons/combine_button_locked.wav")
+            -- TODO: Replace Sound
+            return
+        end
         triggerTransporter(interfaceData)
+
+        local animEnt = CALLER
+        animEnt:Fire("FireUser1")
+        interfaceData.TransportActive = true
+        timer.Simple(2, function()
+            animEnt:Fire("FireUser2")
+            interfaceData.TransportActive = false
+        end)
+
         return
     end
 
-    local success, sourceMenuTable = createWindowTable(Vector(-13, 0, 4), Angle(5, 15, 30), Vector(-30, -10, 18), Angle(15, 45, 60), false, nil, padNumber)
+    local success, sourceMenuTable = createWindowTable(Vector(-15, -2, 4), Angle(5, 15, 30), Vector(-31, -12, 17), Angle(15, 45, 60), false, nil, padNumber)
     if not success then
         Star_Trek:Message(sourceMenuTable)
         return
@@ -457,7 +471,7 @@ function Star_Trek.LCARS:OpenTransporterMenu()
         return
     end
     
-    local success, targetMenuTable = createWindowTable(Vector(13, 0, 4), Angle(-5, -15, 30), Vector(30, -10, 18), Angle(-15, -45, 60), true, nil, padNumber)
+    local success, targetMenuTable = createWindowTable(Vector(15, -2, 4), Angle(-5, -15, 30), Vector(31, -12, 17), Angle(-15, -45, 60), true, nil, padNumber)
     if not success then
         Star_Trek:Message(targetMenuTable)
         return
@@ -486,8 +500,76 @@ function Star_Trek.LCARS:OpenTransporterMenu()
     interfaceData.TargetMenuTable = targetMenuTable
 end
 
+function Star_Trek.LCARS:OpenConsoleTransporterMenu()
+    local success, ent = self:GetInterfaceEntity(TRIGGER_PLAYER, CALLER)
+    if not success then 
+        Star_Trek:Message(ent)
+        return
+    end
+
+    local menuTypes = {
+        "Lifeforms",
+        "Transporter Pads",
+        "Locations",
+    }
+
+    local success, sourceMenuTable = createWindowTable(Vector(-16, -32, 9), Angle(0, 0, -70), Vector(-22, 0, 0), Angle(0, 0, 0), false, menuTypes)
+    if not success then
+        Star_Trek:Message(sourceMenuTable)
+        return
+    end
+    local success, error = sourceMenuTable:SelectType(1)
+    if not success then
+        Star_Trek:Message(error)
+        return
+    end
+    
+    local success, targetMenuTable = createWindowTable(Vector(16, -32, 9), Angle(0, 0, -70), Vector(22, 0, 0), Angle(0, 0, 0), true, menuTypes)
+    if not success then
+        Star_Trek:Message(targetMenuTable)
+        return
+    end
+    local success, error = targetMenuTable:SelectType(2)
+    if not success then
+        Star_Trek:Message(error)
+        return
+    end
+
+    print(ent)
+
+    local success, sliderWindow = Star_Trek.LCARS:CreateWindow("transport_slider", Vector(0, -32, 9), Angle(0, 0, -70), 30, 200, 200, function(windowData, interfaceData, ent, buttonId)
+        triggerTransporter(self.ActiveInterfaces[ent])
+    end)
+    if not success then
+        Star_Trek:Message(sliderWindow)
+        return
+    end
+
+    local windows = Star_Trek.LCARS:CombineWindows(
+        sourceMenuTable.MenuWindow,
+        sourceMenuTable.MainWindow,
+        targetMenuTable.MenuWindow,
+        targetMenuTable.MainWindow,
+        sliderWindow
+    )
+
+    local success, error = self:OpenInterface(ent, windows)
+    if not success then
+        Star_Trek:Message(error)
+        return
+    end
+    
+    local interfaceData = self.ActiveInterfaces[ent]
+    interfaceData.SourceMenuTable = sourceMenuTable
+    interfaceData.TargetMenuTable = targetMenuTable
+end
+
 -- TODO: Get rid of by changing map
 LCARS = LCARS or {}
 function LCARS:OpenTransporterMenu()
     Star_Trek.LCARS:OpenTransporterMenu()
+end
+
+function LCARS:OpenBridgeTransporter()
+    Star_Trek.LCARS:OpenConsoleTransporterMenu()
 end

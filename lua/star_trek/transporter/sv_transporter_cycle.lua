@@ -149,9 +149,11 @@ function Star_Trek.Transporter:BroadcastEffect(ent, remat)
     ent:SetCollisionGroup(oldCollisionGroup)
 
     if remat then
-        sound.Play("star_trek.voy_beam_down", ent:GetPos(), 10, 100, 0.8)
+        sound.Play("star_trek.voy_beam_down", ent:GetPos(), 10, 100, 0.5)
+        ent:EmitSound("star_trek.voy_beam_down", 10, 100, 0.5)
     else
-        sound.Play("star_trek.voy_beam_up"  , ent:GetPos(), 10, 100, 0.8)
+        sound.Play("star_trek.voy_beam_up"  , ent:GetPos(), 10, 100, 0.5)
+        ent:EmitSound("star_trek.voy_beam_up", 10, 100, 0.5)
     end
 
     timer.Simple(0.5, function()
