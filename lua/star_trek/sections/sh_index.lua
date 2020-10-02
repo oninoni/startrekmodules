@@ -13,18 +13,14 @@
 ---------------------------------------
 
 ---------------------------------------
---           Main | Config           --
+--          Sections | Index         --
 ---------------------------------------
 
--- Modules
-Star_Trek.Modules["util"] = true
-Star_Trek.Modules["portal_window"] = true
-Star_Trek.Modules["chairs"] = true
-Star_Trek.Modules["doors"] = true
+Star_Trek.Sections = Star_Trek.Sections or {}
 
-Star_Trek.Modules["lcars"] = true
-Star_Trek.Modules["tricorder"] = true
-Star_Trek.Modules["sections"] = true
+if SERVER then
+    print("Load")
 
-Star_Trek.Modules["turbolift"] = true
-Star_Trek.Modules["transporter"] = true
+    include("sv_config.lua")
+    include("sv_sections.lua")
+end

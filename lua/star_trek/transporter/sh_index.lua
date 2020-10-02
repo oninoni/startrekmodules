@@ -20,9 +20,11 @@ Star_Trek.Transporter = Star_Trek.Transporter or {}
 
 if SERVER then
     AddCSLuaFile("sh_sounds.lua")
+    AddCSLuaFile("sh_particles.lua")
     AddCSLuaFile("cl_transporter.lua")
 
     include("sh_sounds.lua")
+    include("sh_particles.lua")
     include("sv_transporter_cycle.lua")
     include("sv_transporter_pattern.lua")
     include("sv_transporter.lua")
@@ -30,9 +32,6 @@ end
 
 if CLIENT then
     include("sh_sounds.lua")
+    include("sh_particles.lua")
     include("cl_transporter.lua")
 end
-
-game.AddParticles( "particles/voyager.pcf" )
-PrecacheParticleSystem("beam_out")
-PrecacheParticleSystem("beam_in")

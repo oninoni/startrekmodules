@@ -35,7 +35,9 @@ hook.Add("InitPostEntity", "Star_Trek.Transporter.Setup", setupBuffer)
 hook.Add("PostCleanupMap", "Star_Trek.Transporter.Setup", setupBuffer)
 
 hook.Add("SetupPlayerVisibility", "Star_Trek.Transporter.PVS", function(ply, viewEntity)
-    AddOriginToPVS(Star_Trek.Transporter.Buffer.Pos)
+    if istable(Star_Trek.Transporter.Buffer) then
+        AddOriginToPVS(Star_Trek.Transporter.Buffer.Pos)
+    end
 end)
 
 function Star_Trek.Transporter:CleanUpSourcePatterns(patterns)

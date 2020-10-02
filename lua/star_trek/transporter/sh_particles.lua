@@ -13,18 +13,10 @@
 ---------------------------------------
 
 ---------------------------------------
---           Main | Config           --
+--   Transporter Particles | Shared  --
 ---------------------------------------
 
--- Modules
-Star_Trek.Modules["util"] = true
-Star_Trek.Modules["portal_window"] = true
-Star_Trek.Modules["chairs"] = true
-Star_Trek.Modules["doors"] = true
+game.AddParticles( "particles/voyager.pcf" )
 
-Star_Trek.Modules["lcars"] = true
-Star_Trek.Modules["tricorder"] = true
-Star_Trek.Modules["sections"] = true
-
-Star_Trek.Modules["turbolift"] = true
-Star_Trek.Modules["transporter"] = true
+PrecacheParticleSystem("beam_out")
+PrecacheParticleSystem("beam_in")

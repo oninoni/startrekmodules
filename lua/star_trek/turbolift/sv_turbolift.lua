@@ -32,7 +32,7 @@ local setupTurbolifts = function()
 
             local keyValues = ent.LCARSKeyData
             if istable(keyValues) then
-                local name = ent.LCARSKeyData["lcars_name"]
+                local name = keyValues["lcars_name"]
                 if isstring(name) then
                     ent.IsTurbolift = true
 

@@ -297,16 +297,13 @@ net.Receive("Star_Trek.LCARS.Pressed", function(len, ply)
     end
 end)
 
-function Star_Trek.LCARS:LoadInterface(name)
-    include("interfaces/" .. name .. "/init.lua")
-    Star_Trek:Message("Loaded LCARS Interface \"" .. name .. "\"")
-end
-
 function Star_Trek.LCARS:LoadInterfaces()
     local _, directories = file.Find("star_trek/lcars/interfaces/*", "LUA")
 
     for _, interfaceName in pairs(directories) do
-        self:LoadInterface(interfaceName)
+        include("interfaces/" .. interfaceName .. "/init.lua")
+        
+        Star_Trek:Message("Loaded LCARS Interface \"" .. interfaceName .. "\"")
     end
 end
 
