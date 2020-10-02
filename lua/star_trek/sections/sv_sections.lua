@@ -118,19 +118,5 @@ function Star_Trek.Sections:Load()
     end
 end
 
-hook.Add("Think", "SectionTest", function()
-    print("---")
-    for deck, deckData in pairs(Star_Trek.Sections.Decks) do
-        for sectionId, _ in pairs(deckData.Sections) do
-            local found = Star_Trek.Sections:GetInSection(deck, sectionId)
-            if istable(found) then
-                for _, ent in pairs(found) do
-                    print("Found " .. tostring(ent) .. " in \"Deck " .. deck .. " " .. sectionId .. "\"")
-                end
-            end
-        end
-    end
-end)
-
 Star_Trek.Sections:Load()
 -- TODO: Test when actually sections in map.

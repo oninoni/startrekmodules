@@ -17,6 +17,7 @@
 ---------------------------------------
 
 if not (string.StartWith(game.GetMap(), "rp_voyager") or string.StartWith(game.GetMap(), "test_")) then return end
+-- TODO: Add override convar for workshop release
 
 Star_Trek = Star_Trek or {}
 Star_Trek.Modules = Star_Trek.Modules or {}
@@ -59,7 +60,7 @@ local function loadModule(name)
             include(entDirectory .. "cl_init.lua")
         end
 
-        weapons.Register(ENT, entityName)
+        scripted_ents.Register(ENT, entityName)
         ENT = oldEnt
 
         Star_Trek:Message("Loaded Entity \"" .. entityName .. "\"")
