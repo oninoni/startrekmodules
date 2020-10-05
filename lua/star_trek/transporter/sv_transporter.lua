@@ -34,6 +34,22 @@ end
 hook.Add("InitPostEntity", "Star_Trek.Transporter.Setup", setupBuffer)
 hook.Add("PostCleanupMap", "Star_Trek.Transporter.Setup", setupBuffer)
 
+hook.Add("Star_Trek.Sections.Loaded", "Star_Trek.Transporter.DetectLocations", function()
+    for deck, deckData in pairs(Star_Trek.Sections.Decks) do
+        for sectionId, sectionData in pairs(deckData.Sections) do
+            sectionData.BeamLocations = {}
+            
+            local entities = Star_Trek.Sections:GetInSection(deck, sectionId, true)
+            
+            for _, ent in pairs(entities) do
+                if ent:GetName() == "beamLocation" then
+                    table.insert(sectionData.BeamLocations, ent:GetPos())
+                end
+            end
+        end
+    end
+end)
+
 hook.Add("SetupPlayerVisibility", "Star_Trek.Transporter.PVS", function(ply, viewEntity)
     if istable(Star_Trek.Transporter.Buffer) then
         AddOriginToPVS(Star_Trek.Transporter.Buffer.Pos)

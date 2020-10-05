@@ -88,5 +88,5 @@ function WINDOW.OnDraw(self, pos, animPos)
         draw.SimpleText(i, "LCARSSmall", x, y, Color(0, 0, 0, animPos * 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
     end
     
-    Star_Trek.LCARS:DrawFrame(x, y, width, wd2, hd2, self.Title, 255 * animPos)
+    Star_Trek.LCARS:DrawFrame(width, wd2, hd2, self.Title, 255 * animPos)
 end

@@ -31,8 +31,8 @@ SWEP.SlotPos = 42
 
 SWEP.ViewModelFOV = 70
 
-SWEP.ViewModel = ""
-SWEP.WorldModel = ""
+--SWEP.ViewModel = ""
+--SWEP.WorldModel = ""
 
 SWEP.Primary.Ammo = ""
 SWEP.Primary.ClipSize = 0

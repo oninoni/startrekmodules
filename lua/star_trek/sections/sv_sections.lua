@@ -30,7 +30,7 @@ function Star_Trek.Sections:GetSection(deck, sectionId)
     return false, "Invalid Deck!"
 end
 
-function Star_Trek.Sections:GetInSection(deck, sectionId)
+function Star_Trek.Sections:GetInSection(deck, sectionId, allowMap)
     local sectionData, error = self:GetSection(deck, sectionId)
     if not sectionData then
         return false, error
@@ -53,7 +53,7 @@ function Star_Trek.Sections:GetInSection(deck, sectionId)
         local potentialEnts = ents.FindInBox(realMin, realMax)
         for _, ent in pairs(potentialEnts) do
             if table.HasValue(objects, ent) then continue end
-            if ent:MapCreationID() ~= -1 then continue end
+            if not allowMap and ent:MapCreationID() ~= -1 then continue end
             if IsValid(ent:GetParent()) then continue end
             
             local entPos = ent.EyePos and ent:EyePos() or ent:GetPos()
@@ -71,9 +71,9 @@ function Star_Trek.Sections:GetInSection(deck, sectionId)
     return objects
 end
 
-function Star_Trek.Sections:Load()
-
+function Star_Trek.Sections:SetupSections()
     self.Decks = {}
+    
     for i=1,self.DeckCount,1 do
         self.Decks[i] = {
             Sections = {},
@@ -115,8 +115,16 @@ function Star_Trek.Sections:Load()
                 Max = max,
             })
         end
+
+        ent:Remove()
     end
+
+    hook.Run("Star_Trek.Sections.Loaded")
 end
 
-Star_Trek.Sections:Load()
--- TODO: Test when actually sections in map.
+local function setupSections()
+    Star_Trek.Sections:SetupSections()
+end
+
+hook.Add("InitPostEntity", "Star_Trek.Sections.Setup", setupSections)
+hook.Add("PostCleanupMap", "Star_Trek.Sections.Setup", setupSections)

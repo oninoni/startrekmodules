@@ -8,6 +8,8 @@ function WINDOW.OnCreate(windowData, buttons, title, toggle)
     end
 
     for i, button in pairs(buttons) do
+        if not istable(button) then continue end
+
         local buttonData = {
             Name = button.Name or "MISSING",
             Disabled = button.Disabled or false,
@@ -28,48 +30,8 @@ function WINDOW.OnCreate(windowData, buttons, title, toggle)
             end
         end
 
-        local s
-        if isnumber(button.RandomS) then
-            if not (button.RandomS >= 0 and button.RandomS < 100) then
-                return
-            end
-
-            s = button.RandomS
-        else
-            s = math.random(0, 99)
-        end
-        if s < 10 then
-            buttonData.RandomS = "0" .. tostring(s)
-        else
-            buttonData.RandomS = tostring(s)
-        end
-
-        local l
-        if isnumber(button.RandomL) then
-            if not (button.RandomL >= 0 and button.RandomL < 1000000) then
-                return
-            end
-
-            l = button.RandomL
-        else
-            l = math.random(0, 999999)
-        end
-
-        if l < 10 then
-            buttonData.RandomL = "00000" .. tostring(l)
-        elseif l < 100 then
-            buttonData.RandomL = "0000" .. tostring(l)
-        elseif l < 1000 then
-            buttonData.RandomL = "000" .. tostring(l)
-        elseif l < 10000 then
-            buttonData.RandomL = "00" .. tostring(l)
-        elseif l < 100000 then
-            buttonData.RandomL = "0" .. tostring(l)
-        else
-            buttonData.RandomL = tostring(l)
-        end
-
-        buttonData.RandomL = string.sub(buttonData.RandomL, 1, 2) .. "-" .. string.sub(buttonData.RandomL, 3)
+        buttonData.RandomS = Star_Trek.LCARS:GetSmallNumber(button.RandomS)
+        buttonData.RandomL = Star_Trek.LCARS:GetLargeNumber(button.RandomL)
 
         windowData.Buttons[i] = buttonData
     end
@@ -77,20 +39,20 @@ function WINDOW.OnCreate(windowData, buttons, title, toggle)
     return windowData
 end
 
-function WINDOW.GetData(windowData)
+function WINDOW.GetSelected(windowData)
     local data = {}
-    for _, button in pairs(windowData.Buttons) do
-        data[button.Name] = button.Selected
+    for _, buttonData in pairs(windowData.Buttons) do
+        data[buttonData.Name] = buttonData.Selected
     end
 
     return data
 end
 
-function WINDOW.SetData(windowData, data)
+function WINDOW.SetSelected(windowData, data)
     for name, selected in pairs(data) do
-        for _, button in pairs(windowData.Buttons) do
-            if button.Name == name then
-    	        button.Selected = selected
+        for _, buttonData in pairs(windowData.Buttons) do
+            if buttonData.Name == name then
+    	        buttonData.Selected = selected
                 break
             end
         end
@@ -104,9 +66,9 @@ function WINDOW.OnPress(windowData, interfaceData, ent, buttonId, callback)
     local shouldUpdate = false
 
     if windowData.Toggle then
-        local button = windowData.Buttons[buttonId]
-        if istable(button) then
-            button.Selected = not (button.Selected or false)
+        local buttonData = windowData.Buttons[buttonId]
+        if istable(buttonData) then
+            buttonData.Selected = not (buttonData.Selected or false)
             shouldUpdate = true
         end
     end

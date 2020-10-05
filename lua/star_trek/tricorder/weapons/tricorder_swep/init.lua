@@ -20,7 +20,8 @@ function SWEP:Reload()
 
 end
 function SWEP:PrimaryAttack()
-
+    local trace = self:GetOwner():GetEyeTrace()
+    print(trace.Hit, trace.HitPos, trace.Entity)
 end
 function SWEP:SecondaryAttack()
 

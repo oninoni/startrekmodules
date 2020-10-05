@@ -111,8 +111,8 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
                             return
                         end
                         
-                        local sourceMenuData = sourceWindowFunctions.GetData(menuTable.MainWindow)
-                        local targetMenuData = targetWindowFunctions.GetData(targetMenuTable.MainWindow)
+                        local sourceMenuData = sourceWindowFunctions.GetSelected(menuTable.MainWindow)
+                        local targetMenuData = targetWindowFunctions.GetSelected(targetMenuTable.MainWindow)
 
                         local sourceMenuSelection = menuTable.MenuWindow.Selection
                         local success, error = menuTable:SelectType(targetMenuTable.MenuWindow.Selection)
@@ -127,8 +127,8 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
                             return
                         end
 
-                        sourceWindowFunctions.SetData(targetMenuTable.MainWindow, sourceMenuData)
-                        targetWindowFunctions.SetData(menuTable.MainWindow, targetMenuData)
+                        sourceWindowFunctions.SetSelected(targetMenuTable.MainWindow, sourceMenuData)
+                        targetWindowFunctions.SetSelected(menuTable.MainWindow, targetMenuData)
 
                         interfaceData.Windows[targetMenuTable.MenuWindow.WindowId] = targetMenuTable.MenuWindow
                         Star_Trek.LCARS:UpdateWindow(ent, targetMenuTable.MenuWindow.WindowId)
@@ -195,6 +195,41 @@ local function createMainWindow(pos, angle, menuTable, padNumber)
     local callback
     local buttons = {}
 
+    -- Category List Window
+    if selectionName == "Locations" then
+        local categories = {}
+        for deck, deckData in pairs(Star_Trek.Sections.Decks) do
+            local category = {
+                Name = "Deck " .. deck,
+                Buttons = {},
+            }
+
+            if table.Count(deckData.Sections) == 0 then
+                category.Disabled = true
+            else
+                for sectionId, sectionData in SortedPairs(deckData.Sections) do
+                    local button = {
+                        Name = "Section " .. sectionId .. " " .. sectionData.Name,
+                        Data = sectionData.BeamLocations,
+                    }
+
+                    table.insert(category.Buttons, button)
+                end
+            end
+
+            table.insert(categories, category)
+        end
+
+        local success, mainWindow = Star_Trek.LCARS:CreateWindow("category_list", pos, angle, nil, 500, 500, function(windowData, interfaceData, ent, buttonId)
+
+        end, categories, selectionName, true)
+        if not success then
+            return false, mainWindow
+        end
+
+        return true, mainWindow
+    end
+
     -- Button List Window
     if selectionName == "Lifeforms" then
         for _, ply in pairs(player.GetHumans()) do
@@ -204,24 +239,6 @@ local function createMainWindow(pos, angle, menuTable, padNumber)
             })
         end
         table.SortByMember(buttons, "Name")
-
-        callback = function(windowData, interfaceData, ent, buttonId)
-            -- Does nothing special here.
-        end
-    elseif selectionName == "Locations" then
-        local rooms = {}
-        for _, ent in pairs(ents.FindByName("beamLocation")) do
-            local name = ent.LCARSKeyData["lcars_name"]
-            rooms[name] = rooms[name] or {}
-            table.insert(rooms[name], ent:GetPos())
-        end
-
-        for name, locations in SortedPairs(rooms) do
-            table.insert(buttons, {
-                Name = name,
-                Data = locations,
-            })
-        end
 
         callback = function(windowData, interfaceData, ent, buttonId)
             -- Does nothing special here.
@@ -355,10 +372,12 @@ local function getPatternData(menuTable, wideField)
         return Star_Trek.Transporter:GetPatternsFromPlayers(players, wideField)
     elseif selectionName == "Locations" then
         local positions = {}
-        for _, button in pairs(mainWindow.Buttons) do
+        
+        local categoryData = mainWindow.Categories[mainWindow.Selected]
+        for _, button in pairs(categoryData.Buttons or {}) do
             if button.Selected then
-                for _, pos in pairs(button.Data) do
-                    table.insert(positions, pos) 
+                for _, pos in pairs(button.Data or {}) do
+                    table.insert(positions, pos)
                 end
             end
         end
@@ -534,8 +553,6 @@ function Star_Trek.LCARS:OpenConsoleTransporterMenu()
         Star_Trek:Message(error)
         return
     end
-
-    print(ent)
 
     local success, sliderWindow = Star_Trek.LCARS:CreateWindow("transport_slider", Vector(0, -32, 9), Angle(0, 0, -70), 30, 200, 200, function(windowData, interfaceData, ent, buttonId)
         triggerTransporter(self.ActiveInterfaces[ent])

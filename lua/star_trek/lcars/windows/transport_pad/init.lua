@@ -60,7 +60,7 @@ function WINDOW.OnCreate(windowData, padNumber, title)
     return windowData
 end
 
-function WINDOW.GetData(windowData)
+function WINDOW.GetSelected(windowData)
     local data = {}
     for _, pad in pairs(windowData.Pads) do
         data[pad.Name] = pad.Selected
@@ -69,7 +69,7 @@ function WINDOW.GetData(windowData)
     return data
 end
 
-function WINDOW.SetData(windowData, data)
+function WINDOW.SetSelected(windowData, data)
     for name, selected in pairs(data) do
         for _, pad in pairs(windowData.Pads) do
             if pad.Name == name then

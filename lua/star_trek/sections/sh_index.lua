@@ -19,8 +19,6 @@
 Star_Trek.Sections = Star_Trek.Sections or {}
 
 if SERVER then
-    print("Load")
-
     include("sv_config.lua")
     include("sv_sections.lua")
 end

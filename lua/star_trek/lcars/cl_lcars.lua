@@ -25,41 +25,6 @@ function Star_Trek.LCARS:CloseInterface(id)
     end
 end
 
-function Star_Trek.LCARS:DrawFrame(x, y, width, wd2, hd2, title, alpha)
-    -- Bottom Yellow Bars
-    draw.RoundedBox(0, -wd2   ,        0, 50, hd2    , Color(0, 0, 0, alpha))
-    draw.RoundedBox(0, -wd2 +1,        0, 48, hd2    , ColorAlpha(Star_Trek.LCARS.ColorOrange, alpha))
-    
-    -- Middle Red Bars
-    draw.RoundedBox( 0, -wd2    , -hd2 +74,       50, hd2 -74, Color(0, 0, 0, alpha))
-    draw.RoundedBox(25, -wd2    , -hd2 +48,       50,      50, Color(0, 0, 0, alpha))
-    draw.RoundedBox( 0, -wd2 +25, -hd2 +48,       25,      25, Color(0, 0, 0, alpha))
-    draw.RoundedBox( 0, -wd2 +25, -hd2 +48, width-25,      11, Color(0, 0, 0, alpha))
-
-    draw.RoundedBox( 0, -wd2  +1, -hd2 +74,       48, hd2 -74, ColorAlpha(Star_Trek.LCARS.ColorLightRed, alpha))
-    draw.RoundedBox(24, -wd2  +1, -hd2 +49,       48,      48, ColorAlpha(Star_Trek.LCARS.ColorLightRed, alpha))
-    draw.RoundedBox( 0, -wd2 +25, -hd2 +49,       24,      24, ColorAlpha(Star_Trek.LCARS.ColorLightRed, alpha))
-    draw.RoundedBox( 0, -wd2 +25, -hd2 +49, width-25,       9, ColorAlpha(Star_Trek.LCARS.ColorLightRed, alpha))
-
-    -- Top Red Bars
-    draw.RoundedBox( 0, -wd2    , -hd2  -3,       50,      25, Color(0, 0, 0, alpha))
-    draw.RoundedBox(25, -wd2    , -hd2  -3,       50,      50, Color(0, 0, 0, alpha))
-    draw.RoundedBox( 0, -wd2 +25, -hd2 +22,       25,      25, Color(0, 0, 0, alpha))
-    draw.RoundedBox( 0, -wd2 +25, -hd2 +36, width-25,      11, Color(0, 0, 0, alpha))
-
-    draw.RoundedBox( 0, -wd2  +1, -hd2  -3,       48,      25, ColorAlpha(Star_Trek.LCARS.ColorOrange, alpha))
-    draw.RoundedBox(24, -wd2  +1, -hd2  -2,       48,      48, ColorAlpha(Star_Trek.LCARS.ColorOrange, alpha))
-    draw.RoundedBox( 0, -wd2 +25, -hd2 +22,       24,      24, ColorAlpha(Star_Trek.LCARS.ColorOrange, alpha))
-    draw.RoundedBox( 0, -wd2 +25, -hd2 +37, width-25,       9, ColorAlpha(Star_Trek.LCARS.ColorOrange, alpha))
-
-    -- Small Black Bars
-    draw.RoundedBox(0, -wd2, -61, 50, 2, Color(0, 0, 0, alpha))
-    draw.RoundedBox(0, -wd2,  -1, 50, 2, Color(0, 0, 0, alpha))
-    draw.RoundedBox(0, -wd2,  11, 50, 2, Color(0, 0, 0, alpha))
-    
-    draw.DrawText(title, "LCARSBig", wd2 -8, -hd2 -2, color_white, TEXT_ALIGN_RIGHT)
-end
-
 net.Receive("Star_Trek.LCARS.Close", function()
     local id = net.ReadInt(32)
 
