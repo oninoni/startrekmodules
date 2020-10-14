@@ -122,13 +122,16 @@ hook.Add("Think", "Star_Trek.LCARS.Think", function()
         for _, window in pairs(interface.Windows) do
             local trace = util.TraceLine({
                 start = eyePos,
-                endpos = window.WPos,
+                nedpos = window.WPos,
                 filter = ply
             })
 
             --debugoverlay.Cross(trace.HitPos, 10)
+            --debugoverlay.Line(window.WPos, window.WPos + window.WAng:Up() * 10)
 
-            if trace.Hit then
+            local cross = (window.WPos - eyePos):Dot(window.WAng:Up())
+
+            if not trace.Hit or cross > 0 then
                 window.WVis = false
             else
                 window.WVis = true
@@ -251,7 +254,7 @@ hook.Add("PostDrawOpaqueRenderables", "Star_Trek.LCARS.Draw", function()
             end
 
             cam.Start3D2D(window.WPos, window.WAng, 1 / window.WScale)
-                windowFunctions.OnDraw(window, window.LastPos or Vector(), interface.AnimPos)
+                windowFunctions.OnDraw(window, window.LastPos or Vector(-width/2, -height/2), interface.AnimPos)
             cam.End3D2D()
         end
     end

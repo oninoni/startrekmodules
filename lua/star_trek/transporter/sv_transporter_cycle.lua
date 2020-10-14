@@ -35,8 +35,6 @@ function Star_Trek.Transporter:TriggerEffect(transportData, ent)
         transportData.OldCollisionGroup = ent:GetCollisionGroup()
         ent:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
 
-        transportData.OldMoveType = ent:GetMoveType()
-        ent:SetMoveType(MOVETYPE_NONE)
 
         local phys = ent:GetPhysicsObject()
         if IsValid(phys) then
@@ -68,6 +66,9 @@ function Star_Trek.Transporter:TriggerEffect(transportData, ent)
         end
     elseif mode == 2 then
         ent:SetRenderMode(RENDERMODE_NONE)
+        
+        transportData.OldMoveType = ent:GetMoveType()
+        ent:SetMoveType(MOVETYPE_NONE)
         
         transportData.OldColor = ent:GetColor()
         ent:SetColor(Color(0, 0, 0, 0))
@@ -218,10 +219,10 @@ hook.Add("Think", "Star_Trek.Tranporter.Think", function()
             if state == 1 and (stateTime + 3) < curTime then
                 transportData.State = 2
 
+                ent:SetPos(Star_Trek.Transporter.Buffer.Pos)
+
                 -- Object is now dematerialized and moved to the buffer!
                 Star_Trek.Transporter:TriggerEffect(transportData, ent)
-
-                ent:SetPos(Star_Trek.Transporter.Buffer.Pos)
                 
                 transportData.StateTime = curTime
                 

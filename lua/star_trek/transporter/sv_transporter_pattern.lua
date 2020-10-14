@@ -164,6 +164,45 @@ function Star_Trek.Transporter:GetPatternsFromPlayers(players, wideField)
 
     patterns = self:CleanupPatternList(patterns)
 
+    patterns.SingleTarget = true
+    return patterns
+end
+
+-- Returns pattern data from a section.
+--
+-- @param Number deck
+-- @param Number sectionId
+-- @return Table pattern
+function Star_Trek.Transporter:GetPatternsFromArea(deck, sectionId)
+    pattern = {
+        Entities = {},
+        Pos = nil,
+    }
+
+    local entities = Star_Trek.Sections:GetInSection(deck, sectionId, false)
+    print(entities)
+    for i, ent in pairs(entities) do
+        table.insert(pattern.Entities, ent)
+    end
+
+    return pattern
+end
+
+-- Determines all of the pattern Data Tables for a given list of sections on a deck.
+--
+-- @param Number deck
+-- @param Table sectionIds
+-- @return Table pattern
+function Star_Trek.Transporter:GetPatternsFromAreas(deck, sectionIds)
+    local patterns = {}
+
+    for i, sectionId in pairs(sectionIds) do
+        local pattern = self:GetPatternsFromArea(deck, sectionId)
+        patterns[i] = pattern
+    end
+    
+    patterns = self:CleanupPatternList(patterns)
+
     patterns.SingleTarget = false
     return patterns
 end

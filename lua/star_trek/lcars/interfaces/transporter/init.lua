@@ -32,9 +32,9 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
 
     local utilButtonData = {}
     if menuTable.Target then
-        utilButtonData.Name = "Direct Transport"
-        utilButtonData.Color = Star_Trek.LCARS.ColorOrange
-        -- TODO: Menu needs to hide non-compatible settings in buffer mode.
+        utilButtonData = nil
+        --utilButtonData.Name = "Direct Transport"
+        --utilButtonData.Color = Star_Trek.LCARS.ColorOrange
     else
         utilButtonData.Name = "Narrow Beam"
         utilButtonData.Color = Star_Trek.LCARS.ColorOrange
@@ -73,11 +73,11 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
                 end
 
                 if menuTable.Target then
-                    if button.SelectedCustom then
-                        button.Name = "Buffer Transport" -- TODO: Block Types non-compatible source and target types
-                    else
-                        button.Name = "Direct Transport"
-                    end
+                    --if button.SelectedCustom then
+                    --    button.Name = "Buffer Transport" -- TODO: Block Types non-compatible source and target types
+                    --else
+                    --    button.Name = "Direct Transport"
+                    --end
                 else
                     if button.SelectedCustom then
                         button.Name = "Wide Beam"
@@ -196,7 +196,7 @@ local function createMainWindow(pos, angle, menuTable, padNumber)
     local buttons = {}
 
     -- Category List Window
-    if selectionName == "Locations" then
+    if selectionName == "Sections" then
         local categories = {}
         for deck, deckData in pairs(Star_Trek.Sections.Decks) do
             local category = {
@@ -210,8 +210,12 @@ local function createMainWindow(pos, angle, menuTable, padNumber)
                 for sectionId, sectionData in SortedPairs(deckData.Sections) do
                     local button = {
                         Name = "Section " .. sectionId .. " " .. sectionData.Name,
-                        Data = sectionData.BeamLocations,
+                        Data = sectionData,
                     }
+
+                    if menuTable.Target and table.Count(sectionData.BeamLocations) == 0 then
+                        button.Disabled = true
+                    end
 
                     table.insert(category.Buttons, button)
                 end
@@ -307,9 +311,10 @@ local function createWindowTable(menuPos, menuAngle, mainPos, mainAngle, targetS
     local menuTable = {
         MenuTypes = menuTypes or {
             "Transporter Pad",
-            "Locations",
-            "Lifeforms",
             "Other Pads",
+            "Sections",
+            "Lifeforms",
+            "External",
             {"Buffer", false},
         },
         Target = targetSide or false,
@@ -370,19 +375,36 @@ local function getPatternData(menuTable, wideField)
         end
 
         return Star_Trek.Transporter:GetPatternsFromPlayers(players, wideField)
-    elseif selectionName == "Locations" then
+    elseif selectionName == "Sections" then
         local positions = {}
         
-        local categoryData = mainWindow.Categories[mainWindow.Selected]
-        for _, button in pairs(categoryData.Buttons or {}) do
-            if button.Selected then
-                for _, pos in pairs(button.Data or {}) do
-                    table.insert(positions, pos)
+        if menuTable.Target then
+            local categoryData = mainWindow.Categories[mainWindow.Selected]
+            for _, button in pairs(categoryData.Buttons or {}) do
+                if button.Selected then
+                    local sectionData = button.Data or {}
+
+                    for _, pos in pairs(sectionData.BeamLocations or {}) do
+                        table.insert(positions, pos)
+                    end
                 end
             end
-        end
 
-        return Star_Trek.Transporter:GetPatternsFromLocations(positions, wideField)
+            return Star_Trek.Transporter:GetPatternsFromLocations(positions, wideField)
+        else
+            local deck = mainWindow.Selected
+            local categoryData = mainWindow.Categories[deck]
+
+            local sectionIds = {}
+            
+            for buttonId, buttonData in pairs(categoryData.Buttons) do
+                if buttonData.Selected then
+                    table.insert(sectionIds, buttonData.Data.Id)
+                end
+            end
+
+            return Star_Trek.Transporter:GetPatternsFromAreas(deck, sectionIds)
+        end
     elseif selectionName == "Buffer" then
         local entities = {}
         for _, button in pairs(mainWindow.Buttons) do
@@ -479,7 +501,7 @@ function Star_Trek.LCARS:OpenTransporterMenu()
         return
     end
 
-    local success, sourceMenuTable = createWindowTable(Vector(-15, -2, 4), Angle(5, 15, 30), Vector(-31, -12, 17), Angle(15, 45, 60), false, nil, padNumber)
+    local success, sourceMenuTable = createWindowTable(Vector(-15, -2, 6), Angle(5, 15, 30), Vector(-31, -12, 17), Angle(15, 45, 60), false, nil, padNumber)
     if not success then
         Star_Trek:Message(sourceMenuTable)
         return
@@ -490,7 +512,7 @@ function Star_Trek.LCARS:OpenTransporterMenu()
         return
     end
     
-    local success, targetMenuTable = createWindowTable(Vector(15, -2, 4), Angle(-5, -15, 30), Vector(31, -12, 17), Angle(-15, -45, 60), true, nil, padNumber)
+    local success, targetMenuTable = createWindowTable(Vector(15, -2, 6), Angle(-5, -15, 30), Vector(31, -12, 17), Angle(-15, -45, 60), true, nil, padNumber)
     if not success then
         Star_Trek:Message(targetMenuTable)
         return
@@ -525,11 +547,17 @@ function Star_Trek.LCARS:OpenConsoleTransporterMenu()
         Star_Trek:Message(ent)
         return
     end
+    
+    local interfaceData = self.ActiveInterfaces[ent]
+    if istable(interfaceData) then
+        return
+    end
 
     local menuTypes = {
         "Lifeforms",
         "Transporter Pads",
-        "Locations",
+        "Sections",
+        "External",
     }
 
     local success, sourceMenuTable = createWindowTable(Vector(-16, -32, 9), Angle(0, 0, -70), Vector(-22, 0, 0), Angle(0, 0, 0), false, menuTypes)

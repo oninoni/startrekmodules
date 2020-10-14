@@ -20,13 +20,13 @@ function Star_Trek.Sections:GetSection(deck, sectionId)
     local deckData = self.Decks[deck]
     if istable(deckData) then
         local sectionData = deckData.Sections[sectionId]
-        if istable(deckData) then
+        if istable(sectionData) then
             return sectionData
         end
 
         return false, "Invalid Section Id!"
     end
-
+    
     return false, "Invalid Deck!"
 end
 
@@ -99,6 +99,7 @@ function Star_Trek.Sections:SetupSections()
 
             self.Decks[deck].Sections[sectionId] = self.Decks[deck].Sections[sectionId] or {
                 Name = sectionName,
+                Id = sectionId,
                 Areas = {},
             }
 

@@ -108,6 +108,8 @@ function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPattern
             end
         end
     else
+        local targetPatternCount = #targetPatterns
+
         if targetPatterns.SingleTarget then
             local i = 1
 
@@ -136,13 +138,13 @@ function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPattern
             end
         else
             local i = 1
-            local targetPatternCount = #targetPatterns
-
+            
             for _, sourcePattern in pairs(sourcePatterns) do
                 if istable(sourcePattern) then
                     for _, ent in pairs(sourcePattern.Entities) do
                         local targetPattern = targetPatterns[i%targetPatternCount]
                         if istable(targetPattern) then
+                            print("Testing...")
                             local pos = targetPattern.Pos
                             pos = Star_Trek.Util:FindEmptyPosWithin(pos, pos - Vector(200, 200, 200), pos + Vector(200, 200, 200))
                             if pos then
