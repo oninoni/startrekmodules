@@ -30,19 +30,17 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
 
     local menuTypeCount = #(menuTable.MenuTypes)
 
-    local utilButtonData = {}
-    if menuTable.Target then
-        utilButtonData = nil
-        --utilButtonData.Name = "Direct Transport"
-        --utilButtonData.Color = Star_Trek.LCARS.ColorOrange
-    else
+    if not menuTable.Target then
+        local utilButtonData = {}
         utilButtonData.Name = "Narrow Beam"
         utilButtonData.Color = Star_Trek.LCARS.ColorOrange
-    end
-    buttons[menuTypeCount +2] = utilButtonData
-    menuTable.UtilButtonId = menuTypeCount +2
-    function menuTable:GetUtilButtonState()
-        return self.MenuWindow.Buttons[self.UtilButtonId].SelectedCustom or false
+            
+        buttons[menuTypeCount +2] = utilButtonData
+        menuTable.UtilButtonId = menuTypeCount +2
+            
+        function menuTable:GetUtilButtonState()
+            return self.MenuWindow.Buttons[self.UtilButtonId].SelectedCustom or false
+        end
     end
     
     local utilButtonData = {}
@@ -436,12 +434,7 @@ local function triggerTransporter(interfaceData)
     local sourcePatterns = getPatternData(sourceMenuTable, wideField)
     local targetPatterns = getPatternData(targetMenuTable, false)
 
-    local toBuffer = targetMenuTable:GetUtilButtonState()
-    if toBuffer then
-        Star_Trek.Transporter:ActivateTransporter(sourcePatterns, false)
-    else
-        Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPatterns)
-    end
+    Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPatterns)
 
     -- Force Update of Buffer Table, by just switching.
     -- Updating would require a callback (TODO)
@@ -560,7 +553,7 @@ function Star_Trek.LCARS:OpenConsoleTransporterMenu()
         "External",
     }
 
-    local success, sourceMenuTable = createWindowTable(Vector(-16, -32, 9), Angle(0, 0, -70), Vector(-22, 0, 0), Angle(0, 0, 0), false, menuTypes)
+    local success, sourceMenuTable = createWindowTable(Vector(-18, -22, 9), Angle(10, 0, -50), Vector(-22, 0, 0), Angle(0, 0, 0), false, menuTypes)
     if not success then
         Star_Trek:Message(sourceMenuTable)
         return
@@ -571,7 +564,7 @@ function Star_Trek.LCARS:OpenConsoleTransporterMenu()
         return
     end
     
-    local success, targetMenuTable = createWindowTable(Vector(16, -32, 9), Angle(0, 0, -70), Vector(22, 0, 0), Angle(0, 0, 0), true, menuTypes)
+    local success, targetMenuTable = createWindowTable(Vector(18, -22, 9), Angle(-10, 0, -50), Vector(22, 0, 0), Angle(0, 0, 0), true, menuTypes)
     if not success then
         Star_Trek:Message(targetMenuTable)
         return
@@ -582,7 +575,7 @@ function Star_Trek.LCARS:OpenConsoleTransporterMenu()
         return
     end
 
-    local success, sliderWindow = Star_Trek.LCARS:CreateWindow("transport_slider", Vector(0, -32, 9), Angle(0, 0, -70), 30, 200, 200, function(windowData, interfaceData, ent, buttonId)
+    local success, sliderWindow = Star_Trek.LCARS:CreateWindow("transport_slider", Vector(0, -22, 9), Angle(0, 0, -50), 30, 200, 200, function(windowData, interfaceData, ent, buttonId)
         triggerTransporter(self.ActiveInterfaces[ent])
     end)
     if not success then

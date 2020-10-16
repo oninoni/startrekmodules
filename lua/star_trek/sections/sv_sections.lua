@@ -89,6 +89,8 @@ function Star_Trek.Sections:SetupSections()
         local numberData = string.Split(string.sub(ent:GetName(), 8), "_")
         if not istable(numberData) then continue end
 
+        if #numberData < 2 then continue end
+
         local deck = tonumber(numberData[1])
         if deck < 1 and deck > self.DeckCount then continue end
 

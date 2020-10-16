@@ -81,7 +81,7 @@ function Star_Trek.Transporter:CleanUpTargetPatterns(patterns)
 
     for _, pattern in pairs(patterns) do
         if istable(pattern) then
-            if patterns.SingleTarget and table.Count(pattern.Entities) > 0 then
+            if table.Count(pattern.Entities) > 0 then
                 table.insert(invalidPatterns, pattern)
             end
         end
@@ -110,58 +110,29 @@ function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPattern
     else
         local targetPatternCount = #targetPatterns
 
-        if targetPatterns.SingleTarget then
-            local i = 1
+        local i = 1
 
-            for _, sourcePattern in pairs(sourcePatterns) do
-                if istable(sourcePattern) then
-                    for _, ent in pairs(sourcePattern.Entities) do
-                        local targetPattern = targetPatterns[i]
-                        if istable(targetPattern) then
-                            if sourcePatterns.IsBuffer then
-                                table.RemoveByValue(Star_Trek.Transporter.Buffer.Entities, ent)
-                            end
-
-                            self:BeamObject(ent, targetPattern.Pos, sourcePattern.Pad, targetPattern.Pad, false)
-
-                            i = i + 1
-                        elseif isbool(targetPattern) then
-                            continue
-                        else
-                            if not sourcePatterns.IsBuffer then
-                                table.insert(remainingEntities, ent)
-                                ent.Pad = sourcePattern.Pad
-                            end
+        for _, sourcePattern in pairs(sourcePatterns) do
+            if istable(sourcePattern) then
+                for _, ent in pairs(sourcePattern.Entities) do
+                    local targetPattern = targetPatterns[i]
+                    if istable(targetPattern) then
+                        if sourcePatterns.IsBuffer then
+                            table.RemoveByValue(Star_Trek.Transporter.Buffer.Entities, ent)
                         end
-                    end 
-                end
-            end
-        else
-            local i = 1
-            
-            for _, sourcePattern in pairs(sourcePatterns) do
-                if istable(sourcePattern) then
-                    for _, ent in pairs(sourcePattern.Entities) do
-                        local targetPattern = targetPatterns[i%targetPatternCount]
-                        if istable(targetPattern) then
-                            print("Testing...")
-                            local pos = targetPattern.Pos
-                            pos = Star_Trek.Util:FindEmptyPosWithin(pos, pos - Vector(200, 200, 200), pos + Vector(200, 200, 200))
-                            if pos then
-                                if sourcePattern.IsBuffer then
-                                    table.RemoveByValue(Star_Trek.Transporter.Buffer.Entities, ent)
-                                end
 
-                                self:BeamObject(ent, pos, sourcePattern.Pad, targetPattern.Pad, false)
-                            else
-                                table.insert(remainingEntities, ent)
-                                ent.Pad = sourcePattern.Pad
-                            end
-                            
-                            i = i + 1
+                        self:BeamObject(ent, targetPattern.Pos, sourcePattern.Pad, targetPattern.Pad, false)
+
+                        i = i + 1
+                    elseif isbool(targetPattern) then
+                        continue
+                    else
+                        if not sourcePatterns.IsBuffer then
+                            table.insert(remainingEntities, ent)
+                            ent.Pad = sourcePattern.Pad
                         end
                     end
-                end
+                end 
             end
         end
     end

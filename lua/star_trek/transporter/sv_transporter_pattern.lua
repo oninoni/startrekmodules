@@ -111,7 +111,6 @@ function Star_Trek.Transporter:GetPatternsFromPads(pads)
 
     patterns = self:CleanupPatternList(patterns)
 
-    patterns.SingleTarget = true
     return patterns
 end
 
@@ -164,7 +163,6 @@ function Star_Trek.Transporter:GetPatternsFromPlayers(players, wideField)
 
     patterns = self:CleanupPatternList(patterns)
 
-    patterns.SingleTarget = true
     return patterns
 end
 
@@ -203,7 +201,6 @@ function Star_Trek.Transporter:GetPatternsFromAreas(deck, sectionIds)
     
     patterns = self:CleanupPatternList(patterns)
 
-    patterns.SingleTarget = false
     return patterns
 end
 
@@ -256,7 +253,6 @@ function Star_Trek.Transporter:GetPatternsFromLocations(positions, wideField)
 
     patterns = self:CleanupPatternList(patterns)
 
-    patterns.SingleTarget = false
     return patterns
 end
 
