@@ -16,40 +16,38 @@
 --       Portal Window | Client      --
 ---------------------------------------
 
--- Render views from the portals
+-- Render views from the windows
 hook.Add( "RenderScene", "Star_Trek.RenderWindow", function( plyOrigin, plyAngle )
+	wp.windows = ents.FindByClass( "linked_portal_window" )
 
-	wp.portals = ents.FindByClass( "linked_portal_window" )
-
-	if ( not wp.portals ) then return end
+	if ( not wp.windows ) then return end
 	if ( wp.drawing ) then return end
 
 	-- Disable phys gun glow and beam
 	local oldWepColor = LocalPlayer():GetWeaponColor()
 	LocalPlayer():SetWeaponColor( Vector( 0, 0, 0 ) )
 
-	for _, portal in pairs( wp.portals ) do
-
-		local exitPortal = portal:GetExit()
+	for _, window in pairs( wp.windows ) do
+		local exitPortal = window:GetExit()
 		if not IsValid(exitPortal) then continue end
 
-		if not wp.shouldrender( portal ) then continue end
-		if not portal:GetShouldDrawNextFrame() then continue end
-		portal:SetShouldDrawNextFrame( false )
+		if not wp.shouldrender( window ) then continue end
+		if not window:GetShouldDrawNextFrame() then continue end
+		window:SetShouldDrawNextFrame( false )
 
-		hook.Call( "wp-prerender", GAMEMODE, portal, exitPortal, plyOrigin )
+		hook.Call( "wp-prerender", GAMEMODE, window, exitPortal, plyOrigin )
 		
-		render.PushRenderTarget( portal:GetTexture() )
+		render.PushRenderTarget( window:GetTexture() )
 			render.Clear( 0, 0, 0, 255, true, true )
 
 			local oldClip = render.EnableClipping( true )
 			render.PushCustomClipPlane( exitPortal:GetForward(), exitPortal:GetForward():Dot( exitPortal:GetPos() - exitPortal:GetForward() * 0.5 ) )
 
-			local camOrigin = wp.TransformPortalPos( plyOrigin, portal, exitPortal )
-			local camAngle = wp.TransformPortalAngle( plyAngle, portal, exitPortal )
+			local camOrigin = wp.TransformPortalPos( plyOrigin, window, exitPortal )
+			local camAngle = wp.TransformPortalAngle( plyAngle, window, exitPortal )
 
 			wp.drawing = true
-			wp.drawingent = portal
+			wp.drawingent = window
 				render.RenderView( {
 					x = 0,
 					y = 0,
@@ -71,7 +69,7 @@ hook.Add( "RenderScene", "Star_Trek.RenderWindow", function( plyOrigin, plyAngle
 			render.EnableClipping( oldClip )
 		render.PopRenderTarget()
 		
-		hook.Call( "wp-postrender", GAMEMODE, portal, exitPortal, plyOrigin )
+		hook.Call( "wp-postrender", GAMEMODE, window, exitPortal, plyOrigin )
 	end
 
 	LocalPlayer():SetWeaponColor( oldWepColor )

@@ -21,6 +21,8 @@ hook.Add("wp-shouldrender", "Star_Trek.HidePortalInDoors", function(portal, exit
 	local distance = camOrigin:Distance( portal:GetPos() )
 	local disappearDist = portal:GetDisappearDist()
 
+    if portal:GetClass() == "linked_portal_window" then return end
+
 	if not (disappearDist <= 0) and distance > disappearDist then return false end
 
     local parent = portal:GetParent()
