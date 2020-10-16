@@ -82,9 +82,3 @@ function Star_Trek.LCARS:OpenTurboliftMenu()
         return
     end
 end
-
--- TODO: Get rid of by changing map
-LCARS = LCARS or {}
-function LCARS:OpenTurboliftMenu()
-    Star_Trek.LCARS:OpenTurboliftMenu()
-end

@@ -608,13 +608,3 @@ function Star_Trek.LCARS:OpenConsoleTransporterMenu()
     interfaceData.SourceMenuTable = sourceMenuTable
     interfaceData.TargetMenuTable = targetMenuTable
 end
-
--- TODO: Get rid of by changing map
-LCARS = LCARS or {}
-function LCARS:OpenTransporterMenu()
-    Star_Trek.LCARS:OpenTransporterMenu()
-end
-
-function LCARS:OpenBridgeTransporter()
-    Star_Trek.LCARS:OpenConsoleTransporterMenu()
-end

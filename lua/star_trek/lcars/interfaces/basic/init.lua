@@ -111,9 +111,3 @@ hook.Add("Star_Trek.ChangedKeyValue", "Star_Trek.LCARS.BasicInterface", function
         end
     end
 end)
-
--- TODO: Get rid of by changing map
-LCARS = LCARS or {}
-function LCARS:OpenMenu()
-    Star_Trek.LCARS:OpenMenu()
-end
