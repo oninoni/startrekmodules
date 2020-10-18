@@ -45,9 +45,9 @@ function Star_Trek.Turbolift:GetPath(sourceDeck, targetDeck)
         -- Calculating time with Advantage! :D
         local travelTime = math.min(
             math.random(self.MinTime, self.MaxTime),
-            math.random(self.MinTime, self.MaxTime)    
+            math.random(self.MinTime, self.MaxTime)
         )
-        
+
         local evadeDirection = ud[math.random(1, 2)]
         if sourceDeck == 1 or sourceDeck == 2 then
             evadeDirection = "D"
@@ -61,7 +61,7 @@ function Star_Trek.Turbolift:GetPath(sourceDeck, targetDeck)
             travelPath = "U"
         end
 
-        for i=1,travelTime-2,1 do
+        for i = 1, travelTime-2 do
             if math.random(1, 2) == 1 or i == 1 then
                 travelPath = travelPath .. lr[math.random(1, 2)]
             else
@@ -89,7 +89,7 @@ function Star_Trek.Turbolift:GetPath(sourceDeck, targetDeck)
         local travelPath = ""
         local vertTravelled = 0
 
-        for i=1,travelTime,1 do
+        for i = 1, travelTime do
             if vertTravelled == deckDiff then
                 travelPath = travelPath .. lr[math.random(1, 2)]
             else
@@ -106,7 +106,7 @@ function Star_Trek.Turbolift:GetPath(sourceDeck, targetDeck)
                 end
             end
         end
-        
+
         return travelPath, #travelPath
     end
 end
@@ -133,19 +133,19 @@ function Star_Trek.Turbolift:GetCurrentDeck(targetLiftData, path, travelTimeLeft
     local totalTravelDistance = 0
     local travelDirection = nil
 
-    for i=1,#path,1 do
+    for i = 1, #path do
         local c = path[i]
         if c == "D" or c == "U" then
             if not travelDirection then
                 travelDirection = c
             end
-            
+
             totalTravelDistance = totalTravelDistance + 1
         end
     end
 
     local traveledDistance = 0
-    for i=1,#path-travelTimeLeft,1 do
+    for i = 1, #path - travelTimeLeft do
         local c = path[i]
         if c == "D" or c == "U" then
             traveledDistance = traveledDistance + 1

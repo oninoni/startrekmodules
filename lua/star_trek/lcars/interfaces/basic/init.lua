@@ -1,6 +1,6 @@
 local function generateButtons(ent, triggerEntity, keyValues)
     local buttons = {}
-    for i=1,20 do
+    for i = 1, 20 do
         local name = keyValues["lcars_name_" .. i]
         if isstring(name) then
             local disabled = keyValues["lcars_disabled_" .. i]
@@ -20,9 +20,14 @@ end
 -- Opening a general Purpose Menu
 function Star_Trek.LCARS:OpenMenu()
     local success, ent = self:GetInterfaceEntity(TRIGGER_PLAYER, CALLER)
-    if not success then 
+    if not success then
         -- Error Message
         Star_Trek:Message(ent)
+    end
+
+    local interfaceData = self.ActiveInterfaces[ent]
+    if istable(interfaceData) then
+        return
     end
 
     local triggerEntity = ent:GetParent()
@@ -42,12 +47,15 @@ function Star_Trek.LCARS:OpenMenu()
     local height = tonumber(keyValues["lcars_height"])
     local title = keyValues["lcars_title"]
 
+    if not height then
+        height = math.max(2, math.min(6, table.maxn(buttons))) * 35 + 70
+    end
     local success, window = self:CreateWindow("button_list", Vector(), Angle(), scale, width, height, function(windowData, interfaceData, ent, buttonId)
         local triggerEntity = ent:GetParent()
         if not IsValid(triggerEntity) then
             triggerEntity = ent
         end
-        
+
         if buttonId > 4 then
             local name = triggerEntity:GetName()
             local caseEntities = ents.FindByName(name .. "_case")
@@ -64,7 +72,7 @@ function Star_Trek.LCARS:OpenMenu()
         if istable(keyValues) and keyValues["lcars_keep_open"] then
             return
         end
-        
+
         Star_Trek.LCARS:CloseInterface(ent)
     end, buttons, title)
     if not success then
@@ -86,7 +94,7 @@ hook.Add("Think", "Star_Trek.LCARS.BasicInterface", function()
             if not IsValid(triggerEntity) then
                 triggerEntity = ent
             end
-            
+
             if triggerEntity.LCARSMenuChanged then
                 local buttons = generateButtons(ent, triggerEntity, triggerEntity.LCARSKeyData)
                 for i, button in pairs(buttons) do

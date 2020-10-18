@@ -41,11 +41,11 @@ function WINDOW.OnDraw(self, pos, animPos)
     local wd6 = wd3 / 2
     local wd64 = wd2 / 32
     --local yHeight = (height) * animPos
-    for i=1,16,1 do
+    for i = 1, 16 do
         local yPos = -hd2 + (i-1) * hd16 + 1
 
-        draw.RoundedBox(0, -wd6 -wd64/2, yPos, wd64, hd16 - 2, colorBlue)
-        draw.RoundedBox(0,  wd6 -wd64/2, yPos, wd64, hd16 - 2, colorBlue)
+        draw.RoundedBox(0, -wd6 - wd64 / 2, yPos, wd64, hd16 - 2, colorBlue)
+        draw.RoundedBox(0,  wd6 - wd64 / 2, yPos, wd64, hd16 - 2, colorBlue)
     end
 
     if self.TargetState ~= nil and self.TargetState ~= self.State then
@@ -53,9 +53,9 @@ function WINDOW.OnDraw(self, pos, animPos)
         self.Lerp = self.Lerp + FrameTime() / 1.5
     end
 
-    local y = -(self.State /height) *(height-hd16) - hd16/2
+    local y = -(self.State / height) * (height - hd16) - hd16 / 2
 
-    for i=1,3,1 do
-        draw.RoundedBox(0, (i-2) *wd3 -wd6 + wd64, y, wd3 - 2*wd64, hd2-y, colorYellow)
+    for i = 1, 3 do
+        draw.RoundedBox(0, (i-2) * wd3 -wd6 + wd64, y, wd3 - 2 * wd64, hd2-y, colorYellow)
     end
 end

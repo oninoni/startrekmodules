@@ -24,7 +24,7 @@ Star_Trek.Turbolift.Pods  = Star_Trek.Turbolift.Pods  or {}
 local setupTurbolifts = function()
     Star_Trek.Turbolift.Lifts = {}
     Star_Trek.Turbolift.Pods = {}
-    
+
     local lifts = {}
     for _, ent in pairs(ents.GetAll()) do
         if string.StartWith(ent:GetName(), "tlBut") or string.StartWith(ent:GetName(), "TLBut") then
@@ -45,14 +45,14 @@ local setupTurbolifts = function()
                         ClosingTime = 0,
                         CloseCallback = nil
                     }
-                    
+
                     ent.Data = turboliftData
                     lifts[number] = turboliftData
                 end
             end
         elseif string.StartWith(ent:GetName(), "tlPodBut") or string.StartWith(ent:GetName(), "TLPodBut") then
             ent.IsPod = true
-        
+
             local podData = {
                 Entity = ent,
                 InUse = false,
@@ -91,17 +91,17 @@ end
 
 -- Returns all the objects in a given turbolift or pod.
 --
--- @param Entity ent
+-- @param Entity liftEntity
 -- @param Table objects
-function Star_Trek.Turbolift:GetObjects(ent)
+function Star_Trek.Turbolift:GetObjects(liftEntity)
     local objects = {}
 
-    local attachmentId1 = ent:LookupAttachment("corner1")
-    local attachmentId2 = ent:LookupAttachment("corner2")
+    local attachmentId1 = liftEntity:LookupAttachment("corner1")
+    local attachmentId2 = liftEntity:LookupAttachment("corner2")
 
     if isnumber(attachmentId1) and isnumber(attachmentId2) and attachmentId1 > 0 and attachmentId2 > 0 then
-        local attachmentPoint1 = ent:GetAttachment(attachmentId1)
-        local attachmentPoint2 = ent:GetAttachment(attachmentId2)
+        local attachmentPoint1 = liftEntity:GetAttachment(attachmentId1)
+        local attachmentPoint2 = liftEntity:GetAttachment(attachmentId2)
 
         local entities = ents.FindInBox(attachmentPoint1.Pos, attachmentPoint2.Pos)
 
@@ -131,7 +131,7 @@ function Star_Trek.Turbolift:Teleport(sourceLift, targetLift, objects)
         else
             sourceAngles = sourceLift:WorldToLocalAngles(ent:GetAngles())
         end
-        
+
         local targetAngles = targetLift:LocalToWorldAngles(sourceAngles)
 
         ent:SetPos(targetPos)
@@ -162,7 +162,7 @@ function Star_Trek.Turbolift:StartLift(sourceLift, targetLiftId)
                     -- Target Pod and calc travel time/path.
                     podData.TravelTarget = targetLiftData
                     podData.TravelPath = self:GetFullPath(sourceLiftData, targetLiftData)
-                    podData.TravelTime = #(podData.TravelPath)
+                    podData.TravelTime = #podData.TravelPath
                 else
                     -- Disable Pod again when there's nobody actually travelling.
                     podData.InUse = false
@@ -212,31 +212,29 @@ function Star_Trek.Turbolift:ReRoutePod(pod, targetLiftId)
         local sourceDeck = podData.CurrentDeck
         local odlTargetDeck = podData.TravelTarget
         if istable(odlTargetDeck) then
-            local sourceDeck = self:GetCurrentDeck(odlTargetDeck, podData.TravelPath, podData.TravelTime)
+            sourceDeck = self:GetCurrentDeck(odlTargetDeck, podData.TravelPath, podData.TravelTime)
         end
         local targetDeck = self:GetDeckNumber(targetLiftData)
 
         podData.TravelTarget = targetLiftData
         podData.TravelPath = self:GetPath(sourceDeck, targetDeck)
-        podData.TravelTime = #(podData.TravelPath)
+        podData.TravelTime = #podData.TravelPath
     end
 end
 
 -- Think for the Turbolift System.
 hook.Add("Think", "Star_Trek.Turbolift.Think", function()
-    local self = Star_Trek.Turbolift
+    if Star_Trek.Turbolift.NextThink > CurTime() then return end
+    Star_Trek.Turbolift.NextThink = CurTime() + 1
 
-    if self.NextThink > CurTime() then return end
-    self.NextThink = CurTime() + 1
-
-    for _, turboliftData in pairs(self.Lifts) do
+    for _, turboliftData in pairs(Star_Trek.Turbolift.Lifts) do
         if turboliftData.LeaveTime > 0 then
             turboliftData.LeaveTime = turboliftData.LeaveTime - 1
             if turboliftData.LeaveTime == 0 then
                 turboliftData.InUse = false
             end
         end
-        
+
         if turboliftData.ClosingTime > 0 then
             if true then
                 turboliftData.ClosingTime = turboliftData.ClosingTime - 1
@@ -251,12 +249,12 @@ hook.Add("Think", "Star_Trek.Turbolift.Think", function()
         end
     end
 
-    for _, podData in pairs(self.Pods) do
+    for _, podData in pairs(Star_Trek.Turbolift.Pods) do
         if not podData.InUse then continue end
 
         if podData.Stopped then
             -- Reset empty, stopped pods.
-            local podObjects = self:GetObjects(podData.Entity)
+            local podObjects = Star_Trek.Turbolift:GetObjects(podData.Entity)
             if table.Count(podObjects) == 0 then
                 podData.InUse = false
                 podData.Stopped = false
@@ -292,7 +290,7 @@ hook.Add("Think", "Star_Trek.Turbolift.Think", function()
             else
                 local targetLiftData = podData.TravelTarget
                 if not istable(targetLiftData) then continue end
-                 
+
                 if not table.HasValue(targetLiftData.Queue, podData) then
                     table.insert(targetLiftData.Queue, podData)
                 end
@@ -300,36 +298,36 @@ hook.Add("Think", "Star_Trek.Turbolift.Think", function()
                 if targetLiftData.Queue[1] == podData and not targetLiftData.InUse then
                     -- "Dock Animation"
                     podData.Entity:SetSkin(3)
-                    
+
                     -- Close + Lock
-                    self:LockDoors(targetLiftData.Entity)
+                    Star_Trek.Turbolift:LockDoors(targetLiftData.Entity)
                     targetLiftData.InUse = true
                     targetLiftData.ClosingTime = 1
                     targetLiftData.CloseCallback = function()
                         podData.Entity:SetSkin(0)
-                        
+
                         table.remove(targetLiftData.Queue, 1)
-                        
-                        local podObjects = self:GetObjects(podData.Entity)
-                        local targetLiftObjects = self:GetObjects(targetLiftData.Entity)
-                        
+
+                        local podObjects = Star_Trek.Turbolift:GetObjects(podData.Entity)
+                        local targetLiftObjects = Star_Trek.Turbolift:GetObjects(targetLiftData.Entity)
+
                         podData.TravelTime = 0
                         podData.TravelTarget = nil
 
                         if table.Count(targetLiftObjects) > 0 then
-                            self:Teleport(targetLiftData.Entity, podData.Entity, targetLiftObjects)
+                            Star_Trek.Turbolift:Teleport(targetLiftData.Entity, podData.Entity, targetLiftObjects)
 
                             podData.InUse = true
                             podData.Stopped = true
-                            podData.CurrentDeck = self:GetDeckNumber(targetLiftData)
+                            podData.CurrentDeck = Star_Trek.Turbolift:GetDeckNumber(targetLiftData)
                         else
                             podData.InUse = false
                             podData.Stopped = false
                         end
 
-                        self:Teleport(podData.Entity, targetLiftData.Entity, podObjects)
+                        Star_Trek.Turbolift:Teleport(podData.Entity, targetLiftData.Entity, podObjects)
 
-                        self:OpenDoors(targetLiftData.Entity)
+                        Star_Trek.Turbolift:OpenDoors(targetLiftData.Entity)
                         targetLiftData.LeaveTime = 5
                     end
                 end

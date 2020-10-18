@@ -2,6 +2,11 @@ function WINDOW.OnCreate(self, windowData)
     self.Title = windowData.Title
     self.Buttons = windowData.Buttons
 
+    self.WD2 = self.WWidth / 2
+    self.HD2 = self.WHeight / 2
+
+    self.MaxN = table.maxn(buttons)
+
     return self
 end
 
@@ -21,16 +26,11 @@ local function getButtonYPos(height, i, n, offset)
 end
 
 function WINDOW.OnPress(self, pos, animPos)
-    local buttons = self.Buttons
-    local n = table.maxn(buttons)
-
-    local height = self.WHeight
-
-    local offset = getOffset(height, n, pos.y)
-    for i, button in pairs(buttons) do
+    local offset = getOffset(self.WHeight, self.MaxN, pos.y)
+    for i, button in pairs(self.Buttons) do
         if button.Disabled then continue end
-        
-        local y = getButtonYPos(height, i, n, offset, animPos)
+
+        local y = getButtonYPos(self.WHeight, i, n, offset, animPos)
         if pos.y >= y - 16 and pos.y <= y + 16 then
             return i
         end
@@ -41,17 +41,8 @@ local color_grey = Star_Trek.LCARS.ColorGrey
 local color_yellow = Star_Trek.LCARS.ColorYellow
 
 function WINDOW.OnDraw(self, pos, animPos)
-    local buttons = self.Buttons
-    local n = table.maxn(buttons)
-
-    local width = self.WWidth
-    local wd2 = width / 2
-    local height = self.WHeight
-    local hd2 = height / 2
-    --draw.RoundedBox(0, -wd2, -hd2, width, height, Color(127, 127, 127))
-
-    local offset = getOffset(height, n, pos.y)
-    for i, button in pairs(buttons) do
+    local offset = getOffset(self.WHeight, self.MaxN, pos.y)
+    for i, button in pairs(self.Buttons) do
         local color = button.Color
         if button.Disabled then
             color = color_grey
@@ -59,24 +50,23 @@ function WINDOW.OnDraw(self, pos, animPos)
             color = color_yellow
         end
 
-        local y = getButtonYPos(height, i, n, offset)
+        local y = getButtonYPos(self.WHeight, i, self.MaxN, offset)
 
         local alpha = 255
         if y < -68 or y > 125 then
             if y < -68 then
-                alpha =-y -(hd2 -80)
+                alpha = -y -(self.HD2 -80)
             else
-                alpha = y -(hd2 -16)
+                alpha = y -(self.HD2 -16)
             end
-            
+
             alpha = math.min(math.max(0, 255 - alpha * 10), 255)
         end
         alpha = alpha * animPos
 
         local title = button.Name or "[ERROR]"
-
-        Star_Trek.LCARS:DrawButton(26, y - 15, width, title, color, button.RandomS, button.RandomL, alpha, pos)
+        Star_Trek.LCARS:DrawButton(26, y - 15, self.WWidth, title, color, button.RandomS, button.RandomL, alpha, pos)
     end
 
-    Star_Trek.LCARS:DrawFrame(width, wd2, hd2, self.Title, 255 * animPos)
+    Star_Trek.LCARS:DrawFrame(self.WWidth, self.WD2, self.HD2, self.Title, 255 * animPos)
 end

@@ -50,7 +50,7 @@ local function loadModule(name)
         if SERVER then
             AddCSLuaFile(entDirectory .. "shared.lua")
             AddCSLuaFile(entDirectory .. "cl_init.lua")
-            
+
             include(entDirectory .. "shared.lua")
             include(entDirectory .. "init.lua")
         end
@@ -69,7 +69,7 @@ local function loadModule(name)
     local _, weaponDirectories = file.Find(weaponDirectory .. "*", "LUA")
     for _, weaponName in pairs(weaponDirectories) do
         local wepDirectory = weaponDirectory .. weaponName .. "/"
-    
+
         local oldSWEP = SWEP
         SWEP = {
             ClassName = weaponName,
@@ -78,11 +78,11 @@ local function loadModule(name)
 
         SWEP.Primary = {}
         SWEP.Secondary = {}
-        
+
         if SERVER then
             AddCSLuaFile(wepDirectory .. "shared.lua")
             AddCSLuaFile(wepDirectory .. "cl_init.lua")
-            
+
             include(wepDirectory .. "shared.lua")
             include(wepDirectory .. "init.lua")
         end
@@ -94,7 +94,7 @@ local function loadModule(name)
 
         weapons.Register(SWEP, weaponName)
         SWEP = oldSWEP
-        
+
         Star_Trek:Message("Loaded Weapon \"" .. weaponName .. "\"")
     end
 

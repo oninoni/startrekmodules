@@ -12,11 +12,11 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
                 name = menuType[1]
             end
         end
-        
+
         if not name then continue end
-    
+
         local color = Star_Trek.LCARS.ColorBlue
-        if i%2 == 0 then
+        if i % 2 == 0 then
             color = Star_Trek.LCARS.ColorLightBlue
         end
 
@@ -28,21 +28,21 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
         buttons[i] = buttonData
     end
 
-    local menuTypeCount = #(menuTable.MenuTypes)
+    local menuTypeCount = #menuTable.MenuTypes
 
     if not menuTable.Target then
         local utilButtonData = {}
         utilButtonData.Name = "Narrow Beam"
         utilButtonData.Color = Star_Trek.LCARS.ColorOrange
-            
-        buttons[menuTypeCount +2] = utilButtonData
-        menuTable.UtilButtonId = menuTypeCount +2
-            
+
+        buttons[menuTypeCount + 2] = utilButtonData
+        menuTable.UtilButtonId = menuTypeCount + 2
+
         function menuTable:GetUtilButtonState()
             return self.MenuWindow.Buttons[self.UtilButtonId].SelectedCustom or false
         end
     end
-    
+
     local utilButtonData = {}
     if menuTable.Target then
         utilButtonData.Name = "Disable Console"
@@ -51,18 +51,15 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
         utilButtonData.Name = "Swap Sides"
         utilButtonData.Color = Star_Trek.LCARS.ColorOrange
     end
-    buttons[menuTypeCount +3] = utilButtonData
+    buttons[menuTypeCount + 3] = utilButtonData
 
-    local n = table.maxn(buttons)
-    local height = n * 35 + 70
-
+    local height = table.maxn(buttons) * 35 + 70
     local name = "Transporter " .. (menuTable.Target and "Target" or "Source")
-
     local success, menuWindow = Star_Trek.LCARS:CreateWindow("button_list", pos, angle, 30, 400, height, function(windowData, interfaceData, ent, buttonId)
         if buttonId > menuTypeCount then -- Custom Buttons
             local button = windowData.Buttons[buttonId]
-            
-            if buttonId == menuTypeCount+2 then
+
+            if buttonId == menuTypeCount + 2 then
                 button.SelectedCustom = not (button.SelectedCustom or false)
                 if button.SelectedCustom then
                     button.Color = Star_Trek.LCARS.ColorRed
@@ -70,13 +67,7 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
                     button.Color = Star_Trek.LCARS.ColorOrange
                 end
 
-                if menuTable.Target then
-                    --if button.SelectedCustom then
-                    --    button.Name = "Buffer Transport" -- TODO: Block Types non-compatible source and target types
-                    --else
-                    --    button.Name = "Direct Transport"
-                    --end
-                else
+                if not menuTable.Target then
                     if button.SelectedCustom then
                         button.Name = "Wide Beam"
                     else
@@ -85,7 +76,7 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
                 end
 
                 return true
-            elseif buttonId == menuTypeCount+3 then
+            elseif buttonId == menuTypeCount + 3 then
                 if menuTable.Target then
                     Star_Trek.LCARS:CloseInterface(ent)
                 else
@@ -108,7 +99,7 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
                             Star_Trek:Message("Invalid Target Window Type!")
                             return
                         end
-                        
+
                         local sourceMenuData = sourceWindowFunctions.GetSelected(menuTable.MainWindow)
                         local targetMenuData = targetWindowFunctions.GetSelected(targetMenuTable.MainWindow)
 
@@ -118,7 +109,7 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
                             Star_Trek:Message(error)
                             return
                         end
-                        
+
                         local success, error = targetMenuTable:SelectType(sourceMenuSelection)
                         if not success then
                             Star_Trek:Message(error)
@@ -141,7 +132,7 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
                     end
                 end
             end
-        else 
+        else
             local success, error = menuTable:SelectType(buttonId)
             if not success then
                 Star_Trek:Message(error)
@@ -195,36 +186,9 @@ local function createMainWindow(pos, angle, menuTable, padNumber)
 
     -- Category List Window
     if selectionName == "Sections" then
-        local categories = {}
-        for deck, deckData in pairs(Star_Trek.Sections.Decks) do
-            local category = {
-                Name = "Deck " .. deck,
-                Buttons = {},
-            }
+        local success, mainWindow = Star_Trek.LCARS:CreateWindow("category_list", pos, angle, nil, 500, 500, function(windowData, interfaceData, ent, categoryId, buttonId)
 
-            if table.Count(deckData.Sections) == 0 then
-                category.Disabled = true
-            else
-                for sectionId, sectionData in SortedPairs(deckData.Sections) do
-                    local button = {
-                        Name = "Section " .. sectionId .. " " .. sectionData.Name,
-                        Data = sectionData,
-                    }
-
-                    if menuTable.Target and table.Count(sectionData.BeamLocations) == 0 then
-                        button.Disabled = true
-                    end
-
-                    table.insert(category.Buttons, button)
-                end
-            end
-
-            table.insert(categories, category)
-        end
-
-        local success, mainWindow = Star_Trek.LCARS:CreateWindow("category_list", pos, angle, nil, 500, 500, function(windowData, interfaceData, ent, buttonId)
-
-        end, categories, selectionName, true)
+        end, Star_Trek.LCARS:GetSectionCategories(menuTable.Target), selectionName, true)
         if not success then
             return false, mainWindow
         end
@@ -341,19 +305,18 @@ local function createWindowTable(menuPos, menuAngle, mainPos, mainAngle, targetS
         end
         if istable(self.MainWindow) then
             mainWindow.WindowId = self.MainWindow.WindowId
-        end        
+        end
         menuTable.MainWindow = mainWindow
 
         return true
     end
-    
+
     return true, menuTable
 end
 
 local function getPatternData(menuTable, wideField)
     local selectionName = getSelectionName(menuTable)
     local mainWindow = menuTable.MainWindow
-    local menuWindow = menuTable.MenuWindow
 
     if selectionName == "Transporter Pad" then
         local pads = {}
@@ -375,7 +338,7 @@ local function getPatternData(menuTable, wideField)
         return Star_Trek.Transporter:GetPatternsFromPlayers(players, wideField)
     elseif selectionName == "Sections" then
         local positions = {}
-        
+
         if menuTable.Target then
             local categoryData = mainWindow.Categories[mainWindow.Selected]
             for _, button in pairs(categoryData.Buttons or {}) do
@@ -394,7 +357,7 @@ local function getPatternData(menuTable, wideField)
             local categoryData = mainWindow.Categories[deck]
 
             local sectionIds = {}
-            
+
             for buttonId, buttonData in pairs(categoryData.Buttons) do
                 if buttonData.Selected then
                     table.insert(sectionIds, buttonData.Data.Id)
@@ -421,7 +384,7 @@ local function getPatternData(menuTable, wideField)
                 end
             end
         end
-        
+
         return Star_Trek.Transporter:GetPatternsFromPads(pads)
     end
 end
@@ -444,7 +407,7 @@ local function triggerTransporter(interfaceData)
             Star_Trek:Message(error)
             return
         end
-    
+
         local ent = table.KeyFromValue(Star_Trek.LCARS.ActiveInterfaces, interfaceData)
         if not IsValid(ent) then
             Star_Trek:Message("Invalid Entity on Buffer Menu Update")
@@ -462,7 +425,7 @@ end
 -- Opening a turbolift control menu.
 function Star_Trek.LCARS:OpenTransporterMenu()
     local success, ent = self:GetInterfaceEntity(TRIGGER_PLAYER, CALLER)
-    if not success then 
+    if not success then
         Star_Trek:Message(ent)
         return
     end
@@ -504,7 +467,7 @@ function Star_Trek.LCARS:OpenTransporterMenu()
         Star_Trek:Message(error)
         return
     end
-    
+
     local success, targetMenuTable = createWindowTable(Vector(15, -2, 6), Angle(-5, -15, 30), Vector(31, -12, 17), Angle(-15, -45, 60), true, nil, padNumber)
     if not success then
         Star_Trek:Message(targetMenuTable)
@@ -528,7 +491,7 @@ function Star_Trek.LCARS:OpenTransporterMenu()
         Star_Trek:Message(error)
         return
     end
-    
+
     local interfaceData = self.ActiveInterfaces[ent]
     interfaceData.SourceMenuTable = sourceMenuTable
     interfaceData.TargetMenuTable = targetMenuTable
@@ -536,11 +499,11 @@ end
 
 function Star_Trek.LCARS:OpenConsoleTransporterMenu()
     local success, ent = self:GetInterfaceEntity(TRIGGER_PLAYER, CALLER)
-    if not success then 
+    if not success then
         Star_Trek:Message(ent)
         return
     end
-    
+
     local interfaceData = self.ActiveInterfaces[ent]
     if istable(interfaceData) then
         return
@@ -563,7 +526,7 @@ function Star_Trek.LCARS:OpenConsoleTransporterMenu()
         Star_Trek:Message(error)
         return
     end
-    
+
     local success, targetMenuTable = createWindowTable(Vector(18, -22, 9), Angle(-10, 0, -50), Vector(22, 0, 0), Angle(0, 0, 0), true, menuTypes)
     if not success then
         Star_Trek:Message(targetMenuTable)
@@ -596,8 +559,8 @@ function Star_Trek.LCARS:OpenConsoleTransporterMenu()
         Star_Trek:Message(error)
         return
     end
-    
-    local interfaceData = self.ActiveInterfaces[ent]
+
+    interfaceData = self.ActiveInterfaces[ent]
     interfaceData.SourceMenuTable = sourceMenuTable
     interfaceData.TargetMenuTable = targetMenuTable
 end

@@ -26,7 +26,7 @@ function Star_Trek.Sections:GetSection(deck, sectionId)
 
         return false, "Invalid Section Id!"
     end
-    
+
     return false, "Invalid Deck!"
 end
 
@@ -55,7 +55,7 @@ function Star_Trek.Sections:GetInSection(deck, sectionId, allowMap)
             if table.HasValue(objects, ent) then continue end
             if not allowMap and ent:MapCreationID() ~= -1 then continue end
             if IsValid(ent:GetParent()) then continue end
-            
+
             local entPos = ent.EyePos and ent:EyePos() or ent:GetPos()
             local localPos = -WorldToLocal(pos, angle, entPos, Angle())
             -- TODO: No idea why there needs to be a "-" here!
@@ -73,8 +73,8 @@ end
 
 function Star_Trek.Sections:SetupSections()
     self.Decks = {}
-    
-    for i=1,self.DeckCount,1 do
+
+    for i = 1, self.DeckCount do
         self.Decks[i] = {
             Sections = {},
         }
@@ -112,7 +112,7 @@ function Star_Trek.Sections:SetupSections()
 
             table.insert(self.Decks[deck].Sections[sectionId].Areas, {
                 Pos = pos,
-                Angle = Angle(),
+                Angle = ang,
 
                 Min = min,
                 Max = max,

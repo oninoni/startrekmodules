@@ -23,7 +23,7 @@ hook.Add("EntityKeyValue", "Star_Trek.CaptureKeyValues", function(ent, key, valu
     if string.StartWith(key, "lcars") then
         ent.LCARSKeyData[key] = value
 
-		hook.Run("Star_Trek.ChangedKeyValue", ent, key, value)
+        hook.Run("Star_Trek.ChangedKeyValue", ent, key, value)
     end
 end)
 
@@ -34,18 +34,18 @@ hook.Add("AcceptInput", "Star_Trek.CaptureKeyValuesLive", function(ent, input, a
     local valueSplit = string.Split(value, " ")
     local key = valueSplit[1]
     if string.StartWith(key, "lcars") then
-    	ent.LCARSKeyData = ent.LCARSKeyData or {}
+        ent.LCARSKeyData = ent.LCARSKeyData or {}
 
-		local realValue = ""
-		for i, splitString in pairs(valueSplit) do
-			if i == 1 then continue end
-			realValue = realValue .. splitString
-			if i ~= #valueSplit then 
-				realValue = realValue .. " "
-			end
-		end
+        local realValue = ""
+        for i, splitString in pairs(valueSplit) do
+            if i == 1 then continue end
+            realValue = realValue .. splitString
+            if i ~= #valueSplit then
+                realValue = realValue .. " "
+            end
+        end
         ent.LCARSKeyData[key] = realValue
 
-		hook.Run("Star_Trek.ChangedKeyValue", ent, key, realValue)
+        hook.Run("Star_Trek.ChangedKeyValue", ent, key, realValue)
     end
 end)

@@ -51,7 +51,7 @@ end
 -- Capture closeLcars Input
 hook.Add("AcceptInput", "Star_Trek.LCARS.Close", function(ent, input, activator, caller, value)
     if input ~= "CloseLcars" then return end
-    
+
     if Star_Trek.LCARS.ActiveInterfaces[ent] then
         Star_Trek.LCARS:CloseInterface(ent)
     end
@@ -84,7 +84,7 @@ function Star_Trek.LCARS:GetInterfacePosAngle(ent)
 
     local modelSetting = self.ModelSettings[ent:GetModel()]
     if istable(modelSetting) then
-        interfacePos = interfacePos + interfaceAngle:Forward() * modelSetting.Offset 
+        interfacePos = interfacePos + interfaceAngle:Forward() * modelSetting.Offset
     end
 
     interfaceAngle:RotateAroundAxis(interfaceAngle:Right(), -90)
@@ -100,13 +100,13 @@ end
 -- @return Boolean Success
 -- @return? String error
 function Star_Trek.LCARS:OpenInterface(ent, windows)
-    if not IsValid(ent) then 
+    if not IsValid(ent) then
         return false, "Invalid Interface Entity!"
     end
 
     if istable(self.ActiveInterfaces[ent]) then
         return true
-    end 
+    end
 
     local interfacePos, interfaceAngle = self:GetInterfacePosAngle(ent)
     if not (isvector(interfacePos) and isangle(interfaceAngle)) then
@@ -135,7 +135,7 @@ function Star_Trek.LCARS:OpenInterface(ent, windows)
     net.Broadcast()
 
     self.ActiveInterfaces[ent] = interfaceData
-    
+
     return true
 end
 
@@ -149,13 +149,13 @@ function Star_Trek.LCARS:GetInterfaceEntity(ply, triggerEntity)
     if not IsValid(triggerEntity) then
         return false, "Invalid Interface Trigger Entity"
     end
-    
+
     -- If no children, then use trigger Entity.
     local children = triggerEntity:GetChildren()
-    if table.Count(children) == 0 then 
+    if table.Count(children) == 0 then
         return true, triggerEntity
     end
-    
+
     -- If triggered by non-player, then use trigger Entity.
     if not (IsValid(ply) and ply:IsPlayer()) then
         return true, triggerEntity
@@ -192,7 +192,7 @@ function Star_Trek.LCARS:CreateWindow(windowType, pos, angles, scale, width, hei
 
     local windowData = {
         WindowType = windowType,
-        
+
         WindowPos = pos,
         WindowAngles = angles,
 
@@ -236,12 +236,12 @@ hook.Add("Think", "Star_Trek.LCARS.ThinkClose", function()
 
         local entities = ents.FindInSphere(interfaceData.InterfacePos, 128)
         local playersFound = false
-        for _, ent in pairs(entities or {}) do
-            if ent:IsPlayer() then
+        for _, target in pairs(entities or {}) do
+            if target:IsPlayer() then
                 playersFound = true
             end
         end
-        
+
         if not playersFound then
             table.insert(removeInterfaces, ent)
         end
@@ -302,7 +302,7 @@ function Star_Trek.LCARS:LoadInterfaces()
 
     for _, interfaceName in pairs(directories) do
         include("interfaces/" .. interfaceName .. "/init.lua")
-        
+
         Star_Trek:Message("Loaded LCARS Interface \"" .. interfaceName .. "\"")
     end
 end

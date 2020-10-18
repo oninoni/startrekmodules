@@ -2,7 +2,7 @@ function WINDOW.OnCreate(windowData, categories, title, toggle)
     windowData.Categories = {}
     windowData.Title = title or ""
     windowData.Toggle = toggle
-    
+
     if not istable(categories) then
         return false
     end
@@ -24,7 +24,7 @@ function WINDOW.OnCreate(windowData, categories, title, toggle)
         if IsColor(category.Color) then
             categoryData.Color = category.Color
         else
-            if i%2 == 0 then
+            if i % 2 == 0 then
                 categoryData.Color = Star_Trek.LCARS.ColorLightBlue
             else
                 categoryData.Color = Star_Trek.LCARS.ColorBlue
@@ -43,9 +43,9 @@ function WINDOW.OnCreate(windowData, categories, title, toggle)
 
             if IsColor(button.Color) then
                 buttonData.Color = button.Color
-            else            
+            else
                 if windowData.Toggle then
-                    if j%2 == 0 then
+                    if j % 2 == 0 then
                         buttonData.Color = Star_Trek.LCARS.ColorLightBlue
                     else
                         buttonData.Color = Star_Trek.LCARS.ColorBlue
@@ -109,24 +109,24 @@ function WINDOW.OnPress(windowData, interfaceData, ent, buttonId, callback)
 
     local shouldUpdate = false
 
-    if buttonId <= categoryCount then 
+    if buttonId <= categoryCount then
         -- Category Selection
         if buttonId ~= categoryId then
             local newData = windowData.Categories[buttonId]
             if istable(newData) and not newData.Disabled then
                 ent:EmitSound("buttons/blip1.wav")
                 -- TODO: Replace Sound
-                
+
                 windowData.Selected = buttonId
 
                 for _, buttonData in pairs(categoryData.Buttons) do
                     buttonData.Selected = nil
                 end
-                
+
                 shouldUpdate = true
 
                 if isfunction(callback) then
-                    callback(windowData, interfaceData, ent, categoryId, nil)
+                    callback(windowData, interfaceData, ent, buttonId, nil)
                 end
             else
                 ent:EmitSound("buttons/combine_button_locked.wav")
@@ -134,10 +134,10 @@ function WINDOW.OnPress(windowData, interfaceData, ent, buttonId, callback)
             end
 
         end
-    else 
+    else
         ent:EmitSound("buttons/blip1.wav")
         -- TODO: Replace Sound
-        
+
         -- Buttons
         buttonId = buttonId - categoryCount
 
@@ -151,7 +151,7 @@ function WINDOW.OnPress(windowData, interfaceData, ent, buttonId, callback)
 
         if isfunction(callback) then
             local updated = callback(windowData, interfaceData, ent, categoryId, buttonId)
-            if updated then 
+            if updated then
                 shouldUpdate = true
             end
         end

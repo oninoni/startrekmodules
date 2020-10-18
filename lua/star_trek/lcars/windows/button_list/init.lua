@@ -18,9 +18,9 @@ function WINDOW.OnCreate(windowData, buttons, title, toggle)
 
         if IsColor(button.Color) then
             buttonData.Color = button.Color
-        else            
+        else
             if windowData.Toggle then
-                if i%2 == 0 then
+                if i % 2 == 0 then
                     buttonData.Color = Star_Trek.LCARS.ColorLightBlue
                 else
                     buttonData.Color = Star_Trek.LCARS.ColorBlue
@@ -75,7 +75,7 @@ function WINDOW.OnPress(windowData, interfaceData, ent, buttonId, callback)
 
     if isfunction(callback) then
         local updated = callback(windowData, interfaceData, ent, buttonId)
-        if updated then 
+        if updated then
             shouldUpdate = true
         end
     end

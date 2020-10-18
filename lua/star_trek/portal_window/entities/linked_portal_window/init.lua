@@ -11,10 +11,10 @@ function ENT:KeyValue( key, value )
 		self:SetPartnerName( value )
 		self:SetExit( ents.FindByName( value )[1] )
 	elseif ( key == "width" ) then
-		self:SetWidth( tonumber(value) *2 )
+		self:SetWidth( tonumber(value) * 2 )
 
 	elseif ( key == "height" ) then
-		self:SetHeight( tonumber(value) *2 )
+		self:SetHeight( tonumber(value) * 2 )
 
 	elseif ( key == "DisappearDist" ) then
 		self:SetDisappearDist( tonumber(value) )

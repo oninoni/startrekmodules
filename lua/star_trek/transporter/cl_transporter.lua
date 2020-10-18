@@ -22,9 +22,6 @@ Star_Trek.Transporter.SelfActive = Star_Trek.Transporter.SelfActive or false
 Star_Trek.Transporter.SelfRefrac = Star_Trek.Transporter.SelfRefrac or 0
 
 function Star_Trek.Transporter:TriggerEffect(ent, remat)
-    if ent == LocalPlayer() then
-    end
-
     local transportData = {
         Ent = ent,
         Remat = remat,
@@ -81,7 +78,7 @@ local lastSysTime = SysTime()
 hook.Add("RenderScreenspaceEffects", "Star_Trek.Transporter.Effect", function()
     if Star_Trek.Transporter.SelfRefrac > 0 then
         DrawMaterialOverlay("effects/water_warp01", Star_Trek.Transporter.SelfRefrac)
-        
+
         draw.RoundedBox(0, 0, 0, ScrW(), ScrH(), Color(31, 127, 255, Star_Trek.Transporter.SelfRefrac) )
     end
 end)
@@ -118,7 +115,7 @@ hook.Add("PostDrawTranslucentRenderables", "Voyager.Transporter.MainRender", fun
             table.insert(toBeRemoved, transportData)
             continue
         end
-        
+
         transportData.AnimPos = transportData.AnimPos + frameTime / 2
 
         local pos = ent:GetPos() + Vector(0, 0, transportData.Offset)
@@ -134,7 +131,7 @@ hook.Add("PostDrawTranslucentRenderables", "Voyager.Transporter.MainRender", fun
 
         local maxEffectProgress = math.max(0, math.min(transportData.AnimPos - 0.3, 1))
         local midEffectProgress = math.max(0, math.min(transportData.AnimPos      , 1))
-        
+
         local maxAlpha = (0.5 - math.abs(maxEffectProgress - 0.5))
         maxAlpha = math.min(maxAlpha, 0.2) * 1.5
         local midAlpha = (0.5 - math.abs(midEffectProgress - 0.5))
@@ -146,7 +143,7 @@ hook.Add("PostDrawTranslucentRenderables", "Voyager.Transporter.MainRender", fun
         if transportData.Remat then
             maxEffectProgress = 1 - maxEffectProgress
             midEffectProgress = 1 - midEffectProgress
-            
+
             ent:SetColor(ColorAlpha(transportData.OldColor, 255 * math.max(0, transportData.AnimPos - 0.3)))
         else
             ent:SetColor(ColorAlpha(transportData.OldColor, 255 - 255 * math.min(1, transportData.AnimPos - 0.3)))
@@ -166,7 +163,7 @@ hook.Add("PostDrawTranslucentRenderables", "Voyager.Transporter.MainRender", fun
         drawFlare(pos + upHeight * maxEffectProgress, vec, size)
         drawFlare(pos - (upHeight * maxEffectProgress + Vector(0, 0, 0.3)), vec, smallSize)
         drawFlare(pos + (upHeight * maxEffectProgress + Vector(0, 0, 0.3)), vec, smallSize)
-        
+
         local dLight = DynamicLight(ent:EntIndex(), false)
         if ( dLight ) then
             dLight.pos = ent:GetPos()
@@ -178,7 +175,7 @@ hook.Add("PostDrawTranslucentRenderables", "Voyager.Transporter.MainRender", fun
             dLight.Size = 512 * (maxAlpha + midAlpha)
             dLight.DieTime = CurTime() + 1
         end
-        
+
         if transportData.AnimPos > 1.3 then
             table.insert(toBeRemoved, transportData)
         end

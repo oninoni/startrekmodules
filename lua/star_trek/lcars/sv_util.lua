@@ -42,7 +42,7 @@ function Star_Trek.LCARS:GetLargeNumber(value)
     end
 
     local largeNumber = ""
-    
+
     if value < 10 then
         largeNumber = "00000" .. tostring(value)
     elseif value < 100 then
@@ -58,4 +58,39 @@ function Star_Trek.LCARS:GetLargeNumber(value)
     end
 
     return string.sub(largeNumber, 1, 2) .. "-" .. string.sub(largeNumber, 3)
+end
+
+-- Returns categoriy data for a category_list containing all ship sections.
+-- 
+-- @param bool? needsLocations
+-- @return Table categories
+function Star_Trek.LCARS:GetSectionCategories(needsLocations)
+    local categories = {}
+    for deck, deckData in pairs(Star_Trek.Sections.Decks) do
+        local category = {
+            Name = "Deck " .. deck,
+            Buttons = {},
+        }
+
+        if table.Count(deckData.Sections) == 0 then
+            category.Disabled = true
+        else
+            for sectionId, sectionData in SortedPairs(deckData.Sections) do
+                local button = {
+                    Name = "Section " .. sectionId .. " " .. sectionData.Name,
+                    Data = sectionData,
+                }
+
+                if needsLocations and table.Count(sectionData.BeamLocations) == 0 then
+                    button.Disabled = true
+                end
+
+                table.insert(category.Buttons, button)
+            end
+        end
+
+        table.insert(categories, category)
+    end
+
+    return categories
 end

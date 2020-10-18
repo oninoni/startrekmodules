@@ -5,11 +5,8 @@ local function generateButtons(ent, keyValues)
     if ent.IsTurbolift then
         name = keyValues["lcars_name"]
     elseif ent.IsPod then
-        local controlButton = {
-            Name = "",
-        }
-
         local podData = ent.Data
+
         local controlButton = {}
         if podData.Stopped or podData.TravelTarget == nil then
             controlButton.Name = "Resume Lift"
@@ -27,7 +24,7 @@ local function generateButtons(ent, keyValues)
             Disabled = turboliftData.Name == name,
         }
 
-        buttons[#buttons+1] = button
+        buttons[#buttons + 1] = button
     end
 
     return buttons
@@ -36,9 +33,14 @@ end
 -- Opening a turbolift control menu.
 function Star_Trek.LCARS:OpenTurboliftMenu()
     local success, ent = self:GetInterfaceEntity(TRIGGER_PLAYER, CALLER)
-    if not success then 
+    if not success then
         -- Error Message
         Star_Trek:Message(ent)
+        return
+    end
+
+    local interfaceData = self.ActiveInterfaces[ent]
+    if istable(interfaceData) then
         return
     end
 

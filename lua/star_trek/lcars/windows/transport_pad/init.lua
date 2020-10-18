@@ -14,9 +14,9 @@ function WINDOW.OnCreate(windowData, padNumber, title)
             local values = string.Split(string.sub(name, 6), "_")
             local k = tonumber(values[1])
             local n = tonumber(values[2])
-            
+
             if n ~= padNumber then continue end
-            
+
             local pad = {
                 Name = k .. "_" .. n,
                 Data = ent,
@@ -49,9 +49,13 @@ function WINDOW.OnCreate(windowData, padNumber, title)
                     end
                 end
 
+                -- Pad Offset (Frame)
+                pad.X = pad.X + 30
+                pad.Y = pad.Y + 30
+
                 pad.Type = "Hex"
             end
-            
+
             windowData.Pads[k] = pad
         end
 
@@ -94,7 +98,7 @@ function WINDOW.OnPress(windowData, interfaceData, ent, buttonId, callback)
 
     if isfunction(callback) then
         local updated = callback(windowData, interfaceData, ent, buttonId)
-        if updated then 
+        if updated then
             shouldUpdate = true
         end
     end

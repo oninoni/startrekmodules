@@ -1,12 +1,12 @@
 ENT.Type				= "anim"
-ENT.RenderGroup			= RENDERGROUP_BOTH // fixes translucent stuff rendering behind the portal
+ENT.RenderGroup			= RENDERGROUP_BOTH -- fixes translucent stuff rendering behind the portal
 ENT.Spawnable			= false
 ENT.AdminOnly			= false
 ENT.Editable			= false
 
 function ENT:Initialize()
-	local mins = Vector( 0, -self:GetWidth() /2, -self:GetHeight() /2 )
-	local maxs = Vector( 10, self:GetWidth() /2, self:GetHeight() /2)
+	local mins = Vector( 0, -self:GetWidth() / 2, -self:GetHeight() / 2 )
+	local maxs = Vector( 10, self:GetWidth() / 2, self:GetHeight() / 2)
 
 	if CLIENT then
 

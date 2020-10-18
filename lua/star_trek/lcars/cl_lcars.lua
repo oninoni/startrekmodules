@@ -44,9 +44,9 @@ function Star_Trek.LCARS:LoadWindowData(windowData, IPos, IAng)
 
         WPos = pos,
         WAng = ang,
-        
+
         WVis = false,
-        
+
         WVU = ang:Up(),
         WVR = ang:Right(),
         WVF = ang:Forward(),
@@ -63,13 +63,13 @@ function Star_Trek.LCARS:OpenMenu(id, interfaceData)
     local interface = {
         IPos = interfaceData.InterfacePos,
         IAng = interfaceData.InterfaceAngle,
-        
+
         IVU = interfaceData.InterfaceAngle:Up(),
         IVR = interfaceData.InterfaceAngle:Right(),
         IVF = interfaceData.InterfaceAngle:Forward(),
 
         IVis = false,
-        
+
         AnimPos = 0,
         Closing = false,
 
@@ -82,7 +82,7 @@ function Star_Trek.LCARS:OpenMenu(id, interfaceData)
             interface.Windows[i] = window
         end
     end
-    
+
     self.ActiveInterfaces[id] = interface
 end
 
@@ -118,7 +118,7 @@ hook.Add("Think", "Star_Trek.LCARS.Think", function()
     local removeInterfaces = {}
     for id, interface in pairs(Star_Trek.LCARS.ActiveInterfaces) do
         interface.IVis = false
-        
+
         for _, window in pairs(interface.Windows) do
             local trace = util.TraceLine({
                 start = eyePos,
@@ -153,7 +153,7 @@ hook.Add("Think", "Star_Trek.LCARS.Think", function()
     for _, id in pairs(removeInterfaces) do
         Star_Trek.LCARS.ActiveInterfaces[id] = nil
     end
-    
+
     lastThink = curTime
 end)
 
@@ -164,9 +164,9 @@ net.Receive("Star_Trek.LCARS.Update", function()
 
     local interface = Star_Trek.LCARS.ActiveInterfaces[id]
     if not istable(interface) then
-        return 
+        return
     end
-    
+
     local oldVisible = interface.Windows[windowId].WVis
 
     local window = Star_Trek.LCARS:LoadWindowData(windowData, interface.IPos, interface.IAng)
@@ -240,8 +240,8 @@ hook.Add("PostDrawOpaqueRenderables", "Star_Trek.LCARS.Draw", function()
                 continue
             end
 
-            local width = window.WWidth +100
-            local height = window.WHeight +100
+            local width = window.WWidth + 100
+            local height = window.WHeight + 100
             local pos = Star_Trek.LCARS:Get3D2DMousePos(window, eyePos, eyeDir)
             if pos.x > -width / 2 and pos.x < width / 2
             and pos.y > -height / 2 and pos.y < height / 2 then
@@ -254,7 +254,7 @@ hook.Add("PostDrawOpaqueRenderables", "Star_Trek.LCARS.Draw", function()
             end
 
             cam.Start3D2D(window.WPos, window.WAng, 1 / window.WScale)
-                windowFunctions.OnDraw(window, window.LastPos or Vector(-width/2, -height/2), interface.AnimPos)
+                windowFunctions.OnDraw(window, window.LastPos or Vector(-width / 2, -height / 2), interface.AnimPos)
             cam.End3D2D()
         end
     end

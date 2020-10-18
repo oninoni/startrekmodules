@@ -41,7 +41,7 @@ function Star_Trek.Transporter:CleanupPatternList(patterns)
                 table.insert(patternEntities, ent)
             end
         end
-        
+
         for _, removeEnt in pairs(removeEntities) do
             table.RemoveByValue(pattern.Entities, removeEnt)
         end
@@ -56,7 +56,7 @@ function Star_Trek.Transporter:CleanupPatternList(patterns)
                 table.insert(removeEntities, ent)
             end
         end
-        
+
         for _, removeEnt in pairs(removeEntities) do
             table.RemoveByValue(pattern.Entities, removeEnt)
         end
@@ -89,8 +89,6 @@ function Star_Trek.Transporter:GetPatternFromPad(pad)
             table.insert(pattern.Entities, ent)
         end
     end
-    
-    --debugoverlay.Box(pos, -Vector(25, 25, 0), Vector(25, 25, 120), 2, Color(255, 255, 255, 63))
 
     pattern.Pad = pad
     return pattern
@@ -105,8 +103,7 @@ function Star_Trek.Transporter:GetPatternsFromPads(pads)
     local patterns = {}
 
     for i, pad in pairs(pads) do
-        local pattern = self:GetPatternFromPad(pad)
-        patterns[i] = pattern
+        patterns[i] = self:GetPatternFromPad(pad)
     end
 
     patterns = self:CleanupPatternList(patterns)
@@ -142,8 +139,6 @@ function Star_Trek.Transporter:GetPatternFromPlayer(ply, wideField)
                 end
             end
         end
-        
-        --debugoverlay.Box(pos, -Vector(range, range, 0), Vector(range, range, range * 2), 2, Color(255, 255, 255, 63))
     end
 
     return pattern
@@ -157,8 +152,7 @@ function Star_Trek.Transporter:GetPatternsFromPlayers(players, wideField)
     local patterns = {}
 
     for i, ply in pairs(players) do
-        local pattern = self:GetPatternFromPlayer(ply, wideField)
-        patterns[i] = pattern
+        patterns[i] = self:GetPatternFromPlayer(ply, wideField)
     end
 
     patterns = self:CleanupPatternList(patterns)
@@ -195,10 +189,9 @@ function Star_Trek.Transporter:GetPatternsFromAreas(deck, sectionIds)
     local patterns = {}
 
     for i, sectionId in pairs(sectionIds) do
-        local pattern = self:GetPatternsFromArea(deck, sectionId)
-        patterns[i] = pattern
+        patterns[i] = self:GetPatternsFromArea(deck, sectionId)
     end
-    
+
     patterns = self:CleanupPatternList(patterns)
 
     return patterns
@@ -216,7 +209,7 @@ function Star_Trek.Transporter:GetPatternFromLocation(pos, wideField)
     }
 
     local range = 32
-    if wideField then 
+    if wideField then
         range = 64
     end
 
@@ -234,8 +227,6 @@ function Star_Trek.Transporter:GetPatternFromLocation(pos, wideField)
         end
     end
 
-    --debugoverlay.Box(pos, -Vector(range, range, 0), Vector(range, range, range * 2), 2, Color(255, 255, 255, 63))
-
     return pattern
 end
 
@@ -247,8 +238,7 @@ function Star_Trek.Transporter:GetPatternsFromLocations(positions, wideField)
     local patterns = {}
 
     for i, pos in pairs(positions) do
-        local pattern = self:GetPatternFromLocation(pos, wideField)
-        patterns[i] = pattern
+        patterns[i] = self:GetPatternFromLocation(pos, wideField)
     end
 
     patterns = self:CleanupPatternList(patterns)
@@ -275,8 +265,7 @@ function Star_Trek.Transporter:GetPatternsFromBuffers(entities)
     local patterns = {}
 
     for i, ent in pairs(entities) do
-        local pattern = self:GetPatternFromBuffer(ent)
-        patterns[i] = pattern
+        patterns[i] = self:GetPatternFromBuffer(ent)
     end
 
     patterns = self:CleanupPatternList(patterns)

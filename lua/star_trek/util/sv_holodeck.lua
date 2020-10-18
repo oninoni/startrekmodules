@@ -25,7 +25,7 @@
 function Star_Trek.Util:CompressPlayers(outerName, innerName)
     local outer = ents.FindByName(outerName)[1]
     local inner = ents.FindByName(innerName)[1]
-    
+
     if not IsValid(outer) then return end
     if not IsValid(inner) then return end
 
@@ -63,9 +63,9 @@ function Star_Trek.Util:CompressPlayers(outerName, innerName)
                 ent:SetPos(emptyPos)
             else
                 ent:SetPos(pos)
-                
+
                 Star_Trek:Message("No Empty Pos Found, Dumping into other Player/Object")
             end
-        end 
+        end
     end
 end

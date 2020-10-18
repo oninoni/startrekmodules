@@ -38,9 +38,9 @@ hook.Add("Star_Trek.Sections.Loaded", "Star_Trek.Transporter.DetectLocations", f
     for deck, deckData in pairs(Star_Trek.Sections.Decks) do
         for sectionId, sectionData in pairs(deckData.Sections) do
             sectionData.BeamLocations = {}
-            
+
             local entities = Star_Trek.Sections:GetInSection(deck, sectionId, true)
-            
+
             for _, ent in pairs(entities) do
                 if ent:GetName() == "beamLocation" then
                     table.insert(sectionData.BeamLocations, ent:GetPos())
@@ -61,10 +61,8 @@ function Star_Trek.Transporter:CleanUpSourcePatterns(patterns)
     local invalidPatterns = {}
 
     for name, pattern in pairs(patterns) do
-        if istable(pattern) then
-            if table.Count(pattern.Entities) == 0 then
-                table.insert(invalidPatterns, pattern)
-            end
+        if istable(pattern) and table.Count(pattern.Entities) == 0 then
+            table.insert(invalidPatterns, pattern)
         end
     end
 
@@ -80,10 +78,8 @@ function Star_Trek.Transporter:CleanUpTargetPatterns(patterns)
     local invalidPatterns = {}
 
     for _, pattern in pairs(patterns) do
-        if istable(pattern) then
-            if table.Count(pattern.Entities) > 0 then
-                table.insert(invalidPatterns, pattern)
-            end
+        if istable(pattern) and table.Count(pattern.Entities) > 0 then
+            table.insert(invalidPatterns, pattern)
         end
     end
 
@@ -95,8 +91,8 @@ function Star_Trek.Transporter:CleanUpTargetPatterns(patterns)
 end
 
 function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPatterns)
-    local sourcePatterns = self:CleanUpSourcePatterns(sourcePatterns)
-    local targetPatterns = self:CleanUpTargetPatterns(targetPatterns)
+    sourcePatterns = self:CleanUpSourcePatterns(sourcePatterns)
+    targetPatterns = self:CleanUpTargetPatterns(targetPatterns)
 
     local remainingEntities = {}
     if not istable(targetPatterns) then
@@ -108,10 +104,7 @@ function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPattern
             end
         end
     else
-        local targetPatternCount = #targetPatterns
-
         local i = 1
-
         for _, sourcePattern in pairs(sourcePatterns) do
             if istable(sourcePattern) then
                 for _, ent in pairs(sourcePattern.Entities) do
@@ -132,7 +125,7 @@ function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPattern
                             ent.Pad = sourcePattern.Pad
                         end
                     end
-                end 
+                end
             end
         end
     end
