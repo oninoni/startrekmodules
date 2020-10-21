@@ -18,18 +18,23 @@
 
 -- Calculate the ammount of scroll/offset of a button list.
 --
+-- @param Number listOffset
 -- @param Number listHeight
 -- @param Number buttonCount
 -- @param Number mouseYPos
 -- @return Number offset
-function Star_Trek.LCARS:GetButtonOffset(listHeight, buttonCount, mouseYPos)
-    local max = math.floor(listHeight / 35)
+function Star_Trek.LCARS:GetButtonOffset(listOffset, listHeight, buttonCount, mouseYPos)
+    local maxCount = math.floor(listHeight / 35)
 
-    if buttonCount > max then
-        return -mouseYPos * ((buttonCount - max + 2) / max)
+    local offset = listOffset
+    if buttonCount > maxCount then
+        offset = offset - (mouseYPos - listOffset) * ((buttonCount - maxCount + 0.5) / maxCount)  + 35
+
+        offset = math.min(offset, listOffset)
+        offset = math.max(offset, listOffset - (buttonCount + 1) * 35 + (maxCount + 2) * 35)
     end
 
-    return 0
+    return offset
 end
 
 -- @param Number listHeight
@@ -38,6 +43,12 @@ end
 -- @param Number offset
 -- @return Number yPos
 function Star_Trek.LCARS:GetButtonYPos(listHeight, i, buttonCount, offset)
+    local y = (i - 1) * 35 + offset
+
+    return y
+    --[[
+    listHeight = listHeight - 70
+
     local y = (i - (buttonCount / 2)) * 35 + offset
 
     if offset == 0 then
@@ -56,7 +67,7 @@ function Star_Trek.LCARS:GetButtonYPos(listHeight, i, buttonCount, offset)
             listHeight / 2 + 70)
     end
 
-    return math.floor(y - 17.5) + 30
+    return math.floor(y - 17.5) + 30]]
 end
 
 -- Draw a spacer of the LCARS interface
@@ -66,26 +77,26 @@ function Star_Trek.LCARS:DrawFrameSpacer(y, width, wd2, lcars_black, lcars_top, 
     draw.RoundedBox( 0, -wd2     , y - 38,       50,      25, lcars_black)
     draw.RoundedBox( 0, -wd2 + 25, y - 13,       25,      25, lcars_black)
 
-    draw.RoundedBox( 0, -wd2 + 25, y  + 1, width-25,      11, lcars_black)
+    draw.RoundedBox( 0, -wd2 + 25, y  + 1, width-25,      12, lcars_black)
 
     draw.RoundedBox(24, -wd2  + 1, y - 37,       48,      48, lcars_top)
     draw.RoundedBox( 0, -wd2  + 1, y - 37,       48,      25, lcars_top)
     draw.RoundedBox( 0, -wd2 + 25, y - 13,       24,      24, lcars_top)
 
-    draw.RoundedBox( 0, -wd2 + 25, y  + 2, width-25,       9, lcars_top)
+    draw.RoundedBox( 0, -wd2 + 25, y  + 2, width-25,      10, lcars_top)
 
     -- Bottom Bar
-    draw.RoundedBox(25, -wd2     , y + 14,       50,      50, lcars_black)
-    draw.RoundedBox( 0, -wd2     , y + 40,       50,      26, lcars_black)
-    draw.RoundedBox( 0, -wd2 + 25, y + 14,       25,      25, lcars_black)
+    draw.RoundedBox(25, -wd2     , y + 17,       50,      50, lcars_black)
+    draw.RoundedBox( 0, -wd2     , y + 43,       50,      26, lcars_black)
+    draw.RoundedBox( 0, -wd2 + 25, y + 17,       25,      25, lcars_black)
 
-    draw.RoundedBox( 0, -wd2 + 25, y + 14, width-25,      11, lcars_black)
+    draw.RoundedBox( 0, -wd2 + 25, y + 17, width-25,      12, lcars_black)
 
-    draw.RoundedBox(24, -wd2  + 1, y + 15,       48,      48, lcars_bottom)
-    draw.RoundedBox( 0, -wd2  + 1, y + 40,       48,      25, lcars_bottom)
-    draw.RoundedBox( 0, -wd2 + 25, y + 15,       24,      24, lcars_bottom)
+    draw.RoundedBox(24, -wd2  + 1, y + 18,       48,      48, lcars_bottom)
+    draw.RoundedBox( 0, -wd2  + 1, y + 43,       48,      25, lcars_bottom)
+    draw.RoundedBox( 0, -wd2 + 25, y + 18,       24,      24, lcars_bottom)
 
-    draw.RoundedBox( 0, -wd2 + 25, y + 15, width-25,       9, lcars_bottom)
+    draw.RoundedBox( 0, -wd2 + 25, y + 18, width-25,      10, lcars_bottom)
 end
 
 -- Draw the fram of an LCARS interface

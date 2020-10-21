@@ -23,7 +23,9 @@ Star_Trek = Star_Trek or {}
 Star_Trek.Modules = Star_Trek.Modules or {}
 
 function Star_Trek:Message(msg)
-    print("[Star Trek] " .. msg)
+    if msg then
+        print("[Star Trek] " .. msg)
+    end
 end
 
 local function loadModule(name)

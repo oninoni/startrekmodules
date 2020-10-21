@@ -49,12 +49,12 @@ function WINDOW.OnCreate(windowData, padNumber, title)
                     end
                 end
 
-                -- Pad Offset (Frame)
-                pad.X = pad.X + 30
-                pad.Y = pad.Y + 30
-
                 pad.Type = "Hex"
             end
+
+            -- Pad Offset (Frame)
+            pad.X = pad.X + 30
+            pad.Y = pad.Y + 30
 
             windowData.Pads[k] = pad
         end

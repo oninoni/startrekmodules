@@ -186,7 +186,7 @@ local function createMainWindow(pos, angle, menuTable, padNumber)
 
     -- Category List Window
     if selectionName == "Sections" then
-        local success, mainWindow = Star_Trek.LCARS:CreateWindow("category_list", pos, angle, nil, 500, 500, function(windowData, interfaceData, ent, categoryId, buttonId)
+        local success, mainWindow = Star_Trek.LCARS:CreateWindow("category_list", pos, angle, nil, 500, 522, function(windowData, interfaceData, ent, categoryId, buttonId)
 
         end, Star_Trek.LCARS:GetSectionCategories(menuTable.Target), selectionName, true)
         if not success then

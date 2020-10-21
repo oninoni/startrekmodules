@@ -66,7 +66,7 @@ end
 -- @return Table categories
 function Star_Trek.LCARS:GetSectionCategories(needsLocations)
     local categories = {}
-    for deck, deckData in pairs(Star_Trek.Sections.Decks) do
+    for deck, deckData in SortedPairs(Star_Trek.Sections.Decks) do
         local category = {
             Name = "Deck " .. deck,
             Buttons = {},
@@ -77,7 +77,7 @@ function Star_Trek.LCARS:GetSectionCategories(needsLocations)
         else
             for sectionId, sectionData in SortedPairs(deckData.Sections) do
                 local button = {
-                    Name = "Section " .. sectionId .. " " .. sectionData.Name,
+                    Name = "Section " .. sectionData.RealId .. " " .. sectionData.Name,
                     Data = sectionData,
                 }
 

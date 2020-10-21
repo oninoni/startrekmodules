@@ -1,48 +1,83 @@
+local function getCategoryRow(self, categories)
+    local rowData = {
+        Categories = {}
+    }
+
+    if #categories == 1 then
+        rowData.Width = self.WWidth -58
+
+        table.insert(rowData.Categories, categories[1])
+    elseif #categories == 2 then
+        rowData.Width = (self.WWidth -58) / 2
+
+        table.insert(rowData.Categories, categories[1])
+        table.insert(rowData.Categories, categories[2])
+    elseif #categories == 3 or #categories == 4 then
+        rowData.Width = (self.WWidth -58) / 4
+
+        table.insert(rowData.Categories, categories[1])
+        table.insert(rowData.Categories, categories[2])
+        table.insert(rowData.Categories, categories[3])
+        if #categories == 4 then
+            table.insert(rowData.Categories, categories[4])
+        end
+    end
+
+    return rowData
+end
+
 function WINDOW.OnCreate(self, windowData)
     self.Title = windowData.Title
     self.Selected = windowData.Selected
     self.Categories = windowData.Categories
 
+    self.WD2 = self.WWidth / 2
+    self.HD2 = self.WHeight / 2
+
+    self.MaxN = table.Count(self.Categories)
+    self.CategoryHeight = math.max(2, math.ceil(self.MaxN / 4)) * 35
+
+    self.ButtonsHeight = self.WHeight - self.CategoryHeight - 105
+    self.ButtonsStart = self.HD2 - self.ButtonsHeight
+
+    self.ButtonsTopAlpha = self.ButtonsStart
+    self.ButtonsBotAlpha = self.HD2 - 25
+
+    self.CategoryRows = {}
+    local categories = table.Copy(self.Categories)
+    while true do
+        if #categories > 4 then
+            local subCategories = {
+                table.remove(categories, 1),
+                table.remove(categories, 1),
+                table.remove(categories, 1),
+                table.remove(categories, 1),
+            }
+
+            table.insert(self.CategoryRows, getCategoryRow(self, subCategories))
+        else
+            table.insert(self.CategoryRows, getCategoryRow(self, categories))
+
+            break
+        end
+    end
+
     return self
 end
 
--- Calculate the scroll of the list.
-local function getOffset(height, n, y)
-    height = height - 240
-    y = y - 115
-
-    return Star_Trek.LCARS:GetButtonOffset(height, n, y)
-end
-
--- Calculate the y position of an element.
-local function getButtonYPos(height, i, n, offset)
-    height = height - 240
-
-    return Star_Trek.LCARS:GetButtonYPos(height, i, n, offset) + 85
-end
-
-local function isSmallButtPressed(x, y, width, height, pos)
-    return pos.x > x -1 and pos.x < x + width and pos.y > y -1 and pos.y < y + height
+local function isButtonPressed(x, y, width, height, pos)
+    return pos.x >= (x -1) and pos.x <= (x + width) and pos.y >= (y -1) and pos.y <= (y + height)
 end
 
 function WINDOW.OnPress(self, pos, animPos)
     local selected = self.Selected
 
-    local width = self.WWidth
-    local wd2 = width / 2
-    local height = self.WHeight
-    local hd2 = height / 2
-
-    local smallButtWidth = (width - 58) / 4
-
-    if pos.y <= -hd2 + 205 then
+    if pos.y <= -self.HD2 + self.CategoryHeight + 65 then
         -- Selection
-        for y = 1, 4 do
-            for x = 1, 4 do
-                local id = (y - 1) * 4 + x
-                local categoryData = self.Categories[id]
-                if istable(categoryData) and isSmallButtPressed(-wd2 + 53 + (x-1) * smallButtWidth, -hd2 + 30 + y * 35, smallButtWidth -3, 32, pos) then
-                    return id
+        for i, rowData in pairs(self.CategoryRows) do
+            for j, categoryData in pairs(rowData.Categories) do
+                if isButtonPressed(-self.WD2 + 53 + (j - 1) * rowData.Width, -self.HD2 + 30 + i * 35, rowData.Width - 3, 32, pos) then
+                    return categoryData.Id
                 end
             end
         end
@@ -52,12 +87,12 @@ function WINDOW.OnPress(self, pos, animPos)
             local buttons = self.Categories[selected].Buttons
             local n = table.maxn(buttons)
 
-            local offset = getOffset(height, n, pos.y)
+            local offset = Star_Trek.LCARS:GetButtonOffset(self.ButtonsStart, self.ButtonsHeight, n, pos.y)
             for i, button in pairs(buttons) do
                 if button.Disabled then continue end
 
-                local y = getButtonYPos(height, i, n, offset)
-                if pos.y >= y - 16 and pos.y <= y + 16 then
+                local y = Star_Trek.LCARS:GetButtonYPos(self.ButtonsHeight, i, n, offset)
+                if pos.y >= y - 1 and pos.y <= y + 31 then
                     return #self.Categories + i
                 end
             end
@@ -75,44 +110,31 @@ local color_blues = {
 function WINDOW.OnDraw(self, pos, animPos)
     local selected = self.Selected
 
-    local width = self.WWidth
-    local wd2 = width / 2
-    local height = self.WHeight
-    local hd2 = height / 2
-
-    local smallButtWidth = (width -58) / 4
-
     local alpha = 255 * animPos
     local lcars_black = Color(0, 0, 0, alpha)
     local lcars_top = ColorAlpha(Star_Trek.LCARS.ColorOrange, alpha)
     local lcars_middle = ColorAlpha(Star_Trek.LCARS.ColorLightRed, alpha)
     local lcars_bottom = ColorAlpha(Star_Trek.LCARS.ColorYellow, alpha)
 
-    for y = 1, 4 do
-        for x = 1, 4 do
-            local id = (y - 1) * 4 + x
-            local categoryData = self.Categories[id]
-            if istable(categoryData) then
-                local color
-
-                if selected == id then
-                    color = color_yellow
+    for i, rowData in pairs(self.CategoryRows) do
+        for j, categoryData in pairs(rowData.Categories) do
+            local color
+            if selected == categoryData.Id then
+                color = color_yellow
+            else
+                if categoryData.Color then
+                    color = categoryData.Color
                 else
-                    if categoryData.Color then
-                        color = categoryData.Color
-                    else
-                        color = color_blues[(x + y) % 2 + 1]
-                    end
+                    color = color_blues[(i + j) % 2 + 1]
                 end
-
-                if categoryData.Disabled then
-                    color = color_grey
-                end
-
-                Star_Trek.LCARS:DrawButtonGraphic(-wd2 + 53 + (x - 1) * smallButtWidth, -hd2 + 30 + y * 35, smallButtWidth - 3, 32, color, alpha, pos)
-
-                draw.DrawText(categoryData.Name, "LCARSText", -wd2 + 62 + (x - 1) * smallButtWidth, -hd2 + 43 + y * 35, lcars_black, TEXT_ALIGN_LEFT)
             end
+
+            if categoryData.Disabled then
+                color = color_grey
+            end
+
+            Star_Trek.LCARS:DrawButtonGraphic(-self.WD2 + 55 + (j - 1) * rowData.Width, -self.HD2 + (i + 1) * 35, rowData.Width - 3, 32, color, alpha, pos)
+            draw.DrawText(categoryData.Name, "LCARSText", -self.WD2 + 64 + (j - 1) * rowData.Width, -self.HD2 + (i + 1) * 35 + 12, lcars_black, TEXT_ALIGN_LEFT)
         end
     end
 
@@ -120,7 +142,8 @@ function WINDOW.OnDraw(self, pos, animPos)
         local buttons = self.Categories[selected].Buttons
         local n = table.maxn(buttons)
 
-        local offset = getOffset(height, n, pos.y)
+        local offset = Star_Trek.LCARS:GetButtonOffset(self.ButtonsStart, self.ButtonsHeight, n, pos.y)
+
         for i, button in pairs(buttons) do
             local color = button.Color
             if button.Disabled then
@@ -129,14 +152,14 @@ function WINDOW.OnDraw(self, pos, animPos)
                 color = color_yellow
             end
 
-            local y = getButtonYPos(height, i, n, offset)
+            local y = Star_Trek.LCARS:GetButtonYPos(self.ButtonsHeight, i, n, offset)
 
             local buttonAlpha = 255
-            if y < -5 or y > 240 then
-                if y < -5 then
-                    buttonAlpha = -y -(hd2 -245)
+            if y < self.ButtonsTopAlpha or y > self.ButtonsBotAlpha then
+                if y < self.ButtonsTopAlpha then
+                    buttonAlpha = -y + self.ButtonsTopAlpha
                 else
-                    buttonAlpha = y -(hd2 -20)
+                    buttonAlpha = y - self.ButtonsBotAlpha
                 end
 
                 buttonAlpha = math.min(math.max(0, 255 - buttonAlpha * 10), 255)
@@ -145,33 +168,33 @@ function WINDOW.OnDraw(self, pos, animPos)
 
             local title = button.Name or "[ERROR]"
 
-            Star_Trek.LCARS:DrawButton(26, y - 15, width, title, color, button.RandomS, button.RandomL, buttonAlpha, pos)
+            Star_Trek.LCARS:DrawButton(28, y, self.WWidth, title, color, button.RandomS, button.RandomL, buttonAlpha, pos)
         end
     end
 
     -- Custom Drawing the Double Frame
 
     -- Title
-    draw.DrawText(self.Title, "LCARSBig", wd2 -8, -hd2 -2, color_white, TEXT_ALIGN_RIGHT)
+    draw.DrawText(self.Title, "LCARSBig", self.WD2 -8, -self.HD2 -2, color_white, TEXT_ALIGN_RIGHT)
 
-    Star_Trek.LCARS:DrawFrameSpacer(-hd2 +  35, width, wd2, lcars_black, lcars_top, lcars_middle)
-    Star_Trek.LCARS:DrawFrameSpacer(-hd2 + 205, width, wd2, lcars_black, lcars_middle, lcars_bottom)
+    Star_Trek.LCARS:DrawFrameSpacer(-self.HD2                       + 35, self.WWidth, self.WD2, lcars_black, lcars_top,    lcars_middle)
+    Star_Trek.LCARS:DrawFrameSpacer(-self.HD2 + self.CategoryHeight + 70, self.WWidth, self.WD2, lcars_black, lcars_middle, lcars_bottom)
 
     -- Middle Bars
-    draw.RoundedBox(0, -wd2    , -hd2 + 80, 50, 100, lcars_black)
-    draw.RoundedBox(0, -wd2 + 1, -hd2 + 80, 48, 100, lcars_middle)
+    draw.RoundedBox(0, -self.WD2    , -self.HD2 + 104, 50, self.CategoryHeight - 70, lcars_black)
+    draw.RoundedBox(0, -self.WD2 + 1, -self.HD2 + 103, 48, self.CategoryHeight - 68, lcars_middle)
+
+    draw.RoundedBox(0, -self.WD2    , -self.HD2 + 97, 50, 2, lcars_black)
 
     -- Bottom Red Bars 
-    draw.RoundedBox(0, -wd2    , -hd2 + 250, 50, hd2 -60, lcars_black)
-    draw.RoundedBox(0, -wd2 + 1, -hd2 + 250, 48, hd2 -60, lcars_bottom)
+    draw.RoundedBox(0, -self.WD2    , -self.HD2 + self.CategoryHeight + 130, 50, self.HD2 -60, lcars_black)
+    draw.RoundedBox(0, -self.WD2 + 1, -self.HD2 + self.CategoryHeight + 130, 48, self.HD2 -60, lcars_bottom)
 
     -- Very Bottom Orange Bars
-    draw.RoundedBox(0, -wd2    , 100, 50, hd2 -100, lcars_black)
-    draw.RoundedBox(0, -wd2 + 1, 100, 48, hd2 -100, lcars_top)
+    draw.RoundedBox(0, -self.WD2    , 100, 50, self.HD2 -100, lcars_black)
+    draw.RoundedBox(0, -self.WD2 + 1, 100, 48, self.HD2 -100, lcars_top)
 
     -- Small Black Bars
-    draw.RoundedBox(0, -wd2, -hd2 + 100, 50, 2, lcars_black)
-
-    draw.RoundedBox(0, -wd2, 100, 50, 2, lcars_black)
-    draw.RoundedBox(0, -wd2, 120, 50, 2, lcars_black)
+    draw.RoundedBox(0, -self.WD2, 100, 50, 2, lcars_black)
+    draw.RoundedBox(0, -self.WD2, 120, 50, 2, lcars_black)
 end

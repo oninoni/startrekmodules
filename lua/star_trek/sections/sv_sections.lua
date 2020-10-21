@@ -92,9 +92,18 @@ function Star_Trek.Sections:SetupSections()
         if #numberData < 2 then continue end
 
         local deck = tonumber(numberData[1])
-        if deck < 1 and deck > self.DeckCount then continue end
+        if not deck or deck < 1 or deck > self.DeckCount then continue end
 
-        local sectionId = numberData[2]
+        local sectionId = tonumber(numberData[2])
+        if not isnumber(sectionId) then
+            local number, letter = string.match(numberData[2], "(%d+)(%a)")
+            letter = string.byte(letter) - 64
+
+            sectionId = number * 100 + letter
+        else
+            sectionId = sectionId * 100
+        end
+
         local keyValues = ent.LCARSKeyData
         if istable(keyValues) then
             local sectionName = keyValues["lcars_name"]
@@ -102,6 +111,7 @@ function Star_Trek.Sections:SetupSections()
             self.Decks[deck].Sections[sectionId] = self.Decks[deck].Sections[sectionId] or {
                 Name = sectionName,
                 Id = sectionId,
+                RealId = numberData[2],
                 Areas = {},
             }
 

@@ -164,10 +164,10 @@ function Star_Trek.LCARS:GetInterfaceEntity(ply, triggerEntity)
     -- Check if Eye Trace Entity is a child.
     local ent = ply:GetEyeTrace().Entity
     if not IsValid(ent) or ent:IsWorld() then
-        return false, "Invalid Interface Eye Trace Entity"
+        return false--, "Invalid Interface Eye Trace Entity"
     end
     if not table.HasValue(children, ent) then
-        return false, "Interface Eye Trace Entity is not a child of the Trigger Entity."
+        return false--, "Interface Eye Trace Entity is not a child of the Trigger Entity."
     end
 
     return true, ent

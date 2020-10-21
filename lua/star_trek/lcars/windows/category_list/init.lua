@@ -58,10 +58,10 @@ function WINDOW.OnCreate(windowData, categories, title, toggle)
             buttonData.RandomS = Star_Trek.LCARS:GetSmallNumber(button.RandomS)
             buttonData.RandomL = Star_Trek.LCARS:GetLargeNumber(button.RandomL)
 
-            categoryData.Buttons[j] = buttonData
+            table.insert(categoryData.Buttons, buttonData)
         end
 
-        windowData.Categories[i] = categoryData
+        categoryData.Id = table.insert(windowData.Categories, categoryData)
     end
 
     return windowData

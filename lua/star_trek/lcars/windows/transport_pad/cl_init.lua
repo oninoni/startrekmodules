@@ -31,13 +31,13 @@ end
 
 function WINDOW.OnPress(self, pos, animPos)
     for i, pad in pairs(self.Pads) do
-        if isHovered(x, y, self.PadRadius, pos) then
+        if isHovered(pad.X, pad.Y, self.PadRadius, pos) then
             return i
         end
     end
 end
 
-function WINDOW:DrawHexaeder(x, y, r, color)
+local function drawHexaeder(self, x, y, r, color)
     surface.SetDrawColor(color)
     draw.NoTexture()
 
@@ -52,7 +52,7 @@ function WINDOW:DrawHexaeder(x, y, r, color)
     surface.DrawPoly(hex)
 end
 
-local function drawPad(x, y, r, pos, round, selected, alpha)
+local function drawPad(self, x, y, r, pos, round, selected, alpha)
     local lcars_white = Color(255, 255, 255, alpha)
     local lcars_black = Color(0, 0, 0, alpha)
 
@@ -69,20 +69,20 @@ local function drawPad(x, y, r, pos, round, selected, alpha)
         draw.RoundedBox(r, x -(r + 2), y -(r + 2), diameter + 4, diameter + 4, isHov and lcars_white or lcars_black)
         draw.RoundedBox(r, x -r,       y -r,       diameter    , diameter    , color)
     else
-        drawHexaeder(x, y, r + 2, isHov and lcars_white or lcars_black)
-        drawHexaeder(x, y, r    , color)
+        drawHexaeder(self, x, y, r + 2, isHov and lcars_white or lcars_black)
+        drawHexaeder(self, x, y, r    , color)
     end
 end
 
 function WINDOW.OnDraw(self, pos, animPos)
     for i, pad in pairs(self.Pads) do
         if pad.Type == "Round" then
-            drawPad(x, y, self.PadRadius, pos, true, pad.Selected, animPos * 255)
+            drawPad(self, pad.X, pad.Y, self.PadRadius, pos, true, pad.Selected, animPos * 255)
         elseif pad.Type == "Hex" then
-            drawPad(x, y, self.PadRadius, pos, false, pad.Selected, animPos * 255)
+            drawPad(self, pad.X, pad.Y, self.PadRadius, pos, false, pad.Selected, animPos * 255)
         end
 
-        draw.SimpleText(i, "LCARSSmall", x, y, Color(0, 0, 0, animPos * 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        draw.SimpleText(i, "LCARSSmall", pad.X, pad.Y, Color(0, 0, 0, animPos * 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
     end
 
     Star_Trek.LCARS:DrawFrame(self.WWidth, self.WD2, self.HD2, self.Title, 255 * animPos)
