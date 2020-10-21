@@ -10,24 +10,14 @@ function Star_Trek.LCARS:OpenReplicatorMenu()
         return
     end
 
-    local categories = {}
-    for i = 1, 4 do
-        local category = {
-            Name = "Category " .. i,
-            Buttons = {},
-        }
-        for j = 1, 16 do
-            local button = {
-                Name = "Object " .. i .. " " .. j,
-                Data = "models/food/burger.mdl"
-            }
-
-            table.insert(category.Buttons, button)
-        end
-
-        table.insert(categories, category)
-    end
+    local categories = table.Copy(Star_Trek.Replicator.Categories)
     local categoryCount = #categories
+
+    table.insert(categories, {
+        Name = "Clean",
+        Color = Star_Trek.LCARS.ColorOrange,
+        Buttons = {},
+    })
 
     table.insert(categories, {
         Name = "Close",
@@ -35,18 +25,41 @@ function Star_Trek.LCARS:OpenReplicatorMenu()
         Buttons = {},
     })
 
-    local success, window = Star_Trek.LCARS:CreateWindow("category_list", Vector(0, 10, 0), Angle(90, 0, 0), nil, 500, 500, function(windowData, interfaceData, ent, categoryId, buttonId)
+    local success2, window = Star_Trek.LCARS:CreateWindow("category_list", Vector(0, 10, 0), Angle(90, 0, 0), nil, 500, 522, function(windowData, interfaceData, ent, categoryId, buttonId)
         if buttonId then
-            print(categoryId, buttonId)
+            local selected = windowData.Selected
+            local categoryData = windowData.Categories[selected]
+            if istable(categoryData) then
+                local buttonData = categoryData.Buttons[buttonId]
+
+                if istable(buttonData) then
+                    local pos = ent:GetPos()
+                    pos = pos + ent:GetUp() * -18
+                    pos = pos + ent:GetRight() * 6
+
+                    Star_Trek.Replicator:CreateObject(nil, buttonData.Data, pos, ent:GetAngles(), nil)
+                end
+            end
 
             Star_Trek.LCARS:CloseInterface(ent)
         else
             if categoryId == categoryCount + 1 then
+                local pos = ent:GetPos()
+                pos = pos + ent:GetUp() * -18
+                pos = pos + ent:GetRight() * 6
+
+                local entities = ents.FindInSphere(pos, 50)
+                for _, cleanEnt in pairs(entities) do
+                    Star_Trek.Replicator:RecycleObject(cleanEnt)
+                end
+
+                Star_Trek.LCARS:CloseInterface(ent)
+            elseif categoryId == categoryCount + 2 then
                 Star_Trek.LCARS:CloseInterface(ent)
             end
         end
     end, categories, "Replicator", true)
-    if not success then
+    if not success2 then
         Star_Trek:Message(menuWindow)
     end
 
@@ -54,8 +67,8 @@ function Star_Trek.LCARS:OpenReplicatorMenu()
         window
     )
 
-    local success, error = self:OpenInterface(ent, windows)
-    if not success then
+    local success3, error = self:OpenInterface(ent, windows)
+    if not success3 then
         Star_Trek:Message(error)
         return
     end

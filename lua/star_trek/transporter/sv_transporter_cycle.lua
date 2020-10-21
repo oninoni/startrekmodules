@@ -71,7 +71,7 @@ function Star_Trek.Transporter:TriggerEffect(transportData, ent)
         ent:SetMoveType(MOVETYPE_NONE)
 
         transportData.OldColor = ent:GetColor()
-        ent:SetColor(Color(0, 0, 0, 0))
+        ent:SetColor(ColorAlpha(transportData.OldColor, 0))
     elseif mode == 3 then
         ent:SetRenderMode(RENDERMODE_TRANSTEXTURE)
 
@@ -137,7 +137,8 @@ end
 --
 -- @param Entity ent
 -- @param Boolean remat
-function Star_Trek.Transporter:BroadcastEffect(ent, remat)
+-- @param? Boolean replicator
+function Star_Trek.Transporter:BroadcastEffect(ent, remat, replicator)
     if not IsValid(ent) then return end
 
     local oldCollisionGroup = ent:GetCollisionGroup()
@@ -145,18 +146,24 @@ function Star_Trek.Transporter:BroadcastEffect(ent, remat)
 
     ent:SetCollisionGroup(oldCollisionGroup)
 
-    if remat then
-        sound.Play("star_trek.voy_beam_down", ent:GetPos(), 10, 100, 0.5)
-        ent:EmitSound("star_trek.voy_beam_down", 10, 100, 0.5)
+    if replicator then
+        sound.Play("star_trek.tng_replicator", ent:GetPos(), 10, 100, 0.5)
+        ent:EmitSound("star_trek.tng_replicator", 10, 100, 0.5)
     else
-        sound.Play("star_trek.voy_beam_up"  , ent:GetPos(), 10, 100, 0.5)
-        ent:EmitSound("star_trek.voy_beam_up", 10, 100, 0.5)
+        if remat then
+            sound.Play("star_trek.voy_beam_down", ent:GetPos(), 10, 100, 0.5)
+            ent:EmitSound("star_trek.voy_beam_down", 10, 100, 0.5)
+        else
+            sound.Play("star_trek.voy_beam_up"  , ent:GetPos(), 10, 100, 0.5)
+            ent:EmitSound("star_trek.voy_beam_up", 10, 100, 0.5)
+        end
     end
 
     timer.Simple(0.5, function()
         net.Start("Star_Trek.Transporter.TriggerEffect")
             net.WriteEntity(ent)
             net.WriteBool(remat)
+            net.WriteBool(replicator)
         net.Broadcast()
     end)
 end
@@ -168,7 +175,8 @@ end
 -- @param? Entity sourcePad
 -- @param? Entity targetPad
 -- @param? Boolean toBuffer
-function Star_Trek.Transporter:BeamObject(ent, targetPos, sourcePad, targetPad, toBuffer)
+-- @param? Boolean replicator
+function Star_Trek.Transporter:BeamObject(ent, targetPos, sourcePad, targetPad, toBuffer, replicator)
     local transportData = {
         Object = ent,
         TargetPos = targetPos or ent:GetPos(),
@@ -176,7 +184,8 @@ function Star_Trek.Transporter:BeamObject(ent, targetPos, sourcePad, targetPad, 
         State = 1,
         SourcePad = sourcePad,
         TargetPad = targetPad,
-        ToBuffer = toBuffer
+        ToBuffer = toBuffer,
+        Replicator = replicator,
     }
 
     for _, activeTransportData in pairs(self.ActiveTransports) do
@@ -195,7 +204,7 @@ function Star_Trek.Transporter:BeamObject(ent, targetPos, sourcePad, targetPad, 
         transportData.ToBuffer = false
     else
         self:TriggerEffect(transportData, ent)
-        self:BroadcastEffect(ent, false)
+        self:BroadcastEffect(ent, false, replicator)
     end
 
     table.insert(self.ActiveTransports, transportData)
@@ -210,7 +219,6 @@ hook.Add("Think", "Star_Trek.Tranporter.Think", function()
         local state = transportData.State
         local ent = transportData.Object
 
-        debugoverlay.Cross(ent:GetPos(), 10, 0.2, Color(255, 0, 0), true)
         if IsValid(ent) then
             if state == 1 and (stateTime + 3) < curTime then
                 transportData.State = 2

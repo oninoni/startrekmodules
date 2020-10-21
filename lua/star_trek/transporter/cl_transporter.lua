@@ -21,11 +21,12 @@ Star_Trek.Transporter.ActiveTransports = Star_Trek.Transporter.ActiveTransports 
 Star_Trek.Transporter.SelfActive = Star_Trek.Transporter.SelfActive or false
 Star_Trek.Transporter.SelfRefrac = Star_Trek.Transporter.SelfRefrac or 0
 
-function Star_Trek.Transporter:TriggerEffect(ent, remat)
+function Star_Trek.Transporter:TriggerEffect(ent, remat, replicator)
     local transportData = {
         Ent = ent,
         Remat = remat,
         AnimPos = 0,
+        Replicator = replicator,
     }
 
     -- Save old Color, to be restored.
@@ -57,8 +58,9 @@ end
 net.Receive("Star_Trek.Transporter.TriggerEffect", function()
     local ent = net.ReadEntity()
     local remat = net.ReadBool()
+    local replicator = net.ReadBool()
 
-    Star_Trek.Transporter:TriggerEffect(ent, remat)
+    Star_Trek.Transporter:TriggerEffect(ent, remat, replicator)
 end)
 
 net.Receive("Star_Trek.Transporter.TriggerPlayerEffect", function()
@@ -149,31 +151,33 @@ hook.Add("PostDrawTranslucentRenderables", "Voyager.Transporter.MainRender", fun
             ent:SetColor(ColorAlpha(transportData.OldColor, 255 - 255 * math.min(1, transportData.AnimPos - 0.3)))
         end
 
-        local mat = Material("oninoni/startrek/flare_blue")
-        render.SetMaterial(mat)
+        if not transportData.Replicator then
+            local mat = Material("oninoni/startrek/flare_blue")
+            render.SetMaterial(mat)
 
-        mat:SetVector( "$alpha", Vector(midAlpha, 0, 0))
-        drawFlare(pos - upHeight * midEffectProgress, vec, size)
-        drawFlare(pos + upHeight * midEffectProgress, vec, size)
-        drawFlare(pos - (upHeight * midEffectProgress + Vector(0, 0, 0.3)), vec, smallSize)
-        drawFlare(pos + (upHeight * midEffectProgress + Vector(0, 0, 0.3)), vec, smallSize)
+            mat:SetVector( "$alpha", Vector(midAlpha, 0, 0))
+            drawFlare(pos - upHeight * midEffectProgress, vec, size)
+            drawFlare(pos + upHeight * midEffectProgress, vec, size)
+            drawFlare(pos - (upHeight * midEffectProgress + Vector(0, 0, 0.3)), vec, smallSize)
+            drawFlare(pos + (upHeight * midEffectProgress + Vector(0, 0, 0.3)), vec, smallSize)
 
-        mat:SetVector( "$alpha", Vector(maxAlpha, 0, 0))
-        drawFlare(pos - upHeight * maxEffectProgress, vec, size)
-        drawFlare(pos + upHeight * maxEffectProgress, vec, size)
-        drawFlare(pos - (upHeight * maxEffectProgress + Vector(0, 0, 0.3)), vec, smallSize)
-        drawFlare(pos + (upHeight * maxEffectProgress + Vector(0, 0, 0.3)), vec, smallSize)
+            mat:SetVector( "$alpha", Vector(maxAlpha, 0, 0))
+            drawFlare(pos - upHeight * maxEffectProgress, vec, size)
+            drawFlare(pos + upHeight * maxEffectProgress, vec, size)
+            drawFlare(pos - (upHeight * maxEffectProgress + Vector(0, 0, 0.3)), vec, smallSize)
+            drawFlare(pos + (upHeight * maxEffectProgress + Vector(0, 0, 0.3)), vec, smallSize)
 
-        local dLight = DynamicLight(ent:EntIndex(), false)
-        if ( dLight ) then
-            dLight.pos = ent:GetPos()
-            dLight.r = 31
-            dLight.g = 127
-            dLight.b = 255
-            dLight.brightness = 1
-            dLight.Decay = 1000
-            dLight.Size = 512 * (maxAlpha + midAlpha)
-            dLight.DieTime = CurTime() + 1
+            local dLight = DynamicLight(ent:EntIndex(), false)
+            if ( dLight ) then
+                dLight.pos = ent:GetPos()
+                dLight.r = 31
+                dLight.g = 127
+                dLight.b = 255
+                dLight.brightness = 1
+                dLight.Decay = 1000
+                dLight.Size = 512 * (maxAlpha + midAlpha)
+                dLight.DieTime = CurTime() + 1
+            end
         end
 
         if transportData.AnimPos > 1.3 then
