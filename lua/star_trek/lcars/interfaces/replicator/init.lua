@@ -34,10 +34,10 @@ function Star_Trek.LCARS:OpenReplicatorMenu()
 
                 if istable(buttonData) then
                     local pos = ent:GetPos()
-                    pos = pos + ent:GetUp() * -18
+                    pos = pos + ent:GetUp() * -7
                     pos = pos + ent:GetRight() * 6
 
-                    Star_Trek.Replicator:CreateObject(nil, buttonData.Data, pos, ent:GetAngles(), nil)
+                    Star_Trek.Replicator:CreateObject(buttonData.Data, pos, ent:GetAngles())
                 end
             end
 
@@ -45,16 +45,28 @@ function Star_Trek.LCARS:OpenReplicatorMenu()
         else
             if categoryId == categoryCount + 1 then
                 local pos = ent:GetPos()
-                pos = pos + ent:GetUp() * -18
                 pos = pos + ent:GetRight() * 6
 
-                local entities = ents.FindInSphere(pos, 50)
-                for _, cleanEnt in pairs(entities) do
-                    Star_Trek.Replicator:RecycleObject(cleanEnt)
+                local targets = ents.FindInSphere(pos, 20)
+                local cleanEntities = {}
+                for _, target in pairs(targets) do
+                    if target.Replicated then
+                        table.insert(cleanEntities, target)
+                    end
+                end
+
+                if #cleanEntities == 0 then
+                    ent:EmitSound("star_trek.lcars_error")
+                else
+                    for _, cleanEnt in pairs(cleanEntities) do
+                        print(cleanEnt)
+                        Star_Trek.Replicator:RecycleObject(cleanEnt)
+                    end
                 end
 
                 Star_Trek.LCARS:CloseInterface(ent)
             elseif categoryId == categoryCount + 2 then
+                ent:EmitSound("star_trek.lcars_close")
                 Star_Trek.LCARS:CloseInterface(ent)
             end
         end

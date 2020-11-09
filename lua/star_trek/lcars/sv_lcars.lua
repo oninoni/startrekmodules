@@ -40,12 +40,18 @@ function Star_Trek.LCARS:CloseInterface(ent)
         net.WriteInt(ent:EntIndex(), 32)
     net.Broadcast()
 
-    timer.Create("Star_Trek.LCARS." .. ent:EntIndex(), 0.5, 1, function()
-        Star_Trek.LCARS.ActiveInterfaces[ent] = nil
-        timer.Remove("Star_Trek.LCARS." .. ent:EntIndex())
-    end)
+    if Star_Trek.LCARS.ActiveInterfaces[ent] then
+        Star_Trek.LCARS.ActiveInterfaces[ent].Closing = true
 
-    return true
+        timer.Create("Star_Trek.LCARS." .. ent:EntIndex(), 0.5, 1, function()
+            Star_Trek.LCARS.ActiveInterfaces[ent] = nil
+            timer.Remove("Star_Trek.LCARS." .. ent:EntIndex())
+        end)
+
+        return true
+    end
+
+    return false
 end
 
 -- Capture closeLcars Input

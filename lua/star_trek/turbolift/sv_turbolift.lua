@@ -175,8 +175,7 @@ function Star_Trek.Turbolift:StartLift(sourceLift, targetLiftId)
                 sourceLiftData.InUse = false
             end
         else
-            sourceLift:EmitSound("buttons/combine_button_locked.wav")
-            -- TODO: Replace Sound
+            sourceLift:EmitSound("star_trek.lcars_error")
         end
     end
 end

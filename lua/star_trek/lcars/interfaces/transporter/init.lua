@@ -78,14 +78,14 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
                 return true
             elseif buttonId == menuTypeCount + 3 then
                 if menuTable.Target then
+                    ent:EmitSound("star_trek.lcars_close")
                     Star_Trek.LCARS:CloseInterface(ent)
                 else
                     local targetMenuTable = interfaceData.TargetMenuTable
                     local sourceMenuSelectionName = menuTable.MenuTypes[menuTable.Selection]
                     local targetMenuSelectionName = menuTable.MenuTypes[targetMenuTable.Selection]
                     if istable(sourceMenuSelectionName) or istable(targetMenuSelectionName) then
-                        ent:EmitSound("buttons/combine_button_locked.wav")
-                        -- TODO: Replace Sound
+                        ent:EmitSound("star_trek.lcars_error")
                         return
                     else
                         local sourceWindowFunctions = Star_Trek.LCARS.Windows[menuTable.MainWindow.WindowType]
@@ -440,8 +440,7 @@ function Star_Trek.LCARS:OpenTransporterMenu()
     local interfaceData = self.ActiveInterfaces[ent]
     if istable(interfaceData) then
         if interfaceData.TransportActive then
-            ent:EmitSound("buttons/combine_button_locked.wav")
-            -- TODO: Replace Sound
+            ent:EmitSound("star_trek.lcars_error")
             return
         end
         triggerTransporter(interfaceData)

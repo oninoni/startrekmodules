@@ -114,9 +114,6 @@ function WINDOW.OnPress(windowData, interfaceData, ent, buttonId, callback)
         if buttonId ~= categoryId then
             local newData = windowData.Categories[buttonId]
             if istable(newData) and not newData.Disabled then
-                ent:EmitSound("buttons/blip1.wav")
-                -- TODO: Replace Sound
-
                 windowData.Selected = buttonId
 
                 for _, buttonData in pairs(categoryData.Buttons) do
@@ -128,16 +125,13 @@ function WINDOW.OnPress(windowData, interfaceData, ent, buttonId, callback)
                 if isfunction(callback) then
                     callback(windowData, interfaceData, ent, buttonId, nil)
                 end
-            else
-                ent:EmitSound("buttons/combine_button_locked.wav")
-                -- TODO: Replace Sound
-            end
 
+                if Star_Trek.LCARS.ActiveInterfaces[ent] and not Star_Trek.LCARS.ActiveInterfaces[ent].Closing then
+                    ent:EmitSound("star_trek.lcars_beep2")
+                end
+            end
         end
     else
-        ent:EmitSound("buttons/blip1.wav")
-        -- TODO: Replace Sound
-
         -- Buttons
         buttonId = buttonId - categoryCount
 
@@ -154,6 +148,10 @@ function WINDOW.OnPress(windowData, interfaceData, ent, buttonId, callback)
             if updated then
                 shouldUpdate = true
             end
+        end
+
+        if Star_Trek.LCARS.ActiveInterfaces[ent] and not Star_Trek.LCARS.ActiveInterfaces[ent].Closing then
+            ent:EmitSound("star_trek.lcars_beep")
         end
     end
 

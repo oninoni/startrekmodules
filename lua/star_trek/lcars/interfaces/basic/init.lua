@@ -73,6 +73,7 @@ function Star_Trek.LCARS:OpenMenu()
             return
         end
 
+        ent:EmitSound("star_trek.lcars_close")
         Star_Trek.LCARS:CloseInterface(ent)
     end, buttons, title)
     if not success then

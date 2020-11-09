@@ -55,6 +55,8 @@ function Star_Trek.LCARS:OpenTurboliftMenu()
     local success, window = self:CreateWindow("button_list", Vector(), Angle(), 30, 600, 300, function(windowData, interfaceData, ent, buttonId)
         if ent.IsTurbolift then
             Star_Trek.Turbolift:StartLift(ent, buttonId)
+
+            ent:EmitSound("star_trek.lcars_close")
             Star_Trek.LCARS:CloseInterface(ent)
         elseif ent.IsPod then
             if buttonId == 1 then
@@ -67,6 +69,8 @@ function Star_Trek.LCARS:OpenTurboliftMenu()
                 return true
             else
                 Star_Trek.Turbolift:ReRoutePod(ent, buttonId - 1)
+
+                ent:EmitSound("star_trek.lcars_close")
                 Star_Trek.LCARS:CloseInterface(ent)
             end
         end

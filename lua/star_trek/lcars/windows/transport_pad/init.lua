@@ -85,9 +85,6 @@ function WINDOW.SetSelected(windowData, data)
 end
 
 function WINDOW.OnPress(windowData, interfaceData, ent, buttonId, callback)
-    ent:EmitSound("buttons/blip1.wav")
-    -- TODO: Replace Sound
-
     local shouldUpdate = false
 
     local pad = windowData.Pads[buttonId]
@@ -101,6 +98,10 @@ function WINDOW.OnPress(windowData, interfaceData, ent, buttonId, callback)
         if updated then
             shouldUpdate = true
         end
+    end
+
+    if Star_Trek.LCARS.ActiveInterfaces[ent] and not Star_Trek.LCARS.ActiveInterfaces[ent].Closing then
+        ent:EmitSound("star_trek.lcars_beep")
     end
 
     return shouldUpdate

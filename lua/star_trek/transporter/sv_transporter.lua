@@ -137,3 +137,23 @@ function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPattern
         end
     end
 end
+
+hook.Add("PlayerCanPickupItem", "Star_Trek.Transporter.PreventPickup", function(ply, ent)
+    for _, transportData in pairs(Star_Trek.Transporter.ActiveTransports) do
+        if transportData.Object == ent then return false end
+    end
+
+    if ent.Replicated and not (ply:KeyDown(IN_USE) and ply:GetEyeTrace().Entity == ent) then
+        return false
+    end
+end)
+
+hook.Add("PlayerCanPickupWeapon", "Star_Trek.Transporter.PreventPickup", function(ply, ent)
+    for _, transportData in pairs(Star_Trek.Transporter.ActiveTransports) do
+        if transportData.Object == ent then return false end
+    end
+
+    if ent.Replicated and not (ply:KeyDown(IN_USE) and ply:GetEyeTrace().Entity == ent) then
+        return false
+    end
+end)

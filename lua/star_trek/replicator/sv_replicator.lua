@@ -16,38 +16,44 @@
 --        Replicator | Server        --
 ---------------------------------------
 
-function Star_Trek.Replicator:CreateObject(class, model, pos, angle, setupEntity)
-    local ent = ents.Create(class or "prop_physics")
+-- TODO: Error Handling (Return Success)
 
+function Star_Trek.Replicator:CreateObject(data, pos, angle)
+    local class = "prop_physics"
+    local model = data
+
+    if istable(data) then
+        class = data.Class or class
+        model = data.Model or false
+    end
+
+    local ent = ents.Create(class)
     if IsValid(ent) then
-        if isstring(model) then
+        if model then
             ent:SetModel(model)
         end
 
-        ent:SetPos(pos)
+        local min, _ = ent:GetCollisionBounds()
+        ent:SetPos(pos - Vector(0, 0, min.z))
         ent:SetAngles(angle)
-
-        if isfunction(setupEntity) then
-            setupEntity(ent)
-        end
 
         ent:Spawn()
         ent:Activate()
 
         ent.Replicated = true
 
-        print(ent)
-
         local transportData = {
             Object = ent,
-            TargetPos = pos,
+            TargetPos = ent:GetPos(),
             StateTime = CurTime(),
             State = 3,
             ToBuffer = false,
         }
 
         for _, activeTransportData in pairs(Star_Trek.Transporter.ActiveTransports) do
-            if activeTransportData.Object == ent then return end
+            if activeTransportData.Object == ent then
+                return false, "Replicator Active"
+            end
         end
 
         if ent.BufferData then
@@ -71,7 +77,11 @@ function Star_Trek.Replicator:CreateObject(class, model, pos, angle, setupEntity
         end
 
         table.insert(Star_Trek.Transporter.ActiveTransports, transportData)
+
+        return true
     end
+
+    return false, "Unknown Replicator Object"
 end
 
 Star_Trek.Replicator.RecycleList = Star_Trek.Replicator.RecycleList or {}
