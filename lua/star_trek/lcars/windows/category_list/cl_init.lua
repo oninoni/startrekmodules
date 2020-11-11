@@ -35,9 +35,9 @@ function WINDOW.OnCreate(self, windowData)
     self.HD2 = self.WHeight / 2
 
     self.MaxN = table.Count(self.Categories)
-    self.CategoryHeight = math.max(2, math.ceil(self.MaxN / 4)) * 35
+    self.CategoryHeight = math.max(2, math.ceil(self.MaxN / 4)) * 35 + 50
 
-    self.ButtonsHeight = self.WHeight - self.CategoryHeight - 105
+    self.ButtonsHeight = self.WHeight - self.CategoryHeight - 80
     self.ButtonsStart = self.HD2 - self.ButtonsHeight
 
     self.ButtonsTopAlpha = self.ButtonsStart
@@ -62,6 +62,8 @@ function WINDOW.OnCreate(self, windowData)
         end
     end
 
+    self.FrameMaterial = Star_Trek.LCARS:CreateFrame(self.Id, self.WWidth, self.WHeight, self.Title, self.CategoryHeight)
+
     return self
 end
 
@@ -76,7 +78,7 @@ function WINDOW.OnPress(self, pos, animPos)
         -- Selection
         for i, rowData in pairs(self.CategoryRows) do
             for j, categoryData in pairs(rowData.Categories) do
-                if isButtonPressed(-self.WD2 + 53 + (j - 1) * rowData.Width, -self.HD2 + 30 + i * 35, rowData.Width - 3, 32, pos) then
+                if isButtonPressed(-self.WD2 + 53 + (j - 1) * rowData.Width, -self.HD2 + 40 + i * 35, rowData.Width - 3, 32, pos) then
                     return categoryData.Id
                 end
             end
@@ -112,9 +114,6 @@ function WINDOW.OnDraw(self, pos, animPos)
 
     local alpha = 255 * animPos
     local lcars_black = Color(0, 0, 0, alpha)
-    local lcars_top = ColorAlpha(Star_Trek.LCARS.ColorOrange, alpha)
-    local lcars_middle = ColorAlpha(Star_Trek.LCARS.ColorLightRed, alpha)
-    local lcars_bottom = ColorAlpha(Star_Trek.LCARS.ColorYellow, alpha)
 
     for i, rowData in pairs(self.CategoryRows) do
         for j, categoryData in pairs(rowData.Categories) do
@@ -133,7 +132,7 @@ function WINDOW.OnDraw(self, pos, animPos)
                 color = color_grey
             end
 
-            Star_Trek.LCARS:DrawButtonGraphic(-self.WD2 + 55 + (j - 1) * rowData.Width, -self.HD2 + (i + 1) * 35, rowData.Width - 3, 32, color, alpha, pos)
+            Star_Trek.LCARS:DrawButtonGraphic(-self.WD2 + 55 + (j - 1) * rowData.Width, -self.HD2 + (i + 1) * 35 + 10, rowData.Width - 3, 32, color, alpha, pos)
             draw.DrawText(categoryData.Name, "LCARSText", -self.WD2 + 64 + (j - 1) * rowData.Width, -self.HD2 + (i + 1) * 35 + 12, lcars_black, TEXT_ALIGN_LEFT)
         end
     end
@@ -172,29 +171,10 @@ function WINDOW.OnDraw(self, pos, animPos)
         end
     end
 
-    -- Custom Drawing the Double Frame
+    surface.SetDrawColor(255, 255, 255, alpha)
 
-    -- Title
-    draw.DrawText(self.Title, "LCARSBig", self.WD2 -8, -self.HD2 -2, color_white, TEXT_ALIGN_RIGHT)
+    surface.SetMaterial(self.FrameMaterial)
+    surface.DrawTexturedRect(-self.WD2, -self.HD2, self.WWidth, self.WHeight)
 
-    Star_Trek.LCARS:DrawFrameSpacer(-self.HD2                       + 35, self.WWidth, self.WD2, lcars_black, lcars_top,    lcars_middle)
-    Star_Trek.LCARS:DrawFrameSpacer(-self.HD2 + self.CategoryHeight + 70, self.WWidth, self.WD2, lcars_black, lcars_middle, lcars_bottom)
-
-    -- Middle Bars
-    draw.RoundedBox(0, -self.WD2    , -self.HD2 + 104, 50, self.CategoryHeight - 70, lcars_black)
-    draw.RoundedBox(0, -self.WD2 + 1, -self.HD2 + 103, 48, self.CategoryHeight - 68, lcars_middle)
-
-    draw.RoundedBox(0, -self.WD2    , -self.HD2 + 97, 50, 2, lcars_black)
-
-    -- Bottom Red Bars 
-    draw.RoundedBox(0, -self.WD2    , -self.HD2 + self.CategoryHeight + 130, 50, self.HD2 -60, lcars_black)
-    draw.RoundedBox(0, -self.WD2 + 1, -self.HD2 + self.CategoryHeight + 130, 48, self.HD2 -60, lcars_bottom)
-
-    -- Very Bottom Orange Bars
-    draw.RoundedBox(0, -self.WD2    , 100, 50, self.HD2 -100, lcars_black)
-    draw.RoundedBox(0, -self.WD2 + 1, 100, 48, self.HD2 -100, lcars_top)
-
-    -- Small Black Bars
-    draw.RoundedBox(0, -self.WD2, 100, 50, 2, lcars_black)
-    draw.RoundedBox(0, -self.WD2, 120, 50, 2, lcars_black)
+    surface.SetAlphaMultiplier(1)
 end

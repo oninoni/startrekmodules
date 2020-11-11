@@ -53,7 +53,7 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
     end
     buttons[menuTypeCount + 3] = utilButtonData
 
-    local height = table.maxn(buttons) * 35 + 70
+    local height = table.maxn(buttons) * 35 + 85
     local name = "Transporter " .. (menuTable.Target and "Target" or "Source")
     local success, menuWindow = Star_Trek.LCARS:CreateWindow("button_list", pos, angle, 30, 400, height, function(windowData, interfaceData, ent, buttonId)
         if buttonId > menuTypeCount then -- Custom Buttons

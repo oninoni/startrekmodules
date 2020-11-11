@@ -7,11 +7,13 @@ function WINDOW.OnCreate(self, windowData)
 
     self.MaxN = table.maxn(self.Buttons)
 
-    self.ButtonsHeight = self.WHeight - 70
+    self.ButtonsHeight = self.WHeight - 85
     self.ButtonsStart = self.HD2 - self.ButtonsHeight
 
     self.ButtonsTopAlpha = self.ButtonsStart
     self.ButtonsBotAlpha = self.HD2 - 25
+
+    self.FrameMaterial = Star_Trek.LCARS:CreateFrame(self.Id, self.WWidth, self.WHeight, self.Title)
 
     return self
 end
@@ -32,6 +34,8 @@ local color_grey = Star_Trek.LCARS.ColorGrey
 local color_yellow = Star_Trek.LCARS.ColorYellow
 
 function WINDOW.OnDraw(self, pos, animPos)
+    local alpha = 255 * animPos
+
     local offset = Star_Trek.LCARS:GetButtonOffset(self.ButtonsStart, self.ButtonsHeight, self.MaxN, pos.y)
     for i, button in pairs(self.Buttons) do
         local color = button.Color
@@ -59,5 +63,10 @@ function WINDOW.OnDraw(self, pos, animPos)
         Star_Trek.LCARS:DrawButton(28, y, self.WWidth, title, color, button.RandomS, button.RandomL, buttonAlpha, pos)
     end
 
-    Star_Trek.LCARS:DrawFrame(self.WWidth, self.WD2, self.HD2, self.Title, 255 * animPos)
+    surface.SetDrawColor(255, 255, 255, alpha)
+
+    surface.SetMaterial(self.FrameMaterial)
+    surface.DrawTexturedRect(-self.WD2, -self.HD2, self.WWidth, self.WHeight)
+
+    surface.SetAlphaMultiplier(1)
 end

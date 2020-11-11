@@ -52,7 +52,7 @@ function Star_Trek.LCARS:OpenTurboliftMenu()
 
     local buttons = generateButtons(ent, keyValues)
 
-    local success, window = self:CreateWindow("button_list", Vector(), Angle(), 30, 600, 300, function(windowData, interfaceData, ent, buttonId)
+    local success, window = self:CreateWindow("button_list", Vector(), Angle(), 30, 600, 325, function(windowData, interfaceData, ent, buttonId)
         if ent.IsTurbolift then
             Star_Trek.Turbolift:StartLift(ent, buttonId)
 

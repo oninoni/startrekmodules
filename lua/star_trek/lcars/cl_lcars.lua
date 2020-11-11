@@ -31,7 +31,7 @@ net.Receive("Star_Trek.LCARS.Close", function()
     Star_Trek.LCARS:CloseInterface(id)
 end)
 
-function Star_Trek.LCARS:LoadWindowData(windowData, IPos, IAng)
+function Star_Trek.LCARS:LoadWindowData(id, windowData, IPos, IAng)
     local windowFunctions = self.Windows[windowData.WindowType]
     if not istable(windowFunctions) then
         return
@@ -41,6 +41,7 @@ function Star_Trek.LCARS:LoadWindowData(windowData, IPos, IAng)
 
     local window = {
         WType = windowData.WindowType,
+        Id = id,
 
         WPos = pos,
         WAng = ang,
@@ -77,7 +78,7 @@ function Star_Trek.LCARS:OpenMenu(id, interfaceData)
     }
 
     for i, windowData in pairs(interfaceData.Windows) do
-        local window = Star_Trek.LCARS:LoadWindowData(windowData, interface.IPos, interface.IAng)
+        local window = Star_Trek.LCARS:LoadWindowData(id .. "_" .. i, windowData, interface.IPos, interface.IAng)
         if istable(window) then
             interface.Windows[i] = window
         end
@@ -125,9 +126,6 @@ hook.Add("Think", "Star_Trek.LCARS.Think", function()
                 nedpos = window.WPos,
                 filter = ply
             })
-
-            --debugoverlay.Cross(trace.HitPos, 10)
-            --debugoverlay.Line(window.WPos, window.WPos + window.WAng:Up() * 10)
 
             local cross = (window.WPos - eyePos):Dot(window.WAng:Up())
 
@@ -233,11 +231,11 @@ hook.Add("PostDrawOpaqueRenderables", "Star_Trek.LCARS.Draw", function(isDrawing
     local eyeDir = EyeVector()
 
     for _, interface in pairs(Star_Trek.LCARS.ActiveInterfaces) do
-        --print(_)
-
         if not interface.IVis then
             continue
         end
+
+        render.SuppressEngineLighting(true)
 
         for _, window in pairs(interface.Windows) do
             if not window.WVis then
@@ -261,6 +259,8 @@ hook.Add("PostDrawOpaqueRenderables", "Star_Trek.LCARS.Draw", function(isDrawing
                 windowFunctions.OnDraw(window, window.LastPos or Vector(-width / 2, -height / 2), interface.AnimPos)
             cam.End3D2D()
         end
+
+        render.SuppressEngineLighting(false)
     end
 end)
 

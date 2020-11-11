@@ -37,6 +37,7 @@ function Star_Trek.LCARS:GetButtonOffset(listOffset, listHeight, buttonCount, mo
     return offset
 end
 
+-- Generates the offset of a single button.
 -- @param Number listHeight
 -- @param Number i
 -- @param Number buttonCount
@@ -46,85 +47,15 @@ function Star_Trek.LCARS:GetButtonYPos(listHeight, i, buttonCount, offset)
     local y = (i - 1) * 35 + offset
 
     return y
-    --[[
-    listHeight = listHeight - 70
-
-    local y = (i - (buttonCount / 2)) * 35 + offset
-
-    if offset == 0 then
-        y = math.min(
-            math.max(
-                -listHeight / 2 - 35,
-                y),
-            listHeight / 2 + 70)
-    else
-        y = math.min(
-            math.max(
-                listHeight / 2 - (buttonCount - i) * 35,
-                -listHeight / 2 - 35,
-                y),
-            -listHeight / 2 + i * 35,
-            listHeight / 2 + 70)
-    end
-
-    return math.floor(y - 17.5) + 30]]
 end
 
--- Draw a spacer of the LCARS interface
-function Star_Trek.LCARS:DrawFrameSpacer(y, width, wd2, lcars_black, lcars_top, lcars_bottom)
-    -- Top Bar
-    draw.RoundedBox(25, -wd2     , y - 38,       50,      50, lcars_black)
-    draw.RoundedBox( 0, -wd2     , y - 38,       50,      25, lcars_black)
-    draw.RoundedBox( 0, -wd2 + 25, y - 13,       25,      25, lcars_black)
+local LCARS_CORNER_RADIUS = 25
+local LCARS_INNER_RADIUS = 15
+local LCARS_FRAME_OFFSET = 4
+local LCARS_BORDER_WIDTH = 2
+local LCARS_STRIP_HEIGHT = 20
 
-    draw.RoundedBox( 0, -wd2 + 25, y  + 1, width-25,      12, lcars_black)
-
-    draw.RoundedBox(24, -wd2  + 1, y - 37,       48,      48, lcars_top)
-    draw.RoundedBox( 0, -wd2  + 1, y - 37,       48,      25, lcars_top)
-    draw.RoundedBox( 0, -wd2 + 25, y - 13,       24,      24, lcars_top)
-
-    draw.RoundedBox( 0, -wd2 + 25, y  + 2, width-25,      10, lcars_top)
-
-    -- Bottom Bar
-    draw.RoundedBox(25, -wd2     , y + 17,       50,      50, lcars_black)
-    draw.RoundedBox( 0, -wd2     , y + 43,       50,      26, lcars_black)
-    draw.RoundedBox( 0, -wd2 + 25, y + 17,       25,      25, lcars_black)
-
-    draw.RoundedBox( 0, -wd2 + 25, y + 17, width-25,      12, lcars_black)
-
-    draw.RoundedBox(24, -wd2  + 1, y + 18,       48,      48, lcars_bottom)
-    draw.RoundedBox( 0, -wd2  + 1, y + 43,       48,      25, lcars_bottom)
-    draw.RoundedBox( 0, -wd2 + 25, y + 18,       24,      24, lcars_bottom)
-
-    draw.RoundedBox( 0, -wd2 + 25, y + 18, width-25,      10, lcars_bottom)
-end
-
--- Draw the fram of an LCARS interface
-function Star_Trek.LCARS:DrawFrame(width, wd2, hd2, title, alpha)
-    local lcars_black = Color(0, 0, 0, alpha)
-    local lcars_top = ColorAlpha(Star_Trek.LCARS.ColorOrange, alpha)
-    local lcars_bottom = ColorAlpha(Star_Trek.LCARS.ColorLightRed, alpha)
-
-    self:DrawFrameSpacer(-hd2 + 35, width, wd2, lcars_black, lcars_top, lcars_bottom)
-
-    -- Middle Red Bars
-    draw.RoundedBox(0, -wd2    , -hd2 + 80, 50, hd2 -60, lcars_black)
-    draw.RoundedBox(0, -wd2 + 1, -hd2 + 80, 48, hd2 -60, lcars_bottom)
-
-    -- Bottom Orange Bars
-    draw.RoundedBox(0, -wd2    ,         0, 50, hd2    , lcars_black)
-    draw.RoundedBox(0, -wd2 + 1,         0, 48, hd2    , lcars_top)
-
-    -- Small Black Bars
-    draw.RoundedBox(0, -wd2, -hd2 + 100, 50, 2, lcars_black)
-
-    draw.RoundedBox(0, -wd2,   0, 50, 2, lcars_black)
-    draw.RoundedBox(0, -wd2,  20, 50, 2, lcars_black)
-
-    -- Title
-    draw.DrawText(title, "LCARSBig", wd2 -8, -hd2 -2, color_white, TEXT_ALIGN_RIGHT)
-end
-
+-- TODO: Redo
 function Star_Trek.LCARS:DrawButtonGraphic(x, y, width, height, color, alpha, pos)
     local lcars_white = Color(255, 255, 255, alpha)
     local lcars_black = Color(0, 0, 0, alpha)
@@ -151,6 +82,8 @@ end
 -- @param? String l
 -- @param? Number alpha
 -- @param? Vector pos
+
+-- TODO: Redo
 function Star_Trek.LCARS:DrawButton(x, y, width, text, color, s, l, alpha, pos)
     local lcars_black = Color(0, 0, 0, alpha)
     color = ColorAlpha(color, alpha)
@@ -174,4 +107,199 @@ function Star_Trek.LCARS:DrawButton(x, y, width, text, color, s, l, alpha, pos)
 
     draw.DrawText(text, "LCARSText", -88 + x - widthOffset, y + 14, lcars_black, TEXT_ALIGN_LEFT)
     draw.DrawText(l, "LCARSSmall", 71 + x + widthOffset, y + 18, lcars_black, TEXT_ALIGN_LEFT)
+end
+
+function Star_Trek.LCARS:DrawCircle(x, y, radius, seg, r, g, b, a)
+    local cir = {}
+
+    table.insert(cir, {x = x, y = y})
+    for i = 0, seg do
+        local arc = math.rad((i / seg) * -360)
+        table.insert(cir, {x = x + math.sin( arc ) * radius, y = y + math.cos( arc ) * radius})
+    end
+
+    surface.SetDrawColor(r, g, b, a)
+    surface.DrawPoly(cir)
+end
+
+function Star_Trek.LCARS:DrawFramSpacePart(y, width, border, flip, color)
+    -- Outer Circle
+    Star_Trek.LCARS:DrawCircle(
+        LCARS_CORNER_RADIUS,
+        y + LCARS_CORNER_RADIUS,
+        LCARS_CORNER_RADIUS - border, 16,
+    color.r, color.g, color.b, color.a)
+
+    -- Flat Piece
+    if flip then
+        draw.RoundedBox(0,
+            border,
+            y + LCARS_CORNER_RADIUS,
+            (LCARS_CORNER_RADIUS - border) * 2, LCARS_CORNER_RADIUS,
+        color)
+    else
+        draw.RoundedBox(0,
+            border,
+            y,
+            (LCARS_CORNER_RADIUS - border) * 2, LCARS_CORNER_RADIUS,
+        color)
+    end
+
+    -- Long Strip
+    if flip then
+        draw.RoundedBox(0,
+            LCARS_CORNER_RADIUS - border,
+            y + border,
+            width - (LCARS_CORNER_RADIUS - border), LCARS_STRIP_HEIGHT - border * 2,
+        color)
+    else
+        draw.RoundedBox(0,
+            LCARS_CORNER_RADIUS - border,
+            y + (LCARS_CORNER_RADIUS - border) * 2 - (LCARS_STRIP_HEIGHT - border) + border * 2,
+            width - (LCARS_CORNER_RADIUS - border), LCARS_STRIP_HEIGHT - border * 2,
+        color)
+    end
+
+    render.ClearStencil()
+    render.SetStencilWriteMask(255)
+    render.SetStencilTestMask(255)
+    render.SetStencilReferenceValue(255)
+    render.SetStencilPassOperation(STENCILOPERATION_REPLACE)
+
+    -- Inner Circle
+    render.SetStencilEnable(true)
+        render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_ALWAYS)
+        if flip then
+            Star_Trek.LCARS:DrawCircle(
+                LCARS_CORNER_RADIUS * 2 + LCARS_INNER_RADIUS,
+                y + LCARS_STRIP_HEIGHT + LCARS_INNER_RADIUS,
+                LCARS_INNER_RADIUS + border, 16,
+            0, 0, 0, 1)
+        else
+            Star_Trek.LCARS:DrawCircle(
+                LCARS_CORNER_RADIUS * 2 + LCARS_INNER_RADIUS,
+                y + LCARS_CORNER_RADIUS * 2 - LCARS_STRIP_HEIGHT - LCARS_INNER_RADIUS,
+                LCARS_INNER_RADIUS + border, 16,
+            0, 0, 0, 1)
+        end
+
+        render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_NOTEQUAL)
+        if flip then
+            draw.RoundedBox(0,
+                LCARS_CORNER_RADIUS,
+                y + LCARS_STRIP_HEIGHT - LCARS_BORDER_WIDTH,
+                LCARS_CORNER_RADIUS + LCARS_INNER_RADIUS, LCARS_INNER_RADIUS + border,
+            color)
+        else
+            draw.RoundedBox(0,
+                LCARS_CORNER_RADIUS,
+                y + LCARS_CORNER_RADIUS * 2 - LCARS_STRIP_HEIGHT - LCARS_INNER_RADIUS,
+                LCARS_CORNER_RADIUS + LCARS_INNER_RADIUS, LCARS_INNER_RADIUS + border,
+            color)
+        end
+    render.SetStencilEnable(false)
+end
+
+function Star_Trek.LCARS:DrawFrameSpacer(y, width, top_color, bottom_color)
+    Star_Trek.LCARS:DrawFramSpacePart(y, width, 0, false, Star_Trek.LCARS.ColorBlack)
+    Star_Trek.LCARS:DrawFramSpacePart(y, width, LCARS_BORDER_WIDTH, false, top_color)
+
+    Star_Trek.LCARS:DrawFramSpacePart(y + LCARS_CORNER_RADIUS * 2 + LCARS_FRAME_OFFSET, width, 0, true, Star_Trek.LCARS.ColorBlack)
+    Star_Trek.LCARS:DrawFramSpacePart(y + LCARS_CORNER_RADIUS * 2 + LCARS_FRAME_OFFSET, width, LCARS_BORDER_WIDTH, true, bottom_color)
+end
+
+function Star_Trek.LCARS:DrawFrame(width, height, title)
+    Star_Trek.LCARS:DrawFrameSpacer(0, width, Star_Trek.LCARS.ColorOrange, Star_Trek.LCARS.ColorLightRed)
+    draw.SimpleText(title, "LCARSMed", width - 4, 4, nil, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
+
+    local frameStartOffset = LCARS_CORNER_RADIUS * 4 + LCARS_FRAME_OFFSET
+    local remainingHeight = height - frameStartOffset
+
+    draw.RoundedBox(0,
+        0,
+        frameStartOffset,
+        LCARS_CORNER_RADIUS * 2, remainingHeight,
+    Star_Trek.LCARS.ColorBlack)
+
+    draw.RoundedBox(0,
+        LCARS_BORDER_WIDTH,
+        frameStartOffset + LCARS_BORDER_WIDTH,
+        LCARS_CORNER_RADIUS * 2 - LCARS_BORDER_WIDTH * 2, remainingHeight / 2 - LCARS_BORDER_WIDTH,
+    Star_Trek.LCARS.ColorLightRed)
+
+    draw.RoundedBox(0,
+        LCARS_BORDER_WIDTH,
+        frameStartOffset + LCARS_BORDER_WIDTH + remainingHeight / 2,
+        LCARS_CORNER_RADIUS * 2 - LCARS_BORDER_WIDTH * 2, remainingHeight / 2 - LCARS_BORDER_WIDTH,
+    Star_Trek.LCARS.ColorOrange)
+end
+
+function Star_Trek.LCARS:DrawDoubleFrame(width, height, title, height2)
+    Star_Trek.LCARS:DrawFrameSpacer(0, width, Star_Trek.LCARS.ColorOrange, Star_Trek.LCARS.ColorLightRed)
+    draw.SimpleText(title, "LCARSMed", width - 4, 4, nil, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
+
+    local topFrameStartOffset = LCARS_CORNER_RADIUS * 4 + LCARS_FRAME_OFFSET
+
+    draw.RoundedBox(0,
+        0,
+        topFrameStartOffset,
+        LCARS_CORNER_RADIUS * 2, height2 - topFrameStartOffset,
+    Star_Trek.LCARS.ColorBlack)
+
+    draw.RoundedBox(0,
+        LCARS_BORDER_WIDTH,
+        topFrameStartOffset + LCARS_BORDER_WIDTH,
+        LCARS_CORNER_RADIUS * 2 - LCARS_BORDER_WIDTH * 2, height2 - topFrameStartOffset - LCARS_BORDER_WIDTH,
+    Star_Trek.LCARS.ColorLightRed)
+
+    Star_Trek.LCARS:DrawFrameSpacer(height2, width, Star_Trek.LCARS.ColorLightRed, Star_Trek.LCARS.ColorOrange)
+
+    local bottomFrameStarOffset = height2 + topFrameStartOffset
+    local remainingHeight = height - bottomFrameStarOffset
+
+    draw.RoundedBox(0,
+        0,
+        bottomFrameStarOffset,
+        LCARS_CORNER_RADIUS * 2, remainingHeight,
+    Star_Trek.LCARS.ColorBlack)
+
+    draw.RoundedBox(0,
+        LCARS_BORDER_WIDTH,
+        bottomFrameStarOffset + LCARS_BORDER_WIDTH,
+        LCARS_CORNER_RADIUS * 2 - LCARS_BORDER_WIDTH * 2, remainingHeight / 2 - LCARS_BORDER_WIDTH,
+    Star_Trek.LCARS.ColorOrange)
+
+    draw.RoundedBox(0,
+        LCARS_BORDER_WIDTH,
+        bottomFrameStarOffset + LCARS_BORDER_WIDTH + remainingHeight / 2,
+        LCARS_CORNER_RADIUS * 2 - LCARS_BORDER_WIDTH * 2, remainingHeight / 2 - LCARS_BORDER_WIDTH,
+    Star_Trek.LCARS.ColorLightRed)
+end
+
+function Star_Trek.LCARS:CreateFrame(id, width, height, title, height2)
+    local texture = GetRenderTarget("LCARS_Frame_" .. id, width, height)
+
+    local oldW, oldH = ScrW(), ScrH()
+    render.SetViewPort(0, 0, width, height)
+
+    render.PushRenderTarget(texture)
+    cam.Start2D()
+        render.Clear(0, 0, 0, 0, true, true)
+        if height2 then
+            Star_Trek.LCARS:DrawDoubleFrame(width, height, title, height2)
+        else
+            Star_Trek.LCARS:DrawFrame(width, height, title)
+        end
+    cam.End2D()
+    render.PopRenderTarget()
+
+    render.SetViewPort(0, 0, oldW, oldH)
+
+    local material = CreateMaterial("LCARS_Frame_" .. id, "UnlitGeneric", {
+        ["$basetexture"] = texture:GetName(),
+        ["$translucent"] = 1,
+        ["$vertexalpha"] = 1,
+    })
+
+    return material
 end
