@@ -147,7 +147,6 @@ function Star_Trek.Sections:SetupSections()
             local ang = ent:GetAngles() -- TODO: Check if that actually work with brushes
 
             local min, max = ent:GetCollisionBounds()
-            debugoverlay.Box(pos, min, max, 60, Color(0, 0, 255, 127))
 
             table.insert(self.Decks[deck].Sections[sectionId].Areas, {
                 Pos = pos,

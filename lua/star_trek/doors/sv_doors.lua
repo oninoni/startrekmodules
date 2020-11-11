@@ -111,7 +111,7 @@ hook.Add("KeyPress", "Star_Trek.OpenDoors", function(ply, key)
         local trace = ply:GetEyeTrace()
         local ent = trace.Entity
         if IsValid(ent) and table.HasValue(Star_Trek.Doors.Doors, ent) then
-            local distance = trace.HitPos:Distance(ply:GetPos())
+            local distance = trace.HitPos:Distance(ply:EyePos())
             if distance < 64 then
                 ent:Fire("SetAnimation", "open")
             end
@@ -119,20 +119,11 @@ hook.Add("KeyPress", "Star_Trek.OpenDoors", function(ply, key)
     end
 end)
 
-local function checkPlayers(door)
-    local attachmentId1 = door:LookupAttachment("exit1")
-    local attachmentId2 = door:LookupAttachment("exit2")
-
-    if isnumber(attachmentId1) and isnumber(attachmentId2) and attachmentId1 ~= -1 and attachmentId2 ~= -1 then
-        local attachmentPoint1 = door:GetAttachment(attachmentId1)
-        local attachmentPoint2 = door:GetAttachment(attachmentId2)
-
-        local entities = ents.FindInBox(attachmentPoint1.Pos, attachmentPoint2.Pos)
-
-        for _, nearbyEnt in pairs(entities) do
-            if nearbyEnt:IsPlayer() then
-                return true
-            end
+local function checkPlayers(ent)
+    local entities = ents.FindInSphere(ent:GetPos(), 48)
+    for _, nearbyEnt in pairs(entities) do
+        if nearbyEnt:IsPlayer() then
+            return true
         end
     end
 end
