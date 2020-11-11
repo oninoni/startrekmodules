@@ -33,3 +33,12 @@ sound.Add({
     pitch = {85, 95},
     sound = "kingpommes/startrek/intrepid/door01.mp3",
 })
+
+sound.Add({
+    name = "star_trek.doors_128",
+    channel = CHAN_BODY,
+    volume = .8,
+    level = 100,
+    pitch = {95, 105},
+    sound = "kingpommes/startrek/intrepid/door02.mp3",
+})
