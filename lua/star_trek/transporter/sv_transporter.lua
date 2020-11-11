@@ -44,6 +44,8 @@ hook.Add("Star_Trek.Sections.Loaded", "Star_Trek.Transporter.DetectLocations", f
             for _, ent in pairs(entities) do
                 if ent:GetName() == "beamLocation" then
                     table.insert(sectionData.BeamLocations, ent:GetPos())
+
+                    ent:Remove()
                 end
             end
         end

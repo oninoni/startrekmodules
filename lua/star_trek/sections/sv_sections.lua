@@ -30,6 +30,39 @@ function Star_Trek.Sections:GetSection(deck, sectionId)
     return false, "Invalid Deck!"
 end
 
+function Star_Trek.Sections:IsInArea(areaData, entPos)
+        local pos = areaData.Pos
+        local angle = areaData.Angle
+    local min = areaData.Min
+    local max = areaData.Max
+
+    local localPos = -WorldToLocal(pos, angle, entPos, Angle())
+    -- TODO: No idea why there needs to be a "-" here!
+
+    if  localPos.x > min.x and localPos.x < max.x
+    and localPos.y > min.y and localPos.y < max.y
+    and localPos.z > min.z and localPos.z < max.z then
+        return true
+    end
+
+    return false
+end
+
+function Star_Trek.Sections:IsInSection(deck, sectionId, pos)
+    local sectionData, error = self:GetSection(deck, sectionId)
+    if not sectionData then
+        return false, error
+    end
+
+    for _, areaData in pairs(sectionData.Areas) do
+        if self:IsInArea(areaData, pos) then
+            return true
+        end
+    end
+
+    return false
+end
+
 function Star_Trek.Sections:GetInSection(deck, sectionId, allowMap)
     local sectionData, error = self:GetSection(deck, sectionId)
     if not sectionData then
@@ -40,9 +73,9 @@ function Star_Trek.Sections:GetInSection(deck, sectionId, allowMap)
 
     for _, areaData in pairs(sectionData.Areas) do
         local pos = areaData.Pos
+        local angle = areaData.Angle
         local min = areaData.Min
         local max = areaData.Max
-        local angle = areaData.Angle
 
         local rotMin = LocalToWorld(pos, angle, min, Angle())
         local rotMax = LocalToWorld(pos, angle, max, Angle())
@@ -57,12 +90,7 @@ function Star_Trek.Sections:GetInSection(deck, sectionId, allowMap)
             if IsValid(ent:GetParent()) then continue end
 
             local entPos = ent.EyePos and ent:EyePos() or ent:GetPos()
-            local localPos = -WorldToLocal(pos, angle, entPos, Angle())
-            -- TODO: No idea why there needs to be a "-" here!
-
-            if  localPos.x > min.x and localPos.x < max.x
-            and localPos.y > min.y and localPos.y < max.y
-            and localPos.z > min.z and localPos.z < max.z then
+            if self:IsInArea(areaData, entPos) then
                 table.insert(objects, ent)
             end
         end
@@ -119,6 +147,7 @@ function Star_Trek.Sections:SetupSections()
             local ang = ent:GetAngles() -- TODO: Check if that actually work with brushes
 
             local min, max = ent:GetCollisionBounds()
+            debugoverlay.Box(pos, min, max, 60, Color(0, 0, 255, 127))
 
             table.insert(self.Decks[deck].Sections[sectionId].Areas, {
                 Pos = pos,

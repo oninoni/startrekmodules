@@ -13,17 +13,15 @@
 ---------------------------------------
 
 ---------------------------------------
---         Utilities | Index         --
+--           Damage | Index          --
 ---------------------------------------
 
-Star_Trek.Util = Star_Trek.Util or {}
+Star_Trek.Damage = Star_Trek.Damage or {}
+
+if CLIENT then
+    include("cl_damage.lua")
+end
 
 if SERVER then
-    include("sv_positions.lua")
-    include("sv_keyvalues.lua")
-    include("sv_holodeck.lua")
-    include("sv_models.lua")
-
-    include("luabsp.lua")
-    include("sv_luabsp.lua")
+    AddCSLuaFile("cl_damage.lua")
 end

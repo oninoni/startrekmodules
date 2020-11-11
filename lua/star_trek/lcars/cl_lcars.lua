@@ -224,13 +224,17 @@ hook.Add("KeyPress", "Star_Trek.LCARS.KeyPress", function(ply, key)
     end
 end)
 
-
 -- Main Render Hook for all LCARS Screens
-hook.Add("PostDrawOpaqueRenderables", "Star_Trek.LCARS.Draw", function()
+hook.Add("PostDrawOpaqueRenderables", "Star_Trek.LCARS.Draw", function(isDrawingDepth, isDrawSkyBox)
+    if isDrawSkyBox then return end
+    if ( wp.drawing ) then return end
+
     local eyePos = LocalPlayer():EyePos()
     local eyeDir = EyeVector()
 
     for _, interface in pairs(Star_Trek.LCARS.ActiveInterfaces) do
+        --print(_)
+
         if not interface.IVis then
             continue
         end

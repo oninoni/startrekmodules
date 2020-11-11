@@ -24,10 +24,17 @@ function SWEP:PrimaryAttack()
     local trace = self:GetOwner():GetEyeTrace()
 
     debugoverlay.Cross(trace.HitPos, 10, 2, Color(255, 0, 0), true)
-    local entities = ents.FindInSphere(trace.HitPos, 10)
+
+    local entities = ents.FindInSphere(trace.HitPos, 100)
     for _, ent in pairs(entities) do
         debugoverlay.Cross(ent:GetPos(), 10, 2, Color(0, 255, 0), true)
         debugoverlay.Text(ent:GetPos(), ent:GetClass(), 2, false)
+    end
+
+    local moreEntities = Star_Trek.Util:GetStaticPropsInSphere(trace.HitPos, 100)
+    for _, ent in pairs(moreEntities) do
+        debugoverlay.Cross(ent.Origin, 10, 2, Color(0, 255, 0), true)
+        debugoverlay.Text(ent.Origin, ent.PropType, 2, false)
     end
 end
 
