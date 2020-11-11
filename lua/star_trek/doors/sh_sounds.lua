@@ -13,21 +13,23 @@
 ---------------------------------------
 
 ---------------------------------------
---           Doors | Index           --
+--       Doors Sounds | Shared       --
 ---------------------------------------
 
-Star_Trek.Doors = Star_Trek.Doors or {}
+sound.Add({
+    name = "star_trek.doors_48",
+    channel = CHAN_BODY,
+    volume = .8,
+    level = 70,
+    pitch = {95, 105},
+    sound = "kingpommes/startrek/intrepid/door01.mp3",
+})
 
-if SERVER then
-    AddCSLuaFile("sh_sounds.lua")
-    AddCSLuaFile("cl_doors.lua")
-
-    include("sh_sounds.lua")
-    include("sv_config.lua")
-    include("sv_doors.lua")
-end
-
-if CLIENT then
-    include("sh_sounds.lua")
-    include("cl_doors.lua")
-end
+sound.Add({
+    name = "star_trek.doors_80",
+    channel = CHAN_BODY,
+    volume = .8,
+    level = 70,
+    pitch = {85, 95},
+    sound = "kingpommes/startrek/intrepid/door01.mp3",
+})
