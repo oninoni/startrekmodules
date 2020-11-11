@@ -78,7 +78,7 @@ function WINDOW.OnPress(self, pos, animPos)
         -- Selection
         for i, rowData in pairs(self.CategoryRows) do
             for j, categoryData in pairs(rowData.Categories) do
-                if isButtonPressed(-self.WD2 + 53 + (j - 1) * rowData.Width, -self.HD2 + 40 + i * 35, rowData.Width - 3, 32, pos) then
+                if isButtonPressed(-self.WD2 + 53 + (j - 1) * rowData.Width, -self.HD2 + (i + 1) * 35 + 10, rowData.Width - 3, 32, pos) then
                     return categoryData.Id
                 end
             end

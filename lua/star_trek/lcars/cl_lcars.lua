@@ -167,7 +167,7 @@ net.Receive("Star_Trek.LCARS.Update", function()
 
     local oldVisible = interface.Windows[windowId].WVis
 
-    local window = Star_Trek.LCARS:LoadWindowData(windowData, interface.IPos, interface.IAng)
+    local window = Star_Trek.LCARS:LoadWindowData(id .. "_" .. windowId, windowData, interface.IPos, interface.IAng)
     if istable(window) then
         interface.Windows[windowId] = window
         -- table.Merge(interface.Windows[windowId], window)
