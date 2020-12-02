@@ -18,6 +18,8 @@ function WINDOW.OnCreate(self, windowData)
     end
     table.insert(self.HexValues, self.HexValues[1])
 
+    self.FrameMaterial = Star_Trek.LCARS:CreateFrame(self.Id, self.WWidth, self.WHeight, self.Title)
+
     return self
 end
 
@@ -85,5 +87,10 @@ function WINDOW.OnDraw(self, pos, animPos)
         draw.SimpleText(i, "LCARSSmall", pad.X, pad.Y, Color(0, 0, 0, animPos * 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
     end
 
-    Star_Trek.LCARS:DrawFrame(self.WWidth, self.WD2, self.HD2, self.Title, 255 * animPos)
+    surface.SetDrawColor(255, 255, 255, alpha)
+
+    surface.SetMaterial(self.FrameMaterial)
+    surface.DrawTexturedRect(-self.WD2, -self.HD2, self.WWidth, self.WHeight)
+
+    surface.SetAlphaMultiplier(1)
 end

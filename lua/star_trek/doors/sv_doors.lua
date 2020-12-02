@@ -116,6 +116,8 @@ hook.Add("KeyPress", "Star_Trek.OpenDoors", function(ply, key)
                 ent:Fire("SetAnimation", "open")
             end
         end
+
+        PrintTable(trace)
     end
 end)
 
@@ -123,7 +125,11 @@ local function checkPlayers(ent)
     local entities = ents.FindInSphere(ent:GetPos(), 64)
     for _, nearbyEnt in pairs(entities) do
         if nearbyEnt:IsPlayer() then
-            local distance = nearbyEnt:EyePos():Distance(ent:GetPos())
+            local eyePos = nearbyEnt:EyePos()
+            local entPos = ent:GetPos()
+            entPos.z = eyePos.z
+
+            local distance = eyePos:Distance(entPos)
             if distance <= 32 then
                 return true
             end

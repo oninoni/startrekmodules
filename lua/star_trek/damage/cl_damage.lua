@@ -56,7 +56,9 @@ hook.Add("PreDrawTranslucentRenderables", "Star_Trek.Damage.DrawDamages", functi
 
             render.OverrideDepthEnable(true, false)
             cam.IgnoreZ(true)
+            render.SuppressEngineLighting(true)
             ent.ClientModel:DrawModel()
+            render.SuppressEngineLighting(false)
             cam.IgnoreZ(false)
             render.OverrideDepthEnable(false, false)
         render.SetStencilEnable( false )

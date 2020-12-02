@@ -7,7 +7,7 @@ function WINDOW.OnCreate(self, windowData)
 
     self.MaxN = table.maxn(self.Buttons)
 
-    self.ButtonsHeight = self.WHeight - 85
+    self.ButtonsHeight = self.WHeight - 80
     self.ButtonsStart = self.HD2 - self.ButtonsHeight
 
     self.ButtonsTopAlpha = self.ButtonsStart

@@ -46,7 +46,7 @@ local function loadModule(name)
         local oldEnt = ENT
         ENT = {
             ClassName = entityName,
-            Folder = "weapons/" .. entityName,
+            Folder = "entities/" .. entityName,
         }
 
         if SERVER then
@@ -76,10 +76,9 @@ local function loadModule(name)
         SWEP = {
             ClassName = weaponName,
             Folder = "weapons/" .. weaponName,
+            Primary = {},
+            Secondary = {},
         }
-
-        SWEP.Primary = {}
-        SWEP.Secondary = {}
 
         if SERVER then
             AddCSLuaFile(wepDirectory .. "shared.lua")

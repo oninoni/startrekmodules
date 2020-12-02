@@ -19,9 +19,14 @@
 Star_Trek.Damage = Star_Trek.Damage or {}
 
 if CLIENT then
+    include("sh_config.lua")
     include("cl_damage.lua")
 end
 
 if SERVER then
+    AddCSLuaFile("sh_config.lua")
     AddCSLuaFile("cl_damage.lua")
+
+    include("sh_config.lua")
+    include("sv_damage.lua")
 end

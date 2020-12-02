@@ -36,7 +36,7 @@ function Star_Trek.LCARS:OpenSecurityMenu()
     }
     buttons[modeCount + 2] = utilButtonData
 
-    local height = table.maxn(buttons) * 35 + 70
+    local height = table.maxn(buttons) * 35 + 80
     local success, menuWindow = Star_Trek.LCARS:CreateWindow("button_list", Vector(-18, -25, 9), Angle(10, 0, -50), 30, 400, height, function(windowData, interfaceData, ent, buttonId)
         if buttonId == modeCount + 2 then
             ent:EmitSound("star_trek.lcars_close")

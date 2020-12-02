@@ -24,11 +24,11 @@
 -- @param Number mouseYPos
 -- @return Number offset
 function Star_Trek.LCARS:GetButtonOffset(listOffset, listHeight, buttonCount, mouseYPos)
-    local maxCount = math.floor(listHeight / 35)
+    local maxCount = math.floor(listHeight / 35) - 1
 
     local offset = listOffset
     if buttonCount > maxCount then
-        offset = offset - (mouseYPos - listOffset) * ((buttonCount - maxCount + 0.5) / maxCount)  + 35
+        offset = listOffset - (mouseYPos - listOffset) * ((buttonCount - maxCount) / maxCount) + 30
 
         offset = math.min(offset, listOffset)
         offset = math.max(offset, listOffset - (buttonCount + 1) * 35 + (maxCount + 2) * 35)

@@ -48,7 +48,7 @@ function Star_Trek.LCARS:OpenMenu()
     local title = keyValues["lcars_title"]
 
     if not height then
-        height = math.max(2, math.min(6, table.maxn(buttons))) * 35 + 85
+        height = math.max(2, math.min(6, table.maxn(buttons))) * 35 + 80
     end
     local success, window = self:CreateWindow("button_list", Vector(), Angle(), scale, width, height, function(windowData, interfaceData, ent, buttonId)
         local triggerEntity = ent:GetParent()

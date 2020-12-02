@@ -35,13 +35,15 @@ function WINDOW.OnCreate(self, windowData)
     self.HD2 = self.WHeight / 2
 
     self.MaxN = table.Count(self.Categories)
+
+    self.CategoryStart = -self.HD2 + 79
     self.CategoryHeight = math.max(2, math.ceil(self.MaxN / 4)) * 35 + 50
 
-    self.ButtonsHeight = self.WHeight - self.CategoryHeight - 80
-    self.ButtonsStart = self.HD2 - self.ButtonsHeight
+    self.ButtonsStart = -self.HD2 + self.CategoryHeight + 79
+    self.ButtonsHeight = self.WHeight - self.ButtonsStart
 
     self.ButtonsTopAlpha = self.ButtonsStart
-    self.ButtonsBotAlpha = self.HD2 - 25
+    self.ButtonsBotAlpha = self.HD2 - 20
 
     self.CategoryRows = {}
     local categories = table.Copy(self.Categories)
@@ -78,7 +80,7 @@ function WINDOW.OnPress(self, pos, animPos)
         -- Selection
         for i, rowData in pairs(self.CategoryRows) do
             for j, categoryData in pairs(rowData.Categories) do
-                if isButtonPressed(-self.WD2 + 53 + (j - 1) * rowData.Width, -self.HD2 + (i + 1) * 35 + 10, rowData.Width - 3, 32, pos) then
+                if isButtonPressed(-self.WD2 + 53 + (j - 1) * rowData.Width, self.CategoryStart + (i - 1) * 35, rowData.Width - 3, 32, pos) then
                     return categoryData.Id
                 end
             end
@@ -132,7 +134,7 @@ function WINDOW.OnDraw(self, pos, animPos)
                 color = color_grey
             end
 
-            Star_Trek.LCARS:DrawButtonGraphic(-self.WD2 + 55 + (j - 1) * rowData.Width, -self.HD2 + (i + 1) * 35 + 10, rowData.Width - 3, 32, color, alpha, pos)
+            Star_Trek.LCARS:DrawButtonGraphic(-self.WD2 + 55 + (j - 1) * rowData.Width, self.CategoryStart + (i - 1) * 35, rowData.Width - 3, 32, color, alpha, pos)
             draw.DrawText(categoryData.Name, "LCARSText", -self.WD2 + 64 + (j - 1) * rowData.Width, -self.HD2 + (i + 1) * 35 + 12, lcars_black, TEXT_ALIGN_LEFT)
         end
     end
@@ -174,7 +176,7 @@ function WINDOW.OnDraw(self, pos, animPos)
     surface.SetDrawColor(255, 255, 255, alpha)
 
     surface.SetMaterial(self.FrameMaterial)
-    surface.DrawTexturedRect(-self.WD2, -self.HD2, self.WWidth, self.WHeight)
+    surface.DrawTexturedRectUV(-self.WD2, -self.HD2, self.WWidth, self.WHeight, 0, 0, 1, 1)
 
     surface.SetAlphaMultiplier(1)
 end

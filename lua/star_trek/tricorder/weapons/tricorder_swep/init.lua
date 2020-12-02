@@ -30,12 +30,6 @@ function SWEP:PrimaryAttack()
         debugoverlay.Cross(ent:GetPos(), 10, 2, Color(0, 255, 0), true)
         debugoverlay.Text(ent:GetPos(), ent:GetClass(), 2, false)
     end
-
-    local moreEntities = Star_Trek.Util:GetStaticPropsInSphere(trace.HitPos, 100)
-    for _, ent in pairs(moreEntities) do
-        debugoverlay.Cross(ent.Origin, 10, 2, Color(0, 255, 0), true)
-        debugoverlay.Text(ent.Origin, ent.PropType, 2, false)
-    end
 end
 
 function SWEP:SecondaryAttack()

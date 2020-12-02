@@ -19,5 +19,6 @@ function ENT:Initialize()
 end
 
 function ENT:OnRemove()
+    self.ClientModel:Remove()
     Star_Trek.Damage.Entities[self:EntIndex()] = nil
 end

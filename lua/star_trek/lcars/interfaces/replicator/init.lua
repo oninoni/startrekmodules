@@ -25,7 +25,7 @@ function Star_Trek.LCARS:OpenReplicatorMenu()
         Buttons = {},
     })
 
-    local success2, window = Star_Trek.LCARS:CreateWindow("category_list", Vector(0, 10, 0), Angle(90, 0, 0), nil, 500, 522, function(windowData, interfaceData, ent, categoryId, buttonId)
+    local success2, window = Star_Trek.LCARS:CreateWindow("category_list", Vector(0, 10, 0), Angle(0, 0, 0), nil, 500, 500, function(windowData, interfaceData, ent, categoryId, buttonId)
         if buttonId then
             local selected = windowData.Selected
             local categoryData = windowData.Categories[selected]

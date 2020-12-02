@@ -242,8 +242,8 @@ hook.Add("PostDrawOpaqueRenderables", "Star_Trek.LCARS.Draw", function(isDrawing
                 continue
             end
 
-            local width = window.WWidth + 100
-            local height = window.WHeight + 100
+            local width = window.WWidth
+            local height = window.WHeight
             local pos = Star_Trek.LCARS:Get3D2DMousePos(window, eyePos, eyeDir)
             if pos.x > -width / 2 and pos.x < width / 2
             and pos.y > -height / 2 and pos.y < height / 2 then
