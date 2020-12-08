@@ -120,6 +120,7 @@ function Star_Trek.LCARS:DrawCircle(x, y, radius, seg, r, g, b, a)
     table.insert(cir, {x = x, y = y})
 
     surface.SetDrawColor(r, g, b, a)
+    draw.NoTexture()
     surface.DrawPoly(cir)
 end
 
@@ -277,16 +278,22 @@ function Star_Trek.LCARS:DrawDoubleFrame(width, height, title, height2)
     Star_Trek.LCARS.ColorLightRed)
 end
 
+local function filterSize(value)
+    return 2 ^ math.ceil(math.log(value) / math.log(2))
+end
+
 function Star_Trek.LCARS:CreateFrame(id, width, height, title, height2)
-    local texture = GetRenderTarget("LCARS_Frame_" .. id, width, height)
+    tWidth = filterSize(width)
+    tHeight = filterSize(height)
+
+    local texture = GetRenderTarget("LCARS_Frame_" .. id, tWidth, tHeight)
 
     local oldW, oldH = ScrW(), ScrH()
-    render.SetViewPort(0, 0, width, height)
+    render.SetViewPort(0, 0, tWidth, tHeight)
 
     render.PushRenderTarget(texture)
     cam.Start2D()
         render.Clear(0, 0, 0, 0, true, true)
-        draw.NoTexture()
 
         if isnumber(height2) then
             Star_Trek.LCARS:DrawDoubleFrame(width, height, title, height2)
@@ -303,6 +310,20 @@ function Star_Trek.LCARS:CreateFrame(id, width, height, title, height2)
         ["$translucent"] = 1,
         ["$vertexalpha"] = 1,
     })
+    customMaterial = material
 
-    return material
+    local materialData = {
+        Material = material,
+        U = width / tWidth,
+        V = height / tHeight,
+    }
+
+    PrintTable(materialData)
+
+    return materialData
+end
+
+function Star_Trek.LCARS:RenderMaterial(x, y, w, h, materialData)
+    surface.SetMaterial(materialData.Material)
+    surface.DrawTexturedRectUV(x, y, w, h, 0, 0, materialData.U, materialData.V)
 end

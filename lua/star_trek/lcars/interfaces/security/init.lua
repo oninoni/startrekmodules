@@ -57,9 +57,17 @@ function Star_Trek.LCARS:OpenSecurityMenu()
         Star_Trek:Message(menuWindow)
     end
 
+    local success, mainWindow = Star_Trek.LCARS:CreateWindow("button_list", Vector(13, 0, 0), Angle(0, 0, 0), nil, 850, 500, function(windowData, interfaceData, ent, buttonId)
+        -- TODO
+    end, {}, nil, true)
+    if not success then
+        Star_Trek:Message(menuWindow)
+    end
+
     local windows = Star_Trek.LCARS:CombineWindows(
         menuWindow,
-        sectionWindow
+        sectionWindow,
+        mainWindow
     )
 
     local success, error = self:OpenInterface(ent, windows)
