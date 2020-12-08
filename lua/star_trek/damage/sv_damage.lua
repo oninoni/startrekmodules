@@ -45,7 +45,6 @@ function Star_Trek.Damage:DamageSection(damageType, deck, sectionId)
 
     debugoverlay.Axis(staticProp.Origin, staticProp.Angles, 5, 5, true)
 
-    PrintTable(staticProp)
     local pos, ang = LocalToWorld(location.Pos, location.Ang, staticProp.Origin, staticProp.Angles)
     ent:SetPos(pos)
     ent:SetAngles(ang)

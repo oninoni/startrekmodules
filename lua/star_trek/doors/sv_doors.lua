@@ -116,8 +116,6 @@ hook.Add("KeyPress", "Star_Trek.OpenDoors", function(ply, key)
                 ent:Fire("SetAnimation", "open")
             end
         end
-
-        PrintTable(trace)
     end
 end)
 

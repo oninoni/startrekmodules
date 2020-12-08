@@ -117,12 +117,13 @@ function Star_Trek.LCARS:DrawCircle(x, y, radius, seg, r, g, b, a)
         local arc = math.rad((i / seg) * -360)
         table.insert(cir, {x = x + math.sin( arc ) * radius, y = y + math.cos( arc ) * radius})
     end
+    table.insert(cir, {x = x, y = y})
 
     surface.SetDrawColor(r, g, b, a)
     surface.DrawPoly(cir)
 end
 
-function Star_Trek.LCARS:DrawFramSpacePart(y, width, border, flip, color)
+function Star_Trek.LCARS:DrawFrameSpacePart(y, width, border, flip, color)
     -- Outer Circle
     Star_Trek.LCARS:DrawCircle(
         LCARS_CORNER_RADIUS,
@@ -201,11 +202,11 @@ function Star_Trek.LCARS:DrawFramSpacePart(y, width, border, flip, color)
 end
 
 function Star_Trek.LCARS:DrawFrameSpacer(y, width, top_color, bottom_color)
-    Star_Trek.LCARS:DrawFramSpacePart(y, width, 0, false, Star_Trek.LCARS.ColorBlack)
-    Star_Trek.LCARS:DrawFramSpacePart(y, width, LCARS_BORDER_WIDTH, false, top_color)
+    Star_Trek.LCARS:DrawFrameSpacePart(y, width, 0, false, Star_Trek.LCARS.ColorBlack)
+    Star_Trek.LCARS:DrawFrameSpacePart(y, width, LCARS_BORDER_WIDTH, false, top_color)
 
-    Star_Trek.LCARS:DrawFramSpacePart(y + LCARS_CORNER_RADIUS * 2 + LCARS_FRAME_OFFSET, width, 0, true, Star_Trek.LCARS.ColorBlack)
-    Star_Trek.LCARS:DrawFramSpacePart(y + LCARS_CORNER_RADIUS * 2 + LCARS_FRAME_OFFSET, width, LCARS_BORDER_WIDTH, true, bottom_color)
+    Star_Trek.LCARS:DrawFrameSpacePart(y + LCARS_CORNER_RADIUS * 2 + LCARS_FRAME_OFFSET, width, 0, true, Star_Trek.LCARS.ColorBlack)
+    Star_Trek.LCARS:DrawFrameSpacePart(y + LCARS_CORNER_RADIUS * 2 + LCARS_FRAME_OFFSET, width, LCARS_BORDER_WIDTH, true, bottom_color)
 end
 
 function Star_Trek.LCARS:DrawFrame(width, height, title)
@@ -285,7 +286,9 @@ function Star_Trek.LCARS:CreateFrame(id, width, height, title, height2)
     render.PushRenderTarget(texture)
     cam.Start2D()
         render.Clear(0, 0, 0, 0, true, true)
-        if height2 then
+        draw.NoTexture()
+
+        if isnumber(height2) then
             Star_Trek.LCARS:DrawDoubleFrame(width, height, title, height2)
         else
             Star_Trek.LCARS:DrawFrame(width, height, title)
