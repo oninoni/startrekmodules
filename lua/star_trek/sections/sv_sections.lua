@@ -145,6 +145,9 @@ function Star_Trek.Sections:SetupSections()
 
 			local pos = ent:GetPos()
 			local ang = ent:GetAngles() -- TODO: Check if that actually work with brushes
+			if ang ~= Angle() then
+				print("Non-Zero Angle Detected! This needs testing! (" .. ang .. ") on " .. sectionName)
+			end
 
 			local min, max = ent:GetCollisionBounds()
 

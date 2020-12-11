@@ -119,14 +119,9 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
 						sourceWindowFunctions.SetSelected(targetMenuTable.MainWindow, sourceMenuData)
 						targetWindowFunctions.SetSelected(menuTable.MainWindow, targetMenuData)
 
-						interfaceData.Windows[targetMenuTable.MenuWindow.WindowId] = targetMenuTable.MenuWindow
-						Star_Trek.LCARS:UpdateWindow(ent, targetMenuTable.MenuWindow.WindowId)
-
-						interfaceData.Windows[targetMenuTable.MainWindow.WindowId] = targetMenuTable.MainWindow
-						Star_Trek.LCARS:UpdateWindow(ent, targetMenuTable.MainWindow.WindowId)
-
-						interfaceData.Windows[menuTable.MainWindow.WindowId] = menuTable.MainWindow
-						Star_Trek.LCARS:UpdateWindow(ent, menuTable.MainWindow.WindowId)
+						Star_Trek.LCARS:UpdateWindow(ent, targetMenuTable.MenuWindow.WindowId, targetMenuTable.MenuWindow)
+						Star_Trek.LCARS:UpdateWindow(ent, targetMenuTable.MainWindow.WindowId, targetMenuTable.MainWindow)
+						Star_Trek.LCARS:UpdateWindow(ent, menuTable.MainWindow.WindowId, menuTable.MainWindow)
 
 						return true
 					end
@@ -139,8 +134,7 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
 				return
 			end
 
-			interfaceData.Windows[menuTable.MainWindow.WindowId] = menuTable.MainWindow
-			Star_Trek.LCARS:UpdateWindow(ent, menuTable.MainWindow.WindowId)
+			Star_Trek.LCARS:UpdateWindow(ent, menuTable.MainWindow.WindowId, menuTable.MainWindow)
 
 			return true
 		end
@@ -187,7 +181,7 @@ local function createMainWindow(pos, angle, menuTable, padNumber)
 	-- Category List Window
 	if selectionName == "Sections" then
 		local success, mainWindow = Star_Trek.LCARS:CreateWindow("category_list", pos, angle, nil, 500, 500, function(windowData, interfaceData, ent, categoryId, buttonId)
-
+			-- Does nothing special here.
 		end, Star_Trek.LCARS:GetSectionCategories(menuTable.Target), selectionName, true)
 		if not success then
 			return false, mainWindow
@@ -414,11 +408,8 @@ local function triggerTransporter(interfaceData)
 			return
 		end
 
-		interfaceData.Windows[sourceMenuTable.MenuWindow.WindowId] = sourceMenuTable.MenuWindow
-		Star_Trek.LCARS:UpdateWindow(ent, sourceMenuTable.MenuWindow.WindowId)
-
-		interfaceData.Windows[sourceMenuTable.MainWindow.WindowId] = sourceMenuTable.MainWindow
-		Star_Trek.LCARS:UpdateWindow(ent, sourceMenuTable.MainWindow.WindowId)
+		Star_Trek.LCARS:UpdateWindow(ent, sourceMenuTable.MenuWindow.WindowId, sourceMenuTable.MenuWindow)
+		Star_Trek.LCARS:UpdateWindow(ent, sourceMenuTable.MainWindow.WindowId, sourceMenuTable.MainWindow)
 	end
 end
 

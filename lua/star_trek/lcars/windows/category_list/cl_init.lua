@@ -31,9 +31,6 @@ function WINDOW.OnCreate(self, windowData)
 	self.Selected = windowData.Selected
 	self.Categories = windowData.Categories
 
-	self.WD2 = self.WWidth / 2
-	self.HD2 = self.WHeight / 2
-
 	self.MaxN = table.Count(self.Categories)
 
 	self.CategoryStart = -self.HD2 + 79

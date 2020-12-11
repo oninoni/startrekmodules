@@ -54,7 +54,9 @@ function Star_Trek.LCARS:LoadWindowData(id, windowData, IPos, IAng)
 
 		WScale = windowData.WindowScale,
 		WWidth = windowData.WindowWidth,
+		WD2 = windowData.WindowWidth / 2,
 		WHeight = windowData.WindowHeight,
+		HD2 = windowData.WindowHeight / 2,
 	}
 
 	return windowFunctions.OnCreate(window, windowData)

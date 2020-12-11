@@ -2,9 +2,6 @@ function WINDOW.OnCreate(self, windowData)
 	self.Pads = windowData.Pads
 	self.Title = windowData.Title
 
-	self.WD2 = self.WWidth / 2
-	self.HD2 = self.WHeight / 2
-
 	self.PadRadius = self.WHeight / 8
 
 	self.HexValues = {}

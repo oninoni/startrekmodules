@@ -258,8 +258,17 @@ hook.Add("Think", "Star_Trek.LCARS.ThinkClose", function()
 	end
 end)
 
-function Star_Trek.LCARS:UpdateWindow(ent, windowId)
+-- Updates the window of the given id.
+--
+-- @param Entity ent
+-- @param Number windowId
+-- @param? Table windowData
+function Star_Trek.LCARS:UpdateWindow(ent, windowId, windowData)
 	local interfaceData = self.ActiveInterfaces[ent]
+
+	if istable(windowData) then
+		interfaceData.Windows[windowId] = windowData
+	end
 
 	local windowDataClient = table.Copy(interfaceData.Windows[windowId])
 	windowDataClient.Callback = nil

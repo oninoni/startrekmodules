@@ -172,7 +172,6 @@ function Star_Trek.Transporter:GetPatternsFromArea(deck, sectionId)
 	}
 
 	local entities = Star_Trek.Sections:GetInSection(deck, sectionId, false)
-	print(entities)
 	for i, ent in pairs(entities) do
 		table.insert(pattern.Entities, ent)
 	end

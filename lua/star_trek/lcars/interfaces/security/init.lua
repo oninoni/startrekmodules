@@ -1,12 +1,22 @@
-function Star_Trek.LCARS:OpenSecurityMenu()
-	local success, ent = self:GetInterfaceEntity(TRIGGER_PLAYER, CALLER)
+local function createMainWindow(deckData)
+	local success, mainWindow = Star_Trek.LCARS:CreateWindow("section_map", Vector(13, 0, 0), Angle(0, 0, 0), nil, 850, 500, function(windowData, interfaceData, ent, buttonId)
+		-- TODO
+	end, deckData.Buttons, deckData.Name)
 	if not success then
-		Star_Trek:Message(ent)
+		return false, mainWindow
+	end
+
+	return true, mainWindow
+end
+
+function Star_Trek.LCARS:OpenSecurityMenu()
+	local success, interfaceEnt = self:GetInterfaceEntity(TRIGGER_PLAYER, CALLER)
+	if not success then
+		Star_Trek:Message(interfaceEnt)
 		return
 	end
 
-	local interfaceData = self.ActiveInterfaces[ent]
-	if istable(interfaceData) then
+	if istable(self.ActiveInterfaces[interfaceEnt]) then
 		return
 	end
 
@@ -37,7 +47,7 @@ function Star_Trek.LCARS:OpenSecurityMenu()
 	buttons[modeCount + 2] = utilButtonData
 
 	local height = table.maxn(buttons) * 35 + 80
-	local success, menuWindow = Star_Trek.LCARS:CreateWindow("button_list", Vector(-18, -25, 9), Angle(10, 0, -50), 30, 400, height, function(windowData, interfaceData, ent, buttonId)
+	local success2, menuWindow = Star_Trek.LCARS:CreateWindow("button_list", Vector(-18, -25, 9), Angle(10, 0, -50), 30, 400, height, function(windowData, interfaceData, ent, buttonId)
 		if buttonId == modeCount + 2 then
 			ent:EmitSound("star_trek.lcars_close")
 			Star_Trek.LCARS:CloseInterface(ent)
@@ -46,22 +56,31 @@ function Star_Trek.LCARS:OpenSecurityMenu()
 			-- TODO: Mode Selection
 		end
 	end , buttons, "Modes")
-	if not success then
+	if not success2 then
 		Star_Trek:Message(menuWindow)
+		return
 	end
 
-	local success, sectionWindow = Star_Trek.LCARS:CreateWindow("category_list", Vector(-22, 0, 0), Angle(0, 0, 0), nil, 500, 500, function(windowData, interfaceData, ent, buttonId)
-		-- TODO
-	end, Star_Trek.LCARS:GetSectionCategories(), "Sections", true)
-	if not success then
-		Star_Trek:Message(menuWindow)
+	local mainCategoryData = Star_Trek.LCARS:GetSectionCategories()
+
+	local success3, mainWindow = createMainWindow(mainCategoryData[1])
+	if not success3 then
+		Star_Trek:Message(mainWindow)
+		return
 	end
 
-	local success, mainWindow = Star_Trek.LCARS:CreateWindow("button_list", Vector(13, 0, 0), Angle(0, 0, 0), nil, 850, 500, function(windowData, interfaceData, ent, buttonId)
-		-- TODO
-	end, {}, nil, true)
-	if not success then
+	local success4, sectionWindow = Star_Trek.LCARS:CreateWindow("category_list", Vector(-22, 0, 0), Angle(0, 0, 0), nil, 500, 500, function(windowData, interfaceData, ent, categoryId, buttonId)
+		local updateSuccess, updateMainWindow = createMainWindow(mainCategoryData[categoryId])
+		if not updateSuccess then
+			Star_Trek:Message(updateMainWindow)
+			return
+		end
+
+		Star_Trek.LCARS:UpdateWindow(ent, mainWindow.WindowId, updateMainWindow)
+	end, mainCategoryData, "Sections", true)
+	if not success4 then
 		Star_Trek:Message(menuWindow)
+		return
 	end
 
 	local windows = Star_Trek.LCARS:CombineWindows(
@@ -70,8 +89,8 @@ function Star_Trek.LCARS:OpenSecurityMenu()
 		mainWindow
 	)
 
-	local success, error = self:OpenInterface(ent, windows)
-	if not success then
+	local success5, error = self:OpenInterface(interfaceEnt, windows)
+	if not success5 then
 		Star_Trek:Message(error)
 		return
 	end

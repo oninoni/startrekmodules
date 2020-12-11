@@ -2,9 +2,6 @@ function WINDOW.OnCreate(self, windowData)
 	self.Title = windowData.Title
 	self.Buttons = windowData.Buttons
 
-	self.WD2 = self.WWidth / 2
-	self.HD2 = self.WHeight / 2
-
 	self.MaxN = table.maxn(self.Buttons)
 
 	self.ButtonsHeight = self.WHeight - 80

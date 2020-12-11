@@ -59,7 +59,6 @@ function Star_Trek.LCARS:OpenReplicatorMenu()
 					ent:EmitSound("star_trek.lcars_error")
 				else
 					for _, cleanEnt in pairs(cleanEntities) do
-						print(cleanEnt)
 						Star_Trek.Replicator:RecycleObject(cleanEnt)
 					end
 				end

@@ -318,8 +318,6 @@ function Star_Trek.LCARS:CreateFrame(id, width, height, title, height2)
 		V = height / tHeight,
 	}
 
-	PrintTable(materialData)
-
 	return materialData
 end
 
