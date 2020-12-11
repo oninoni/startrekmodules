@@ -19,6 +19,6 @@
 Star_Trek.Replicator = Star_Trek.Replicator or {}
 
 if SERVER then
-    include("sv_config.lua")
-    include("sv_replicator.lua")
+	include("sv_config.lua")
+	include("sv_replicator.lua")
 end

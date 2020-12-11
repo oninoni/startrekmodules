@@ -29,9 +29,9 @@ Star_Trek.LCARS.ColorBlack =      Color(  0,   0,   0)
 Star_Trek.LCARS.ColorWhite =      Color(255, 255, 255)
 
 Star_Trek.LCARS.Colors = {
-    Star_Trek.LCARS.ColorOrange,
-    Star_Trek.LCARS.ColorYellow,
-    Star_Trek.LCARS.ColorLightBlue,
-    Star_Trek.LCARS.ColorBlue,
-    Star_Trek.LCARS.ColorLightRed,
+	Star_Trek.LCARS.ColorOrange,
+	Star_Trek.LCARS.ColorYellow,
+	Star_Trek.LCARS.ColorLightBlue,
+	Star_Trek.LCARS.ColorBlue,
+	Star_Trek.LCARS.ColorLightRed,
 }

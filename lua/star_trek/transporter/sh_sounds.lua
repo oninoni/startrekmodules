@@ -17,28 +17,28 @@
 ---------------------------------------
 
 sound.Add({
-    name = "star_trek.voy_beam_up",
-    channel = CHAN_BODY,
-    volume = .8,
-    level = 70,
-    pitch = 100,
-    sound = "oninoni/startrek/transporter/voy_beam_up.wav"
+	name = "star_trek.voy_beam_up",
+	channel = CHAN_BODY,
+	volume = .8,
+	level = 70,
+	pitch = 100,
+	sound = "oninoni/startrek/transporter/voy_beam_up.wav"
 })
 
 sound.Add({
-    name = "star_trek.voy_beam_down",
-    channel = CHAN_BODY,
-    volume = .8,
-    level = 70,
-    pitch = 100,
-    sound = "oninoni/startrek/transporter/voy_beam_down.wav"
+	name = "star_trek.voy_beam_down",
+	channel = CHAN_BODY,
+	volume = .8,
+	level = 70,
+	pitch = 100,
+	sound = "oninoni/startrek/transporter/voy_beam_down.wav"
 })
 
 sound.Add({
-    name = "star_trek.tng_replicator",
-    channel = CHAN_BODY,
-    volume = .8,
-    level = 70,
-    pitch = 100,
-    sound = "oninoni/startrek/transporter/tng_replicator.wav"
+	name = "star_trek.tng_replicator",
+	channel = CHAN_BODY,
+	volume = .8,
+	level = 70,
+	pitch = 100,
+	sound = "oninoni/startrek/transporter/tng_replicator.wav"
 })

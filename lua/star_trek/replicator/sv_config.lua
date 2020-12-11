@@ -17,77 +17,77 @@
 ---------------------------------------
 
 Star_Trek.Replicator.Categories = {
-    {
-        Name = "Food",
-        Disabled = false,
-        Buttons = {
-            {
-                Name = "Burger",
-                Data = "models/food/burger.mdl",
-            },
-            {
-                Name = "Wiener",
-                Data = "models/food/hotdog.mdl",
-            },
-            {
-                Name = "Soda",
-                Data = "models/props_junk/PopCan01a.mdl",
-            },
-            {
-                Name = "Tea Kettle",
-                Data = "models/props_interiors/pot01a.mdl",
-            },
-            {
-                Name = "Coffee",
-                Data = "models/props_junk/garbage_coffeemug001a.mdl",
-            },
-            {
-                Name = "Melon",
-                Data = "models/props_junk/watermelon01.mdl",
-            }
-        },
-    },
-    {
-        Name = "Medical",
-        Disabled = false,
-        Buttons = {
-            {
-                Name = "Skull",
-                Data = "models/Gibs/HGIBS.mdl",
-            },
-            {
-                Name = "Healing Vial",
-                Data = {
-                    Class = "item_healthvial",
-                }
-            }
-        },
-    },
-    {
-        Name = "Stuff",
-        Disabled = false,
-        Buttons = {
-            {
-                Name = "Hula Doll",
-                Data = "models/props_lab/huladoll.mdl",
-            },
-            {
-                Name = "Cactus Plant",
-                Data = "models/props_lab/cactus.mdl",
-            }
+	{
+		Name = "Food",
+		Disabled = false,
+		Buttons = {
+			{
+				Name = "Burger",
+				Data = "models/food/burger.mdl",
+			},
+			{
+				Name = "Wiener",
+				Data = "models/food/hotdog.mdl",
+			},
+			{
+				Name = "Soda",
+				Data = "models/props_junk/PopCan01a.mdl",
+			},
+			{
+				Name = "Tea Kettle",
+				Data = "models/props_interiors/pot01a.mdl",
+			},
+			{
+				Name = "Coffee",
+				Data = "models/props_junk/garbage_coffeemug001a.mdl",
+			},
+			{
+				Name = "Melon",
+				Data = "models/props_junk/watermelon01.mdl",
+			}
+		},
+	},
+	{
+		Name = "Medical",
+		Disabled = false,
+		Buttons = {
+			{
+				Name = "Skull",
+				Data = "models/Gibs/HGIBS.mdl",
+			},
+			{
+				Name = "Healing Vial",
+				Data = {
+					Class = "item_healthvial",
+				}
+			}
+		},
+	},
+	{
+		Name = "Stuff",
+		Disabled = false,
+		Buttons = {
+			{
+				Name = "Hula Doll",
+				Data = "models/props_lab/huladoll.mdl",
+			},
+			{
+				Name = "Cactus Plant",
+				Data = "models/props_lab/cactus.mdl",
+			}
 
-        },
-    },
-    {
-        Name = "Weapons",
-        Disabled = false,
-        Buttons = {
-            {
-                Name = "Antique Pistol",
-                Data = {
-                    Class = "weapon_357"
-                }
-            }
-        },
-    },
+		},
+	},
+	{
+		Name = "Weapons",
+		Disabled = false,
+		Buttons = {
+			{
+				Name = "Antique Pistol",
+				Data = {
+					Class = "weapon_357"
+				}
+			}
+		},
+	},
 }

@@ -17,43 +17,43 @@
 ---------------------------------------
 
 function Star_Trek.Util:LoadCurrentMap()
-    local mapName = game.GetMap()
+	local mapName = game.GetMap()
 
-    self.MapData = self:LoadMap(mapName)
+	self.MapData = self:LoadMap(mapName)
 
-    self.MapData:LoadStaticProps()
+	self.MapData:LoadStaticProps()
 end
 
 function Star_Trek.Util:GetStaticPropsByModel(model, callback)
-    local props = {}
+	local props = {}
 
-    for _, lump_entry in pairs(self.MapData.static_props) do
-        for _, entry in pairs(lump_entry.entries) do
-            if entry.PropType == model then
-                if isfunction(callback) and not callback(entry) then
-                    continue
-                end
+	for _, lump_entry in pairs(self.MapData.static_props) do
+		for _, entry in pairs(lump_entry.entries) do
+			if entry.PropType == model then
+				if isfunction(callback) and not callback(entry) then
+					continue
+				end
 
-                table.insert(props, entry)
-            end
-        end
-    end
+				table.insert(props, entry)
+			end
+		end
+	end
 
-    return props
+	return props
 end
 
 function Star_Trek.Util:GetStaticPropsByModelList(modelList, callback)
-    local props = {}
+	local props = {}
 
-    for _, model in pairs(modelList) do
-        local modelProps = Star_Trek.Util:GetStaticPropsByModel(model, callback)
+	for _, model in pairs(modelList) do
+		local modelProps = Star_Trek.Util:GetStaticPropsByModel(model, callback)
 
-        for _, entry in pairs(modelProps) do
-            table.insert(props, entry)
-        end
-    end
+		for _, entry in pairs(modelProps) do
+			table.insert(props, entry)
+		end
+	end
 
-    return props
+	return props
 end
 
 Star_Trek.Util:LoadCurrentMap()

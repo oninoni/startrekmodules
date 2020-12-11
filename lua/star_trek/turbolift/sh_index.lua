@@ -19,8 +19,8 @@
 Star_Trek.Turbolift = Star_Trek.Turbolift or {}
 
 if SERVER then
-    include("sv_config.lua")
-    include("sv_doors.lua")
-    include("sv_path.lua")
-    include("sv_turbolift.lua")
+	include("sv_config.lua")
+	include("sv_doors.lua")
+	include("sv_path.lua")
+	include("sv_turbolift.lua")
 end
