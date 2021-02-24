@@ -16,24 +16,41 @@
 --          Chairs | Server          --
 ---------------------------------------
 
--- Set up all chairs from the map with their collision group.
-local function setupChairs()
-	for _, ent in pairs(ents.FindByClass("prop_vehicle_prisoner_pod")) do
-		if table.HasValue(Star_Trek.Chairs.Models, ent:GetModel()) then
-			ent:SetCollisionGroup(COLLISION_GROUP_PASSABLE_DOOR)
-		end
-	end
-end
-hook.Add("InitPostEntity", "Star_Trek.ChairsInitPostEntity", setupChairs)
-hook.Add("PostCleanupMap", "Star_Trek.ChairsPostCleanupMap", setupChairs)
-
-function Star_Trek.Chairs:IsStarTrekChair(ent)
+-- Checks if entity is a chair.
+--
+-- @param Entity chair
+-- @return Bool isChair
+local function isStarTrekChair(ent)
 	if IsValid(ent) and ent:GetClass() == "prop_vehicle_prisoner_pod" and table.HasValue(Star_Trek.Chairs.Models, ent:GetModel()) then 
 		return true
 	end
 
 	return false
 end
+
+-- Sets up one entity as a chair, if it is a chair.
+--
+-- @param Entity chair
+local function setupChair(ent)
+	if isStarTrekChair(ent) then
+		ent:SetCollisionGroup(COLLISION_GROUP_PASSABLE_DOOR)
+
+		local phys = ent:GetPhysicsObject()
+		if IsValid(phys) then
+			phys:EnableMotion(false)
+		end
+	end
+end
+hook.Add("OnEntityCreated", "Star_Trek.ChairsOnEntityCreated", function(ent) timer.Simple(0, function() setupChair(ent) end) end)
+
+-- Set up all chairs from the map with their collision group.
+local function setupChairs()
+	for _, ent in pairs(ents.FindByClass("prop_vehicle_prisoner_pod")) do
+		setupChair(ent)
+	end
+end
+hook.Add("InitPostEntity", "Star_Trek.ChairsInitPostEntity", setupChairs)
+hook.Add("PostCleanupMap", "Star_Trek.ChairsPostCleanupMap", setupChairs)
 
 -- Save View Angle when leaving a chair.
 hook.Add("CanExitVehicle", "Star_Trek.CheckLeaveChair", function(chair, ply)
