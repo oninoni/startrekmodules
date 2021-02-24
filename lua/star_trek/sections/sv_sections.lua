@@ -63,7 +63,7 @@ function Star_Trek.Sections:IsInSection(deck, sectionId, pos)
 	return false
 end
 
-function Star_Trek.Sections:GetInSection(deck, sectionId, allowMap)
+function Star_Trek.Sections:GetInSection(deck, sectionId, allowMap, allowChildren)
 	local sectionData, error = self:GetSection(deck, sectionId)
 	if not sectionData then
 		return false, error
@@ -87,7 +87,7 @@ function Star_Trek.Sections:GetInSection(deck, sectionId, allowMap)
 		for _, ent in pairs(potentialEnts) do
 			if table.HasValue(objects, ent) then continue end
 			if not allowMap and ent:MapCreationID() ~= -1 then continue end
-			if IsValid(ent:GetParent()) then continue end
+			if not allowChildren and IsValid(ent:GetParent()) then continue end
 
 			local entPos = ent.EyePos and ent:EyePos() or ent:GetPos()
 			if self:IsInArea(areaData, entPos) then
