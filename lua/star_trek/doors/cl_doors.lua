@@ -41,8 +41,6 @@ hook.Add("wp-shouldrender", "Star_Trek.HidePortalInDoors", function(portal, exit
 		end
 
 		if isnumber(parent.DelayRenderDisable) and parent.DelayRenderDisable > CurTime() then
-			print(portal, exitPortal, portal:GetPos().x, exitPortal:GetPos().x)
-		
 			return true
 		end
 
