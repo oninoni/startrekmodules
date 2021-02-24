@@ -16,4 +16,11 @@
 --          Chairs | Config          --
 ---------------------------------------
 
--- TODO: Add Chair Models instead of Map ID Check
+Star_Trek.Chairs.Models = {
+    "models/kingpommes/startrek/intrepid/seat_captains.mdl",
+    "models/kingpommes/startrek/intrepid/seat_conferenceroom.mdl",
+    "models/kingpommes/startrek/intrepid/seat_messhall.mdl",
+    "models/kingpommes/startrek/intrepid/seat_officechair_a.mdl",
+    "models/kingpommes/startrek/intrepid/seat_officechair_b.mdl",
+    "models/kingpommes/startrek/intrepid/seat_readyroom.mdl",
+}

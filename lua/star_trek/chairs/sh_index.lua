@@ -16,6 +16,8 @@
 --           Chairs | Index          --
 ---------------------------------------
 
+Star_Trek.Chairs = Star_Trek.Chairs or {}
+
 if SERVER then
 	include("sv_config.lua")
 	include("sv_chairs.lua")
