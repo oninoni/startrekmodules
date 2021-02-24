@@ -44,7 +44,7 @@ Star_Trek.Replicator.Categories = {
 			{
 				Name = "Melon",
 				Data = "models/props_junk/watermelon01.mdl",
-			}
+			},
 		},
 	},
 	{

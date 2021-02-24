@@ -16,8 +16,6 @@
 --        Replicator | Server        --
 ---------------------------------------
 
--- TODO: Error Handling (Return Success)
-
 function Star_Trek.Replicator:CreateObject(data, pos, angle)
 	local class = "prop_physics"
 	local model = data
