@@ -33,9 +33,9 @@ function Star_Trek.LCARS:OpenReplicatorMenu()
 				local buttonData = categoryData.Buttons[buttonId]
 
 				if istable(buttonData) then
-					local pos = ent:GetPos()
-					pos = pos + ent:GetUp() * -7
-					pos = pos + ent:GetRight() * 6
+					local pos, angle = Star_Trek.LCARS:GetInterfacePosAngle(ent)
+					pos = pos + angle:Up() * -7
+					pos = pos + angle:Right() * 6
 
 					Star_Trek.Replicator:CreateObject(buttonData.Data, pos, ent:GetAngles())
 				end
@@ -44,8 +44,8 @@ function Star_Trek.LCARS:OpenReplicatorMenu()
 			Star_Trek.LCARS:CloseInterface(ent)
 		else
 			if categoryId == categoryCount + 1 then
-				local pos = ent:GetPos()
-				pos = pos + ent:GetRight() * 6
+				local pos, angle = Star_Trek.LCARS:GetInterfacePosAngle(ent)
+				pos = pos + angle:Right() * 6
 
 				local targets = ents.FindInSphere(pos, 20)
 				local cleanEntities = {}

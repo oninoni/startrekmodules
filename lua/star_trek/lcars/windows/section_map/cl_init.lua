@@ -34,7 +34,8 @@ function WINDOW.OnDraw(self, pos, animPos)
 			local width = areaData.Width
 			local height = areaData.Height
 
-			draw.RoundedBox(0, x, y, width, height, sectionData.Hovered and Star_Trek.LCARS.ColorOrange or Star_Trek.LCARS.ColorBlue)
+			draw.RoundedBox(0, x, y, width, height, sectionData.Hovered and Star_Trek.LCARS.ColorWhite or Star_Trek.LCARS.ColorBlack)
+			draw.RoundedBox(0, x + 1, y + 1, width - 2, height - 2, sectionData.Selected and Star_Trek.LCARS.ColorOrange or Star_Trek.LCARS.ColorBlue)
 		end
 	end
 

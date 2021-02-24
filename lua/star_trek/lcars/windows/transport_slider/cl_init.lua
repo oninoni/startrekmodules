@@ -25,7 +25,8 @@ function WINDOW.OnPress(self, pos, animPos)
 	end
 end
 
--- TODO: Redo graphics
+-- TODO: Redo graphics with prerender functionality.
+-- TODO: Redo Graphics to have better quality.
 function WINDOW.OnDraw(self, pos, animPos)
 	local colorBlue = ColorAlpha(Star_Trek.LCARS.ColorBlue, animPos * 255)
 	local colorYellow = ColorAlpha(Star_Trek.LCARS.ColorOrange, animPos * 255)

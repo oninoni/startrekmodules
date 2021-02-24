@@ -28,10 +28,13 @@ function Star_Trek.LCARS:GetButtonOffset(listOffset, listHeight, buttonCount, mo
 
 	local offset = listOffset
 	if buttonCount > maxCount then
-		offset = listOffset - (mouseYPos - listOffset) * ((buttonCount - maxCount) / maxCount) + 30
+		local overFlow = math.min(0, listHeight - buttonCount * 35 + 4)
+
+		local relativePos = (mouseYPos - (listOffset + 35)) / (listHeight - 70)
+		offset = listOffset + relativePos * overFlow
 
 		offset = math.min(offset, listOffset)
-		offset = math.max(offset, listOffset - (buttonCount + 1) * 35 + (maxCount + 2) * 35)
+		offset = math.max(offset, listOffset + overFlow)
 	end
 
 	return offset
@@ -55,7 +58,17 @@ local LCARS_FRAME_OFFSET = 4
 local LCARS_BORDER_WIDTH = 2
 local LCARS_STRIP_HEIGHT = 20
 
--- TODO: Redo
+-- TODO: Redo with pre-render functionality.
+
+-- Drawing a normal LCARS panel. (2D Rendering Context)
+--
+-- @param Number x
+-- @param Number y
+-- @param Number width
+-- @param Number height
+-- @param Color color
+-- @param Number alpha
+-- @param? Vector pos
 function Star_Trek.LCARS:DrawButtonGraphic(x, y, width, height, color, alpha, pos)
 	local lcars_white = Color(255, 255, 255, alpha)
 	local lcars_black = Color(0, 0, 0, alpha)
@@ -71,6 +84,8 @@ function Star_Trek.LCARS:DrawButtonGraphic(x, y, width, height, color, alpha, po
 	draw.RoundedBox(15, x, y, width -2, height -2, color)
 end
 
+-- TODO: Redo with pre-render functionality.
+
 -- Drawing a normal LCARS panel button. (2D Rendering Context)
 --
 -- @param Number x
@@ -80,10 +95,8 @@ end
 -- @param Color color
 -- @param? String s
 -- @param? String l
--- @param? Number alpha
+-- @param Number alpha
 -- @param? Vector pos
-
--- TODO: Redo
 function Star_Trek.LCARS:DrawButton(x, y, width, text, color, s, l, alpha, pos)
 	local lcars_black = Color(0, 0, 0, alpha)
 	color = ColorAlpha(color, alpha)

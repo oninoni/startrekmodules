@@ -1,17 +1,22 @@
 CENTER_POS = Vector(0, -200, 0)
 MAP_SCALE = 6
 
-function WINDOW.OnCreate(windowData, sections, deckName)
-	windowData.Sections = {}
-	windowData.DeckName = deckName or ""
+function WINDOW.OnCreate(windowData, deck)
+	windowData.DeckId = deck
+	local deckData = Star_Trek.Sections.Decks[deck]
 
-	for id, sectionData in pairs(sections) do
+	windowData.Sections = {}
+	windowData.DeckName = "Deck " .. deck
+
+	for sectionId, sectionData in pairs(deckData.Sections) do
 		local sectionButtonData = {
+			Id = sectionId,
 			Name = sectionData.Name,
 			Areas = {},
 		}
+		print(sectionData.Name)
 
-		for _, areaData in pairs(sectionData.Data.Areas) do
+		for _, areaData in pairs(sectionData.Areas) do
 			local areaButtonData = {}
 
 			areaButtonData.Width = (math.abs(areaData.Min.x) + math.abs(areaData.Max.x)) / MAP_SCALE
@@ -19,7 +24,20 @@ function WINDOW.OnCreate(windowData, sections, deckName)
 			areaButtonData.Pos = CENTER_POS + areaData.Pos + Vector(areaData.Min.x + areaData.Max.x, areaData.Min.y + areaData.Max.y, 0)
 
 			if areaButtonData.Pos.z > 1000 then
-				areaButtonData.Pos = areaButtonData.Pos + Vector(300 , 0, 0)
+				local sectionEntities = Star_Trek.Sections:GetInSection(deck, sectionId, true, true)
+
+				local offset
+				for _, ent in pairs(sectionEntities) do
+					if ent:GetClass() == "linked_portal_door" then
+						offset = ent:GetPos() - ent:GetExit():GetPos()
+					end
+				end
+
+				print(offset)
+
+				--if offset then
+				--	areaButtonData.Pos = areaButtonData.Pos - Vector(offset.x , 0, 0)
+				--end
 			end
 
 			areaButtonData.Pos.y = -areaButtonData.Pos.y

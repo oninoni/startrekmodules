@@ -123,15 +123,9 @@ hook.Add("Think", "Star_Trek.LCARS.Think", function()
 		interface.IVis = false
 
 		for _, window in pairs(interface.Windows) do
-			local trace = util.TraceLine({
-				start = eyePos,
-				nedpos = window.WPos,
-				filter = ply
-			})
-
 			local cross = (window.WPos - eyePos):Dot(window.WAng:Up())
 
-			if not trace.Hit or cross > 0 then
+			if cross > 0 then
 				window.WVis = false
 			else
 				window.WVis = true
@@ -182,7 +176,7 @@ end)
 hook.Add("KeyPress", "Star_Trek.LCARS.KeyPress", function(ply, key)
 	if not (game.SinglePlayer() or IsFirstTimePredicted()) then return end
 
-	if key ~= IN_USE and key ~= IN_ATTACK then return end
+	if key ~= IN_USE and key ~= IN_ATTACK and key ~= IN_ATTACK2 then return end
 
 	local eyePos = LocalPlayer():EyePos()
 	local eyeDir = EyeVector()
