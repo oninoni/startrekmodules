@@ -31,8 +31,9 @@ function Star_Trek.Sections:GetSection(deck, sectionId)
 end
 
 function Star_Trek.Sections:IsInArea(areaData, entPos)
-		local pos = areaData.Pos
-		local angle = areaData.Angle
+	local pos = areaData.Pos
+	local angle = areaData.Angle
+
 	local min = areaData.Min
 	local max = areaData.Max
 
@@ -60,7 +61,7 @@ function Star_Trek.Sections:IsInSection(deck, sectionId, pos)
 		end
 	end
 
-	return false
+	return false, "Not in area."
 end
 
 function Star_Trek.Sections:GetInSection(deck, sectionId, allowMap, allowChildren)

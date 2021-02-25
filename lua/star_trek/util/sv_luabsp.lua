@@ -56,4 +56,10 @@ function Star_Trek.Util:GetStaticPropsByModelList(modelList, callback)
 	return props
 end
 
-Star_Trek.Util:LoadCurrentMap()
+local function loadMap()
+	Star_Trek.Util:LoadCurrentMap()
+	hook.Run("Star_Trek.Util.MapLoaded")
+end
+
+hook.Add("InitPostEntity", "Star_Trek.Map.Setup", loadMap)
+hook.Add("PostCleanupMap", "Star_Trek.Map.Setup", loadMap)

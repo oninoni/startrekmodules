@@ -21,18 +21,19 @@ Star_Trek.Damage.DamageTypes = {}
 Star_Trek.Damage.DamageTypes["eps_breach"] = {
 	Name = "EPS Conduit Breach",
 	Entity = "plasma_conduit",
+	CanChain = true, -- TODO
 	StaticProps = {
-		["models/kingpommes/startrek/voyager/panel_wall48.mdl"] = {
+		["models/kingpommes/startrek/intrepid/panel_wall48.mdl"] = {
 			Locations = {
 				{Pos = Vector( 8, -64, -10), Ang = Angle(0, 90, 0),},
 			},
 		},
-		--["models/kingpommes/startrek/voyager/panel_wall56.mdl"] = {
-		--    Locations = {
-		--        {Pos = Vector(  0, -64, -10), Ang = Angle(0, 90, 0),},
-		--    },
-		--},
-		["models/kingpommes/startrek/voyager/panel_wall128.mdl"] = {
+		["models/kingpommes/startrek/intrepid/panel_wall56.mdl"] = {
+		    Locations = {
+		        {Pos = Vector(  0, -64, -10), Ang = Angle(0, 90, 0),},
+		    },
+		},
+		["models/kingpommes/startrek/intrepid/panel_wall128.mdl"] = {
 			Locations = {
 				{Pos = Vector(  0, -64, -10), Ang = Angle(0, 90, 0),},
 
