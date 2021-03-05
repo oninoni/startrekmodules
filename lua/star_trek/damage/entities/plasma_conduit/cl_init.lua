@@ -67,12 +67,12 @@ function ENT:Think()
 	if self.LastThink + 0.05 > CurTime() then return end
 	self.LastThink = CurTime()
 
-	local flame = self.Emitter:Add("effects/softglow", self:GetPos())
+	local flame = self.Emitter:Add("effects/energyball", self:GetPos())
 	if flame then
 		flame:SetVelocity(self.FlameDir * math.random(40, 50))
 		flame:SetGravity(-GRAV_SPARKS / 5)
 		
-		flame:SetDieTime(0.5)
+		flame:SetDieTime(0.8)
 		flame:SetColor(math.random(200, 255), math.random(0, 50), 0)
 
 		flame:SetStartAlpha(127)
@@ -82,29 +82,29 @@ function ENT:Think()
 		flame:SetEndSize(10)
 	end
 	
-	local flame = self.Emitter:Add("effects/softglow", self:GetPos())
+	local flame = self.Emitter:Add("effects/energyball", self:GetPos())
 	if flame then
 		flame:SetVelocity(self.FlameDir * math.random(40, 50))
 		flame:SetGravity(-GRAV_SPARKS / 5)
 		
-		flame:SetDieTime(0.5)
+		flame:SetDieTime(0.9)
 		flame:SetColor(math.random(80, 120), math.random(80, 120), 0)
 
 		flame:SetStartAlpha(200)
-		flame:SetEndAlpha(0)
+		flame:SetEndAlpha(1)
 	
 		flame:SetStartSize(2)
 		flame:SetEndSize(5)
 	end
 	
-	local spark = self.Emitter:Add("effects/softglow", self:GetPos())
+	local spark = self.Emitter:Add("effects/energyball", self:GetPos())
 	if spark then
 		spark:SetVelocity(self.FlameDir * math.random(40, 50) + AngleRand():Forward() * math.random(0, 5))
 		spark:SetGravity(-GRAV_SPARKS / 5)
 		
-		spark:SetDieTime(0.5)
+		spark:SetDieTime(0.3)
 
-		spark:SetStartAlpha(127)
+		spark:SetStartAlpha(31)
 		spark:SetEndAlpha(0)
 	
 		spark:SetStartSize(2)
