@@ -17,14 +17,14 @@
 ---------------------------------------
 
 local detectMapStrings = {
-	"rp_voyager_v",
+	"rp_voyager",
 	"rp_intrepid_v",
 	"rp_intrepid_dev_v",
 }
 
 local skip = true
 for _, mapString in pairs(detectMapStrings) do
-	if string.StartWith(game.GetMap(), mapString)
+	if string.StartWith(game.GetMap(), mapString) then
 		skip = false
 		continue 
 	end
