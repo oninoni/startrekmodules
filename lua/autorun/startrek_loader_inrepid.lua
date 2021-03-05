@@ -16,7 +16,21 @@
 --               Loader              --
 ---------------------------------------
 
-if not (string.StartWith(game.GetMap(), "rp_voyager") or string.StartWith(game.GetMap(), "test_")) then return end
+local detectMapStrings = {
+	"rp_voyager_v",
+	"rp_intrepid_v",
+	"rp_intrepid_dev_v",
+}
+
+local skip = true
+for _, mapString in pairs(detectMapStrings) do
+	if string.StartWith(game.GetMap(), mapString)
+		skip = false
+		continue 
+	end
+end
+if skip then return end
+
 -- TODO: Add override convar for workshop release
 
 Star_Trek = Star_Trek or {}
