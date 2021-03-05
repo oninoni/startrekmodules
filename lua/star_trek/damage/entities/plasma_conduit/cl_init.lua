@@ -54,18 +54,23 @@ function ENT:Initialize()
 	self.RightBorder  = 10
 	
 	self.Emitter = ParticleEmitter(self:GetPos(), false)
+	self.LastThink = CurTime()
 	self:SpawnSparks()
 
-	self.FlameDir = self:GetForward() * 2 + AngleRand():Forward()
+	self.FlameDir = self:GetForward() * 5 + AngleRand():Forward()
 	self.FlameDir:Normalize()
 
 	Star_Trek.Damage.Entities[self:EntIndex()] = self
 end
 
 function ENT:Think()
+	if self.LastThink + 0.05 > CurTime() then return end
+	self.LastThink = CurTime()
+
 	local flame = self.Emitter:Add("effects/softglow", self:GetPos())
 	if flame then
-		flame:SetVelocity(self.FlameDir * 50)
+		flame:SetVelocity(self.FlameDir * math.random(40, 50))
+		flame:SetGravity(-GRAV_SPARKS / 5)
 		
 		flame:SetDieTime(0.5)
 		flame:SetColor(math.random(200, 255), math.random(0, 50), 0)
@@ -79,16 +84,31 @@ function ENT:Think()
 	
 	local flame = self.Emitter:Add("effects/softglow", self:GetPos())
 	if flame then
-		flame:SetVelocity(self.FlameDir * 50)
+		flame:SetVelocity(self.FlameDir * math.random(40, 50))
+		flame:SetGravity(-GRAV_SPARKS / 5)
 		
 		flame:SetDieTime(0.5)
 		flame:SetColor(math.random(80, 120), math.random(80, 120), 0)
 
-		flame:SetStartAlpha(127)
+		flame:SetStartAlpha(200)
 		flame:SetEndAlpha(0)
 	
 		flame:SetStartSize(2)
 		flame:SetEndSize(5)
+	end
+	
+	local spark = self.Emitter:Add("effects/softglow", self:GetPos())
+	if spark then
+		spark:SetVelocity(self.FlameDir * math.random(40, 50) + AngleRand():Forward() * math.random(0, 5))
+		spark:SetGravity(-GRAV_SPARKS / 5)
+		
+		spark:SetDieTime(0.5)
+
+		spark:SetStartAlpha(127)
+		spark:SetEndAlpha(0)
+	
+		spark:SetStartSize(2)
+		spark:SetEndSize(1)
 	end
 end
 
