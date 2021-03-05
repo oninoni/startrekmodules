@@ -54,14 +54,14 @@ hook.Add("PostCleanupMap", "Star_Trek.ChairsPostCleanupMap", setupChairs)
 
 -- Save View Angle when leaving a chair.
 hook.Add("CanExitVehicle", "Star_Trek.CheckLeaveChair", function(chair, ply)
-	if Star_Trek.Chairs:IsStarTrekChair(chair) then
+	if isStarTrekChair(chair) then
 		ply.STPrevViewAngle = ply:EyeAngles()
 	end
 end)
 
 -- Set Position and View Angle after leaving a chair.
 hook.Add("PlayerLeaveVehicle", "Star_Trek.LeaveChair", function(ply, chair)
-	if Star_Trek.Chairs:IsStarTrekChair(chair) then
+	if isStarTrekChair(chair) then
 		timer.Simple(0, function()
 			ply:SetPos(chair:GetPos())
 			ply:SetEyeAngles(ply.STPrevViewAngle)
@@ -71,7 +71,7 @@ end)
 
 -- Enable crosshair in chair.
 hook.Add("PlayerEnteredVehicle", "Star_Trek.EnterConsoleChair", function(ply, chair, role)
-	if Star_Trek.Chairs:IsStarTrekChair(chair) then
+	if isStarTrekChair(chair) then
 		ply:CrosshairEnable()
 	end
 end)
