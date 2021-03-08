@@ -32,12 +32,11 @@ end
 
 function Star_Trek.Sections:IsInArea(areaData, entPos)
 	local pos = areaData.Pos
-	local angle = areaData.Angle
 
 	local min = areaData.Min
 	local max = areaData.Max
 
-	local localPos = -WorldToLocal(pos, angle, entPos, Angle())
+	local localPos = -WorldToLocal(pos, Angle(), entPos, Angle())
 	-- TODO: No idea why there needs to be a "-" here!
 
 	if  localPos.x > min.x and localPos.x < max.x
@@ -74,12 +73,11 @@ function Star_Trek.Sections:GetInSection(deck, sectionId, allowMap, allowChildre
 
 	for _, areaData in pairs(sectionData.Areas) do
 		local pos = areaData.Pos
-		local angle = areaData.Angle
 		local min = areaData.Min
 		local max = areaData.Max
 
-		local rotMin = LocalToWorld(pos, angle, min, Angle())
-		local rotMax = LocalToWorld(pos, angle, max, Angle())
+		local rotMin = LocalToWorld(pos, Angle(), min, Angle())
+		local rotMax = LocalToWorld(pos, Angle(), max, Angle())
 
 		local realMin = Vector(math.min(rotMin.x, rotMax.x), math.min(rotMin.y, rotMax.y), math.min(rotMin.z, rotMax.z))
 		local realMax = Vector(math.max(rotMin.x, rotMax.x), math.max(rotMin.y, rotMax.y), math.max(rotMin.z, rotMax.z))
@@ -145,16 +143,18 @@ function Star_Trek.Sections:SetupSections()
 			}
 
 			local pos = ent:GetPos()
-			local ang = ent:GetAngles() -- TODO: Check if that actually work with brushes
-			if ang ~= Angle() then
-				print("Non-Zero Angle Detected! This needs testing! (" .. ang .. ") on " .. sectionName)
+			if ent:GetAngles() ~= Angle() then
+				print("Non-Zero Angle Detected! Not implemented!")
 			end
 
 			local min, max = ent:GetCollisionBounds()
 
+			if deck == 1 then
+				print(sectionName, pos, min, max)
+			end
+
 			table.insert(self.Decks[deck].Sections[sectionId].Areas, {
 				Pos = pos,
-				Angle = ang,
 
 				Min = min,
 				Max = max,

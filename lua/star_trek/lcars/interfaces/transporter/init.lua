@@ -293,14 +293,14 @@ local function createWindowTable(menuPos, menuAngle, mainPos, mainAngle, targetS
 		self.MenuWindow.Selection = buttonId
 		buttons[buttonId].Selected = true
 
-		local success, mainWindow = createMainWindow(mainPos, mainAngle, menuTable, padNumber)
+		local success, mainWindow = createMainWindow(mainPos, mainAngle, self, padNumber)
 		if not success then
 			return false, "Error on MainWindow: " .. mainWindow
 		end
 		if istable(self.MainWindow) then
 			mainWindow.WindowId = self.MainWindow.WindowId
 		end
-		menuTable.MainWindow = mainWindow
+		self.MainWindow = mainWindow
 
 		return true
 	end
