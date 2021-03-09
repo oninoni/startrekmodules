@@ -1,3 +1,5 @@
+local transporterUtil = include("util.lua")
+
 local function createMenuWindow(pos, angle, menuTable, padNumber)
 	local buttons = {}
 
@@ -30,14 +32,19 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
 
 	local menuTypeCount = #menuTable.MenuTypes
 
-	if not menuTable.Target then
+	if isnumber(padNumber) then
 		local utilButtonData = {}
-		utilButtonData.Name = "Narrow Beam"
-		utilButtonData.Color = Star_Trek.LCARS.ColorOrange
-
+		if not menuTable.Target then
+			utilButtonData.Name = "Narrow Beam"
+			utilButtonData.Color = Star_Trek.LCARS.ColorOrange
+		else
+			utilButtonData.Name = "Instant Dematerialisation"
+			utilButtonData.Color = Star_Trek.LCARS.ColorOrange
+		end
+		
 		buttons[menuTypeCount + 2] = utilButtonData
 		menuTable.UtilButtonId = menuTypeCount + 2
-
+		
 		function menuTable:GetUtilButtonState()
 			return self.MenuWindow.Buttons[self.UtilButtonId].SelectedCustom or false
 		end
@@ -58,8 +65,8 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
 	local success, menuWindow = Star_Trek.LCARS:CreateWindow("button_list", pos, angle, 30, 400, height, function(windowData, interfaceData, ent, buttonId)
 		if buttonId > menuTypeCount then -- Custom Buttons
 			local button = windowData.Buttons[buttonId]
-
-			if buttonId == menuTypeCount + 2 then
+			
+			if button.Name == "Wide Beam" or button.Name == "Narrow Beam" then
 				button.SelectedCustom = not (button.SelectedCustom or false)
 				if button.SelectedCustom then
 					button.Color = Star_Trek.LCARS.ColorRed
@@ -67,65 +74,85 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
 					button.Color = Star_Trek.LCARS.ColorOrange
 				end
 
-				if not menuTable.Target then
-					if button.SelectedCustom then
-						button.Name = "Wide Beam"
-					else
-						button.Name = "Narrow Beam"
-					end
+				if button.SelectedCustom then
+					button.Name = "Wide Beam"
+				else
+					button.Name = "Narrow Beam"
 				end
 
 				return true
-			elseif buttonId == menuTypeCount + 3 then
-				if menuTable.Target then
-					ent:EmitSound("star_trek.lcars_close")
-					Star_Trek.LCARS:CloseInterface(ent)
+			end
+
+			if button.Name == "Instant Dematerialisation" or button.Name == "Delayed Dematerialisation" then
+				button.SelectedCustom = not (button.SelectedCustom or false)
+				if button.SelectedCustom then
+					button.Color = Star_Trek.LCARS.ColorRed
 				else
-					local targetMenuTable = interfaceData.TargetMenuTable
-					local sourceMenuSelectionName = menuTable.MenuTypes[menuTable.Selection]
-					local targetMenuSelectionName = menuTable.MenuTypes[targetMenuTable.Selection]
-					if istable(sourceMenuSelectionName) or istable(targetMenuSelectionName) then
-						ent:EmitSound("star_trek.lcars_error")
-						return
-					else
-						local sourceWindowFunctions = Star_Trek.LCARS.Windows[menuTable.MainWindow.WindowType]
-						if not istable(sourceWindowFunctions) then
-							Star_Trek:Message("Invalid Source Window Type!")
-							return
-						end
-
-						local targetWindowFunctions = Star_Trek.LCARS.Windows[targetMenuTable.MainWindow.WindowType]
-						if not istable(targetWindowFunctions) then
-							Star_Trek:Message("Invalid Target Window Type!")
-							return
-						end
-
-						local sourceMenuData = sourceWindowFunctions.GetSelected(menuTable.MainWindow)
-						local targetMenuData = targetWindowFunctions.GetSelected(targetMenuTable.MainWindow)
-
-						local sourceMenuSelection = menuTable.MenuWindow.Selection
-						local success, error = menuTable:SelectType(targetMenuTable.MenuWindow.Selection)
-						if not success then
-							Star_Trek:Message(error)
-							return
-						end
-
-						local success, error = targetMenuTable:SelectType(sourceMenuSelection)
-						if not success then
-							Star_Trek:Message(error)
-							return
-						end
-
-						sourceWindowFunctions.SetSelected(targetMenuTable.MainWindow, sourceMenuData)
-						targetWindowFunctions.SetSelected(menuTable.MainWindow, targetMenuData)
-
-						Star_Trek.LCARS:UpdateWindow(ent, targetMenuTable.MenuWindow.WindowId, targetMenuTable.MenuWindow)
-						Star_Trek.LCARS:UpdateWindow(ent, targetMenuTable.MainWindow.WindowId, targetMenuTable.MainWindow)
-						Star_Trek.LCARS:UpdateWindow(ent, menuTable.MainWindow.WindowId, menuTable.MainWindow)
-
-						return true
-					end
+					button.Color = Star_Trek.LCARS.ColorOrange
 				end
+				
+				if button.SelectedCustom then
+					button.Name = "Delayed Dematerialisation"
+				else
+					button.Name = "Instant Dematerialisation"
+				end
+
+				return true
+			end
+
+			if button.Name == "Disable Console" then
+				ent:EmitSound("star_trek.lcars_close")
+				Star_Trek.LCARS:CloseInterface(ent)
+
+				return false
+			end
+
+			if button.Name == "Swap Sides" then
+				local targetMenuTable = interfaceData.TargetMenuTable
+				local sourceMenuSelectionName = menuTable.MenuTypes[menuTable.Selection]
+				local targetMenuSelectionName = menuTable.MenuTypes[targetMenuTable.Selection]
+				if istable(sourceMenuSelectionName) or istable(targetMenuSelectionName) then
+					ent:EmitSound("star_trek.lcars_error")
+
+					return false
+				end
+			
+				local sourceWindowFunctions = Star_Trek.LCARS.Windows[menuTable.MainWindow.WindowType]
+				if not istable(sourceWindowFunctions) then
+					Star_Trek:Message("Invalid Source Window Type!")
+					return
+				end
+
+				local targetWindowFunctions = Star_Trek.LCARS.Windows[targetMenuTable.MainWindow.WindowType]
+				if not istable(targetWindowFunctions) then
+					Star_Trek:Message("Invalid Target Window Type!")
+					return
+				end
+
+				local sourceMenuData = sourceWindowFunctions.GetSelected(menuTable.MainWindow)
+				local targetMenuData = targetWindowFunctions.GetSelected(targetMenuTable.MainWindow)
+
+				local sourceMenuSelection = menuTable.MenuWindow.Selection
+				local success, error = menuTable:SelectType(targetMenuTable.MenuWindow.Selection)
+				if not success then
+					Star_Trek:Message(error)
+					return
+				end
+
+				local success, error = targetMenuTable:SelectType(sourceMenuSelection)
+				if not success then
+					Star_Trek:Message(error)
+					return
+				end
+
+				sourceWindowFunctions.SetSelected(targetMenuTable.MainWindow, sourceMenuData)
+				targetWindowFunctions.SetSelected(menuTable.MainWindow, targetMenuData)
+
+				Star_Trek.LCARS:UpdateWindow(ent, targetMenuTable.MenuWindow.WindowId, targetMenuTable.MenuWindow)
+				Star_Trek.LCARS:UpdateWindow(ent, targetMenuTable.MainWindow.WindowId, targetMenuTable.MainWindow)
+				Star_Trek.LCARS:UpdateWindow(ent, menuTable.MainWindow.WindowId, menuTable.MainWindow)
+
+				return true
 			end
 		else
 			local success, error = menuTable:SelectType(buttonId)
@@ -146,22 +173,8 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
 	return true, menuWindow
 end
 
-local function getSelectionName(menuTable)
-	local selection = menuTable.MenuWindow.Selection
-	local selectionName = menuTable.MenuTypes[selection]
-	if istable(selectionName) then
-		if menuTable.Target then
-			selectionName = selectionName[2]
-		else
-			selectionName = selectionName[1]
-		end
-	end
-
-	return selectionName
-end
-
 local function createMainWindow(pos, angle, menuTable, padNumber)
-	local selectionName = getSelectionName(menuTable)
+	local selectionName = transporterUtil.GetSelectionName(menuTable)
 
 	-- Transport Pad Window
 	if selectionName == "Transporter Pad" then
@@ -308,116 +321,15 @@ local function createWindowTable(menuPos, menuAngle, mainPos, mainAngle, targetS
 	return true, menuTable
 end
 
-local function getPatternData(menuTable, wideField)
-	local selectionName = getSelectionName(menuTable)
-	local mainWindow = menuTable.MainWindow
-
-	if selectionName == "Transporter Pad" then
-		local pads = {}
-		for _, pad in pairs(mainWindow.Pads) do
-			if pad.Selected then
-				table.insert(pads, pad.Data)
-			end
-		end
-
-		return Star_Trek.Transporter:GetPatternsFromPads(pads)
-	elseif selectionName == "Lifeforms" then
-		local players = {}
-		for _, button in pairs(mainWindow.Buttons) do
-			if button.Selected then
-				table.insert(players, button.Data)
-			end
-		end
-
-		return Star_Trek.Transporter:GetPatternsFromPlayers(players, wideField)
-	elseif selectionName == "Sections" then
-		local positions = {}
-
-		if menuTable.Target then
-			local categoryData = mainWindow.Categories[mainWindow.Selected]
-			for _, button in pairs(categoryData.Buttons or {}) do
-				if button.Selected then
-					local sectionData = button.Data or {}
-
-					for _, pos in pairs(sectionData.BeamLocations or {}) do
-						table.insert(positions, pos)
-					end
-				end
-			end
-
-			return Star_Trek.Transporter:GetPatternsFromLocations(positions, wideField)
-		else
-			local deck = mainWindow.Selected
-			local categoryData = mainWindow.Categories[deck]
-
-			local sectionIds = {}
-
-			for buttonId, buttonData in pairs(categoryData.Buttons) do
-				if buttonData.Selected then
-					table.insert(sectionIds, buttonData.Data.Id)
-				end
-			end
-
-			return Star_Trek.Transporter:GetPatternsFromAreas(deck, sectionIds)
-		end
-	elseif selectionName == "Buffer" then
-		local entities = {}
-		for _, button in pairs(mainWindow.Buttons) do
-			if button.Selected then
-				table.insert(entities, button.Data)
-			end
-		end
-
-		return Star_Trek.Transporter:GetPatternsFromBuffers(entities)
-	elseif selectionName == "Other Pads" or selectionName == "Transporter Pads"  then
-		local pads = {}
-		for _, button in pairs(mainWindow.Buttons) do
-			if button.Selected then
-				for _, pad in pairs(button.Data) do
-					table.insert(pads, pad)
-				end
-			end
-		end
-
-		return Star_Trek.Transporter:GetPatternsFromPads(pads)
-	end
-end
-
-local function triggerTransporter(interfaceData)
-	local sourceMenuTable = interfaceData.SourceMenuTable
-	local targetMenuTable = interfaceData.TargetMenuTable
-
-	local wideField = sourceMenuTable:GetUtilButtonState()
-	local sourcePatterns = getPatternData(sourceMenuTable, wideField)
-	local targetPatterns = getPatternData(targetMenuTable, false)
-
-	Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPatterns)
-
-	-- Force Update of Buffer Table, by just switching.
-	-- Updating would require a callback (TODO)
-	if sourcePatterns.IsBuffer then
-		local success, error = sourceMenuTable:SelectType(1)
-		if not success then
-			Star_Trek:Message(error)
-			return
-		end
-
-		local ent = table.KeyFromValue(Star_Trek.LCARS.ActiveInterfaces, interfaceData)
-		if not IsValid(ent) then
-			Star_Trek:Message("Invalid Entity on Buffer Menu Update")
-			return
-		end
-
-		Star_Trek.LCARS:UpdateWindow(ent, sourceMenuTable.MenuWindow.WindowId, sourceMenuTable.MenuWindow)
-		Star_Trek.LCARS:UpdateWindow(ent, sourceMenuTable.MainWindow.WindowId, sourceMenuTable.MainWindow)
-	end
-end
-
--- Opening a turbolift control menu.
 function Star_Trek.LCARS:OpenTransporterMenu()
 	local success, ent = self:GetInterfaceEntity(TRIGGER_PLAYER, CALLER)
 	if not success then
 		Star_Trek:Message(ent)
+		return
+	end
+
+	local interfaceData = self.ActiveInterfaces[ent]
+	if istable(interfaceData) then
 		return
 	end
 
@@ -426,25 +338,6 @@ function Star_Trek.LCARS:OpenTransporterMenu()
 	if isstring(consoleName) and string.StartWith(consoleName, "TRConsole") then
 		local split = string.Split(consoleName, "_")
 		padNumber = tonumber(split[2])
-	end
-
-	local interfaceData = self.ActiveInterfaces[ent]
-	if istable(interfaceData) then
-		if interfaceData.TransportActive then
-			ent:EmitSound("star_trek.lcars_error")
-			return
-		end
-		triggerTransporter(interfaceData)
-
-		local animEnt = CALLER
-		animEnt:Fire("FireUser1")
-		interfaceData.TransportActive = true
-		timer.Simple(2, function()
-			animEnt:Fire("FireUser2")
-			interfaceData.TransportActive = false
-		end)
-
-		return
 	end
 
 	local success, sourceMenuTable = createWindowTable(Vector(-15, -2, 6), Angle(5, 15, 30), Vector(-31, -12, 17), Angle(15, 45, 60), false, nil, padNumber)
@@ -469,11 +362,20 @@ function Star_Trek.LCARS:OpenTransporterMenu()
 		return
 	end
 
+	local success, sliderWindow = Star_Trek.LCARS:CreateWindow("transport_slider", Vector(0, -2, 6), Angle(0, 0, 30), 30, 200, 200, function(windowData, interfaceData, ent, buttonId)
+		transporterUtil.TriggerTransporter(self.ActiveInterfaces[ent])
+	end)
+	if not success then
+		Star_Trek:Message(sliderWindow)
+		return
+	end
+
 	local windows = Star_Trek.LCARS:CombineWindows(
 		sourceMenuTable.MenuWindow,
 		sourceMenuTable.MainWindow,
 		targetMenuTable.MenuWindow,
-		targetMenuTable.MainWindow
+		targetMenuTable.MainWindow,
+		sliderWindow
 	)
 
 	local success, error = self:OpenInterface(ent, windows)
@@ -529,7 +431,7 @@ function Star_Trek.LCARS:OpenConsoleTransporterMenu()
 	end
 
 	local success, sliderWindow = Star_Trek.LCARS:CreateWindow("transport_slider", Vector(0, -22, 9), Angle(0, 0, -50), 30, 200, 200, function(windowData, interfaceData, ent, buttonId)
-		triggerTransporter(self.ActiveInterfaces[ent])
+		transporterUtil.TriggerTransporter(self.ActiveInterfaces[ent])
 	end)
 	if not success then
 		Star_Trek:Message(sliderWindow)
