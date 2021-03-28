@@ -14,13 +14,13 @@ function Star_Trek.LCARS:OpenReplicatorMenu()
 	local categoryCount = #categories
 
 	table.insert(categories, {
-		Name = "Clean",
+		Name = "CLEAN",
 		Color = Star_Trek.LCARS.ColorOrange,
 		Buttons = {},
 	})
 
 	table.insert(categories, {
-		Name = "Close",
+		Name = "CLOSE",
 		Color = Star_Trek.LCARS.ColorRed,
 		Buttons = {},
 	})
@@ -69,7 +69,7 @@ function Star_Trek.LCARS:OpenReplicatorMenu()
 				Star_Trek.LCARS:CloseInterface(ent)
 			end
 		end
-	end, categories, "Replicator", true)
+	end, categories, "REPLICATOR", "REPL", true)
 	if not success2 then
 		Star_Trek:Message(menuWindow)
 	end

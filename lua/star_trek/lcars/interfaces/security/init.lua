@@ -1,5 +1,5 @@
 local function createMapWindow(deck)
-	local success, mapWindow = Star_Trek.LCARS:CreateWindow("section_map", Vector(13, 0, 0), Angle(0, 0, 0), nil, 850, 500, function(windowData, interfaceData, ent, buttonId)
+	local success, mapWindow = Star_Trek.LCARS:CreateWindow("section_map", Vector(12.5, -2, -2), Angle(0, 0, 0), nil, 1100, 680, function(windowData, interfaceData, ent, buttonId)
 		-- No Interactivity here yet.
 	end, deck)
 	if not success then
@@ -47,7 +47,7 @@ function Star_Trek.LCARS:OpenSecurityMenu()
 	buttons[modeCount + 2] = utilButtonData
 
 	local height = table.maxn(buttons) * 35 + 80
-	local success2, menuWindow = Star_Trek.LCARS:CreateWindow("button_list", Vector(-18, -25, 9), Angle(10, 0, -50), 30, 400, height, function(windowData, interfaceData, ent, buttonId)
+	local success2, menuWindow = Star_Trek.LCARS:CreateWindow("button_list", Vector(-22, -34, 8), Angle(0, 0, -90), 19, 400, height, function(windowData, interfaceData, ent, buttonId)
 		if buttonId == modeCount + 2 then
 			ent:EmitSound("star_trek.lcars_close")
 			Star_Trek.LCARS:CloseInterface(ent)
@@ -55,7 +55,7 @@ function Star_Trek.LCARS:OpenSecurityMenu()
 			print(buttonId)
 			-- TODO: Mode Selection
 		end
-	end , buttons, "Modes")
+	end , buttons, "MODES")
 	if not success2 then
 		Star_Trek:Message(menuWindow)
 		return
@@ -67,7 +67,7 @@ function Star_Trek.LCARS:OpenSecurityMenu()
 		return
 	end
 
-	local success4, sectionWindow = Star_Trek.LCARS:CreateWindow("category_list", Vector(-22, 0, 0), Angle(0, 0, 0), nil, 500, 500, function(windowData, interfaceData, ent, categoryId, buttonId)
+	local success4, sectionWindow = Star_Trek.LCARS:CreateWindow("category_list", Vector(-28, -5, -2), Angle(0, 0, 0), nil, 500, 700, function(windowData, interfaceData, ent, categoryId, buttonId)
 		if isnumber(buttonId) then
 			local windowFunctions = Star_Trek.LCARS.Windows[mapWindow.WindowType]
 			if not istable(windowFunctions) then
@@ -95,7 +95,7 @@ function Star_Trek.LCARS:OpenSecurityMenu()
 			newMapWindow.WindowId = mapWindow.WindowId
 			mapWindow = newMapWindow
 		end
-	end, Star_Trek.LCARS:GetSectionCategories(), "Sections", true)
+	end, Star_Trek.LCARS:GetSectionCategories(), "SECTIONS", "SECTNS", true)
 	if not success4 then
 		Star_Trek:Message(menuWindow)
 		return

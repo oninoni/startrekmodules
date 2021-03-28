@@ -1,6 +1,7 @@
-function WINDOW.OnCreate(windowData, categories, title, toggle)
+function WINDOW.OnCreate(windowData, categories, title, titleShort, toggle)
 	windowData.Categories = {}
 	windowData.Title = title or ""
+	windowData.TitleShort = titleShort or windowData.Title
 	windowData.Toggle = toggle
 
 	if not istable(categories) then

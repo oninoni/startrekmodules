@@ -46,6 +46,10 @@ function Star_Trek.LCARS:OpenMenu()
 	local width = tonumber(keyValues["lcars_width"])
 	local height = tonumber(keyValues["lcars_height"])
 	local title = keyValues["lcars_title"]
+	local titleShort = keyValues["lcars_title_short"]
+	if titleShort == false then
+		titleShort = ""
+	end
 
 	if not height then
 		height = math.max(2, math.min(6, table.maxn(buttons))) * 35 + 80
@@ -75,7 +79,7 @@ function Star_Trek.LCARS:OpenMenu()
 
 		ent:EmitSound("star_trek.lcars_close")
 		Star_Trek.LCARS:CloseInterface(ent)
-	end, buttons, title)
+	end, buttons, title, titleShort)
 	if not success then
 		Star_Trek:Message(window)
 	end

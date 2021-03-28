@@ -61,7 +61,8 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
 	buttons[menuTypeCount + 3] = utilButtonData
 
 	local height = table.maxn(buttons) * 35 + 80
-	local name = "Transporter " .. (menuTable.Target and "Target" or "Source")
+	local transporterType = menuTable.Target and "Target" or "Source"
+	local name = "Transporter " .. transporterType
 	local success, menuWindow = Star_Trek.LCARS:CreateWindow("button_list", pos, angle, 30, 400, height, function(windowData, interfaceData, ent, buttonId)
 		if buttonId > menuTypeCount then -- Custom Buttons
 			local button = windowData.Buttons[buttonId]
@@ -165,7 +166,7 @@ local function createMenuWindow(pos, angle, menuTable, padNumber)
 
 			return true
 		end
-	end, buttons, name)
+	end, buttons, name, transporterType)
 	if not success then
 		return false, menuWindow
 	end
@@ -180,7 +181,7 @@ local function createMainWindow(pos, angle, menuTable, padNumber)
 	if selectionName == "Transporter Pad" then
 		local success, mainWindow = Star_Trek.LCARS:CreateWindow("transport_pad", pos, angle, nil, 500, 500, function(windowData, interfaceData, ent, buttonId)
 			-- Does nothing special here.
-		end, padNumber, selectionName)
+		end, padNumber, "Transporter Pad", "Pad")
 		if not success then
 			return false, mainWindow
 		end
@@ -195,7 +196,7 @@ local function createMainWindow(pos, angle, menuTable, padNumber)
 	if selectionName == "Sections" then
 		local success, mainWindow = Star_Trek.LCARS:CreateWindow("category_list", pos, angle, nil, 500, 500, function(windowData, interfaceData, ent, categoryId, buttonId)
 			-- Does nothing special here.
-		end, Star_Trek.LCARS:GetSectionCategories(menuTable.Target), selectionName, true)
+		end, Star_Trek.LCARS:GetSectionCategories(menuTable.Target), "Sections", "SECTNS", true)
 		if not success then
 			return false, mainWindow
 		end
@@ -204,7 +205,10 @@ local function createMainWindow(pos, angle, menuTable, padNumber)
 	end
 
 	-- Button List Window
+	local titleShort = ""
 	if selectionName == "Lifeforms" then
+		titleShort = "LIFE"
+
 		for _, ply in pairs(player.GetHumans()) do
 			table.insert(buttons, {
 				Name = ply:GetName(),
@@ -217,6 +221,8 @@ local function createMainWindow(pos, angle, menuTable, padNumber)
 			-- Does nothing special here.
 		end
 	elseif selectionName == "Buffer" then
+		titleShort = "Buffer"
+
 		for _, ent in pairs(Star_Trek.Transporter.Buffer.Entities) do
 			local name = "Unknown Pattern"
 			if ent:IsPlayer() or ent:IsNPC() then
@@ -238,6 +244,8 @@ local function createMainWindow(pos, angle, menuTable, padNumber)
 			-- Does nothing special here.
 		end
 	elseif selectionName == "Other Pads" or selectionName == "Transporter Pads"  then
+		titleShort = "Pads"
+
 		local pads = {}
 		for _, pad in pairs(ents.GetAll()) do
 			local name = pad:GetName()
@@ -268,7 +276,7 @@ local function createMainWindow(pos, angle, menuTable, padNumber)
 		return false, "Invalid Menu Type"
 	end
 
-	local success, mainWindow = Star_Trek.LCARS:CreateWindow("button_list", pos, angle, nil, 500, 500, callback, buttons, selectionName, true)
+	local success, mainWindow = Star_Trek.LCARS:CreateWindow("button_list", pos, angle, nil, 500, 500, callback, buttons, selectionName, titleShort, true)
 	if not success then
 		return false, mainWindow
 	end

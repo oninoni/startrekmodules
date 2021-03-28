@@ -1,5 +1,7 @@
 function WINDOW.OnCreate(self, windowData)
 	self.Title = windowData.Title
+	self.TitleShort = windowData.TitleShort
+	
 	self.Buttons = windowData.Buttons
 
 	self.MaxN = table.maxn(self.Buttons)
@@ -10,7 +12,16 @@ function WINDOW.OnCreate(self, windowData)
 	self.ButtonsTopAlpha = self.ButtonsStart
 	self.ButtonsBotAlpha = self.HD2 - 25
 
-	self.FrameMaterialData = Star_Trek.LCARS:CreateFrame(self.Id, self.WWidth, self.WHeight, self.Title)
+	self.FrameMaterialData = Star_Trek.LCARS:CreateFrame(
+		self.Id,
+		self.WWidth,
+		self.WHeight,
+		self.Title,
+		self.TitleShort,
+		Star_Trek.LCARS.ColorOrange,
+		Star_Trek.LCARS.ColorBlue,
+		Star_Trek.LCARS.ColorLightRed
+	)
 
 	return self
 end

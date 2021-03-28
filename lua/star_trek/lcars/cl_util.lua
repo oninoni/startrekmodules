@@ -223,9 +223,9 @@ function Star_Trek.LCARS:DrawFrameSpacer(y, width, top_color, bottom_color)
 	Star_Trek.LCARS:DrawFrameSpacePart(y + LCARS_CORNER_RADIUS * 2 + LCARS_FRAME_OFFSET, width, LCARS_BORDER_WIDTH, true, bottom_color)
 end
 
-function Star_Trek.LCARS:DrawFrame(width, height, title)
-	Star_Trek.LCARS:DrawFrameSpacer(0, width, Star_Trek.LCARS.ColorOrange, Star_Trek.LCARS.ColorLightRed)
-	draw.SimpleText(title, "LCARSMed", width - 4, 4, nil, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
+function Star_Trek.LCARS:DrawFrame(width, height, title, titleShort, color1, color2, color3)
+	Star_Trek.LCARS:DrawFrameSpacer(0, width, color1, color2)
+	draw.SimpleText(title, "LCARSMed", width * 0.95, 3, nil, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
 
 	local frameStartOffset = LCARS_CORNER_RADIUS * 4 + LCARS_FRAME_OFFSET
 	local remainingHeight = height - frameStartOffset
@@ -240,18 +240,20 @@ function Star_Trek.LCARS:DrawFrame(width, height, title)
 		LCARS_BORDER_WIDTH,
 		frameStartOffset + LCARS_BORDER_WIDTH,
 		LCARS_CORNER_RADIUS * 2 - LCARS_BORDER_WIDTH * 2, remainingHeight / 2 - LCARS_BORDER_WIDTH,
-	Star_Trek.LCARS.ColorLightRed)
+	color2)
 
 	draw.RoundedBox(0,
 		LCARS_BORDER_WIDTH,
 		frameStartOffset + LCARS_BORDER_WIDTH + remainingHeight / 2,
 		LCARS_CORNER_RADIUS * 2 - LCARS_BORDER_WIDTH * 2, remainingHeight / 2 - LCARS_BORDER_WIDTH,
-	Star_Trek.LCARS.ColorOrange)
+	color3)
+
+	draw.SimpleText(titleShort, "LCARSSmall", LCARS_CORNER_RADIUS, frameStartOffset, Star_Trek.LCARS.ColorBlack, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
 end
 
-function Star_Trek.LCARS:DrawDoubleFrame(width, height, title, height2)
-	Star_Trek.LCARS:DrawFrameSpacer(0, width, Star_Trek.LCARS.ColorOrange, Star_Trek.LCARS.ColorLightRed)
-	draw.SimpleText(title, "LCARSMed", width - 4, 4, nil, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
+function Star_Trek.LCARS:DrawDoubleFrame(width, height, title, titleShort, color1, color2, color3, height2, color4)
+	Star_Trek.LCARS:DrawFrameSpacer(0, width, color1, color2)
+	draw.SimpleText(title, "LCARSMed", width * 0.95, 3, nil, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
 
 	local topFrameStartOffset = LCARS_CORNER_RADIUS * 4 + LCARS_FRAME_OFFSET
 
@@ -265,9 +267,9 @@ function Star_Trek.LCARS:DrawDoubleFrame(width, height, title, height2)
 		LCARS_BORDER_WIDTH,
 		topFrameStartOffset + LCARS_BORDER_WIDTH,
 		LCARS_CORNER_RADIUS * 2 - LCARS_BORDER_WIDTH * 2, height2 - topFrameStartOffset - LCARS_BORDER_WIDTH,
-	Star_Trek.LCARS.ColorLightRed)
+	color2)
 
-	Star_Trek.LCARS:DrawFrameSpacer(height2, width, Star_Trek.LCARS.ColorLightRed, Star_Trek.LCARS.ColorOrange)
+	Star_Trek.LCARS:DrawFrameSpacer(height2, width, color2, color3)
 
 	local bottomFrameStarOffset = height2 + topFrameStartOffset
 	local remainingHeight = height - bottomFrameStarOffset
@@ -282,24 +284,32 @@ function Star_Trek.LCARS:DrawDoubleFrame(width, height, title, height2)
 		LCARS_BORDER_WIDTH,
 		bottomFrameStarOffset + LCARS_BORDER_WIDTH,
 		LCARS_CORNER_RADIUS * 2 - LCARS_BORDER_WIDTH * 2, remainingHeight / 2 - LCARS_BORDER_WIDTH,
-	Star_Trek.LCARS.ColorOrange)
+	color3)
 
 	draw.RoundedBox(0,
 		LCARS_BORDER_WIDTH,
 		bottomFrameStarOffset + LCARS_BORDER_WIDTH + remainingHeight / 2,
 		LCARS_CORNER_RADIUS * 2 - LCARS_BORDER_WIDTH * 2, remainingHeight / 2 - LCARS_BORDER_WIDTH,
-	Star_Trek.LCARS.ColorLightRed)
+	color4)
+
+	draw.SimpleText(titleShort, "LCARSSmall", LCARS_CORNER_RADIUS, topFrameStartOffset, Star_Trek.LCARS.ColorBlack, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
 end
 
 local function filterSize(value)
 	return 2 ^ math.ceil(math.log(value) / math.log(2))
 end
 
-function Star_Trek.LCARS:CreateFrame(id, width, height, title, height2)
+function Star_Trek.LCARS:CreateFrame(id, width, height, title, titleShort, color1, color2, color3, height2, color4)
 	tWidth = filterSize(width)
 	tHeight = filterSize(height)
 
-	local texture = GetRenderTarget("LCARS_Frame_" .. id, tWidth, tHeight)
+	color1 = color1 or table.Random(Star_Trek.LCARS.Colors)
+	color2 = color2 or table.Random(Star_Trek.LCARS.Colors)
+	color3 = color3 or table.Random(Star_Trek.LCARS.Colors)
+	color4 = color4 or table.Random(Star_Trek.LCARS.Colors)
+
+	local textureName = "LCARS_Frame_" .. id .. "_" .. width .. "x" .. height
+	local texture = GetRenderTarget(textureName, tWidth, tHeight)
 
 	local oldW, oldH = ScrW(), ScrH()
 	render.SetViewPort(0, 0, tWidth, tHeight)
@@ -309,16 +319,16 @@ function Star_Trek.LCARS:CreateFrame(id, width, height, title, height2)
 		render.Clear(0, 0, 0, 0, true, true)
 
 		if isnumber(height2) then
-			Star_Trek.LCARS:DrawDoubleFrame(width, height, title, height2)
+			Star_Trek.LCARS:DrawDoubleFrame(width, height, title, titleShort, color1, color2, color3, height2, color4)
 		else
-			Star_Trek.LCARS:DrawFrame(width, height, title)
+			Star_Trek.LCARS:DrawFrame(width, height, title, titleShort, color1, color2, color3)
 		end
 	cam.End2D()
 	render.PopRenderTarget()
 
 	render.SetViewPort(0, 0, oldW, oldH)
 
-	local material = CreateMaterial("LCARS_Frame_" .. id, "UnlitGeneric", {
+	local material = CreateMaterial(textureName, "UnlitGeneric", {
 		["$basetexture"] = texture:GetName(),
 		["$translucent"] = 1,
 		["$vertexalpha"] = 1,

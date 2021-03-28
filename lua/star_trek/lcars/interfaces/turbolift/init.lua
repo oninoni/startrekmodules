@@ -74,7 +74,7 @@ function Star_Trek.LCARS:OpenTurboliftMenu()
 				Star_Trek.LCARS:CloseInterface(ent)
 			end
 		end
-	end, buttons, "Turbolift")
+	end, buttons, "TURBOLIFT", "TRBLFT")
 	if not success then
 		Star_Trek:Message(window)
 		return

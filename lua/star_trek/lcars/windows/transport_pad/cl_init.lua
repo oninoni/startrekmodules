@@ -1,6 +1,8 @@
 function WINDOW.OnCreate(self, windowData)
-	self.Pads = windowData.Pads
 	self.Title = windowData.Title
+	self.TitleShort = windowData.TitleShort
+
+	self.Pads = windowData.Pads
 
 	self.PadRadius = self.WHeight / 8
 
@@ -15,7 +17,16 @@ function WINDOW.OnCreate(self, windowData)
 	end
 	table.insert(self.HexValues, self.HexValues[1])
 
-	self.FrameMaterialData = Star_Trek.LCARS:CreateFrame(self.Id, self.WWidth, self.WHeight, self.Title)
+	self.FrameMaterialData = Star_Trek.LCARS:CreateFrame(
+		self.Id,
+		self.WWidth,
+		self.WHeight,
+		self.Title,
+		self.TitleShort,
+		Star_Trek.LCARS.ColorLightRed,
+		Star_Trek.LCARS.ColorOrange,
+		Star_Trek.LCARS.ColorLightRed
+	)
 
 	return self
 end

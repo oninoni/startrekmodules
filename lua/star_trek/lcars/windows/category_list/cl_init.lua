@@ -28,6 +28,8 @@ end
 
 function WINDOW.OnCreate(self, windowData)
 	self.Title = windowData.Title
+	self.TitleShort = windowData.TitleShort
+
 	self.Selected = windowData.Selected
 	self.Categories = windowData.Categories
 
@@ -61,7 +63,18 @@ function WINDOW.OnCreate(self, windowData)
 		end
 	end
 
-	self.FrameMaterialData = Star_Trek.LCARS:CreateFrame(self.Id, self.WWidth, self.WHeight, self.Title, self.CategoryHeight)
+	self.FrameMaterialData = Star_Trek.LCARS:CreateFrame(
+		self.Id,
+		self.WWidth,
+		self.WHeight,
+		self.Title,
+		self.TitleShort,
+		Star_Trek.LCARS.ColorOrange,
+		Star_Trek.LCARS.ColorLightRed,
+		Star_Trek.LCARS.ColorBlue,
+		self.CategoryHeight,
+		Star_Trek.LCARS.ColorLightRed
+	)
 
 	return self
 end

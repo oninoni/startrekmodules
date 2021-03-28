@@ -18,7 +18,7 @@
 
 Star_Trek.Replicator.Categories = {
 	{
-		Name = "Food",
+		Name = "FOOD",
 		Disabled = false,
 		Buttons = {
 			{
@@ -48,7 +48,7 @@ Star_Trek.Replicator.Categories = {
 		},
 	},
 	{
-		Name = "Medical",
+		Name = "MEDICAL",
 		Disabled = false,
 		Buttons = {
 			{
@@ -64,7 +64,7 @@ Star_Trek.Replicator.Categories = {
 		},
 	},
 	{
-		Name = "Stuff",
+		Name = "STUFF",
 		Disabled = false,
 		Buttons = {
 			{
@@ -79,7 +79,7 @@ Star_Trek.Replicator.Categories = {
 		},
 	},
 	{
-		Name = "Weapons",
+		Name = "WEAPONS",
 		Disabled = false,
 		Buttons = {
 			{
