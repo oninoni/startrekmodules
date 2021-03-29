@@ -1,13 +1,4 @@
-local function createMapWindow(deck)
-	local success, mapWindow = Star_Trek.LCARS:CreateWindow("section_map", Vector(12.5, -2, -2), Angle(0, 0, 0), nil, 1100, 680, function(windowData, interfaceData, ent, buttonId)
-		-- No Interactivity here yet.
-	end, deck)
-	if not success then
-		return false, mapWindow
-	end
-
-	return true, mapWindow
-end
+local securityUtil = include("util.lua")
 
 function Star_Trek.LCARS:OpenSecurityMenu()
 	local success, interfaceEnt = self:GetInterfaceEntity(TRIGGER_PLAYER, CALLER)
@@ -61,7 +52,7 @@ function Star_Trek.LCARS:OpenSecurityMenu()
 		return
 	end
 
-	local success3, mapWindow = createMapWindow(1)
+	local success3, mapWindow = securityUtil.CreateMapWindow(1)
 	if not success3 then
 		Star_Trek:Message(mapWindow)
 		return
@@ -85,7 +76,7 @@ function Star_Trek.LCARS:OpenSecurityMenu()
 			
 			Star_Trek.LCARS:UpdateWindow(ent, mapWindow.WindowId, mapWindow)
 		else
-			local updateSuccess, newMapWindow = createMapWindow(categoryId)
+			local updateSuccess, newMapWindow = securityUtil.CreateMapWindow(categoryId)
 			if not updateSuccess then
 				Star_Trek:Message(newMapWindow)
 				return

@@ -1,23 +1,6 @@
-local function generateButtons(ent, triggerEntity, keyValues)
-	local buttons = {}
-	for i = 1, 20 do
-		local name = keyValues["lcars_name_" .. i]
-		if isstring(name) then
-			local disabled = keyValues["lcars_disabled_" .. i]
+local basicUtil = include("util.lua")
 
-			buttons[i] = {
-				Name = name,
-				Disabled = disabled,
-			}
-		else
-			break
-		end
-	end
-
-	return buttons
-end
-
--- Opening a general Purpose Menu
+-- Opening general purpose menus.
 function Star_Trek.LCARS:OpenMenu()
 	local success, ent = self:GetInterfaceEntity(TRIGGER_PLAYER, CALLER)
 	if not success then
@@ -40,7 +23,7 @@ function Star_Trek.LCARS:OpenMenu()
 		Star_Trek:Message("Invalid Key Values on OpenMenu")
 	end
 
-	local buttons = generateButtons(ent, triggerEntity, keyValues)
+	local buttons = basicUtil.GenerateButtons(keyValues)
 
 	local scale = tonumber(keyValues["lcars_scale"])
 	local width = tonumber(keyValues["lcars_width"])
@@ -92,6 +75,7 @@ function Star_Trek.LCARS:OpenMenu()
 	end
 end
 
+-- Update general purpose menus.
 hook.Add("Think", "Star_Trek.LCARS.BasicInterface", function()
 	for ent, interfaceData in pairs(Star_Trek.LCARS.ActiveInterfaces) do
 		if IsValid(ent) then
@@ -101,7 +85,7 @@ hook.Add("Think", "Star_Trek.LCARS.BasicInterface", function()
 			end
 
 			if triggerEntity.LCARSMenuChanged then
-				local buttons = generateButtons(ent, triggerEntity, triggerEntity.LCARSKeyData)
+				local buttons = basicUtil.GenerateButtons(triggerEntity.LCARSKeyData)
 				for i, button in pairs(buttons) do
 					interfaceData.Windows[1].Buttons[i].Name = button.Name
 					interfaceData.Windows[1].Buttons[i].Disabled = button.Disabled
@@ -115,7 +99,7 @@ hook.Add("Think", "Star_Trek.LCARS.BasicInterface", function()
 	end
 end)
 
--- Detect Updates in _name, _disabled.
+-- Detect updates in "lcars_name_i", "lcars_disabled_i".
 hook.Add("Star_Trek.ChangedKeyValue", "Star_Trek.LCARS.BasicInterface", function(ent, key, value)
 	if string.StartWith(key, "lcars_name_") or string.StartWith(key, "lcars_disabled_") then
 		local keyValues = ent.LCARSKeyData
