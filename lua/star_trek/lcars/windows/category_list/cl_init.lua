@@ -39,7 +39,7 @@ function WINDOW.OnCreate(self, windowData)
 	self.CategoryHeight = math.max(2, math.ceil(self.MaxN / 4)) * 35 + 50
 
 	self.ButtonsStart = -self.HD2 + self.CategoryHeight + 79
-	self.ButtonsHeight = self.WD2 - self.ButtonsStart
+	self.ButtonsHeight = self.HD2 - self.ButtonsStart
 
 	self.ButtonsTopAlpha = self.ButtonsStart
 	self.ButtonsBotAlpha = self.HD2 - 20

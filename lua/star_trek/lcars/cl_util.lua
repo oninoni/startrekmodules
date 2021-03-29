@@ -58,9 +58,8 @@ local LCARS_FRAME_OFFSET = 4
 local LCARS_BORDER_WIDTH = 2
 local LCARS_STRIP_HEIGHT = 20
 
--- TODO: Redo with pre-render functionality.
-
 -- Drawing a normal LCARS panel. (2D Rendering Context)
+-- TODO: Redo with pre-render functionality.
 --
 -- @param Number x
 -- @param Number y
@@ -84,9 +83,8 @@ function Star_Trek.LCARS:DrawButtonGraphic(x, y, width, height, color, alpha, po
 	draw.RoundedBox(15, x, y, width -2, height -2, color)
 end
 
--- TODO: Redo with pre-render functionality.
-
 -- Drawing a normal LCARS panel button. (2D Rendering Context)
+-- TODO: Redo with pre-render functionality.
 --
 -- @param Number x
 -- @param Number y
@@ -122,7 +120,14 @@ function Star_Trek.LCARS:DrawButton(x, y, width, text, color, s, l, alpha, pos)
 	draw.DrawText(l, "LCARSSmall", 71 + x + widthOffset, y + 18, lcars_black, TEXT_ALIGN_LEFT)
 end
 
-function Star_Trek.LCARS:DrawCircle(x, y, radius, seg, r, g, b, a)
+-- Drawing a circle using the given ammount of segments.
+--
+-- @param Number x
+-- @param Number y
+-- @param Number radius
+-- @param Number seg
+-- @param Color color
+function Star_Trek.LCARS:DrawCircle(x, y, radius, seg, color)
 	local cir = {}
 
 	table.insert(cir, {x = x, y = y})
@@ -132,18 +137,25 @@ function Star_Trek.LCARS:DrawCircle(x, y, radius, seg, r, g, b, a)
 	end
 	table.insert(cir, {x = x, y = y})
 
-	surface.SetDrawColor(r, g, b, a)
+	surface.SetDrawColor(color)
 	draw.NoTexture()
 	surface.DrawPoly(cir)
 end
 
+-- Draw a part of the framed spacer.
+--
+-- @param Number y
+-- @param Number width
+-- @param Number border
+-- @param Boolean flip
+-- @param Color color
 function Star_Trek.LCARS:DrawFrameSpacePart(y, width, border, flip, color)
 	-- Outer Circle
 	Star_Trek.LCARS:DrawCircle(
 		LCARS_CORNER_RADIUS,
 		y + LCARS_CORNER_RADIUS,
 		LCARS_CORNER_RADIUS - border, 16,
-	color.r, color.g, color.b, color.a)
+	color)
 
 	-- Flat Piece
 	if flip then
@@ -189,13 +201,13 @@ function Star_Trek.LCARS:DrawFrameSpacePart(y, width, border, flip, color)
 				LCARS_CORNER_RADIUS * 2 + LCARS_INNER_RADIUS,
 				y + LCARS_STRIP_HEIGHT + LCARS_INNER_RADIUS,
 				LCARS_INNER_RADIUS + border, 16,
-			0, 0, 0, 1)
+			Color(0, 0, 0, 1))
 		else
 			Star_Trek.LCARS:DrawCircle(
 				LCARS_CORNER_RADIUS * 2 + LCARS_INNER_RADIUS,
 				y + LCARS_CORNER_RADIUS * 2 - LCARS_STRIP_HEIGHT - LCARS_INNER_RADIUS,
 				LCARS_INNER_RADIUS + border, 16,
-			0, 0, 0, 1)
+			Color(0, 0, 0, 1))
 		end
 
 		render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_NOTEQUAL)
@@ -215,6 +227,12 @@ function Star_Trek.LCARS:DrawFrameSpacePart(y, width, border, flip, color)
 	render.SetStencilEnable(false)
 end
 
+-- Draws a frame spacer.
+--
+-- @param Number y
+-- @param Number width
+-- @param Color top_color
+-- @param Color bottom_color
 function Star_Trek.LCARS:DrawFrameSpacer(y, width, top_color, bottom_color)
 	Star_Trek.LCARS:DrawFrameSpacePart(y, width, 0, false, Star_Trek.LCARS.ColorBlack)
 	Star_Trek.LCARS:DrawFrameSpacePart(y, width, LCARS_BORDER_WIDTH, false, top_color)
@@ -308,7 +326,7 @@ function Star_Trek.LCARS:CreateFrame(id, width, height, title, titleShort, color
 	color3 = color3 or table.Random(Star_Trek.LCARS.Colors)
 	color4 = color4 or table.Random(Star_Trek.LCARS.Colors)
 
-	local textureName = "LCARS_Frame_" .. id .. "_" .. width .. "x" .. height
+	local textureName = "LCARS_Frame_" .. id .. "_" .. tWidth .. "x" .. tHeight
 	local texture = GetRenderTarget(textureName, tWidth, tHeight)
 
 	local oldW, oldH = ScrW(), ScrH()
