@@ -16,6 +16,7 @@
 --           Doors | Client          --
 ---------------------------------------
 
+-- Stop rendering the portal on a closed door.
 hook.Add("wp-shouldrender", "Star_Trek.HidePortalInDoors", function(portal, exitPortal )
 	local camOrigin = LocalPlayer():EyePos()
 	local distance = camOrigin:Distance( portal:GetPos() )
