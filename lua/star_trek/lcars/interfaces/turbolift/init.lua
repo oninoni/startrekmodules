@@ -22,29 +22,40 @@ function Star_Trek.LCARS:OpenTurboliftMenu()
 
 	local buttons = turboliftUtil.GenerateButtons(ent, keyValues)
 
-	local success, window = self:CreateWindow("button_list", Vector(), Angle(), 30, 600, 325, function(windowData, interfaceData, ent, buttonId)
-		if ent.IsTurbolift then
-			Star_Trek.Turbolift:StartLift(ent, buttonId)
-
-			ent:EmitSound("star_trek.lcars_close")
-			Star_Trek.LCARS:CloseInterface(ent)
-		elseif ent.IsPod then
-			if buttonId == 1 then
-				if Star_Trek.Turbolift:TogglePos(ent) then
-					windowData.Buttons[1].Name = "Resume Lift"
-				else
-					windowData.Buttons[1].Name = "Stop Lift"
-				end
-
-				return true
-			else
-				Star_Trek.Turbolift:ReRoutePod(ent, buttonId - 1)
+	local success, window = self:CreateWindow(
+		"button_list",
+		Vector(),
+		Angle(),
+		30,
+		600,
+		325,
+		function(windowData, interfaceData, ent, buttonId)
+			if ent.IsTurbolift then
+				Star_Trek.Turbolift:StartLift(ent, buttonId)
 
 				ent:EmitSound("star_trek.lcars_close")
 				Star_Trek.LCARS:CloseInterface(ent)
+			elseif ent.IsPod then
+				if buttonId == 1 then
+					if Star_Trek.Turbolift:TogglePos(ent) then
+						windowData.Buttons[1].Name = "Resume Lift"
+					else
+						windowData.Buttons[1].Name = "Stop Lift"
+					end
+
+					return true
+				else
+					Star_Trek.Turbolift:ReRoutePod(ent, buttonId - 1)
+
+					ent:EmitSound("star_trek.lcars_close")
+					Star_Trek.LCARS:CloseInterface(ent)
+				end
 			end
-		end
-	end, buttons, "TURBOLIFT", "TRBLFT")
+		end,
+		buttons,
+		"TURBOLIFT",
+		"TRBLFT"
+	)
 	if not success then
 		Star_Trek:Message(window)
 		return

@@ -37,32 +37,43 @@ function Star_Trek.LCARS:OpenMenu()
 	if not height then
 		height = math.max(2, math.min(6, table.maxn(buttons))) * 35 + 80
 	end
-	local success, window = self:CreateWindow("button_list", Vector(), Angle(), scale, width, height, function(windowData, interfaceData, ent, buttonId)
-		local triggerEntity = ent:GetParent()
-		if not IsValid(triggerEntity) then
-			triggerEntity = ent
-		end
-
-		if buttonId > 4 then
-			local name = triggerEntity:GetName()
-			local caseEntities = ents.FindByName(name .. "_case")
-			for _, caseEnt in pairs(caseEntities) do
-				if IsValid(caseEnt) then
-					caseEnt:Fire("InValue", buttonId - 4)
-				end
+	local success, window = self:CreateWindow(
+		"button_list",
+		Vector(),
+		Angle(),
+		scale,
+		width,
+		height,
+		function(windowData, interfaceData, ent, buttonId)
+			local triggerEntity = ent:GetParent()
+			if not IsValid(triggerEntity) then
+				triggerEntity = ent
 			end
-		else
-			triggerEntity:Fire("FireUser" .. buttonId)
-		end
 
-		local keyValues = triggerEntity.LCARSKeyData
-		if istable(keyValues) and keyValues["lcars_keep_open"] then
-			return
-		end
+			if buttonId > 4 then
+				local name = triggerEntity:GetName()
+				local caseEntities = ents.FindByName(name .. "_case")
+				for _, caseEnt in pairs(caseEntities) do
+					if IsValid(caseEnt) then
+						caseEnt:Fire("InValue", buttonId - 4)
+					end
+				end
+			else
+				triggerEntity:Fire("FireUser" .. buttonId)
+			end
 
-		ent:EmitSound("star_trek.lcars_close")
-		Star_Trek.LCARS:CloseInterface(ent)
-	end, buttons, title, titleShort)
+			local keyValues = triggerEntity.LCARSKeyData
+			if istable(keyValues) and keyValues["lcars_keep_open"] then
+				return
+			end
+
+			ent:EmitSound("star_trek.lcars_close")
+			Star_Trek.LCARS:CloseInterface(ent)
+		end,
+		buttons,
+		title,
+		titleShort
+	)
 	if not success then
 		Star_Trek:Message(window)
 	end
