@@ -5,30 +5,42 @@ local function getCategoryRow(self, categories)
 
 	if #categories == 1 then
 		rowData.Width = self.WWidth -58
+		rowData.N = 1
 
 		table.insert(rowData.Categories, categories[1])
 	elseif #categories == 2 then
 		rowData.Width = (self.WWidth -58) / 2
+		rowData.N = 2
 
 		table.insert(rowData.Categories, categories[1])
 		table.insert(rowData.Categories, categories[2])
 	elseif #categories == 3 or #categories == 4 then
 		rowData.Width = (self.WWidth -58) / 4
+		rowData.N = 4
 
 		table.insert(rowData.Categories, categories[1])
 		table.insert(rowData.Categories, categories[2])
 		table.insert(rowData.Categories, categories[3])
 		if #categories == 4 then
 			table.insert(rowData.Categories, categories[4])
+		else
+			table.insert(rowData.Categories, {
+				Disabled = true,
+				Name = "",
+				Color = Star_Trek.LCARS.ColorGrey,
+			})
 		end
 	end
 
 	return rowData
 end
 
+local BUTTON_HEIGHT = 32
+
 function WINDOW.OnCreate(self, windowData)
 	self.Title = windowData.Title
 	self.TitleShort = windowData.TitleShort
+	self.HFlip = windowData.HFlip
 
 	self.Selected = windowData.Selected
 	self.Categories = windowData.Categories
@@ -72,15 +84,48 @@ function WINDOW.OnCreate(self, windowData)
 		Star_Trek.LCARS.ColorOrange,
 		Star_Trek.LCARS.ColorLightRed,
 		Star_Trek.LCARS.ColorBlue,
+		self.HFlip,
 		self.CategoryHeight,
 		Star_Trek.LCARS.ColorLightRed
 	)
+
+	for rowId, rowData in pairs(self.CategoryRows) do
+		for butId, categoryData in pairs(rowData.Categories) do
+			categoryData.MaterialData = Star_Trek.LCARS:CreateButton(
+				self.Id .. "_Cat_" .. rowId .. "_" .. butId,
+				rowData.Width,
+				BUTTON_HEIGHT,
+				categoryData.Color,
+				Star_Trek.LCARS.ColorYellow,
+				categoryData.Name or "[ERROR]",
+				butId > 1,
+				butId < rowData.N
+			)
+		end
+	end
+
+	for catId, category in pairs(self.Categories) do
+		for butId, button in pairs(category.Buttons) do
+			button.MaterialData = Star_Trek.LCARS:CreateButton(
+				self.Id .. "_But_" .. catId .. "_" .. butId,
+				self.WWidth - 64,
+				BUTTON_HEIGHT,
+				button.Color,
+				Star_Trek.LCARS.ColorYellow,
+				button.Name or "[ERROR]",
+				false,
+				false,
+				button.RandomL,
+				button.RandomS
+			)
+		end
+	end
 
 	return self
 end
 
 local function isButtonPressed(x, y, width, height, pos)
-	return pos.x >= (x -1) and pos.x <= (x + width) and pos.y >= (y -1) and pos.y <= (y + height)
+	return pos.x >= (x - width/2) and pos.x <= (x + width/2) and pos.y >= (y -1) and pos.y <= (y + height)
 end
 
 function WINDOW.OnPress(self, pos, animPos)
@@ -88,9 +133,14 @@ function WINDOW.OnPress(self, pos, animPos)
 
 	if pos.y <= -self.HD2 + self.CategoryHeight + 65 then
 		-- Selection
-		for i, rowData in pairs(self.CategoryRows) do
-			for j, categoryData in pairs(rowData.Categories) do
-				if isButtonPressed(-self.WD2 + 53 + (j - 1) * rowData.Width, self.CategoryStart + (i - 1) * 35, rowData.Width - 3, 32, pos) then
+		local x = self.HFlip and -24 or 24
+
+		for rowId, rowData in pairs(self.CategoryRows) do
+			for butId, categoryData in pairs(rowData.Categories) do
+				local xRow = x + ((butId - 0.5) - rowData.N / 2) * rowData.Width
+				local y = self.CategoryStart + (rowId - 1) * 35
+
+				if isButtonPressed(xRow, y, rowData.Width - 3, 32, pos) then
 					return categoryData.Id
 				end
 			end
@@ -114,38 +164,29 @@ function WINDOW.OnPress(self, pos, animPos)
 	end
 end
 
-local color_grey = Star_Trek.LCARS.ColorGrey
-local color_yellow = Star_Trek.LCARS.ColorYellow
-local color_blues = {
-	Star_Trek.LCARS.ColorLightBlue,
-	Star_Trek.LCARS.ColorBlue,
-}
-
 function WINDOW.OnDraw(self, pos, animPos)
+	surface.SetDrawColor(255, 255, 255, 255 * animPos)
 	local selected = self.Selected
+	
+	local x = self.HFlip and -24 or 24
 
-	local alpha = 255 * animPos
-	local lcars_black = Color(0, 0, 0, alpha)
-
-	for i, rowData in pairs(self.CategoryRows) do
-		for j, categoryData in pairs(rowData.Categories) do
-			local color
-			if selected == categoryData.Id then
-				color = color_yellow
-			else
-				if categoryData.Color then
-					color = categoryData.Color
-				else
-					color = color_blues[(i + j) % 2 + 1]
+	for rowId, rowData in pairs(self.CategoryRows) do
+		for butId, categoryData in pairs(rowData.Categories) do
+			local xRow = x + ((butId - 0.5) - rowData.N / 2) * rowData.Width
+			local y = self.CategoryStart + (rowId - 1) * 35
+			
+			local state = 1
+			if not categoryData.Disabled then
+				state = 2
+				if selected == categoryData.Id then
+					state = state + 1
+				end
+				if isButtonPressed(xRow, y, rowData.Width - 3, 32, pos) then
+					state = state + 3
 				end
 			end
 
-			if categoryData.Disabled then
-				color = color_grey
-			end
-
-			Star_Trek.LCARS:DrawButtonGraphic(-self.WD2 + 55 + (j - 1) * rowData.Width, self.CategoryStart + (i - 1) * 35, rowData.Width - 3, 32, color, alpha, pos)
-			draw.DrawText(categoryData.Name, "LCARSText", -self.WD2 + 64 + (j - 1) * rowData.Width, -self.HD2 + (i + 1) * 35 + 12, lcars_black, TEXT_ALIGN_LEFT)
+			Star_Trek.LCARS:RenderButton(xRow, y, categoryData.MaterialData, state)
 		end
 	end
 
@@ -154,38 +195,25 @@ function WINDOW.OnDraw(self, pos, animPos)
 		local n = table.maxn(buttons)
 
 		local offset = Star_Trek.LCARS:GetButtonOffset(self.ButtonsStart, self.ButtonsHeight, n, pos.y)
-
 		for i, button in pairs(buttons) do
-			local color = button.Color
-			if button.Disabled then
-				color = color_grey
-			elseif button.Selected then
-				color = color_yellow
-			end
-
 			local y = Star_Trek.LCARS:GetButtonYPos(self.ButtonsHeight, i, n, offset)
 
-			local buttonAlpha = 255
-			if y < self.ButtonsTopAlpha or y > self.ButtonsBotAlpha then
-				if y < self.ButtonsTopAlpha then
-					buttonAlpha = -y + self.ButtonsTopAlpha
-				else
-					buttonAlpha = y - self.ButtonsBotAlpha
+			local state = 1
+			if not button.Disabled then
+				state = 2
+				if button.Selected then
+					state = state + 1
 				end
-
-				buttonAlpha = math.min(math.max(0, 255 - buttonAlpha * 10), 255)
+				if pos.y >= y - 1 and pos.y <= y + (BUTTON_HEIGHT - 1) then
+					state = state + 3
+				end
 			end
-			buttonAlpha = buttonAlpha * animPos
 
-			local title = button.Name or "[ERROR]"
-
-			Star_Trek.LCARS:DrawButton(28, y, self.WWidth, title, color, button.RandomS, button.RandomL, buttonAlpha, pos)
+			Star_Trek.LCARS:RenderButton(x, y, button.MaterialData, state)
 		end
 	end
 
-	surface.SetDrawColor(255, 255, 255, alpha)
-
-	Star_Trek.LCARS:RenderMaterial(-self.WD2, -self.HD2, self.WWidth, self.WHeight, self.FrameMaterialData)
+	Star_Trek.LCARS:RenderFrame(self.FrameMaterialData)
 
 	surface.SetAlphaMultiplier(1)
 end

@@ -25,12 +25,20 @@ function Star_Trek.LCARS:CloseInterface(id)
 	end
 end
 
+-- Receive the network message, to close an interface.
 net.Receive("Star_Trek.LCARS.Close", function()
 	local id = net.ReadInt(32)
 
 	Star_Trek.LCARS:CloseInterface(id)
 end)
 
+-- Loads and converts the data of a single window into the format used by the render system.
+-- 
+-- @param Number id
+-- @param Table windowData
+-- @param Vector IPos
+-- @param Angle IAng
+-- @return window
 function Star_Trek.LCARS:LoadWindowData(id, windowData, IPos, IAng)
 	local windowFunctions = self.Windows[windowData.WindowType]
 	if not istable(windowFunctions) then
@@ -62,6 +70,10 @@ function Star_Trek.LCARS:LoadWindowData(id, windowData, IPos, IAng)
 	return windowFunctions.OnCreate(window, windowData)
 end
 
+-- Open a given interface and loads the data for all windows.
+--
+-- @param Number id
+-- @param Table interfaceData
 function Star_Trek.LCARS:OpenMenu(id, interfaceData)
 	local interface = {
 		IPos = interfaceData.InterfacePos,
@@ -89,6 +101,7 @@ function Star_Trek.LCARS:OpenMenu(id, interfaceData)
 	self.ActiveInterfaces[id] = interface
 end
 
+-- Receive the network message, to open an interface.
 net.Receive("Star_Trek.LCARS.Open", function()
 	local id = net.ReadInt(32)
 	local interfaceData = net.ReadTable()
@@ -151,6 +164,7 @@ hook.Add("Think", "Star_Trek.LCARS.Think", function()
 	lastThink = curTime
 end)
 
+-- Receive the network message, to update an interface.
 net.Receive("Star_Trek.LCARS.Update", function()
 	local id = net.ReadInt(32)
 	local windowId = net.ReadInt(32)
@@ -259,4 +273,3 @@ hook.Add("PostDrawOpaqueRenderables", "Star_Trek.LCARS.Draw", function(isDrawing
 		render.SuppressEngineLighting(false)
 	end
 end)
-

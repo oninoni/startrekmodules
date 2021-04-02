@@ -23,10 +23,12 @@ function Star_Trek.LCARS:OpenTransporterMenu()
 		Vector(-15, -2, 6),
 		Angle(5, 15, 30),
 		500,
+		false,
 		Vector(-31, -12, 17),
 		Angle(15, 45, 60),
 		500,
 		500,
+		false,
 		false,
 		padNumber
 	)
@@ -44,10 +46,12 @@ function Star_Trek.LCARS:OpenTransporterMenu()
 		Vector(15, -2, 6),
 		Angle(-5, -15, 30),
 		500,
+		false,
 		Vector(31, -12, 17),
 		Angle(-15, -45, 60),
 		500,
 		500,
+		false,
 		true,
 		padNumber
 	)
@@ -104,10 +108,12 @@ function Star_Trek.LCARS:OpenConsoleTransporterMenu()
 		Vector(-22, -34, 8.2),
 		Angle(0, 0, -90),
 		500,
-		Vector(-22, 0, 0),
+		false,
+		Vector(-28, -5, -2),
 		Angle(0, 0, 0),
 		500,
-		500,
+		700,
+		false,
 		false
 	)
 	if not success then
@@ -124,10 +130,12 @@ function Star_Trek.LCARS:OpenConsoleTransporterMenu()
 		Vector(22, -34, 8.2),
 		Angle(0, 0, -90),
 		500,
-		Vector(22, 0, 0),
+		true,
+		Vector(28, -5, -2),
 		Angle(0, 0, 0),
 		500,
-		500,
+		700,
+		true,
 		true
 	)
 	if not success then

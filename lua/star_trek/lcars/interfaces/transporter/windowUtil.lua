@@ -1,6 +1,6 @@
 local transporterUtil = include("util.lua")
 
-function transporterUtil.CreateMenuWindow(pos, angle, width, menuTable, padNumber)
+function transporterUtil.CreateMenuWindow(pos, angle, width, menuTable, hFlip, padNumber)
 	local buttons = {}
 
 	for i, menuType in pairs(menuTable.MenuTypes) do
@@ -63,110 +63,122 @@ function transporterUtil.CreateMenuWindow(pos, angle, width, menuTable, padNumbe
 	local height = table.maxn(buttons) * 35 + 80
 	local transporterType = menuTable.Target and "Target" or "Source"
 	local name = "Transporter " .. transporterType
-	local success, menuWindow = Star_Trek.LCARS:CreateWindow("button_list", pos, angle, 24, width, height, function(windowData, interfaceData, ent, buttonId)
-		if buttonId > menuTypeCount then -- Custom Buttons
-			local button = windowData.Buttons[buttonId]
-			
-			if button.Name == "Wide Beam" or button.Name == "Narrow Beam" then
-				button.SelectedCustom = not (button.SelectedCustom or false)
-				if button.SelectedCustom then
-					button.Color = Star_Trek.LCARS.ColorRed
-				else
-					button.Color = Star_Trek.LCARS.ColorOrange
-				end
-
-				if button.SelectedCustom then
-					button.Name = "Wide Beam"
-				else
-					button.Name = "Narrow Beam"
-				end
-
-				return true
-			end
-
-			if button.Name == "Instant Dematerialisation" or button.Name == "Delayed Dematerialisation" then
-				button.SelectedCustom = not (button.SelectedCustom or false)
-				if button.SelectedCustom then
-					button.Color = Star_Trek.LCARS.ColorRed
-				else
-					button.Color = Star_Trek.LCARS.ColorOrange
-				end
+	local success, menuWindow = Star_Trek.LCARS:CreateWindow(
+		"button_list",
+		pos,
+		angle,
+		24,
+		width,
+		height,
+		function(windowData, interfaceData, ent, buttonId)
+			if buttonId > menuTypeCount then -- Custom Buttons
+				local button = windowData.Buttons[buttonId]
 				
-				if button.SelectedCustom then
-					button.Name = "Delayed Dematerialisation"
-				else
-					button.Name = "Instant Dematerialisation"
+				if button.Name == "Wide Beam" or button.Name == "Narrow Beam" then
+					button.SelectedCustom = not (button.SelectedCustom or false)
+					if button.SelectedCustom then
+						button.Color = Star_Trek.LCARS.ColorRed
+					else
+						button.Color = Star_Trek.LCARS.ColorOrange
+					end
+
+					if button.SelectedCustom then
+						button.Name = "Wide Beam"
+					else
+						button.Name = "Narrow Beam"
+					end
+
+					return true
 				end
 
-				return true
-			end
+				if button.Name == "Instant Dematerialisation" or button.Name == "Delayed Dematerialisation" then
+					button.SelectedCustom = not (button.SelectedCustom or false)
+					if button.SelectedCustom then
+						button.Color = Star_Trek.LCARS.ColorRed
+					else
+						button.Color = Star_Trek.LCARS.ColorOrange
+					end
+					
+					if button.SelectedCustom then
+						button.Name = "Delayed Dematerialisation"
+					else
+						button.Name = "Instant Dematerialisation"
+					end
 
-			if button.Name == "Disable Console" then
-				ent:EmitSound("star_trek.lcars_close")
-				Star_Trek.LCARS:CloseInterface(ent)
+					return true
+				end
 
-				return false
-			end
-
-			if button.Name == "Swap Sides" then
-				local targetMenuTable = interfaceData.TargetMenuTable
-				local sourceMenuSelectionName = menuTable.MenuTypes[menuTable.Selection]
-				local targetMenuSelectionName = menuTable.MenuTypes[targetMenuTable.Selection]
-				if istable(sourceMenuSelectionName) or istable(targetMenuSelectionName) then
-					ent:EmitSound("star_trek.lcars_error")
+				if button.Name == "Disable Console" then
+					ent:EmitSound("star_trek.lcars_close")
+					Star_Trek.LCARS:CloseInterface(ent)
 
 					return false
 				end
-			
-				local sourceWindowFunctions = Star_Trek.LCARS.Windows[menuTable.MainWindow.WindowType]
-				if not istable(sourceWindowFunctions) then
-					Star_Trek:Message("Invalid Source Window Type!")
-					return
+
+				if button.Name == "Swap Sides" then
+					local targetMenuTable = interfaceData.TargetMenuTable
+					local sourceMenuSelectionName = menuTable.MenuTypes[menuTable.Selection]
+					local targetMenuSelectionName = menuTable.MenuTypes[targetMenuTable.Selection]
+					if istable(sourceMenuSelectionName) or istable(targetMenuSelectionName) then
+						ent:EmitSound("star_trek.lcars_error")
+
+						return false
+					end
+				
+					local sourceWindowFunctions = Star_Trek.LCARS.Windows[menuTable.MainWindow.WindowType]
+					if not istable(sourceWindowFunctions) then
+						Star_Trek:Message("Invalid Source Window Type!")
+						return
+					end
+
+					local targetWindowFunctions = Star_Trek.LCARS.Windows[targetMenuTable.MainWindow.WindowType]
+					if not istable(targetWindowFunctions) then
+						Star_Trek:Message("Invalid Target Window Type!")
+						return
+					end
+
+					local sourceMenuData = sourceWindowFunctions.GetSelected(menuTable.MainWindow)
+					local targetMenuData = targetWindowFunctions.GetSelected(targetMenuTable.MainWindow)
+
+					local sourceMenuSelection = menuTable.MenuWindow.Selection
+					local success, error = menuTable:SelectType(targetMenuTable.MenuWindow.Selection)
+					if not success then
+						Star_Trek:Message(error)
+						return
+					end
+
+					local success, error = targetMenuTable:SelectType(sourceMenuSelection)
+					if not success then
+						Star_Trek:Message(error)
+						return
+					end
+
+					sourceWindowFunctions.SetSelected(targetMenuTable.MainWindow, sourceMenuData)
+					targetWindowFunctions.SetSelected(menuTable.MainWindow, targetMenuData)
+
+					Star_Trek.LCARS:UpdateWindow(ent, targetMenuTable.MenuWindow.WindowId, targetMenuTable.MenuWindow)
+					Star_Trek.LCARS:UpdateWindow(ent, targetMenuTable.MainWindow.WindowId, targetMenuTable.MainWindow)
+					Star_Trek.LCARS:UpdateWindow(ent, menuTable.MainWindow.WindowId, menuTable.MainWindow)
+
+					return true
 				end
-
-				local targetWindowFunctions = Star_Trek.LCARS.Windows[targetMenuTable.MainWindow.WindowType]
-				if not istable(targetWindowFunctions) then
-					Star_Trek:Message("Invalid Target Window Type!")
-					return
-				end
-
-				local sourceMenuData = sourceWindowFunctions.GetSelected(menuTable.MainWindow)
-				local targetMenuData = targetWindowFunctions.GetSelected(targetMenuTable.MainWindow)
-
-				local sourceMenuSelection = menuTable.MenuWindow.Selection
-				local success, error = menuTable:SelectType(targetMenuTable.MenuWindow.Selection)
+			else
+				local success, error = menuTable:SelectType(buttonId)
 				if not success then
 					Star_Trek:Message(error)
 					return
 				end
 
-				local success, error = targetMenuTable:SelectType(sourceMenuSelection)
-				if not success then
-					Star_Trek:Message(error)
-					return
-				end
-
-				sourceWindowFunctions.SetSelected(targetMenuTable.MainWindow, sourceMenuData)
-				targetWindowFunctions.SetSelected(menuTable.MainWindow, targetMenuData)
-
-				Star_Trek.LCARS:UpdateWindow(ent, targetMenuTable.MenuWindow.WindowId, targetMenuTable.MenuWindow)
-				Star_Trek.LCARS:UpdateWindow(ent, targetMenuTable.MainWindow.WindowId, targetMenuTable.MainWindow)
 				Star_Trek.LCARS:UpdateWindow(ent, menuTable.MainWindow.WindowId, menuTable.MainWindow)
 
 				return true
 			end
-		else
-			local success, error = menuTable:SelectType(buttonId)
-			if not success then
-				Star_Trek:Message(error)
-				return
-			end
-
-			Star_Trek.LCARS:UpdateWindow(ent, menuTable.MainWindow.WindowId, menuTable.MainWindow)
-
-			return true
-		end
-	end, buttons, name, transporterType)
+		end,
+		buttons,
+		name,
+		transporterType,
+		hFlip
+	)
 	if not success then
 		return false, menuWindow
 	end
@@ -174,14 +186,26 @@ function transporterUtil.CreateMenuWindow(pos, angle, width, menuTable, padNumbe
 	return true, menuWindow
 end
 
-function transporterUtil.CreateMainWindow(pos, angle, width, height, menuTable, padNumber)
+function transporterUtil.CreateMainWindow(pos, angle, width, height, menuTable, hFlip, padNumber)
 	local selectionName = transporterUtil.GetSelectionName(menuTable)
 
 	-- Transport Pad Window
 	if selectionName == "Transporter Pad" then
-		local success, mainWindow = Star_Trek.LCARS:CreateWindow("transport_pad", pos, angle, nil, width, height, function(windowData, interfaceData, ent, buttonId)
-			-- Does nothing special here.
-		end, padNumber, "Transporter Pad", "Pad")
+		local success, mainWindow = Star_Trek.LCARS:CreateWindow(
+			"transport_pad",
+			pos,
+			angle,
+			nil,
+			width,
+			height,
+			function(windowData, interfaceData, ent, buttonId)
+				-- Does nothing special here.
+			end,
+			padNumber,
+			"Transporter Pad",
+			"Pad",
+			hFlip
+		)
 		if not success then
 			return false, mainWindow
 		end
@@ -194,9 +218,22 @@ function transporterUtil.CreateMainWindow(pos, angle, width, height, menuTable, 
 
 	-- Category List Window
 	if selectionName == "Sections" then
-		local success, mainWindow = Star_Trek.LCARS:CreateWindow("category_list", pos, angle, nil, width, height, function(windowData, interfaceData, ent, categoryId, buttonId)
-			-- Does nothing special here.
-		end, Star_Trek.LCARS:GetSectionCategories(menuTable.Target), "Sections", "SECTNS", true)
+		local success, mainWindow = Star_Trek.LCARS:CreateWindow(
+			"category_list",
+			pos,
+			angle,
+			nil,
+			width,
+			height,
+			function(windowData, interfaceData, ent, categoryId, buttonId)
+				-- Does nothing special here.
+			end,
+			Star_Trek.LCARS:GetSectionCategories(menuTable.Target),
+			"Sections",
+			"SECTNS",
+			hFlip,
+			true
+		)
 		if not success then
 			return false, mainWindow
 		end
@@ -276,7 +313,20 @@ function transporterUtil.CreateMainWindow(pos, angle, width, height, menuTable, 
 		return false, "Invalid Menu Type"
 	end
 
-	local success, mainWindow = Star_Trek.LCARS:CreateWindow("button_list", pos, angle, nil, width, height, callback, buttons, selectionName, titleShort, true)
+	local success, mainWindow = Star_Trek.LCARS:CreateWindow(
+		"button_list",
+		pos,
+		angle,
+		nil,
+		width,
+		height,
+		callback,
+		buttons,
+		selectionName,
+		titleShort,
+		hFlip,
+		true
+	)
 	if not success then
 		return false, mainWindow
 	end
@@ -284,7 +334,7 @@ function transporterUtil.CreateMainWindow(pos, angle, width, height, menuTable, 
 	return true, mainWindow
 end
 
-function transporterUtil.CreateWindowTable(menuPos, menuAngle, menuWidth, mainPos, mainAngle, mainWidth, mainHeight, targetSide, padNumber)
+function transporterUtil.CreateWindowTable(menuPos, menuAngle, menuWidth, menuHFlip, mainPos, mainAngle, mainWidth, mainHeight, mainHFlip, targetSide, padNumber)
 	local menuTypes = {
 		"Lifeforms",
 		"Transporter Pads",
@@ -308,7 +358,7 @@ function transporterUtil.CreateWindowTable(menuPos, menuAngle, menuWidth, mainPo
 		Target = targetSide or false,
 	}
 
-	local success, menuWindow = transporterUtil.CreateMenuWindow(menuPos, menuAngle, menuWidth, menuTable, padNumber) -- TODO: Modularize menu window width
+	local success, menuWindow = transporterUtil.CreateMenuWindow(menuPos, menuAngle, menuWidth, menuTable, menuHFlip, padNumber)
 	if not success then
 		return false, "Error on MenuWindow: " .. menuWindow
 	end
@@ -325,7 +375,7 @@ function transporterUtil.CreateWindowTable(menuPos, menuAngle, menuWidth, mainPo
 		self.MenuWindow.Selection = buttonId
 		buttons[buttonId].Selected = true
 
-		local success, mainWindow = transporterUtil.CreateMainWindow(mainPos, mainAngle, mainWidth, mainHeight, self, padNumber) -- TODO: Modularize main window width, height
+		local success, mainWindow = transporterUtil.CreateMainWindow(mainPos, mainAngle, mainWidth, mainHeight, self, mainHFlip, padNumber)
 		if not success then
 			return false, "Error on MainWindow: " .. mainWindow
 		end

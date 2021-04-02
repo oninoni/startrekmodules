@@ -1,7 +1,8 @@
-function WINDOW.OnCreate(windowData, categories, title, titleShort, toggle)
+function WINDOW.OnCreate(windowData, categories, title, titleShort, hFlip, toggle)
 	windowData.Categories = {}
 	windowData.Title = title or ""
 	windowData.TitleShort = titleShort or windowData.Title
+	windowData.HFlip = hFlip or false
 	windowData.Toggle = toggle
 
 	if not istable(categories) then
@@ -31,9 +32,6 @@ function WINDOW.OnCreate(windowData, categories, title, titleShort, toggle)
 				categoryData.Color = Star_Trek.LCARS.ColorBlue
 			end
 		end
-
-		categoryData.RandomS = Star_Trek.LCARS:GetSmallNumber(category.RandomS)
-		categoryData.RandomL = Star_Trek.LCARS:GetLargeNumber(category.RandomL)
 
 		for j, button in pairs(category.Buttons) do
 			local buttonData = {

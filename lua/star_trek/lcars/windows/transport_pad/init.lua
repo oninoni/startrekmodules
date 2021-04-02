@@ -1,7 +1,8 @@
-function WINDOW.OnCreate(windowData, padNumber, title, titleShort)
+function WINDOW.OnCreate(windowData, padNumber, title, titleShort, hFlip)
 	windowData.Pads = {}
 	windowData.Title = title or ""
 	windowData.TitleShort = titleShort or windowData.Title
+	windowData.HFlip = hFlip or false
 
 	local radius = windowData.WindowHeight / 8
 	local offset = radius * 2.5

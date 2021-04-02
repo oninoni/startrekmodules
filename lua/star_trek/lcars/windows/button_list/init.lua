@@ -1,8 +1,9 @@
-function WINDOW.OnCreate(windowData, buttons, title, titleShort, toggle)
+function WINDOW.OnCreate(windowData, buttons, title, titleShort, hFlip, toggle)
 	windowData.Buttons = {}
 	windowData.Title = title or ""
 	windowData.TitleShort = titleShort or windowData.Title
-	windowData.Toggle = toggle
+	windowData.HFlip = hFlip or false
+	windowData.Toggle = toggle or false
 
 	if not istable(buttons) then
 		return false

@@ -50,7 +50,6 @@ function Star_Trek.LCARS:OpenSecurityMenu()
 				ent:EmitSound("star_trek.lcars_close")
 				Star_Trek.LCARS:CloseInterface(ent)
 			else
-				print(buttonId)
 				-- TODO: Mode Selection
 			end
 		end,
@@ -107,6 +106,7 @@ function Star_Trek.LCARS:OpenSecurityMenu()
 		Star_Trek.LCARS:GetSectionCategories(),
 		"SECTIONS",
 		"SECTNS",
+		false,
 		true
 	)
 	if not success4 then

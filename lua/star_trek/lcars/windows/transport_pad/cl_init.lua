@@ -1,6 +1,7 @@
 function WINDOW.OnCreate(self, windowData)
 	self.Title = windowData.Title
 	self.TitleShort = windowData.TitleShort
+	self.HFlip = windowData.HFlip
 
 	self.Pads = windowData.Pads
 
@@ -25,7 +26,8 @@ function WINDOW.OnCreate(self, windowData)
 		self.TitleShort,
 		Star_Trek.LCARS.ColorLightRed,
 		Star_Trek.LCARS.ColorOrange,
-		Star_Trek.LCARS.ColorLightRed
+		Star_Trek.LCARS.ColorLightRed,
+		self.HFlip
 	)
 
 	return self
@@ -97,7 +99,7 @@ function WINDOW.OnDraw(self, pos, animPos)
 
 	surface.SetDrawColor(255, 255, 255, alpha)
 
-	Star_Trek.LCARS:RenderMaterial(-self.WD2, -self.HD2, self.WWidth, self.WHeight, self.FrameMaterialData)
+	Star_Trek.LCARS:RenderFrame(self.FrameMaterialData)
 
 	surface.SetAlphaMultiplier(1)
 end

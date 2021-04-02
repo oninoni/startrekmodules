@@ -5,6 +5,7 @@ local MAP_OFFSET_Y = -200
 function WINDOW.OnCreate(self, windowData)
 	self.DeckName = windowData.DeckName
 	self.Sections = windowData.Sections
+	self.HFlip = windowData.HFlip
 
 	self.FrameMaterialData = Star_Trek.LCARS:CreateFrame(
 		self.Id,
@@ -14,7 +15,8 @@ function WINDOW.OnCreate(self, windowData)
 		self.DeckName,
 		Star_Trek.LCARS.ColorLightRed,
 		Star_Trek.LCARS.ColorOrange,
-		Star_Trek.LCARS.ColorBlue
+		Star_Trek.LCARS.ColorBlue,
+		self.HFlip
 	)
 
 	return self
@@ -61,7 +63,7 @@ function WINDOW.OnDraw(self, pos, animPos)
 
 	surface.SetDrawColor(255, 255, 255, alpha)
 
-	Star_Trek.LCARS:RenderMaterial(-self.WD2, -self.HD2, self.WWidth, self.WHeight, self.FrameMaterialData)
+	Star_Trek.LCARS:RenderFrame(self.FrameMaterialData)
 
 	surface.SetAlphaMultiplier(1)
 end

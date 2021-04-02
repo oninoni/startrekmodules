@@ -1,10 +1,11 @@
-function WINDOW.OnCreate(windowData, deck)
+function WINDOW.OnCreate(windowData, deck, hFlip)
 	windowData.DeckId = deck
-	local deckData = Star_Trek.Sections.Decks[deck]
-
+	windowData.HFlip = hFlip or false
+	
 	windowData.Sections = {}
 	windowData.DeckName = "Deck " .. deck
 
+	local deckData = Star_Trek.Sections.Decks[deck]
 	for sectionId, sectionData in pairs(deckData.Sections) do
 		local sectionButtonData = {
 			Id = sectionId,
