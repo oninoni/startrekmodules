@@ -29,7 +29,7 @@ end
 function WINDOW.OnDraw(self, pos, animPos)
 	local alpha = 255 * animPos
 
-	local lcars_black = ColorAlpha(Star_Trek.LCARS.ColorBlack, alpha)
+	local lcars_border = ColorAlpha(Star_Trek.LCARS.ColorLightBlue, alpha)
 	local lcars_selected = ColorAlpha(Star_Trek.LCARS.ColorOrange, alpha)
 	local lcars_inactive = ColorAlpha(Star_Trek.LCARS.ColorBlue, alpha)
 
@@ -43,7 +43,7 @@ function WINDOW.OnDraw(self, pos, animPos)
 			local width = areaData.Width
 			local height = areaData.Height
 
-			draw.RoundedBox(0, x - 1 * MAP_SCALE, y - 1 * MAP_SCALE, width + 2 * MAP_SCALE, height + 2 * MAP_SCALE, lcars_black)
+			draw.RoundedBox(0, x - 1 * MAP_SCALE, y - 1 * MAP_SCALE, width + 2 * MAP_SCALE, height + 2 * MAP_SCALE, lcars_border)
 		end
 	end
 

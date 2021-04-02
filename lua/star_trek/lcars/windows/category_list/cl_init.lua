@@ -134,7 +134,6 @@ function WINDOW.OnPress(self, pos, animPos)
 	if pos.y <= -self.HD2 + self.CategoryHeight + 65 then
 		-- Selection
 		local x = self.HFlip and -24 or 24
-
 		for rowId, rowData in pairs(self.CategoryRows) do
 			for butId, categoryData in pairs(rowData.Categories) do
 				local xRow = x + ((butId - 0.5) - rowData.N / 2) * rowData.Width
@@ -169,7 +168,6 @@ function WINDOW.OnDraw(self, pos, animPos)
 	local selected = self.Selected
 	
 	local x = self.HFlip and -24 or 24
-
 	for rowId, rowData in pairs(self.CategoryRows) do
 		for butId, categoryData in pairs(rowData.Categories) do
 			local xRow = x + ((butId - 0.5) - rowData.N / 2) * rowData.Width
@@ -209,9 +207,24 @@ function WINDOW.OnDraw(self, pos, animPos)
 				end
 			end
 
+			local buttonAlpha = 255
+			if y < self.ButtonsTopAlpha or y > self.ButtonsBotAlpha then
+				if y < self.ButtonsTopAlpha then
+					buttonAlpha = -y + self.ButtonsTopAlpha
+				else
+					buttonAlpha = y - self.ButtonsBotAlpha
+				end
+	
+				buttonAlpha = math.min(math.max(0, 255 - buttonAlpha * 10), 255)
+			end
+			buttonAlpha = math.min(buttonAlpha, 255 * animPos)
+			surface.SetDrawColor(255, 255, 255, buttonAlpha)
+			
 			Star_Trek.LCARS:RenderButton(x, y, button.MaterialData, state)
 		end
 	end
+	
+	surface.SetDrawColor(255, 255, 255, 255 * animPos)
 
 	Star_Trek.LCARS:RenderFrame(self.FrameMaterialData)
 

@@ -62,7 +62,6 @@ local color_grey = Star_Trek.LCARS.ColorGrey
 local color_yellow = Star_Trek.LCARS.ColorYellow
 
 function WINDOW.OnDraw(self, pos, animPos)
-	surface.SetDrawColor(255, 255, 255, 255 * animPos)
 
 	local offset = Star_Trek.LCARS:GetButtonOffset(self.ButtonsStart, self.ButtonsHeight, self.MaxN, pos.y)
 	local x = self.HFlip and -24 or 24
@@ -80,8 +79,23 @@ function WINDOW.OnDraw(self, pos, animPos)
 			end
 		end
 
+		local buttonAlpha = 255
+		if y < self.ButtonsTopAlpha or y > self.ButtonsBotAlpha then
+			if y < self.ButtonsTopAlpha then
+				buttonAlpha = -y + self.ButtonsTopAlpha
+			else
+				buttonAlpha = y - self.ButtonsBotAlpha
+			end
+
+			buttonAlpha = math.min(math.max(0, 255 - buttonAlpha * 10), 255)
+		end
+		buttonAlpha = math.min(buttonAlpha, 255 * animPos)
+		surface.SetDrawColor(255, 255, 255, buttonAlpha)
+		
 		Star_Trek.LCARS:RenderButton(x, y, button.MaterialData, state)
 	end
+	
+	surface.SetDrawColor(255, 255, 255, 255 * animPos)
 
 	Star_Trek.LCARS:RenderFrame(self.FrameMaterialData)
 

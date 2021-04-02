@@ -32,8 +32,8 @@ function WINDOW.OnCreate(windowData, buttons, title, titleShort, hFlip, toggle)
 			end
 		end
 
-		buttonData.RandomS = Star_Trek.LCARS:GetSmallNumber(button.RandomS)
-		buttonData.RandomL = Star_Trek.LCARS:GetLargeNumber(button.RandomL)
+		buttonData.RandomS = button.RandomS
+		buttonData.RandomL = button.RandomL
 
 		windowData.Buttons[i] = buttonData
 	end
