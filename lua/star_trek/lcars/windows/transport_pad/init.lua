@@ -1,10 +1,10 @@
-function WINDOW.OnCreate(windowData, padNumber, title, titleShort, hFlip)
-	windowData.Pads = {}
-	windowData.Title = title or ""
-	windowData.TitleShort = titleShort or windowData.Title
-	windowData.HFlip = hFlip or false
+function WINDOW:OnCreate(padNumber, title, titleShort, hFlip)
+	self.Pads = {}
+	self.Title = title or ""
+	self.TitleShort = titleShort or self.Title
+	self.HFlip = hFlip or false
 
-	local radius = windowData.WindowHeight / 8
+	local radius = self.WindowHeight / 8
 	local offset = radius * 2.5
 	local outerX = 0.5 * offset
 	local outerY = 0.866 * offset
@@ -58,26 +58,26 @@ function WINDOW.OnCreate(windowData, padNumber, title, titleShort, hFlip)
 			pad.X = pad.X + 30
 			pad.Y = pad.Y + 30
 
-			windowData.Pads[k] = pad
+			self.Pads[k] = pad
 		end
 
 	end
 
-	return windowData
+	return self
 end
 
-function WINDOW.GetSelected(windowData)
+function WINDOW:GetSelected()
 	local data = {}
-	for _, pad in pairs(windowData.Pads) do
+	for _, pad in pairs(self.Pads) do
 		data[pad.Name] = pad.Selected
 	end
 
 	return data
 end
 
-function WINDOW.SetSelected(windowData, data)
+function WINDOW:SetSelected(data)
 	for name, selected in pairs(data) do
-		for _, pad in pairs(windowData.Pads) do
+		for _, pad in pairs(self.Pads) do
 			if pad.Name == name then
 				pad.Selected = selected
 				break
@@ -86,17 +86,17 @@ function WINDOW.SetSelected(windowData, data)
 	end
 end
 
-function WINDOW.OnPress(windowData, interfaceData, ent, buttonId, callback)
+function WINDOW:OnPress(interfaceData, ent, buttonId, callback)
 	local shouldUpdate = false
 
-	local pad = windowData.Pads[buttonId]
+	local pad = self.Pads[buttonId]
 	if istable(pad) then
 		pad.Selected = not (pad.Selected or false)
 		shouldUpdate = true
 	end
 
 	if isfunction(callback) then
-		local updated = callback(windowData, interfaceData, ent, buttonId)
+		local updated = callback(self, interfaceData, ent, buttonId)
 		if updated then
 			shouldUpdate = true
 		end

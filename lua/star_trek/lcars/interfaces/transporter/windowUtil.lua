@@ -124,21 +124,9 @@ function transporterUtil.CreateMenuWindow(pos, angle, width, menuTable, hFlip, p
 
 						return false
 					end
-				
-					local sourceWindowFunctions = Star_Trek.LCARS.Windows[menuTable.MainWindow.WindowType]
-					if not istable(sourceWindowFunctions) then
-						Star_Trek:Message("Invalid Source Window Type!")
-						return
-					end
 
-					local targetWindowFunctions = Star_Trek.LCARS.Windows[targetMenuTable.MainWindow.WindowType]
-					if not istable(targetWindowFunctions) then
-						Star_Trek:Message("Invalid Target Window Type!")
-						return
-					end
-
-					local sourceMenuData = sourceWindowFunctions.GetSelected(menuTable.MainWindow)
-					local targetMenuData = targetWindowFunctions.GetSelected(targetMenuTable.MainWindow)
+					local sourceMenuData = menuTable.MainWindow:GetSelected()
+					local targetMenuData = targetMenuTable.MainWindow:GetSelected()
 
 					local sourceMenuSelection = menuTable.MenuWindow.Selection
 					local success, error = menuTable:SelectType(targetMenuTable.MenuWindow.Selection)
@@ -153,8 +141,8 @@ function transporterUtil.CreateMenuWindow(pos, angle, width, menuTable, hFlip, p
 						return
 					end
 
-					sourceWindowFunctions.SetSelected(targetMenuTable.MainWindow, sourceMenuData)
-					targetWindowFunctions.SetSelected(menuTable.MainWindow, targetMenuData)
+					targetMenuTable.MainWindow:SetSelected(sourceMenuData)
+					menuTable.MainWindow:SetSelected(targetMenuData)
 
 					Star_Trek.LCARS:UpdateWindow(ent, targetMenuTable.MenuWindow.WindowId, targetMenuTable.MenuWindow)
 					Star_Trek.LCARS:UpdateWindow(ent, targetMenuTable.MainWindow.WindowId, targetMenuTable.MainWindow)

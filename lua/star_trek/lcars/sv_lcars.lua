@@ -208,8 +208,10 @@ function Star_Trek.LCARS:CreateWindow(windowType, pos, angles, scale, width, hei
 
 		Callback = callback,
 	}
+	setmetatable(windowData, {__index = windowFunctions})
 
-	windowData = windowFunctions.OnCreate(windowData, ...)
+	-- TODO: Change Return to only be validation.
+	windowData = windowData:OnCreate(...)
 	if not istable(windowData) then
 		return false, "Invalid Window Data!"
 	end
@@ -301,12 +303,7 @@ net.Receive("Star_Trek.LCARS.Pressed", function(len, ply)
 		return
 	end
 
-	local windowFunctions = Star_Trek.LCARS.Windows[windowData.WindowType]
-	if not istable(windowFunctions) then
-		return
-	end
-
-	local updated = windowFunctions.OnPress(windowData, interfaceData, ent, buttonId, windowData.Callback)
+	local updated = windowData:OnPress(interfaceData, ent, buttonId, windowData.Callback)
 	if updated then
 		Star_Trek.LCARS:UpdateWindow(ent, windowId)
 	end

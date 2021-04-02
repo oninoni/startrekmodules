@@ -1,4 +1,4 @@
-function WINDOW.OnCreate(self, windowData)
+function WINDOW:OnCreate(windowData)
 	self.Title = windowData.Title
 	self.TitleShort = windowData.TitleShort
 	self.HFlip = windowData.HFlip
@@ -41,7 +41,7 @@ local function isHovered(x, y, r, pos)
 	return false
 end
 
-function WINDOW.OnPress(self, pos, animPos)
+function WINDOW:OnPress(pos, animPos)
 	for i, pad in pairs(self.Pads) do
 		if isHovered(pad.X, pad.Y, self.PadRadius, pos) then
 			return i
@@ -86,7 +86,7 @@ local function drawPad(self, x, y, r, pos, round, selected, alpha)
 	end
 end
 
-function WINDOW.OnDraw(self, pos, animPos)
+function WINDOW:OnDraw(pos, animPos)
 	for i, pad in pairs(self.Pads) do
 		if pad.Type == "Round" then
 			drawPad(self, pad.X, pad.Y, self.PadRadius, pos, true, pad.Selected, animPos * 255)

@@ -24,7 +24,7 @@ function Star_Trek.LCARS:GetSectionCategories(needsLocations)
 	local categories = {}
 	for deck, deckData in SortedPairs(Star_Trek.Sections.Decks) do
 		local category = {
-			Name = "Deck " .. deck,
+			Name = "DECK " .. deck,
 			Buttons = {},
 		}
 

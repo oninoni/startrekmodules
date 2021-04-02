@@ -81,4 +81,4 @@ hook.Add("Star_Trek.Util.MapLoaded", "Star_Trek.Damage.Initialize", function()
 	end
 end)
 
---print(Star_Trek.Damage:DamageSection("eps_breach", 1, 400))
+--Star_Trek.Damage:DamageSection("eps_breach", 1, 400)

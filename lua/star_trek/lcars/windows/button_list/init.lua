@@ -1,9 +1,9 @@
-function WINDOW.OnCreate(windowData, buttons, title, titleShort, hFlip, toggle)
-	windowData.Buttons = {}
-	windowData.Title = title or ""
-	windowData.TitleShort = titleShort or windowData.Title
-	windowData.HFlip = hFlip or false
-	windowData.Toggle = toggle or false
+function WINDOW:OnCreate(buttons, title, titleShort, hFlip, toggle)
+	self.Buttons = {}
+	self.Title = title or ""
+	self.TitleShort = titleShort or self.Title
+	self.HFlip = hFlip or false
+	self.Toggle = toggle or false
 
 	if not istable(buttons) then
 		return false
@@ -21,7 +21,7 @@ function WINDOW.OnCreate(windowData, buttons, title, titleShort, hFlip, toggle)
 		if IsColor(button.Color) then
 			buttonData.Color = button.Color
 		else
-			if windowData.Toggle then
+			if self.Toggle then
 				if i % 2 == 0 then
 					buttonData.Color = Star_Trek.LCARS.ColorLightBlue
 				else
@@ -35,24 +35,24 @@ function WINDOW.OnCreate(windowData, buttons, title, titleShort, hFlip, toggle)
 		buttonData.RandomS = button.RandomS
 		buttonData.RandomL = button.RandomL
 
-		windowData.Buttons[i] = buttonData
+		self.Buttons[i] = buttonData
 	end
 
-	return windowData
+	return self
 end
 
-function WINDOW.GetSelected(windowData)
+function WINDOW:GetSelected()
 	local data = {}
-	for _, buttonData in pairs(windowData.Buttons) do
+	for _, buttonData in pairs(self.Buttons) do
 		data[buttonData.Name] = buttonData.Selected
 	end
 
 	return data
 end
 
-function WINDOW.SetSelected(windowData, data)
+function WINDOW:SetSelected(data)
 	for name, selected in pairs(data) do
-		for _, buttonData in pairs(windowData.Buttons) do
+		for _, buttonData in pairs(self.Buttons) do
 			if buttonData.Name == name then
 				buttonData.Selected = selected
 				break
@@ -61,11 +61,11 @@ function WINDOW.SetSelected(windowData, data)
 	end
 end
 
-function WINDOW.OnPress(windowData, interfaceData, ent, buttonId, callback)
+function WINDOW:OnPress(interfaceData, ent, buttonId, callback)
 	local shouldUpdate = false
 
-	if windowData.Toggle then
-		local buttonData = windowData.Buttons[buttonId]
+	if self.Toggle then
+		local buttonData = self.Buttons[buttonId]
 		if istable(buttonData) then
 			buttonData.Selected = not (buttonData.Selected or false)
 			shouldUpdate = true
@@ -73,7 +73,7 @@ function WINDOW.OnPress(windowData, interfaceData, ent, buttonId, callback)
 	end
 
 	if isfunction(callback) then
-		local updated = callback(windowData, interfaceData, ent, buttonId)
+		local updated = callback(self, interfaceData, ent, buttonId)
 		if updated then
 			shouldUpdate = true
 		end

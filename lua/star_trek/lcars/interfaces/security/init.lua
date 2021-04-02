@@ -76,19 +76,13 @@ function Star_Trek.LCARS:OpenSecurityMenu()
 		700,
 		function(windowData, interfaceData, ent, categoryId, buttonId)
 			if isnumber(buttonId) then
-				local windowFunctions = Star_Trek.LCARS.Windows[mapWindow.WindowType]
-				if not istable(windowFunctions) then
-					Star_Trek:Message("Invalid Map Window Type!")
-					return
-				end
-
 				local buttonData = windowData.Categories[categoryId].Buttons[buttonId]
 				local sectionId = buttonData.Data.Id
 
-				local selected = windowFunctions.GetSelected(mapWindow)
+				local selected = mapWindow:GetSelected(mapWindow)
 				selected[sectionId] = buttonData.Selected
 
-				windowFunctions.SetSelected(mapWindow, selected)
+				mapWindow:SetSelected(selected)
 				
 				Star_Trek.LCARS:UpdateWindow(ent, mapWindow.WindowId, mapWindow)
 			else

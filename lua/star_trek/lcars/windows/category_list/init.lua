@@ -1,9 +1,9 @@
-function WINDOW.OnCreate(windowData, categories, title, titleShort, hFlip, toggle)
-	windowData.Categories = {}
-	windowData.Title = title or ""
-	windowData.TitleShort = titleShort or windowData.Title
-	windowData.HFlip = hFlip or false
-	windowData.Toggle = toggle
+function WINDOW:OnCreate(categories, title, titleShort, hFlip, toggle)
+	self.Categories = {}
+	self.Title = title or ""
+	self.TitleShort = titleShort or self.Title
+	self.HFlip = hFlip or false
+	self.Toggle = toggle
 
 	if not istable(categories) then
 		return false
@@ -19,8 +19,8 @@ function WINDOW.OnCreate(windowData, categories, title, titleShort, hFlip, toggl
 			Buttons = {}
 		}
 
-		if not windowData.Selected then
-			windowData.Selected = i
+		if not self.Selected then
+			self.Selected = i
 		end
 
 		if IsColor(category.Color) then
@@ -43,7 +43,7 @@ function WINDOW.OnCreate(windowData, categories, title, titleShort, hFlip, toggl
 			if IsColor(button.Color) then
 				buttonData.Color = button.Color
 			else
-				if windowData.Toggle then
+				if self.Toggle then
 					if j % 2 == 0 then
 						buttonData.Color = Star_Trek.LCARS.ColorLightBlue
 					else
@@ -60,18 +60,18 @@ function WINDOW.OnCreate(windowData, categories, title, titleShort, hFlip, toggl
 			table.insert(categoryData.Buttons, buttonData)
 		end
 
-		categoryData.Id = table.insert(windowData.Categories, categoryData)
+		categoryData.Id = table.insert(self.Categories, categoryData)
 	end
 
-	return windowData
+	return self
 end
 
-function WINDOW.GetSelected(windowData)
+function WINDOW:GetSelected()
 	local data = {
 		Buttons = {}
 	}
 
-	local categoryData = windowData.Categories[windowData.Selected]
+	local categoryData = self.Categories[self.Selected]
 	if istable(categoryData) then
 		data.Selected = categoryData.Name
 		for _, buttonData in pairs(categoryData.Buttons) do
@@ -82,10 +82,10 @@ function WINDOW.GetSelected(windowData)
 	return data
 end
 
-function WINDOW.SetSelected(windowData, data)
-	for i, categoryData in pairs(windowData.Categories) do
+function WINDOW:SetSelected(data)
+	for i, categoryData in pairs(self.Categories) do
 		if categoryData.Name == data.Selected then
-			windowData.Selected = i
+			self.Selected = i
 
 			for name, selected in pairs(data.Buttons) do
 				for _, buttonData in pairs(categoryData.Buttons) do
@@ -101,19 +101,19 @@ function WINDOW.SetSelected(windowData, data)
 	end
 end
 
-function WINDOW.OnPress(windowData, interfaceData, ent, buttonId, callback)
-	local categoryId = windowData.Selected
-	local categoryCount = table.Count(windowData.Categories)
-	local categoryData = windowData.Categories[categoryId]
+function WINDOW:OnPress(interfaceData, ent, buttonId, callback)
+	local categoryId = self.Selected
+	local categoryCount = table.Count(self.Categories)
+	local categoryData = self.Categories[categoryId]
 
 	local shouldUpdate = false
 
 	if buttonId <= categoryCount then
 		-- Category Selection
 		if buttonId ~= categoryId then
-			local newData = windowData.Categories[buttonId]
+			local newData = self.Categories[buttonId]
 			if istable(newData) and not newData.Disabled then
-				windowData.Selected = buttonId
+				self.Selected = buttonId
 
 				for _, buttonData in pairs(categoryData.Buttons) do
 					buttonData.Selected = nil
@@ -122,7 +122,7 @@ function WINDOW.OnPress(windowData, interfaceData, ent, buttonId, callback)
 				shouldUpdate = true
 
 				if isfunction(callback) then
-					callback(windowData, interfaceData, ent, buttonId, nil)
+					callback(self, interfaceData, ent, buttonId, nil)
 				end
 
 				if Star_Trek.LCARS.ActiveInterfaces[ent] and not Star_Trek.LCARS.ActiveInterfaces[ent].Closing then
@@ -134,7 +134,7 @@ function WINDOW.OnPress(windowData, interfaceData, ent, buttonId, callback)
 		-- Buttons
 		buttonId = buttonId - categoryCount
 
-		if windowData.Toggle then
+		if self.Toggle then
 			local buttonData = categoryData.Buttons[buttonId]
 			if istable(buttonData) then
 				buttonData.Selected = not (buttonData.Selected or false)
@@ -143,7 +143,7 @@ function WINDOW.OnPress(windowData, interfaceData, ent, buttonId, callback)
 		end
 
 		if isfunction(callback) then
-			local updated = callback(windowData, interfaceData, ent, categoryId, buttonId)
+			local updated = callback(self, interfaceData, ent, categoryId, buttonId)
 			if updated then
 				shouldUpdate = true
 			end

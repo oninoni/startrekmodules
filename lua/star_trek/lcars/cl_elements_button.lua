@@ -217,9 +217,7 @@ end
 function Star_Trek.LCARS:CreateButton(id, width, height, color, activeColor, text, flatLeft, flatRight, longNumber, smallNumber)
 	return Star_Trek.LCARS:CreateMaterial("Button_" .. id, width, height * 6, function()
 		local longTextNumber = Star_Trek.LCARS:GetLargeNumber(longNumber)
-		print(longNumber, longTextNumber)
 		local smallTextNumber = Star_Trek.LCARS:GetSmallNumber(smallNumber)
-		print(smallNumber, smallTextNumber)
 
 		Star_Trek.LCARS:DrawButton(0 * height, width, height, Star_Trek.LCARS.ColorGrey, Star_Trek.LCARS.ColorBlack, text, flatLeft, flatRight, longTextNumber, smallTextNumber)
 		Star_Trek.LCARS:DrawButton(1 * height, width, height, color                    , Star_Trek.LCARS.ColorBlack, text, flatLeft, flatRight, longTextNumber, smallTextNumber)

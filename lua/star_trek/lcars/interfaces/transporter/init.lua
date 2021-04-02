@@ -20,9 +20,9 @@ function Star_Trek.LCARS:OpenTransporterMenu()
 	end
 
 	local success, sourceMenuTable = transporterUtil.CreateWindowTable(
-		Vector(-15, -2, 6),
+		Vector(-13, -2, 6),
 		Angle(5, 15, 30),
-		500,
+		350,
 		false,
 		Vector(-31, -12, 17),
 		Angle(15, 45, 60),
@@ -43,9 +43,9 @@ function Star_Trek.LCARS:OpenTransporterMenu()
 	end
 
 	local success, targetMenuTable = transporterUtil.CreateWindowTable(
-		Vector(15, -2, 6),
+		Vector(13, -2, 6),
 		Angle(-5, -15, 30),
-		500,
+		350,
 		false,
 		Vector(31, -12, 17),
 		Angle(-15, -45, 60),

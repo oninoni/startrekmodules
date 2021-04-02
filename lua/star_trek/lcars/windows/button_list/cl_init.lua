@@ -1,7 +1,7 @@
 local BUTTON_HEIGHT = 32
 -- TODO: Modularize the size of the buttons. (Interaction, Offsets, etc...)
 
-function WINDOW.OnCreate(self, windowData)
+function WINDOW:OnCreate(windowData)
 	self.Title = windowData.Title
 	self.TitleShort = windowData.TitleShort
 	self.HFlip = windowData.HFlip
@@ -46,7 +46,7 @@ function WINDOW.OnCreate(self, windowData)
 	return self
 end
 
-function WINDOW.OnPress(self, pos, animPos)
+function WINDOW:OnPress(pos, animPos)
 	local offset = Star_Trek.LCARS:GetButtonOffset(self.ButtonsStart, self.ButtonsHeight, self.MaxN, pos.y)
 	for i, button in pairs(self.Buttons) do
 		if button.Disabled then continue end
@@ -61,8 +61,7 @@ end
 local color_grey = Star_Trek.LCARS.ColorGrey
 local color_yellow = Star_Trek.LCARS.ColorYellow
 
-function WINDOW.OnDraw(self, pos, animPos)
-
+function WINDOW:OnDraw(pos, animPos)
 	local offset = Star_Trek.LCARS:GetButtonOffset(self.ButtonsStart, self.ButtonsHeight, self.MaxN, pos.y)
 	local x = self.HFlip and -24 or 24
 	for i, button in pairs(self.Buttons) do

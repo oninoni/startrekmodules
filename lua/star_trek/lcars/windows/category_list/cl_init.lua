@@ -37,7 +37,7 @@ end
 
 local BUTTON_HEIGHT = 32
 
-function WINDOW.OnCreate(self, windowData)
+function WINDOW:OnCreate(windowData)
 	self.Title = windowData.Title
 	self.TitleShort = windowData.TitleShort
 	self.HFlip = windowData.HFlip
@@ -128,7 +128,7 @@ local function isButtonPressed(x, y, width, height, pos)
 	return pos.x >= (x - width/2) and pos.x <= (x + width/2) and pos.y >= (y -1) and pos.y <= (y + height)
 end
 
-function WINDOW.OnPress(self, pos, animPos)
+function WINDOW:OnPress(pos, animPos)
 	local selected = self.Selected
 
 	if pos.y <= -self.HD2 + self.CategoryHeight + 65 then
@@ -163,7 +163,7 @@ function WINDOW.OnPress(self, pos, animPos)
 	end
 end
 
-function WINDOW.OnDraw(self, pos, animPos)
+function WINDOW:OnDraw(pos, animPos)
 	surface.SetDrawColor(255, 255, 255, 255 * animPos)
 	local selected = self.Selected
 	

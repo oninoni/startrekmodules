@@ -144,14 +144,10 @@ function Star_Trek.Sections:SetupSections()
 
 			local pos = ent:GetPos()
 			if ent:GetAngles() ~= Angle() then
-				print("Non-Zero Angle Detected! Not implemented!")
+				print("Section Non-Zero Angle Detected! Not implemented!")
 			end
 
 			local min, max = ent:GetCollisionBounds()
-
-			if deck == 1 then
-				print(sectionName, pos, min, max)
-			end
 
 			table.insert(self.Decks[deck].Sections[sectionId].Areas, {
 				Pos = pos,

@@ -1,8 +1,8 @@
-function WINDOW.OnCreate(windowData)
-	return windowData
+function WINDOW:OnCreate()
+	return self
 end
 
-function WINDOW.OnPress(windowData, interfaceData, ent, buttonId, callback)
+function WINDOW:OnPress(interfaceData, ent, buttonId, callback)
 	ent:EmitSound("star_trek.lcars_transporter_lock")
 
 	callback(windowData, interfaceData, ent, buttonId)

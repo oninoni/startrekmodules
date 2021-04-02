@@ -66,8 +66,10 @@ function Star_Trek.LCARS:LoadWindowData(id, windowData, IPos, IAng)
 		WHeight = windowData.WindowHeight,
 		HD2 = windowData.WindowHeight / 2,
 	}
-
-	return windowFunctions.OnCreate(window, windowData)
+	
+	setmetatable(window, {__index = windowFunctions})
+	
+	return window:OnCreate(windowData)
 end
 
 -- Open a given interface and loads the data for all windows.
@@ -214,12 +216,7 @@ hook.Add("KeyPress", "Star_Trek.LCARS.KeyPress", function(ply, key)
 			local pos = Star_Trek.LCARS:Get3D2DMousePos(window, eyePos, eyeDir)
 			if pos.x > -width / 2 and pos.x < width / 2
 			and pos.y > -height / 2 and pos.y < height / 2 then
-				local windowFunctions = Star_Trek.LCARS.Windows[window.WType]
-				if not istable(windowFunctions) then
-					continue
-				end
-
-				local buttonId = windowFunctions.OnPress(window, pos, interface.AnimPos)
+				local buttonId = window:OnPress(pos, interface.AnimPos)
 				if buttonId then
 					net.Start("Star_Trek.LCARS.Pressed")
 						net.WriteInt(id, 32)
@@ -260,13 +257,8 @@ hook.Add("PostDrawOpaqueRenderables", "Star_Trek.LCARS.Draw", function(isDrawing
 				window.LastPos = pos
 			end
 
-			local windowFunctions = Star_Trek.LCARS.Windows[window.WType]
-			if not istable(windowFunctions) then
-				continue
-			end
-
 			cam.Start3D2D(window.WPos, window.WAng, 1 / window.WScale)
-				windowFunctions.OnDraw(window, window.LastPos or Vector(-width / 2, -height / 2), interface.AnimPos)
+				window:OnDraw(window.LastPos or Vector(-width / 2, -height / 2), interface.AnimPos)
 			cam.End3D2D()
 		end
 

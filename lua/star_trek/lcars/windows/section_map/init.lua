@@ -1,9 +1,9 @@
-function WINDOW.OnCreate(windowData, deck, hFlip)
-	windowData.DeckId = deck
-	windowData.HFlip = hFlip or false
+function WINDOW:OnCreate(deck, hFlip)
+	self.DeckId = deck
+	self.HFlip = hFlip or false
 	
-	windowData.Sections = {}
-	windowData.DeckName = "Deck " .. deck
+	self.Sections = {}
+	self.DeckName = "DECK " .. deck
 
 	local deckData = Star_Trek.Sections.Decks[deck]
 	for sectionId, sectionData in pairs(deckData.Sections) do
@@ -27,24 +27,24 @@ function WINDOW.OnCreate(windowData, deck, hFlip)
 			table.insert(sectionButtonData.Areas, areaButtonData)
 		end
 
-		table.insert(windowData.Sections, sectionButtonData)
+		table.insert(self.Sections, sectionButtonData)
 	end
 
-	return windowData
+	return self
 end
 
-function WINDOW.GetSelected(windowData)
+function WINDOW:GetSelected()
 	local data = {}
 
-	for _, sectionData in pairs(windowData.Sections) do
+	for _, sectionData in pairs(self.Sections) do
 		data[sectionData.Id] = sectionData.Selected
 	end
 
 	return data
 end
 
-function WINDOW.SetSelected(windowData, data)
-	for _, sectionData in pairs(windowData.Sections) do
+function WINDOW:SetSelected(data)
+	for _, sectionData in pairs(self.Sections) do
 		for id, selected in pairs(data) do
 			if id == sectionData.Id then
 				sectionData.Selected = selected
@@ -53,7 +53,7 @@ function WINDOW.SetSelected(windowData, data)
 	end
 end
 
-function WINDOW.OnPress(windowData, interfaceData, ent, buttonId, callback)
+function WINDOW:OnPress(interfaceData, ent, buttonId, callback)
 	local shouldUpdate = false
 
 	return shouldUpdate

@@ -2,7 +2,7 @@ local MAP_SCALE = 5
 local MAP_OFFSET_X = 0
 local MAP_OFFSET_Y = -200
 
-function WINDOW.OnCreate(self, windowData)
+function WINDOW:OnCreate(windowData)
 	self.DeckName = windowData.DeckName
 	self.Sections = windowData.Sections
 	self.HFlip = windowData.HFlip
@@ -22,11 +22,10 @@ function WINDOW.OnCreate(self, windowData)
 	return self
 end
 
-function WINDOW.OnPress(self, pos, animPos)
-
+function WINDOW:OnPress(pos, animPos)
 end
 
-function WINDOW.OnDraw(self, pos, animPos)
+function WINDOW:OnDraw(pos, animPos)
 	local alpha = 255 * animPos
 
 	local lcars_border = ColorAlpha(Star_Trek.LCARS.ColorLightBlue, alpha)
