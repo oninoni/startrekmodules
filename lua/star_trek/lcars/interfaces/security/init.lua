@@ -14,6 +14,7 @@ function Star_Trek.LCARS:OpenSecurityMenu()
 	local modes = {
 		"Internal Scanners",
 		"Security Measures",
+		"Alerts",
 	}
 	local buttons = {}
 	for i, name in pairs(modes) do
@@ -35,15 +36,17 @@ function Star_Trek.LCARS:OpenSecurityMenu()
 		Name = "Disable Console",
 		Color = Star_Trek.LCARS.ColorRed,
 	}
-	buttons[modeCount + 2] = utilButtonData
+	buttons[modeCount + 3] = utilButtonData
+
+	local success2, actionWindow = securityUtil.CreateActionWindow(1)
 
 	local height = table.maxn(buttons) * 35 + 80
-	local success2, menuWindow = Star_Trek.LCARS:CreateWindow(
+	local success3, menuWindow = Star_Trek.LCARS:CreateWindow(
 		"button_list",
 		Vector(-22, -34, 8.2),
 		Angle(0, 0, -90),
-		18,
-		400,
+		24,
+		500,
 		height,
 		function(windowData, interfaceData, ent, buttonId)
 			if buttonId == modeCount + 2 then
@@ -56,18 +59,18 @@ function Star_Trek.LCARS:OpenSecurityMenu()
 		buttons,
 		"MODES"
 	)
-	if not success2 then
+	if not success3 then
 		Star_Trek:Message(menuWindow)
 		return
 	end
 
-	local success3, mapWindow = securityUtil.CreateMapWindow(1)
-	if not success3 then
+	local success4, mapWindow = securityUtil.CreateMapWindow(1)
+	if not success4 then
 		Star_Trek:Message(mapWindow)
 		return
 	end
 
-	local success4, sectionWindow = Star_Trek.LCARS:CreateWindow(
+	local success5, sectionWindow = Star_Trek.LCARS:CreateWindow(
 		"category_list",
 		Vector(-28, -5, -2),
 		Angle(0, 0, 0),
@@ -103,7 +106,7 @@ function Star_Trek.LCARS:OpenSecurityMenu()
 		false,
 		true
 	)
-	if not success4 then
+	if not success5 then
 		Star_Trek:Message(menuWindow)
 		return
 	end
@@ -111,11 +114,12 @@ function Star_Trek.LCARS:OpenSecurityMenu()
 	local windows = Star_Trek.LCARS:CombineWindows(
 		menuWindow,
 		sectionWindow,
-		mapWindow
+		mapWindow,
+		actionWindow
 	)
 
-	local success5, error = self:OpenInterface(interfaceEnt, windows)
-	if not success5 then
+	local success6, error = self:OpenInterface(interfaceEnt, windows)
+	if not success6 then
 		Star_Trek:Message(error)
 		return
 	end

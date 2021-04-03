@@ -56,6 +56,8 @@ function WINDOW:OnCreate(windowData)
 	self.ButtonsTopAlpha = self.ButtonsStart
 	self.ButtonsBotAlpha = self.HD2 - 20
 
+	self.ButtonWidth = self.WWidth - 64
+
 	self.CategoryRows = {}
 	local categories = table.Copy(self.Categories)
 	while true do
@@ -108,7 +110,7 @@ function WINDOW:OnCreate(windowData)
 		for butId, button in pairs(category.Buttons) do
 			button.MaterialData = Star_Trek.LCARS:CreateButton(
 				self.Id .. "_But_" .. catId .. "_" .. butId,
-				self.WWidth - 64,
+				self.ButtonWidth,
 				BUTTON_HEIGHT,
 				button.Color,
 				Star_Trek.LCARS.ColorYellow,
@@ -130,10 +132,10 @@ end
 
 function WINDOW:OnPress(pos, animPos)
 	local selected = self.Selected
+	local x = self.HFlip and -24 or 24
 
 	if pos.y <= -self.HD2 + self.CategoryHeight + 65 then
 		-- Selection
-		local x = self.HFlip and -24 or 24
 		for rowId, rowData in pairs(self.CategoryRows) do
 			for butId, categoryData in pairs(rowData.Categories) do
 				local xRow = x + ((butId - 0.5) - rowData.N / 2) * rowData.Width
@@ -155,7 +157,7 @@ function WINDOW:OnPress(pos, animPos)
 				if button.Disabled then continue end
 
 				local y = Star_Trek.LCARS:GetButtonYPos(self.ButtonsHeight, i, n, offset)
-				if pos.y >= y - 1 and pos.y <= y + 31 then
+				if isButtonPressed(x, y, self.ButtonWidth, BUTTON_HEIGHT, pos) then
 					return #self.Categories + i
 				end
 			end
@@ -202,7 +204,7 @@ function WINDOW:OnDraw(pos, animPos)
 				if button.Selected then
 					state = state + 1
 				end
-				if pos.y >= y - 1 and pos.y <= y + (BUTTON_HEIGHT - 1) then
+				if isButtonPressed(x, y, self.ButtonWidth, BUTTON_HEIGHT, pos) then
 					state = state + 3
 				end
 			end
