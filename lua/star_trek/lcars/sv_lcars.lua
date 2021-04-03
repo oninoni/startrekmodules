@@ -130,6 +130,11 @@ function Star_Trek.LCARS:OpenInterface(ent, windows)
 		Windows         = windows,
 	}
 
+	for id, window in pairs(interfaceData.Windows) do
+		window.Id = id
+		window.Ent = ent
+	end
+
 	local interfaceDataClient = table.Copy(interfaceData)
 	for _, windowData in pairs(interfaceDataClient.Windows) do
 		windowData.Callback = nil
@@ -210,9 +215,8 @@ function Star_Trek.LCARS:CreateWindow(windowType, pos, angles, scale, width, hei
 	}
 	setmetatable(windowData, {__index = windowFunctions})
 
-	-- TODO: Change Return to only be validation.
-	windowData = windowData:OnCreate(...)
-	if not istable(windowData) then
+	local success = windowData:OnCreate(...)
+	if not success then
 		return false, "Invalid Window Data!"
 	end
 
@@ -303,9 +307,9 @@ net.Receive("Star_Trek.LCARS.Pressed", function(len, ply)
 		return
 	end
 
-	local updated = windowData:OnPress(interfaceData, ent, buttonId, windowData.Callback)
-	if updated then
-		Star_Trek.LCARS:UpdateWindow(ent, windowId)
+	local shouldUpdate = windowData:OnPress(interfaceData, ent, buttonId, windowData.Callback)
+	if shouldUpdate then
+		windowData:Update()
 	end
 end)
 

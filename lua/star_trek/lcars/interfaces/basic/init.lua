@@ -6,6 +6,7 @@ function Star_Trek.LCARS:OpenMenu()
 	if not success then
 		-- Error Message
 		Star_Trek:Message(ent)
+		return
 	end
 
 	local interfaceData = self.ActiveInterfaces[ent]
@@ -21,6 +22,7 @@ function Star_Trek.LCARS:OpenMenu()
 	local keyValues = triggerEntity.LCARSKeyData
 	if not istable(keyValues) then
 		Star_Trek:Message("Invalid Key Values on OpenMenu")
+		return
 	end
 
 	local buttons = basicUtil.GenerateButtons(keyValues)
@@ -76,6 +78,7 @@ function Star_Trek.LCARS:OpenMenu()
 	)
 	if not success then
 		Star_Trek:Message(window)
+		return
 	end
 
 	local windows = Star_Trek.LCARS:CombineWindows(window)
@@ -83,6 +86,7 @@ function Star_Trek.LCARS:OpenMenu()
 	local success, error = self:OpenInterface(ent, windows)
 	if not success then
 		Star_Trek:Message(error)
+		return
 	end
 end
 

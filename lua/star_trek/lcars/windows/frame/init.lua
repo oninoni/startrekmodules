@@ -13,12 +13,20 @@
 ---------------------------------------
 
 ---------------------------------------
---  LCARS Transport Slider | Server  --
+--    LCARS Single Frame | Server    --
 ---------------------------------------
 
 local SELF = WINDOW
-function WINDOW:OnPress(interfaceData, ent, buttonId, callback)
-	ent:EmitSound("star_trek.lcars_transporter_lock")
+function WINDOW:OnCreate(title, titleShort, hFlip)
+	self.Height2 	= false
+	self.Title 		= title or ""
+	self.TitleShort = titleShort or self.Title
+	self.HFlip 		= hFlip or false
+	
+	self.Color1 = Star_Trek.LCARS.ColorOrange
+	self.Color2 = Star_Trek.LCARS.ColorBlue
+	self.Color3 = Star_Trek.LCARS.ColorLightRed
+	self.Color4 = Star_Trek.LCARS.ColorBlue
 
-	callback(windowData, interfaceData, ent, buttonId)
+	return true
 end

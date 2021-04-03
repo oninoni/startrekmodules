@@ -1,9 +1,29 @@
+---------------------------------------
+---------------------------------------
+--        Star Trek Utilities        --
+--                                   --
+--            Created by             --
+--       Jan 'Oninoni' Ziegler       --
+--                                   --
+-- This software can be used freely, --
+--    but only distributed by me.    --
+--                                   --
+--    Copyright © 2020 Jan Ziegler   --
+---------------------------------------
+---------------------------------------
+
+---------------------------------------
+--     LCARS Section Map | Server    --
+---------------------------------------
+
+local SELF = WINDOW
 function WINDOW:OnCreate(deck, hFlip)
-	self.DeckId = deck
-	self.HFlip = hFlip or false
+	local success = SELF.Base.OnCreate(self, "", "DECK " .. deck, hFlip)
+	if not success then
+		return false
+	end
 	
 	self.Sections = {}
-	self.DeckName = "DECK " .. deck
 
 	local deckData = Star_Trek.Sections.Decks[deck]
 	for sectionId, sectionData in pairs(deckData.Sections) do
@@ -45,6 +65,8 @@ end
 
 function WINDOW:SetSelected(data)
 	for _, sectionData in pairs(self.Sections) do
+		sectionData.Selected = false
+		
 		for id, selected in pairs(data) do
 			if id == sectionData.Id then
 				sectionData.Selected = selected

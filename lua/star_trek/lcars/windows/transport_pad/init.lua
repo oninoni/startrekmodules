@@ -1,8 +1,29 @@
+---------------------------------------
+---------------------------------------
+--        Star Trek Utilities        --
+--                                   --
+--            Created by             --
+--       Jan 'Oninoni' Ziegler       --
+--                                   --
+-- This software can be used freely, --
+--    but only distributed by me.    --
+--                                   --
+--    Copyright © 2020 Jan Ziegler   --
+---------------------------------------
+---------------------------------------
+
+---------------------------------------
+--    LCARS Transport Pad | Client   --
+---------------------------------------
+
+local SELF = WINDOW
 function WINDOW:OnCreate(padNumber, title, titleShort, hFlip)
+	local success = SELF.Base.OnCreate(self, title, titleShort, hFlip)
+	if not success then
+		return false
+	end
+
 	self.Pads = {}
-	self.Title = title or ""
-	self.TitleShort = titleShort or self.Title
-	self.HFlip = hFlip or false
 
 	local radius = self.WindowHeight / 8
 	local offset = radius * 2.5
@@ -68,6 +89,7 @@ end
 
 function WINDOW:GetSelected()
 	local data = {}
+	
 	for _, pad in pairs(self.Pads) do
 		data[pad.Name] = pad.Selected
 	end
@@ -76,8 +98,10 @@ function WINDOW:GetSelected()
 end
 
 function WINDOW:SetSelected(data)
-	for name, selected in pairs(data) do
-		for _, pad in pairs(self.Pads) do
+	for _, pad in pairs(self.Pads) do
+		pad.Selected = false
+		
+		for name, selected in pairs(data) do
 			if pad.Name == name then
 				pad.Selected = selected
 				break

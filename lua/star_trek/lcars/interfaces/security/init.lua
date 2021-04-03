@@ -11,66 +11,15 @@ function Star_Trek.LCARS:OpenSecurityMenu()
 		return
 	end
 
-	local modes = {
-		"Internal Scanners",
-		"Security Measures",
-		"Alerts",
-	}
-	local buttons = {}
-	for i, name in pairs(modes) do
-		local color = Star_Trek.LCARS.ColorBlue
-		if i % 2 == 0 then
-			color = Star_Trek.LCARS.ColorLightBlue
-		end
+	local success2, menuWindow, actionWindow = securityUtil.CreateMenuWindow()
 
-		local buttonData = {
-			Name = name,
-			Color = color,
-		}
-
-		buttons[i] = buttonData
-	end
-
-	local modeCount = #modes
-	local utilButtonData = {
-		Name = "Disable Console",
-		Color = Star_Trek.LCARS.ColorRed,
-	}
-	buttons[modeCount + 3] = utilButtonData
-
-	local success2, actionWindow = securityUtil.CreateActionWindow(1)
-
-	local height = table.maxn(buttons) * 35 + 80
-	local success3, menuWindow = Star_Trek.LCARS:CreateWindow(
-		"button_list",
-		Vector(-22, -34, 8.2),
-		Angle(0, 0, -90),
-		24,
-		500,
-		height,
-		function(windowData, interfaceData, ent, buttonId)
-			if buttonId == modeCount + 2 then
-				ent:EmitSound("star_trek.lcars_close")
-				Star_Trek.LCARS:CloseInterface(ent)
-			else
-				-- TODO: Mode Selection
-			end
-		end,
-		buttons,
-		"MODES"
-	)
+	local success3, mapWindow = securityUtil.CreateMapWindow(1)
 	if not success3 then
-		Star_Trek:Message(menuWindow)
-		return
-	end
-
-	local success4, mapWindow = securityUtil.CreateMapWindow(1)
-	if not success4 then
 		Star_Trek:Message(mapWindow)
 		return
 	end
 
-	local success5, sectionWindow = Star_Trek.LCARS:CreateWindow(
+	local success4, sectionWindow = Star_Trek.LCARS:CreateWindow(
 		"category_list",
 		Vector(-28, -5, -2),
 		Angle(0, 0, 0),
@@ -106,7 +55,7 @@ function Star_Trek.LCARS:OpenSecurityMenu()
 		false,
 		true
 	)
-	if not success5 then
+	if not success4 then
 		Star_Trek:Message(menuWindow)
 		return
 	end
@@ -118,8 +67,8 @@ function Star_Trek.LCARS:OpenSecurityMenu()
 		actionWindow
 	)
 
-	local success6, error = self:OpenInterface(interfaceEnt, windows)
-	if not success6 then
+	local success5, error = self:OpenInterface(interfaceEnt, windows)
+	if not success5 then
 		Star_Trek:Message(error)
 		return
 	end

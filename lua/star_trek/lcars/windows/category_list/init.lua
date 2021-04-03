@@ -1,14 +1,38 @@
+---------------------------------------
+---------------------------------------
+--        Star Trek Utilities        --
+--                                   --
+--            Created by             --
+--       Jan 'Oninoni' Ziegler       --
+--                                   --
+-- This software can be used freely, --
+--    but only distributed by me.    --
+--                                   --
+--    Copyright © 2020 Jan Ziegler   --
+---------------------------------------
+---------------------------------------
+
+---------------------------------------
+--    LCARS Category List | Server   --
+---------------------------------------
+
+local SELF = WINDOW
 function WINDOW:OnCreate(categories, title, titleShort, hFlip, toggle)
-	self.Categories = {}
-	self.Title = title or ""
-	self.TitleShort = titleShort or self.Title
-	self.HFlip = hFlip or false
-	self.Toggle = toggle
+	self.Selected = 1
+
+	local success = SELF.Base.OnCreate(self, categories[self.Selected].Buttons, title, titleShort, hFlip, toggle)
+	if not success then
+		return false
+	end
 
 	if not istable(categories) then
 		return false
 	end
 
+	self.Height2 = math.max(2, math.ceil(table.Count(categories) / 4)) * 35 + 50
+	
+	-- TODO: Check for redundancy.
+	self.Categories = {}
 	for i, category in pairs(categories) do
 		if not istable(category) or not istable(category.Buttons) then continue end
 
@@ -18,10 +42,6 @@ function WINDOW:OnCreate(categories, title, titleShort, hFlip, toggle)
 			Data = category.Data,
 			Buttons = {}
 		}
-
-		if not self.Selected then
-			self.Selected = i
-		end
 
 		if IsColor(category.Color) then
 			categoryData.Color = category.Color
@@ -33,124 +53,66 @@ function WINDOW:OnCreate(categories, title, titleShort, hFlip, toggle)
 			end
 		end
 
-		for j, button in pairs(category.Buttons) do
-			local buttonData = {
-				Name = button.Name or "MISSING",
-				Disabled = button.Disabled or false,
-				Data = button.Data,
-			}
-
-			if IsColor(button.Color) then
-				buttonData.Color = button.Color
-			else
-				if self.Toggle then
-					if j % 2 == 0 then
-						buttonData.Color = Star_Trek.LCARS.ColorLightBlue
-					else
-						buttonData.Color = Star_Trek.LCARS.ColorBlue
-					end
-				else
-					buttonData.Color = table.Random(Star_Trek.LCARS.Colors)
-				end
-			end
-
-			buttonData.RandomS = button.RandomS
-			buttonData.RandomL = button.RandomL
-
-			table.insert(categoryData.Buttons, buttonData)
-		end
+		categoryData.Buttons = category.Buttons
 
 		categoryData.Id = table.insert(self.Categories, categoryData)
 	end
 
-	return self
+	return true
 end
 
 function WINDOW:GetSelected()
-	local data = {
-		Buttons = {}
-	}
+	local data = {}
 
-	local categoryData = self.Categories[self.Selected]
-	if istable(categoryData) then
-		data.Selected = categoryData.Name
-		for _, buttonData in pairs(categoryData.Buttons) do
-			data.Buttons[buttonData.Name] = buttonData.Selected
-		end
-	end
+	data.Buttons = SELF.BASE.GetSelected(self)
+	data.Selected = self.Selected
 
 	return data
 end
 
+function WINDOW:SetCategory(category)
+	self.Selected = category
+	
+	local height2 = self.Height2
+	SELF.Base.OnCreate(self, self.Categories[self.Selected].Buttons, self.Title, self.TitleShort, self.HFlip, self.Toggle)
+	self.Height2 = height2
+end
+
 function WINDOW:SetSelected(data)
-	for i, categoryData in pairs(self.Categories) do
-		if categoryData.Name == data.Selected then
-			self.Selected = i
-
-			for name, selected in pairs(data.Buttons) do
-				for _, buttonData in pairs(categoryData.Buttons) do
-					if buttonData.Name == name then
-						buttonData.Selected = selected
-						break
-					end
-				end
-			end
-
-			break
-		end
-	end
+	self:SetCategory(data.Selected)
+	self.BASE.SetSelected(self, data.Buttons)
 end
 
 function WINDOW:OnPress(interfaceData, ent, buttonId, callback)
+	local shouldUpdate = false
+	
 	local categoryId = self.Selected
 	local categoryCount = table.Count(self.Categories)
-	local categoryData = self.Categories[categoryId]
-
-	local shouldUpdate = false
 
 	if buttonId <= categoryCount then
-		-- Category Selection
-		if buttonId ~= categoryId then
-			local newData = self.Categories[buttonId]
-			if istable(newData) and not newData.Disabled then
-				self.Selected = buttonId
+		if buttonId == categoryId then
+			return
+		end
 
-				for _, buttonData in pairs(categoryData.Buttons) do
-					buttonData.Selected = nil
-				end
-
-				shouldUpdate = true
-
-				if isfunction(callback) then
-					callback(self, interfaceData, ent, buttonId, nil)
-				end
-
-				if Star_Trek.LCARS.ActiveInterfaces[ent] and not Star_Trek.LCARS.ActiveInterfaces[ent].Closing then
-					ent:EmitSound("star_trek.lcars_beep2")
-				end
-			end
+		self:SetCategory(buttonId)
+		shouldUpdate = true
+		
+		ent:EmitSound("star_trek.lcars_beep") -- Modularize Sound
+		
+		if isfunction(callback) then
+			callback(self, interfaceData, ent, categoryId, nil)
 		end
 	else
-		-- Buttons
 		buttonId = buttonId - categoryCount
 
-		if self.Toggle then
-			local buttonData = categoryData.Buttons[buttonId]
-			if istable(buttonData) then
-				buttonData.Selected = not (buttonData.Selected or false)
-				shouldUpdate = true
-			end
+		if SELF.Base.OnPress(self, interfaceData, ent, buttonId, nil) then
+			shouldUpdate = true
+			
+			ent:EmitSound("star_trek.lcars_beep") -- Modularize Sound
 		end
 
-		if isfunction(callback) then
-			local updated = callback(self, interfaceData, ent, categoryId, buttonId)
-			if updated then
-				shouldUpdate = true
-			end
-		end
-
-		if Star_Trek.LCARS.ActiveInterfaces[ent] and not Star_Trek.LCARS.ActiveInterfaces[ent].Closing then
-			ent:EmitSound("star_trek.lcars_beep")
+		if isfunction(callback) and callback(self, interfaceData, ent, categoryId, buttonId) then
+			shouldUpdate = true
 		end
 	end
 

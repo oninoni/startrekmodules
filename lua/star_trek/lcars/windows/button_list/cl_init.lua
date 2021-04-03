@@ -1,13 +1,32 @@
+---------------------------------------
+---------------------------------------
+--        Star Trek Utilities        --
+--                                   --
+--            Created by             --
+--       Jan 'Oninoni' Ziegler       --
+--                                   --
+-- This software can be used freely, --
+--    but only distributed by me.    --
+--                                   --
+--    Copyright © 2020 Jan Ziegler   --
+---------------------------------------
+---------------------------------------
+
+---------------------------------------
+--     LCARS Button List | Client    --
+---------------------------------------
+
 local BUTTON_HEIGHT = 32
 -- TODO: Modularize the size of the buttons. (Interaction, Offsets, etc...)
 
+local SELF = WINDOW
 function WINDOW:OnCreate(windowData)
-	self.Title = windowData.Title
-	self.TitleShort = windowData.TitleShort
-	self.HFlip = windowData.HFlip
+	local success = SELF.Base.OnCreate(self, windowData)
+	if not success then
+		return false
+	end
 	
 	self.Buttons = windowData.Buttons
-
 	self.MaxN = table.maxn(self.Buttons)
 
 	self.ButtonsHeight = self.WHeight - 80
@@ -17,18 +36,7 @@ function WINDOW:OnCreate(windowData)
 	self.ButtonsBotAlpha = self.HD2 - 25
 
 	self.ButtonWidth = self.WWidth - 64
-
-	self.FrameMaterialData = Star_Trek.LCARS:CreateFrame(
-		self.Id,
-		self.WWidth,
-		self.WHeight,
-		self.Title,
-		self.TitleShort,
-		Star_Trek.LCARS.ColorOrange,
-		Star_Trek.LCARS.ColorBlue,
-		Star_Trek.LCARS.ColorLightRed,
-		self.HFlip
-	)
+	self.XOffset = self.HFlip and -24 or 24
 
 	for id, button in pairs(self.Buttons) do
 		button.MaterialData = Star_Trek.LCARS:CreateButton(
@@ -36,7 +44,7 @@ function WINDOW:OnCreate(windowData)
 			self.ButtonWidth,
 			BUTTON_HEIGHT,
 			button.Color,
-			Star_Trek.LCARS.ColorYellow,
+			Star_Trek.LCARS.ColorYellow, -- TODO: Modularize
 			button.Name or "[ERROR]",
 			false,
 			false,
@@ -45,45 +53,33 @@ function WINDOW:OnCreate(windowData)
 		)
 	end
 
-	return self
+	return true
 end
 
-local function isButtonPressed(x, y, width, height, pos)
+function WINDOW:IsButtonHovered(x, y, width, height, pos)
 	return pos.x >= (x - width/2) and pos.x <= (x + width/2) and pos.y >= (y -1) and pos.y <= (y + height)
 end
 
 function WINDOW:OnPress(pos, animPos)
 	local offset = Star_Trek.LCARS:GetButtonOffset(self.ButtonsStart, self.ButtonsHeight, self.MaxN, pos.y)
-	local x = self.HFlip and -24 or 24
+
 	for i, button in pairs(self.Buttons) do
 		if button.Disabled then continue end
 
 		local y = Star_Trek.LCARS:GetButtonYPos(self.ButtonsHeight, i, self.MaxN, offset)
-		if isButtonPressed(x, y, self.ButtonWidth, BUTTON_HEIGHT, pos) then
+		if self:IsButtonHovered(self.XOffset, y, self.ButtonWidth, BUTTON_HEIGHT, pos) then
 			return i
 		end
 	end
 end
 
-local color_grey = Star_Trek.LCARS.ColorGrey
-local color_yellow = Star_Trek.LCARS.ColorYellow
-
 function WINDOW:OnDraw(pos, animPos)
 	local offset = Star_Trek.LCARS:GetButtonOffset(self.ButtonsStart, self.ButtonsHeight, self.MaxN, pos.y)
-	local x = self.HFlip and -24 or 24
+
 	for i, button in pairs(self.Buttons) do
 		local y = Star_Trek.LCARS:GetButtonYPos(self.ButtonsHeight, i, self.MaxN, offset)
 
-		local state = 1
-		if not button.Disabled then
-			state = 2
-			if button.Selected then
-				state = state + 1
-			end
-			if isButtonPressed(x, y, self.ButtonWidth, BUTTON_HEIGHT, pos) then
-				state = state + 3
-			end
-		end
+		local state = Star_Trek.LCARS:GetButtonState(button.Disabled, self:IsButtonHovered(self.XOffset, y, self.ButtonWidth, BUTTON_HEIGHT, pos), button.Selected)
 
 		local buttonAlpha = 255
 		if y < self.ButtonsTopAlpha or y > self.ButtonsBotAlpha then
@@ -98,12 +94,8 @@ function WINDOW:OnDraw(pos, animPos)
 		buttonAlpha = math.min(buttonAlpha, 255 * animPos)
 		surface.SetDrawColor(255, 255, 255, buttonAlpha)
 		
-		Star_Trek.LCARS:RenderButton(x, y, button.MaterialData, state)
+		Star_Trek.LCARS:RenderButton(self.XOffset, y, button.MaterialData, state)
 	end
 	
-	surface.SetDrawColor(255, 255, 255, 255 * animPos)
-
-	Star_Trek.LCARS:RenderFrame(self.FrameMaterialData)
-
-	surface.SetAlphaMultiplier(1)
+	SELF.Base.OnDraw(self, pos, animPos)
 end

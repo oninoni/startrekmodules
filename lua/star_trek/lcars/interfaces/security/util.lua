@@ -66,6 +66,73 @@ function securityUtil.CreateActionWindow(mode)
 	return true, actionWindow
 end
 
+function securityUtil.CreateMenuWindow()
+	local success, actionWindow = securityUtil.CreateActionWindow(1)
+	if not success then 
+		return false, actionWindow
+	end
+
+	local modes = {
+		"Internal Scanners",
+		"Security Measures",
+		"Alerts",
+	}
+	local buttons = {}
+	for i, name in pairs(modes) do
+		local color = Star_Trek.LCARS.ColorBlue
+		if i % 2 == 0 then
+			color = Star_Trek.LCARS.ColorLightBlue
+		end
+
+		local buttonData = {
+			Name = name,
+			Color = color,
+		}
+
+		buttons[i] = buttonData
+	end
+
+	local modeCount = #modes
+	local utilButtonData = {
+		Name = "Disable Console",
+		Color = Star_Trek.LCARS.ColorRed,
+	}
+	buttons[modeCount + 3] = utilButtonData
+
+	local height = table.maxn(buttons) * 35 + 80
+	local success2, menuWindow = Star_Trek.LCARS:CreateWindow(
+		"button_list",
+		Vector(-22, -34, 8.2),
+		Angle(0, 0, -90),
+		24,
+		500,
+		height,
+		function(windowData, interfaceData, ent, buttonId)
+			if buttonId == modeCount + 2 then
+				ent:EmitSound("star_trek.lcars_close")
+				Star_Trek.LCARS:CloseInterface(ent)
+			else
+				print("---")
+				PrintTable(windowData:GetSelected())
+				print("...")
+				windowData:SetSelected({
+					[buttonId] = true
+				})
+				PrintTable(windowData:GetSelected())
+				
+				Star_Trek.LCARS:UpdateWindow(ent, windowData.WindowId, windowData)
+			end
+		end,
+		buttons,
+		"MODES"
+	)
+	if not success2 then
+		return false, menuWindow
+	end
+
+	return true, menuWindow, actionWindow
+end
+
 -- Generates the map view.
 function securityUtil.CreateMapWindow(deck)
 	local success, mapWindow = Star_Trek.LCARS:CreateWindow("section_map", Vector(12.5, -2, -2), Angle(0, 0, 0), nil, 1100, 680, function(windowData, interfaceData, ent, buttonId)

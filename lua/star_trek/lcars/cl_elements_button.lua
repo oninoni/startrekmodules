@@ -228,6 +228,22 @@ function Star_Trek.LCARS:CreateButton(id, width, height, color, activeColor, tex
 	end)
 end
 
+function Star_Trek.LCARS:GetButtonState(disabled, hovered, selected)
+	if disabled then
+		return 1
+	end
+
+	local state = 2
+	if selected then
+		state = state + 1
+	end
+	if hovered then
+		state = state + 3
+	end
+
+	return state
+end
+
 function Star_Trek.LCARS:RenderButton(x, y, materialData, state)
 	surface.SetMaterial(materialData.Material)
 

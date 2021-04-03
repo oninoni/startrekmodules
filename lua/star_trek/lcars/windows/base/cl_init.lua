@@ -13,12 +13,17 @@
 ---------------------------------------
 
 ---------------------------------------
---  LCARS Transport Slider | Server  --
+--     LCARS Base Window | Client    --
 ---------------------------------------
 
 local SELF = WINDOW
-function WINDOW:OnPress(interfaceData, ent, buttonId, callback)
-	ent:EmitSound("star_trek.lcars_transporter_lock")
+function WINDOW:OnCreate(windowData)
+	return true
+end
 
-	callback(windowData, interfaceData, ent, buttonId)
+-- TODO: Redo modular with deriving
+function WINDOW:OnPress(pos, animPos)
+end
+
+function WINDOW:OnDraw(pos, animPos)
 end

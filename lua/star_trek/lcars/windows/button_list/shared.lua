@@ -13,12 +13,8 @@
 ---------------------------------------
 
 ---------------------------------------
---  LCARS Transport Slider | Server  --
+--     LCARS Button List | Shared    --
 ---------------------------------------
 
-local SELF = WINDOW
-function WINDOW:OnPress(interfaceData, ent, buttonId, callback)
-	ent:EmitSound("star_trek.lcars_transporter_lock")
-
-	callback(windowData, interfaceData, ent, buttonId)
-end
+-- Determines the parent windows name for this one. (Like Deriving Classes)
+WINDOW.BaseWindow = "frame"

@@ -1,40 +1,46 @@
+---------------------------------------
+---------------------------------------
+--        Star Trek Utilities        --
+--                                   --
+--            Created by             --
+--       Jan 'Oninoni' Ziegler       --
+--                                   --
+-- This software can be used freely, --
+--    but only distributed by me.    --
+--                                   --
+--    Copyright © 2020 Jan Ziegler   --
+---------------------------------------
+---------------------------------------
+
+---------------------------------------
+--     LCARS Section Map | Client    --
+---------------------------------------
+
 local MAP_SCALE = 5
 local MAP_OFFSET_X = 0
 local MAP_OFFSET_Y = -200
 
+local SELF = WINDOW
 function WINDOW:OnCreate(windowData)
-	self.DeckName = windowData.DeckName
-	self.Sections = windowData.Sections
-	self.HFlip = windowData.HFlip
+	local success = SELF.Base.OnCreate(self, windowData)
+	if not success then
+		return false
+	end
 
-	self.FrameMaterialData = Star_Trek.LCARS:CreateFrame(
-		self.Id,
-		self.WWidth,
-		self.WHeight,
-		"",
-		self.DeckName,
-		Star_Trek.LCARS.ColorLightRed,
-		Star_Trek.LCARS.ColorOrange,
-		Star_Trek.LCARS.ColorBlue,
-		self.HFlip
-	)
+	self.Sections = windowData.Sections
 
 	return self
 end
 
-function WINDOW:OnPress(pos, animPos)
-end
-
 function WINDOW:OnDraw(pos, animPos)
-	local alpha = 255 * animPos
+	cam.End3D2D()
+	cam.Start3D2D(self.WPos, self.WAng, 1 / (self.WScale * MAP_SCALE))
 
+	local alpha = 255 * animPos
 	local lcars_border = ColorAlpha(Star_Trek.LCARS.ColorLightBlue, alpha)
 	local lcars_selected = ColorAlpha(Star_Trek.LCARS.ColorOrange, alpha)
 	local lcars_inactive = ColorAlpha(Star_Trek.LCARS.ColorBlue, alpha)
 
-	cam.End3D2D()
-	cam.Start3D2D(self.WPos, self.WAng, 1 / (self.WScale * MAP_SCALE))
-	
 	for _, sectionData in pairs(self.Sections) do
 		for _, areaData in pairs(sectionData.Areas) do
 			local x = areaData.Pos.x + MAP_OFFSET_X
@@ -60,9 +66,5 @@ function WINDOW:OnDraw(pos, animPos)
 	cam.End3D2D()
 	cam.Start3D2D(self.WPos, self.WAng, 1 / self.WScale)
 
-	surface.SetDrawColor(255, 255, 255, alpha)
-
-	Star_Trek.LCARS:RenderFrame(self.FrameMaterialData)
-
-	surface.SetAlphaMultiplier(1)
+	SELF.Base.OnDraw(self, pos, animPos)
 end

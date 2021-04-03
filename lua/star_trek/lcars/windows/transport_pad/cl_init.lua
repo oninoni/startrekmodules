@@ -1,7 +1,27 @@
+---------------------------------------
+---------------------------------------
+--        Star Trek Utilities        --
+--                                   --
+--            Created by             --
+--       Jan 'Oninoni' Ziegler       --
+--                                   --
+-- This software can be used freely, --
+--    but only distributed by me.    --
+--                                   --
+--    Copyright © 2020 Jan Ziegler   --
+---------------------------------------
+---------------------------------------
+
+---------------------------------------
+--    LCARS Transport Pad | Client   --
+---------------------------------------
+
+local SELF = WINDOW
 function WINDOW:OnCreate(windowData)
-	self.Title = windowData.Title
-	self.TitleShort = windowData.TitleShort
-	self.HFlip = windowData.HFlip
+	local success = SELF.Base.OnCreate(self, windowData)
+	if not success then
+		return false
+	end
 
 	self.Pads = windowData.Pads
 
@@ -17,18 +37,6 @@ function WINDOW:OnCreate(windowData)
 		}
 	end
 	table.insert(self.HexValues, self.HexValues[1])
-
-	self.FrameMaterialData = Star_Trek.LCARS:CreateFrame(
-		self.Id,
-		self.WWidth,
-		self.WHeight,
-		self.Title,
-		self.TitleShort,
-		Star_Trek.LCARS.ColorLightRed,
-		Star_Trek.LCARS.ColorOrange,
-		Star_Trek.LCARS.ColorLightRed,
-		self.HFlip
-	)
 
 	return self
 end
@@ -97,9 +105,5 @@ function WINDOW:OnDraw(pos, animPos)
 		draw.SimpleText(i, "LCARSSmall", pad.X, pad.Y, Color(0, 0, 0, animPos * 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end
 
-	surface.SetDrawColor(255, 255, 255, alpha)
-
-	Star_Trek.LCARS:RenderFrame(self.FrameMaterialData)
-
-	surface.SetAlphaMultiplier(1)
+	SELF.Base.OnDraw(self, pos, animPos)
 end

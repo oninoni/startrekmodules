@@ -1,10 +1,29 @@
-function WINDOW:OnCreate(selfData)
+---------------------------------------
+---------------------------------------
+--        Star Trek Utilities        --
+--                                   --
+--            Created by             --
+--       Jan 'Oninoni' Ziegler       --
+--                                   --
+-- This software can be used freely, --
+--    but only distributed by me.    --
+--                                   --
+--    Copyright © 2020 Jan Ziegler   --
+---------------------------------------
+---------------------------------------
+
+---------------------------------------
+--  LCARS Transport Slider | Client  --
+---------------------------------------
+
+local SELF = WINDOW
+function WINDOW:OnCreate(windowData)
 	local height = self.WHeight
 
 	self.State = -height / 2
 	self.TargetState = -height / 2
 
-	return self
+	return true
 end
 
 function WINDOW:OnPress(pos, animPos)

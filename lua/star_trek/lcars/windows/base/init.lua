@@ -13,12 +13,25 @@
 ---------------------------------------
 
 ---------------------------------------
---  LCARS Transport Slider | Server  --
+--     LCARS Base Window | Client    --
 ---------------------------------------
 
 local SELF = WINDOW
-function WINDOW:OnPress(interfaceData, ent, buttonId, callback)
-	ent:EmitSound("star_trek.lcars_transporter_lock")
+function WINDOW:OnCreate()
+	return true
+end
 
+function WINDOW:GetSelected()
+    return {}
+end
+
+function WINDOW:SetSelected(data)
+end
+
+function WINDOW:Update()
+	Star_Trek.LCARS:UpdateWindow(self.Ent, self.Id, self)
+end
+
+function WINDOW:OnPress(interfaceData, ent, buttonId, callback)
 	callback(windowData, interfaceData, ent, buttonId)
 end

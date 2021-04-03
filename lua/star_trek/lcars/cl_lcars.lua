@@ -42,7 +42,7 @@ end)
 function Star_Trek.LCARS:LoadWindowData(id, windowData, IPos, IAng)
 	local windowFunctions = self.Windows[windowData.WindowType]
 	if not istable(windowFunctions) then
-		return
+		return false -- TODO: Add Errors
 	end
 
 	local pos, ang = LocalToWorld(windowData.WindowPos, windowData.WindowAngles, IPos, IAng)
@@ -69,7 +69,12 @@ function Star_Trek.LCARS:LoadWindowData(id, windowData, IPos, IAng)
 	
 	setmetatable(window, {__index = windowFunctions})
 	
-	return window:OnCreate(windowData)
+	local success = window:OnCreate(windowData)
+	if not success then
+		return false -- TODO: Add Errors
+	end
+
+	return window
 end
 
 -- Open a given interface and loads the data for all windows.
@@ -262,6 +267,7 @@ hook.Add("PostDrawOpaqueRenderables", "Star_Trek.LCARS.Draw", function(isDrawing
 			cam.End3D2D()
 		end
 
+		surface.SetAlphaMultiplier(1)
 		render.SuppressEngineLighting(false)
 	end
 end)
