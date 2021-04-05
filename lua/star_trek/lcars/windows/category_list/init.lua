@@ -100,7 +100,7 @@ function WINDOW:OnPress(interfaceData, ent, buttonId, callback)
 		ent:EmitSound("star_trek.lcars_beep") -- Modularize Sound
 		
 		if isfunction(callback) then
-			callback(self, interfaceData, ent, categoryId, nil)
+			callback(self, interfaceData, ent, buttonId, nil)
 		end
 	else
 		buttonId = buttonId - categoryCount

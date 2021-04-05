@@ -75,7 +75,7 @@ end
 
 function WINDOW:OnDraw(pos, animPos)
 	local offset = Star_Trek.LCARS:GetButtonOffset(self.ButtonsStart, self.ButtonsHeight, self.MaxN, pos.y)
-
+	
 	for i, button in pairs(self.Buttons) do
 		local y = Star_Trek.LCARS:GetButtonYPos(self.ButtonsHeight, i, self.MaxN, offset)
 

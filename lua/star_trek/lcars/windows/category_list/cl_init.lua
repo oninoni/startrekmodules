@@ -29,18 +29,14 @@ function WINDOW:OnCreate(windowData)
 	self.Selected = windowData.Selected
 	self.Categories = windowData.Categories
 
-	self.MaxN = table.Count(self.Categories)
-
 	self.CategoryStart = -self.HD2 + 79
 	self.CategoryHeight = windowData.Height2
 	
-	self.ButtonsStart = -self.HD2 + self.CategoryHeight + 79
-	self.ButtonsHeight = self.WHeight - self.ButtonsStart
+	self.ButtonsStart = self.CategoryStart + self.CategoryHeight
+	self.ButtonsHeight = self.HD2 - self.ButtonsStart
 
 	self.ButtonsTopAlpha = self.ButtonsStart
 	self.ButtonsBotAlpha = self.HD2 - 20
-
-	self.ButtonWidth = self.WWidth - 64
 
 	self.CategoryRows = {}
 	local categories = table.Copy(self.Categories)
@@ -129,9 +125,9 @@ function WINDOW:OnPress(pos, animPos)
 			end
 		end
 	else
-		local buttonId = SELF.Base.OnPress(pos, animPos)
+		local buttonId = SELF.Base.OnPress(self, pos, animPos)
 		if isnumber(buttonId) then
-			return #self.Categories + i
+			return #self.Categories + buttonId
 		end
 	end
 end

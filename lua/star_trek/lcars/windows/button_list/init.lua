@@ -87,7 +87,7 @@ function WINDOW:OnPress(interfaceData, ent, buttonId, callback)
 	if self.Toggle then
 		local buttonData = self.Buttons[buttonId]
 		if istable(buttonData) then
-			Selected.Selected = not (buttonData.Selected or false)
+			buttonData.Selected = not (buttonData.Selected or false)
 			shouldUpdate = true
 
 			ent:EmitSound("star_trek.lcars_beep") -- Modularize Sound
