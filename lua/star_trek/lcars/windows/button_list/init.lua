@@ -70,13 +70,10 @@ end
 
 function WINDOW:SetSelected(data)
 	for _, buttonData in pairs(self.Buttons) do
-		buttonData.Selected = false
-		
-		for name, selected in pairs(data) do
-			if buttonData.Name == name then
-				buttonData.Selected = selected
-				break
-			end
+		if data[buttonData.Name] then
+			buttonData.Selected = true
+		else
+			buttonData.Selected = false
 		end
 	end
 end

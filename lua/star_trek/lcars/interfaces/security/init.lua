@@ -28,15 +28,14 @@ function Star_Trek.LCARS:OpenSecurityMenu()
 		700,
 		function(windowData, interfaceData, ent, categoryId, buttonId)
 			if isnumber(buttonId) then
-				local buttonData = windowData.Categories[categoryId].Buttons[buttonId]
+				local buttonData = windowData.Buttons[buttonId]
 				local sectionId = buttonData.Data.Id
 
-				local selected = mapWindow:GetSelected(mapWindow)
+				local selected = mapWindow:GetSelected()
 				selected[sectionId] = buttonData.Selected
 
 				mapWindow:SetSelected(selected)
-				
-				Star_Trek.LCARS:UpdateWindow(ent, mapWindow.WindowId, mapWindow)
+				mapWindow:Update()
 			else
 				local updateSuccess, newMapWindow = securityUtil.CreateMapWindow(categoryId)
 				if not updateSuccess then

@@ -65,12 +65,10 @@ end
 
 function WINDOW:SetSelected(data)
 	for _, sectionData in pairs(self.Sections) do
-		sectionData.Selected = false
-		
-		for id, selected in pairs(data) do
-			if id == sectionData.Id then
-				sectionData.Selected = selected
-			end
+		if data[sectionData.Id] then
+			sectionData.Selected = true
+		else
+			sectionData.Selected = false
 		end
 	end
 end
