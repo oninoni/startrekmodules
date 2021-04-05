@@ -29,9 +29,9 @@ function WINDOW:SetSelected(data)
 end
 
 function WINDOW:Update()
-	Star_Trek.LCARS:UpdateWindow(self.Ent, self.Id, self)
+	Star_Trek.LCARS:UpdateWindow(self.Ent, self.Id)
 end
 
 function WINDOW:OnPress(interfaceData, ent, buttonId, callback)
-	callback(windowData, interfaceData, ent, buttonId)
+	callback(windowData, interfaceData, buttonId)
 end

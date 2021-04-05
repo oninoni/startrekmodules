@@ -26,7 +26,7 @@ local skip = true
 for _, mapString in pairs(detectMapStrings) do
 	if string.StartWith(game.GetMap(), mapString) then
 		skip = false
-		continue 
+		continue
 	end
 end
 if skip then return end

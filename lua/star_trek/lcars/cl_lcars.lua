@@ -66,9 +66,9 @@ function Star_Trek.LCARS:LoadWindowData(id, windowData, IPos, IAng)
 		WHeight = windowData.WindowHeight,
 		HD2 = windowData.WindowHeight / 2,
 	}
-	
+
 	setmetatable(window, {__index = windowFunctions})
-	
+
 	local success = window:OnCreate(windowData)
 	if not success then
 		return false -- TODO: Add Errors

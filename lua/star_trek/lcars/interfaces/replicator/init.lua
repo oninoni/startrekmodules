@@ -5,8 +5,7 @@ function Star_Trek.LCARS:OpenReplicatorMenu()
 		return
 	end
 
-	local interfaceData = self.ActiveInterfaces[ent]
-	if istable(interfaceData) then
+	if istable(self.ActiveInterfaces[ent]) then
 		return
 	end
 
@@ -32,7 +31,7 @@ function Star_Trek.LCARS:OpenReplicatorMenu()
 		nil,
 		500,
 		500,
-		function(windowData, interfaceData, ent, categoryId, buttonId)
+		function(windowData, interfaceData, categoryId, buttonId)
 			if buttonId then
 				local selected = windowData.Selected
 				local categoryData = windowData.Categories[selected]
@@ -86,11 +85,7 @@ function Star_Trek.LCARS:OpenReplicatorMenu()
 		Star_Trek:Message(menuWindow)
 	end
 
-	local windows = Star_Trek.LCARS:CombineWindows(
-		window
-	)
-
-	local success3, error = self:OpenInterface(ent, windows)
+	local success3, error = self:OpenInterface(ent, window)
 	if not success3 then
 		Star_Trek:Message(error)
 		return

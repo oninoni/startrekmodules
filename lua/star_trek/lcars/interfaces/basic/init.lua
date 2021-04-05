@@ -2,15 +2,13 @@ local basicUtil = include("util.lua")
 
 -- Opening general purpose menus.
 function Star_Trek.LCARS:OpenMenu()
-	local success, ent = self:GetInterfaceEntity(TRIGGER_PLAYER, CALLER)
-	if not success then
-		-- Error Message
+	local success1, ent = self:GetInterfaceEntity(TRIGGER_PLAYER, CALLER)
+	if not success1 then
 		Star_Trek:Message(ent)
 		return
 	end
 
-	local interfaceData = self.ActiveInterfaces[ent]
-	if istable(interfaceData) then
+	if istable(self.ActiveInterfaces[ent]) then
 		return
 	end
 
@@ -19,39 +17,20 @@ function Star_Trek.LCARS:OpenMenu()
 		triggerEntity = ent
 	end
 
-	local keyValues = triggerEntity.LCARSKeyData
-	if not istable(keyValues) then
-		Star_Trek:Message("Invalid Key Values on OpenMenu")
+	local success2, buttons, scale, width, height, title, titleShort = basicUtil.GetButtonData(triggerEntity)
+	if not success2 then
+		Star_Trek:Message(buttons)
 		return
 	end
 
-	local buttons = basicUtil.GenerateButtons(keyValues)
-
-	local scale = tonumber(keyValues["lcars_scale"])
-	local width = tonumber(keyValues["lcars_width"])
-	local height = tonumber(keyValues["lcars_height"])
-	local title = keyValues["lcars_title"]
-	local titleShort = keyValues["lcars_title_short"]
-	if titleShort == false then
-		titleShort = ""
-	end
-
-	if not height then
-		height = math.max(2, math.min(6, table.maxn(buttons))) * 35 + 80
-	end
-	local success, window = self:CreateWindow(
+	local success3, window = self:CreateWindow(
 		"button_list",
 		Vector(),
 		Angle(),
 		scale,
 		width,
 		height,
-		function(windowData, interfaceData, ent, buttonId)
-			local triggerEntity = ent:GetParent()
-			if not IsValid(triggerEntity) then
-				triggerEntity = ent
-			end
-
+		function(windowData, interfaceData, buttonId)
 			if buttonId > 4 then
 				local name = triggerEntity:GetName()
 				local caseEntities = ents.FindByName(name .. "_case")
@@ -76,15 +55,13 @@ function Star_Trek.LCARS:OpenMenu()
 		title,
 		titleShort
 	)
-	if not success then
+	if not success3 then
 		Star_Trek:Message(window)
 		return
 	end
 
-	local windows = Star_Trek.LCARS:CombineWindows(window)
-
-	local success, error = self:OpenInterface(ent, windows)
-	if not success then
+	local success4, error = self:OpenInterface(ent, window)
+	if not success4 then
 		Star_Trek:Message(error)
 		return
 	end

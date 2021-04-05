@@ -22,7 +22,13 @@ function WINDOW:OnCreate(deck, hFlip)
 	if not success then
 		return false
 	end
-	
+
+	self:SetDeck(deck)
+
+	return self
+end
+
+function WINDOW:SetDeck(deck)
 	self.Sections = {}
 
 	local deckData = Star_Trek.Sections.Decks[deck]
@@ -49,8 +55,6 @@ function WINDOW:OnCreate(deck, hFlip)
 
 		table.insert(self.Sections, sectionButtonData)
 	end
-
-	return self
 end
 
 function WINDOW:GetSelected()
@@ -71,6 +75,13 @@ function WINDOW:SetSelected(data)
 			sectionData.Selected = false
 		end
 	end
+end
+
+function WINDOW:SetSectionActive(sectionId, active)
+	local selected = self:GetSelected()
+	selected[sectionId] = active
+
+	self:SetSelected(selected)
 end
 
 function WINDOW:OnPress(interfaceData, ent, buttonId, callback)

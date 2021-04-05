@@ -50,13 +50,13 @@ function Star_Trek.LCARS:DrawFrameSpacePart(y, width, border, vFlip, hFlip, colo
 	if hFlip then
 		if vFlip then
 			draw.RoundedBox(0,
-				width - (LCARS_CORNER_RADIUS) * 2 + border,
+				width - LCARS_CORNER_RADIUS * 2 + border,
 				y + LCARS_CORNER_RADIUS,
 				(LCARS_CORNER_RADIUS - border) * 2, LCARS_CORNER_RADIUS,
 			color)
 		else
 			draw.RoundedBox(0,
-				width - (LCARS_CORNER_RADIUS) * 2 + border,
+				width - LCARS_CORNER_RADIUS * 2 + border,
 				y,
 				(LCARS_CORNER_RADIUS - border) * 2, LCARS_CORNER_RADIUS,
 			color)
@@ -221,7 +221,7 @@ function Star_Trek.LCARS:DrawFrame(width, height, title, titleShort, color1, col
 		frameStartOffset + LCARS_BORDER_WIDTH,
 		LCARS_CORNER_RADIUS * 2 - LCARS_BORDER_WIDTH * 2, remainingHeight / 2 - LCARS_BORDER_WIDTH,
 	color2)
-		
+
 	draw.RoundedBox(0,
 		posOffset + LCARS_BORDER_WIDTH,
 		frameStartOffset + LCARS_BORDER_WIDTH + remainingHeight / 2,
@@ -238,7 +238,7 @@ function Star_Trek.LCARS:DrawDoubleFrame(width, height, title, titleShort, color
 	else
 		draw.SimpleText(title, "LCARSMed", width * 0.95, 3, nil, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
 	end
-	
+
 	local posOffset = 0
 	if hFlip then
 		posOffset = width - LCARS_CORNER_RADIUS * 2

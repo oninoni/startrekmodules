@@ -28,7 +28,7 @@
 function Star_Trek.LCARS:DrawButtonGraphic(yOffset, width, height, color, borderColor, flatLeft, flatRight)
 	local solidStart = 0
 	local solidWidth = width
-	local hd2 = height / 2 
+	local hd2 = height / 2
 
 	if not flatLeft then
 		solidStart = hd2
@@ -39,7 +39,7 @@ function Star_Trek.LCARS:DrawButtonGraphic(yOffset, width, height, color, border
 			yOffset + hd2,
 			hd2, 16,
 		borderColor)
-		
+
 		Star_Trek.LCARS:DrawCircle(
 			hd2,
 			yOffset + hd2,
@@ -49,7 +49,7 @@ function Star_Trek.LCARS:DrawButtonGraphic(yOffset, width, height, color, border
 
 	if not flatRight then
 		solidWidth = solidWidth - hd2
-		
+
 		Star_Trek.LCARS:DrawCircle(
 			width - hd2,
 			yOffset + hd2,
@@ -68,7 +68,7 @@ function Star_Trek.LCARS:DrawButtonGraphic(yOffset, width, height, color, border
 		yOffset,
 		solidWidth, height,
 	borderColor)
-	
+
 	if flatLeft then
 		solidStart = 1
 		solidWidth = solidWidth - 1
@@ -134,7 +134,7 @@ function Star_Trek.LCARS:DrawButton(yOffset, width, height, color, borderColor, 
 	Star_Trek.LCARS:DrawButtonGraphic(yOffset, width, height, color, borderColor, flatLeft, flatRight)
 
 	surface.SetFont("LCARSText")
-	local textW, _ = surface.GetTextSize(text)
+	--local textW, _ = surface.GetTextSize(text)
 	if width < 200 then
 		draw.Text({
 			text = text,

@@ -6,7 +6,7 @@ local MODE_ALERT = 3
 
 function securityUtil.CreateActionWindow(mode)
 	mode = mode or MODE_SCAN
-	
+
 	local actions = {}
 	if mode == MODE_SCAN then
 		actions = {
@@ -36,7 +36,7 @@ function securityUtil.CreateActionWindow(mode)
 		if i % 2 == 0 then
 			color = Star_Trek.LCARS.ColorLightBlue
 		end
-		
+
 		buttons[i] = {
 			Name = name,
 			Color = color,
@@ -51,8 +51,8 @@ function securityUtil.CreateActionWindow(mode)
 		24,
 		500,
 		height,
-		function(windowData, interfaceData, ent, buttonId)
-			
+		function(windowData, interfaceData, buttonId)
+
 		end,
 		buttons,
 		"Stuff",
@@ -68,7 +68,7 @@ end
 
 function securityUtil.CreateMenuWindow()
 	local success, actionWindow = securityUtil.CreateActionWindow(1)
-	if not success then 
+	if not success then
 		return false, actionWindow
 	end
 
@@ -107,7 +107,7 @@ function securityUtil.CreateMenuWindow()
 		24,
 		500,
 		height,
-		function(windowData, interfaceData, ent, buttonId)
+		function(windowData, interfaceData, buttonId)
 			if buttonId == modeCount + 2 then
 				ent:EmitSound("star_trek.lcars_close")
 				Star_Trek.LCARS:CloseInterface(ent)
@@ -119,8 +119,8 @@ function securityUtil.CreateMenuWindow()
 					[buttonId] = true
 				})
 				PrintTable(windowData:GetSelected())
-				
-				Star_Trek.LCARS:UpdateWindow(ent, windowData.WindowId, windowData)
+
+				Star_Trek.LCARS:UpdateWindow(ent, windowData.Id, windowData)
 			end
 		end,
 		buttons,
@@ -135,7 +135,7 @@ end
 
 -- Generates the map view.
 function securityUtil.CreateMapWindow(deck)
-	local success, mapWindow = Star_Trek.LCARS:CreateWindow("section_map", Vector(12.5, -2, -2), Angle(0, 0, 0), nil, 1100, 680, function(windowData, interfaceData, ent, buttonId)
+	local success, mapWindow = Star_Trek.LCARS:CreateWindow("section_map", Vector(12.5, -2, -2), Angle(0, 0, 0), nil, 1100, 680, function(windowData, interfaceData, buttonId)
 		-- No Interactivity here yet.
 	end, deck)
 	if not success then

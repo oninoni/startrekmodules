@@ -22,7 +22,8 @@ function WINDOW:OnCreate(title, titleShort, hFlip)
 	self.Title 		= title or ""
 	self.TitleShort = titleShort or self.Title
 	self.HFlip 		= hFlip or false
-	
+
+	-- TODO: Modularize Colors
 	self.Color1 = Star_Trek.LCARS.ColorOrange
 	self.Color2 = Star_Trek.LCARS.ColorBlue
 	self.Color3 = Star_Trek.LCARS.ColorLightRed

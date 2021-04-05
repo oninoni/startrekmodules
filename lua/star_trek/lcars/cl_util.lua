@@ -91,7 +91,7 @@ function Star_Trek.LCARS:CreateMaterial(id, width, height, renderFunction)
 	render.PushRenderTarget(texture)
 	cam.Start2D()
 		render.Clear(0, 0, 0, 0, true, true)
-		
+
 		renderFunction()
 	cam.End2D()
 	render.PopRenderTarget()

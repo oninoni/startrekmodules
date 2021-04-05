@@ -89,7 +89,7 @@ end
 
 function WINDOW:GetSelected()
 	local data = {}
-	
+
 	for _, pad in pairs(self.Pads) do
 		data[pad.Name] = pad.Selected
 	end
@@ -100,7 +100,7 @@ end
 function WINDOW:SetSelected(data)
 	for _, pad in pairs(self.Pads) do
 		pad.Selected = false
-		
+
 		for name, selected in pairs(data) do
 			if pad.Name == name then
 				pad.Selected = selected
@@ -120,7 +120,7 @@ function WINDOW:OnPress(interfaceData, ent, buttonId, callback)
 	end
 
 	if isfunction(callback) then
-		local updated = callback(self, interfaceData, ent, buttonId)
+		local updated = callback(self, interfaceData, buttonId)
 		if updated then
 			shouldUpdate = true
 		end

@@ -21,7 +21,7 @@
 -- @param Entity chair
 -- @return Bool isChair
 local function isStarTrekChair(ent)
-	if IsValid(ent) and ent:GetClass() == "prop_vehicle_prisoner_pod" and table.HasValue(Star_Trek.Chairs.Models, ent:GetModel()) then 
+	if IsValid(ent) and ent:GetClass() == "prop_vehicle_prisoner_pod" and table.HasValue(Star_Trek.Chairs.Models, ent:GetModel()) then
 		return true
 	end
 

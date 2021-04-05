@@ -102,10 +102,10 @@ end
 -- Opens a given interface at the given console entity.
 --
 -- @param Entity ent
--- @param Table windows
+-- @param vararg ...
 -- @return Boolean Success
 -- @return? String error
-function Star_Trek.LCARS:OpenInterface(ent, windows)
+function Star_Trek.LCARS:OpenInterface(ent, ...)
 	if not IsValid(ent) then
 		return false, "Invalid Interface Entity!"
 	end
@@ -119,8 +119,12 @@ function Star_Trek.LCARS:OpenInterface(ent, windows)
 		return false, "Invalid Interface Pos/Angle!"
 	end
 
-	if not istable(windows) then
-		return false, "No Interface Windows given!"
+	local windows = {}
+	for i, windowData in ipairs({...}) do
+		windowData.Id = i
+		windowData.Ent = ent
+
+		windows[i] = windowData
 	end
 
 	local interfaceData = {
@@ -129,11 +133,6 @@ function Star_Trek.LCARS:OpenInterface(ent, windows)
 
 		Windows         = windows,
 	}
-
-	for id, window in pairs(interfaceData.Windows) do
-		window.Id = id
-		window.Ent = ent
-	end
 
 	local interfaceDataClient = table.Copy(interfaceData)
 	for _, windowData in pairs(interfaceDataClient.Windows) do
@@ -221,17 +220,6 @@ function Star_Trek.LCARS:CreateWindow(windowType, pos, angles, scale, width, hei
 	end
 
 	return true, windowData
-end
-
-function Star_Trek.LCARS:CombineWindows(...)
-	local windows = {}
-
-	for i, windowData in ipairs({...}) do
-		windows[i] = windowData
-		windowData.WindowId = i
-	end
-
-	return windows
 end
 
 -- TODO: Sync on Join Active Interfaces

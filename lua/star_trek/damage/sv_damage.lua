@@ -28,7 +28,7 @@ function Star_Trek.Damage:DamageSection(damageType, deck, sectionId)
 	end
 
 	local staticProps = Star_Trek.Util:GetStaticPropsByModelList(modelList, function(entry)
-		local s, e = Star_Trek.Sections:IsInSection(deck, sectionId, entry.Origin)
+		local s, _ = Star_Trek.Sections:IsInSection(deck, sectionId, entry.Origin)
 
 		if s then
 			return true
@@ -48,7 +48,7 @@ function Star_Trek.Damage:DamageSection(damageType, deck, sectionId)
 			break
 		end
 	end
-	
+
 	if not istable(staticProp) then
 		return false, "No undamaged position for damage found!"
 	end

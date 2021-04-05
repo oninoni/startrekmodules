@@ -27,7 +27,7 @@ function Star_Trek.LCARS:LoadWindow(windowName)
 
 	AddCSLuaFile("windows/" .. windowName .. "/shared.lua")
 	include("windows/" .. windowName .. "/shared.lua")
-	
+
 	if SERVER then
 		AddCSLuaFile("windows/" .. windowName .. "/cl_init.lua")
 		include("windows/" .. windowName .. "/init.lua")
@@ -38,7 +38,7 @@ function Star_Trek.LCARS:LoadWindow(windowName)
 
 	local window = WINDOW
 	WINDOW = nil
-	
+
 	if isstring(window.BaseWindow) then
 		local success, baseWindow = self:LoadWindow(window.BaseWindow)
 		if not success then

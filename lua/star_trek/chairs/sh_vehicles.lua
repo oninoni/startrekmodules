@@ -21,7 +21,7 @@ for name, model in pairs(Star_Trek.Chairs.Models) do
     local split = string.Split(model, "/")
     split = string.Split(split[#split], ".")
     local entityName = split[1]
-    
+
     local vehicleTable = {
         Name = name,
         Model = model,

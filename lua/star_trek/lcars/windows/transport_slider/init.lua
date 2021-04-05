@@ -20,5 +20,5 @@ local SELF = WINDOW
 function WINDOW:OnPress(interfaceData, ent, buttonId, callback)
 	ent:EmitSound("star_trek.lcars_transporter_lock")
 
-	callback(windowData, interfaceData, ent, buttonId)
+	callback(windowData, interfaceData, buttonId)
 end

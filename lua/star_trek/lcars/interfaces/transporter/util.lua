@@ -92,10 +92,9 @@ end
 function transporterUtil.Energize(sourcePatterns, targetPatterns, callback)
 	Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPatterns)
 
-    if isfunction(callback) then
-        callback()
-    end
-
+	if isfunction(callback) then
+		callback()
+	end
 end
 
 -- Force Update of Buffer Table, by just switching.
@@ -103,20 +102,20 @@ end
 function transporterUtil.UpdateBufferMenu(interfaceData)
 	local sourceMenuTable = interfaceData.SourceMenuTable
 
-    local success, error = sourceMenuTable:SelectType(1)
-    if not success then
-        Star_Trek:Message(error)
-        return
-    end
+	local success, error = sourceMenuTable:SelectType(1)
+	if not success then
+		Star_Trek:Message(error)
+		return
+	end
 
-    local ent = table.KeyFromValue(Star_Trek.LCARS.ActiveInterfaces, interfaceData)
-    if not IsValid(ent) then
-        Star_Trek:Message("Invalid Entity on Buffer Menu Update")
-        return
-    end
+	local ent = table.KeyFromValue(Star_Trek.LCARS.ActiveInterfaces, interfaceData)
+	if not IsValid(ent) then
+		Star_Trek:Message("Invalid Entity on Buffer Menu Update")
+		return
+	end
 
-    Star_Trek.LCARS:UpdateWindow(ent, sourceMenuTable.MenuWindow.WindowId, sourceMenuTable.MenuWindow)
-    Star_Trek.LCARS:UpdateWindow(ent, sourceMenuTable.MainWindow.WindowId, sourceMenuTable.MainWindow)
+	Star_Trek.LCARS:UpdateWindow(ent, sourceMenuTable.MenuWindow.Id, sourceMenuTable.MenuWindow)
+	Star_Trek.LCARS:UpdateWindow(ent, sourceMenuTable.MainWindow.Id, sourceMenuTable.MainWindow)
 end
 
 function transporterUtil.TriggerTransporter(interfaceData)
@@ -132,23 +131,23 @@ function transporterUtil.TriggerTransporter(interfaceData)
 		delayDematerialisation = targetMenuTable:GetUtilButtonState()
 	end
 
-    if delayDematerialisation then
-        timer.Simple(5, function()
-            local sourcePatterns = transporterUtil.GetPatternData(sourceMenuTable, wideField)
-            local targetPatterns = transporterUtil.GetPatternData(targetMenuTable, false)
-        
-            transporterUtil.Energize(sourcePatterns, targetPatterns, function()
-                if sourcePatterns.IsBuffer then transporterUtil.UpdateBufferMenu(interfaceData) end
-            end)
-        end)
-    else
-        local sourcePatterns = transporterUtil.GetPatternData(sourceMenuTable, wideField)
-        local targetPatterns = transporterUtil.GetPatternData(targetMenuTable, false)
-    
-        transporterUtil.Energize(sourcePatterns, targetPatterns, function()
-            if sourcePatterns.IsBuffer then transporterUtil.UpdateBufferMenu(interfaceData) end
-        end)
-    end
+	if delayDematerialisation then
+		timer.Simple(5, function()
+			local sourcePatterns = transporterUtil.GetPatternData(sourceMenuTable, wideField)
+			local targetPatterns = transporterUtil.GetPatternData(targetMenuTable, false)
+
+			transporterUtil.Energize(sourcePatterns, targetPatterns, function()
+				if sourcePatterns.IsBuffer then transporterUtil.UpdateBufferMenu(interfaceData) end
+			end)
+		end)
+	else
+		local sourcePatterns = transporterUtil.GetPatternData(sourceMenuTable, wideField)
+		local targetPatterns = transporterUtil.GetPatternData(targetMenuTable, false)
+
+		transporterUtil.Energize(sourcePatterns, targetPatterns, function()
+			if sourcePatterns.IsBuffer then transporterUtil.UpdateBufferMenu(interfaceData) end
+		end)
+	end
 end
 
 return transporterUtil

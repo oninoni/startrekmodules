@@ -25,7 +25,7 @@ function WINDOW:OnCreate(windowData)
 	if not success then
 		return false
 	end
-	
+
 	self.Selected = windowData.Selected
 	self.Categories = windowData.Categories
 

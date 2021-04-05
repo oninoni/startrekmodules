@@ -41,10 +41,10 @@ function transporterUtil.CreateMenuWindow(pos, angle, width, menuTable, hFlip, p
 			utilButtonData.Name = "Instant Dematerialisation"
 			utilButtonData.Color = Star_Trek.LCARS.ColorOrange
 		end
-		
+
 		buttons[table.Count(buttons) + 2] = utilButtonData
 		menuTable.UtilButtonId = menuTypeCount + 2
-		
+
 		function menuTable:GetUtilButtonState()
 			return self.MenuWindow.Buttons[self.UtilButtonId].SelectedCustom or false
 		end
@@ -70,10 +70,10 @@ function transporterUtil.CreateMenuWindow(pos, angle, width, menuTable, hFlip, p
 		24,
 		width,
 		height,
-		function(windowData, interfaceData, ent, buttonId)
+		function(windowData, interfaceData, buttonId)
 			if buttonId > menuTypeCount then -- Custom Buttons
 				local button = windowData.Buttons[buttonId]
-				
+
 				if button.Name == "Wide Beam" or button.Name == "Narrow Beam" then
 					button.SelectedCustom = not (button.SelectedCustom or false)
 					if button.SelectedCustom then
@@ -98,7 +98,7 @@ function transporterUtil.CreateMenuWindow(pos, angle, width, menuTable, hFlip, p
 					else
 						button.Color = Star_Trek.LCARS.ColorOrange
 					end
-					
+
 					if button.SelectedCustom then
 						button.Name = "Delayed Dematerialisation"
 					else
@@ -129,35 +129,35 @@ function transporterUtil.CreateMenuWindow(pos, angle, width, menuTable, hFlip, p
 					local targetMenuData = targetMenuTable.MainWindow:GetSelected()
 
 					local sourceMenuSelection = menuTable.MenuWindow.Selection
-					local success, error = menuTable:SelectType(targetMenuTable.MenuWindow.Selection)
-					if not success then
-						Star_Trek:Message(error)
+					local success2, error2 = menuTable:SelectType(targetMenuTable.MenuWindow.Selection)
+					if not success2 then
+						Star_Trek:Message(error2)
 						return
 					end
 
-					local success, error = targetMenuTable:SelectType(sourceMenuSelection)
-					if not success then
-						Star_Trek:Message(error)
+					local success3, error3 = targetMenuTable:SelectType(sourceMenuSelection)
+					if not success3 then
+						Star_Trek:Message(error3)
 						return
 					end
 
 					targetMenuTable.MainWindow:SetSelected(sourceMenuData)
 					menuTable.MainWindow:SetSelected(targetMenuData)
 
-					Star_Trek.LCARS:UpdateWindow(ent, targetMenuTable.MenuWindow.WindowId, targetMenuTable.MenuWindow)
-					Star_Trek.LCARS:UpdateWindow(ent, targetMenuTable.MainWindow.WindowId, targetMenuTable.MainWindow)
-					Star_Trek.LCARS:UpdateWindow(ent, menuTable.MainWindow.WindowId, menuTable.MainWindow)
+					Star_Trek.LCARS:UpdateWindow(ent, targetMenuTable.MenuWindow.Id, targetMenuTable.MenuWindow)
+					Star_Trek.LCARS:UpdateWindow(ent, targetMenuTable.MainWindow.Id, targetMenuTable.MainWindow)
+					Star_Trek.LCARS:UpdateWindow(ent, menuTable.MainWindow.Id, menuTable.MainWindow)
 
 					return true
 				end
 			else
-				local success, error = menuTable:SelectType(buttonId)
-				if not success then
-					Star_Trek:Message(error)
+				local success4, error4 = menuTable:SelectType(buttonId)
+				if not success4 then
+					Star_Trek:Message(error4)
 					return
 				end
 
-				Star_Trek.LCARS:UpdateWindow(ent, menuTable.MainWindow.WindowId, menuTable.MainWindow)
+				Star_Trek.LCARS:UpdateWindow(ent, menuTable.MainWindow.Id, menuTable.MainWindow)
 
 				return true
 			end
@@ -186,7 +186,7 @@ function transporterUtil.CreateMainWindow(pos, angle, width, height, menuTable, 
 			nil,
 			width,
 			height,
-			function(windowData, interfaceData, ent, buttonId)
+			function(windowData, interfaceData, buttonId)
 				-- Does nothing special here.
 			end,
 			padNumber,
@@ -201,9 +201,6 @@ function transporterUtil.CreateMainWindow(pos, angle, width, height, menuTable, 
 		return true, mainWindow
 	end
 
-	local callback
-	local buttons = {}
-
 	-- Category List Window
 	if selectionName == "Sections" then
 		local success, mainWindow = Star_Trek.LCARS:CreateWindow(
@@ -213,7 +210,7 @@ function transporterUtil.CreateMainWindow(pos, angle, width, height, menuTable, 
 			nil,
 			width,
 			height,
-			function(windowData, interfaceData, ent, categoryId, buttonId)
+			function(windowData, interfaceData, categoryId, buttonId)
 				-- Does nothing special here.
 			end,
 			Star_Trek.LCARS:GetSectionCategories(menuTable.Target),
@@ -229,6 +226,9 @@ function transporterUtil.CreateMainWindow(pos, angle, width, height, menuTable, 
 		return true, mainWindow
 	end
 
+	local callback
+	local buttons = {}
+
 	-- Button List Window
 	local titleShort = ""
 	if selectionName == "Lifeforms" then
@@ -242,7 +242,7 @@ function transporterUtil.CreateMainWindow(pos, angle, width, height, menuTable, 
 		end
 		table.SortByMember(buttons, "Name")
 
-		callback = function(windowData, interfaceData, ent, buttonId)
+		callback = function(windowData, interfaceData, buttonId)
 			-- Does nothing special here.
 		end
 	elseif selectionName == "Buffer" then
@@ -265,7 +265,7 @@ function transporterUtil.CreateMainWindow(pos, angle, width, height, menuTable, 
 			})
 		end
 
-		callback = function(windowData, interfaceData, ent, buttonId)
+		callback = function(windowData, interfaceData, buttonId)
 			-- Does nothing special here.
 		end
 	elseif selectionName == "Other Pads" or selectionName == "Transporter Pads"  then
@@ -294,7 +294,7 @@ function transporterUtil.CreateMainWindow(pos, angle, width, height, menuTable, 
 			})
 		end
 
-		callback = function(windowData, interfaceData, ent, buttonId)
+		callback = function(windowData, interfaceData, buttonId)
 			-- Does nothing special here.
 		end
 	else
@@ -363,12 +363,12 @@ function transporterUtil.CreateWindowTable(menuPos, menuAngle, menuWidth, menuHF
 		self.MenuWindow.Selection = buttonId
 		buttons[buttonId].Selected = true
 
-		local success, mainWindow = transporterUtil.CreateMainWindow(mainPos, mainAngle, mainWidth, mainHeight, self, mainHFlip, padNumber)
-		if not success then
+		local success2, mainWindow = transporterUtil.CreateMainWindow(mainPos, mainAngle, mainWidth, mainHeight, self, mainHFlip, padNumber)
+		if not success2 then
 			return false, "Error on MainWindow: " .. mainWindow
 		end
 		if istable(self.MainWindow) then
-			mainWindow.WindowId = self.MainWindow.WindowId
+			mainWindow.Id = self.MainWindow.Id
 		end
 		self.MainWindow = mainWindow
 

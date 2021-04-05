@@ -9,8 +9,7 @@ function Star_Trek.LCARS:OpenTurboliftMenu()
 		return
 	end
 
-	local interfaceData = self.ActiveInterfaces[ent]
-	if istable(interfaceData) then
+	if istable(self.ActiveInterfaces[ent]) then
 		return
 	end
 
@@ -22,14 +21,14 @@ function Star_Trek.LCARS:OpenTurboliftMenu()
 
 	local buttons = turboliftUtil.GenerateButtons(ent, keyValues)
 
-	local success, window = self:CreateWindow(
+	local success2, window = self:CreateWindow(
 		"button_list",
 		Vector(),
 		Angle(),
 		30,
 		600,
 		325,
-		function(windowData, interfaceData, ent, buttonId)
+		function(windowData, interfaceData, buttonId)
 			if ent.IsTurbolift then
 				Star_Trek.Turbolift:StartLift(ent, buttonId)
 
@@ -56,15 +55,13 @@ function Star_Trek.LCARS:OpenTurboliftMenu()
 		"TURBOLIFT",
 		"TRBLFT"
 	)
-	if not success then
+	if not success2 then
 		Star_Trek:Message(window)
 		return
 	end
 
-	local windows = Star_Trek.LCARS:CombineWindows(window)
-
-	local success, error = self:OpenInterface(ent, windows)
-	if not success then
+	local success3, error = self:OpenInterface(ent, window)
+	if not success3 then
 		Star_Trek:Message(error)
 		return
 	end

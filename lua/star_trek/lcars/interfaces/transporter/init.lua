@@ -7,8 +7,7 @@ function Star_Trek.LCARS:OpenTransporterMenu()
 		return
 	end
 
-	local interfaceData = self.ActiveInterfaces[ent]
-	if istable(interfaceData) then
+	if istable(self.ActiveInterfaces[ent]) then
 		return
 	end
 
@@ -19,7 +18,7 @@ function Star_Trek.LCARS:OpenTransporterMenu()
 		padNumber = tonumber(split[2])
 	end
 
-	local success, sourceMenuTable = transporterUtil.CreateWindowTable(
+	local success2, sourceMenuTable = transporterUtil.CreateWindowTable(
 		Vector(-13, -2, 6),
 		Angle(5, 15, 30),
 		350,
@@ -32,17 +31,17 @@ function Star_Trek.LCARS:OpenTransporterMenu()
 		false,
 		padNumber
 	)
-	if not success then
+	if not success2 then
 		Star_Trek:Message(sourceMenuTable)
 		return
 	end
-	local success, error = sourceMenuTable:SelectType(1)
-	if not success then
+	local success3, error = sourceMenuTable:SelectType(1)
+	if not success3 then
 		Star_Trek:Message(error)
 		return
 	end
 
-	local success, targetMenuTable = transporterUtil.CreateWindowTable(
+	local success4, targetMenuTable = transporterUtil.CreateWindowTable(
 		Vector(13, -2, 6),
 		Angle(-5, -15, 30),
 		350,
@@ -55,35 +54,27 @@ function Star_Trek.LCARS:OpenTransporterMenu()
 		true,
 		padNumber
 	)
-	if not success then
+	if not success4 then
 		Star_Trek:Message(targetMenuTable)
 		return
 	end
-	local success, error = targetMenuTable:SelectType(2)
-	if not success then
-		Star_Trek:Message(error)
+	local success5, error2 = targetMenuTable:SelectType(2)
+	if not success5 then
+		Star_Trek:Message(error2)
 		return
 	end
 
-	local success, sliderWindow = Star_Trek.LCARS:CreateWindow("transport_slider", Vector(0, -2, 6), Angle(0, 0, 30), 30, 200, 200, function(windowData, interfaceData, ent, buttonId)
+	local success6, sliderWindow = Star_Trek.LCARS:CreateWindow("transport_slider", Vector(0, -2, 6), Angle(0, 0, 30), 30, 200, 200, function(windowData, interfaceData, buttonId)
 		transporterUtil.TriggerTransporter(self.ActiveInterfaces[ent])
 	end)
-	if not success then
+	if not success6 then
 		Star_Trek:Message(sliderWindow)
 		return
 	end
 
-	local windows = Star_Trek.LCARS:CombineWindows(
-		sourceMenuTable.MenuWindow,
-		sourceMenuTable.MainWindow,
-		targetMenuTable.MenuWindow,
-		targetMenuTable.MainWindow,
-		sliderWindow
-	)
-
-	local success, error = self:OpenInterface(ent, windows)
-	if not success then
-		Star_Trek:Message(error)
+	local success7, error3 = self:OpenInterface(ent, sourceMenuTable.MenuWindow, sourceMenuTable.MainWindow, targetMenuTable.MenuWindow, targetMenuTable.MainWindow, sliderWindow)
+	if not success7 then
+		Star_Trek:Message(error3)
 		return
 	end
 
@@ -99,12 +90,11 @@ function Star_Trek.LCARS:OpenConsoleTransporterMenu()
 		return
 	end
 
-	local interfaceData = self.ActiveInterfaces[ent]
-	if istable(interfaceData) then
+	if istable(self.ActiveInterfaces[ent]) then
 		return
 	end
 
-	local success, sourceMenuTable = transporterUtil.CreateWindowTable(
+	local success2, sourceMenuTable = transporterUtil.CreateWindowTable(
 		Vector(-22, -34, 8.2),
 		Angle(0, 0, -90),
 		500,
@@ -116,17 +106,17 @@ function Star_Trek.LCARS:OpenConsoleTransporterMenu()
 		false,
 		false
 	)
-	if not success then
+	if not success2 then
 		Star_Trek:Message(sourceMenuTable)
 		return
 	end
-	local success, error = sourceMenuTable:SelectType(1)
-	if not success then
+	local success3, error = sourceMenuTable:SelectType(1)
+	if not success3 then
 		Star_Trek:Message(error)
 		return
 	end
 
-	local success, targetMenuTable = transporterUtil.CreateWindowTable(
+	local success4, targetMenuTable = transporterUtil.CreateWindowTable(
 		Vector(22, -34, 8.2),
 		Angle(0, 0, -90),
 		500,
@@ -138,43 +128,35 @@ function Star_Trek.LCARS:OpenConsoleTransporterMenu()
 		true,
 		true
 	)
-	if not success then
+	if not success4 then
 		Star_Trek:Message(targetMenuTable)
 		return
 	end
-	local success, error = targetMenuTable:SelectType(2)
-	if not success then
-		Star_Trek:Message(error)
+	local success5, error2 = targetMenuTable:SelectType(2)
+	if not success5 then
+		Star_Trek:Message(error2)
 		return
 	end
 
-	local success, sliderWindow = Star_Trek.LCARS:CreateWindow(
+	local success6, sliderWindow = Star_Trek.LCARS:CreateWindow(
 		"transport_slider",
 		Vector(0, -34, 8),
 		Angle(0, 0, -90),
 		20,
 		200,
 		200,
-		function(windowData, interfaceData, ent, buttonId)
+		function(windowData, interfaceData, buttonId)
 			transporterUtil.TriggerTransporter(self.ActiveInterfaces[ent])
 		end
 	)
-	if not success then
+	if not success6 then
 		Star_Trek:Message(sliderWindow)
 		return
 	end
 
-	local windows = Star_Trek.LCARS:CombineWindows(
-		sourceMenuTable.MenuWindow,
-		sourceMenuTable.MainWindow,
-		targetMenuTable.MenuWindow,
-		targetMenuTable.MainWindow,
-		sliderWindow
-	)
-
-	local success, error = self:OpenInterface(ent, windows)
-	if not success then
-		Star_Trek:Message(error)
+	local success7, error3 = self:OpenInterface(ent, sourceMenuTable.MenuWindow, sourceMenuTable.MainWindow, targetMenuTable.MenuWindow, targetMenuTable.MainWindow, sliderWindow)
+	if not success7 then
+		Star_Trek:Message(error3)
 		return
 	end
 

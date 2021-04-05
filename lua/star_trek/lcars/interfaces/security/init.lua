@@ -12,6 +12,10 @@ function Star_Trek.LCARS:OpenSecurityMenu()
 	end
 
 	local success2, menuWindow, actionWindow = securityUtil.CreateMenuWindow()
+	if not success2 then
+		Star_Trek:Message(menuWindow)
+		return
+	end
 
 	local success3, mapWindow = securityUtil.CreateMapWindow(1)
 	if not success3 then
@@ -26,26 +30,15 @@ function Star_Trek.LCARS:OpenSecurityMenu()
 		nil,
 		500,
 		700,
-		function(windowData, interfaceData, ent, categoryId, buttonId)
+		function(windowData, interfaceData, categoryId, buttonId)
 			if isnumber(buttonId) then
 				local buttonData = windowData.Buttons[buttonId]
-				local sectionId = buttonData.Data.Id
 
-				local selected = mapWindow:GetSelected()
-				selected[sectionId] = buttonData.Selected
-
-				mapWindow:SetSelected(selected)
+				mapWindow:SetSectionActive(buttonData.Data.Id, buttonData.Selected)
 				mapWindow:Update()
 			else
-				local updateSuccess, newMapWindow = securityUtil.CreateMapWindow(categoryId)
-				if not updateSuccess then
-					Star_Trek:Message(newMapWindow)
-					return
-				end
-
-				Star_Trek.LCARS:UpdateWindow(ent, mapWindow.WindowId, newMapWindow)
-				newMapWindow.WindowId = mapWindow.WindowId
-				mapWindow = newMapWindow
+				mapWindow:SetDeck(categoryId)
+				mapWindow:Update()
 			end
 		end,
 		Star_Trek.LCARS:GetSectionCategories(),
@@ -59,14 +52,7 @@ function Star_Trek.LCARS:OpenSecurityMenu()
 		return
 	end
 
-	local windows = Star_Trek.LCARS:CombineWindows(
-		menuWindow,
-		sectionWindow,
-		mapWindow,
-		actionWindow
-	)
-
-	local success5, error = self:OpenInterface(interfaceEnt, windows)
+	local success5, error = self:OpenInterface(interfaceEnt, menuWindow, sectionWindow, mapWindow, actionWindow)
 	if not success5 then
 		Star_Trek:Message(error)
 		return
