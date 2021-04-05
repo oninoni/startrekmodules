@@ -71,6 +71,8 @@ function transporterUtil.CreateMenuWindow(pos, angle, width, menuTable, hFlip, p
 		width,
 		height,
 		function(windowData, interfaceData, buttonId)
+			local ent = windowData.Ent
+
 			if buttonId > menuTypeCount then -- Custom Buttons
 				local button = windowData.Buttons[buttonId]
 
