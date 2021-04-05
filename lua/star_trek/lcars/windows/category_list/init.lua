@@ -17,7 +17,7 @@
 ---------------------------------------
 
 local SELF = WINDOW
-function WINDOW:OnCreate(categories, title, titleShort, hFlip, toggle)
+function SELF:OnCreate(categories, title, titleShort, hFlip, toggle)
 	local success = SELF.Base.OnCreate(self, {}, title, titleShort, hFlip, toggle)
 	if not success then
 		return false
@@ -32,7 +32,7 @@ function WINDOW:OnCreate(categories, title, titleShort, hFlip, toggle)
 	return true
 end
 
-function WINDOW:SetCategories(categories, default)
+function SELF:SetCategories(categories, default)
 	self.Height2 = math.max(2, math.ceil(table.Count(categories) / 4)) * 35 + 50
 	self.Categories = {}
 	for i, category in pairs(categories) do
@@ -64,7 +64,7 @@ function WINDOW:SetCategories(categories, default)
 	self:SetCategory(self.Selected)
 end
 
-function WINDOW:GetSelected()
+function SELF:GetSelected()
 	local data = {}
 
 	data.Buttons = SELF.BASE.GetSelected(self)
@@ -73,7 +73,7 @@ function WINDOW:GetSelected()
 	return data
 end
 
-function WINDOW:SetCategory(category)
+function SELF:SetCategory(category)
 	self.Selected = category
 
 	local height2 = self.Height2
@@ -81,12 +81,12 @@ function WINDOW:SetCategory(category)
 	self.Height2 = height2
 end
 
-function WINDOW:SetSelected(data)
+function SELF:SetSelected(data)
 	self:SetCategory(data.Selected)
 	self.BASE.SetSelected(self, data.Buttons)
 end
 
-function WINDOW:OnPress(interfaceData, ent, buttonId, callback)
+function SELF:OnPress(interfaceData, ent, buttonId, callback)
 	local shouldUpdate = false
 
 	local categoryId = self.Selected

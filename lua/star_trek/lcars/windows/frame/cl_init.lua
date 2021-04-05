@@ -17,7 +17,7 @@
 ---------------------------------------
 
 local SELF = WINDOW
-function WINDOW:OnCreate(windowData)
+function SELF:OnCreate(windowData)
 	self.HFlip = windowData.HFlip
 
 	self.FrameMaterialData = Star_Trek.LCARS:CreateFrame(
@@ -37,7 +37,7 @@ function WINDOW:OnCreate(windowData)
 	return true
 end
 
-function WINDOW:OnDraw(pos, animPos)
+function SELF:OnDraw(pos, animPos)
 	surface.SetDrawColor(255, 255, 255, 255 * animPos)
 
 	Star_Trek.LCARS:RenderFrame(self.FrameMaterialData)

@@ -21,7 +21,7 @@ local MAP_OFFSET_X = 0
 local MAP_OFFSET_Y = -200
 
 local SELF = WINDOW
-function WINDOW:OnCreate(windowData)
+function SELF:OnCreate(windowData)
 	local success = SELF.Base.OnCreate(self, windowData)
 	if not success then
 		return false
@@ -32,7 +32,7 @@ function WINDOW:OnCreate(windowData)
 	return self
 end
 
-function WINDOW:OnDraw(pos, animPos)
+function SELF:OnDraw(pos, animPos)
 	cam.End3D2D()
 	cam.Start3D2D(self.WPos, self.WAng, 1 / (self.WScale * MAP_SCALE))
 

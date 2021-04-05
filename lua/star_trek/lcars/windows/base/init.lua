@@ -17,21 +17,21 @@
 ---------------------------------------
 
 local SELF = WINDOW
-function WINDOW:OnCreate()
+function SELF:OnCreate()
 	return true
 end
 
-function WINDOW:GetSelected()
-    return {}
+function SELF:GetSelected()
+	return {}
 end
 
-function WINDOW:SetSelected(data)
+function SELF:SetSelected(data)
 end
 
-function WINDOW:Update()
+function SELF:Update()
 	Star_Trek.LCARS:UpdateWindow(self.Ent, self.Id)
 end
 
-function WINDOW:OnPress(interfaceData, ent, buttonId, callback)
+function SELF:OnPress(interfaceData, ent, buttonId, callback)
 	callback(windowData, interfaceData, buttonId)
 end

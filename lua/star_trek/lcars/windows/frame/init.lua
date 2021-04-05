@@ -17,7 +17,7 @@
 ---------------------------------------
 
 local SELF = WINDOW
-function WINDOW:OnCreate(title, titleShort, hFlip)
+function SELF:OnCreate(title, titleShort, hFlip)
 	self.Height2 	= false
 	self.Title 		= title or ""
 	self.TitleShort = titleShort or self.Title

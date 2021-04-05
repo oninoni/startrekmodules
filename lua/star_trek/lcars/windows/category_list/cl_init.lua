@@ -20,7 +20,7 @@ local BUTTON_HEIGHT = 32
 -- TODO: Modularize the size of the buttons. (Interaction, Offsets, etc...)
 
 local SELF = WINDOW
-function WINDOW:OnCreate(windowData)
+function SELF:OnCreate(windowData)
 	local success = SELF.Base.OnCreate(self, windowData)
 	if not success then
 		return false
@@ -31,7 +31,7 @@ function WINDOW:OnCreate(windowData)
 
 	self.CategoryStart = -self.HD2 + 79
 	self.CategoryHeight = windowData.Height2
-	
+
 	self.ButtonsStart = self.CategoryStart + self.CategoryHeight
 	self.ButtonsHeight = self.HD2 - self.ButtonsStart
 
@@ -75,7 +75,7 @@ function WINDOW:OnCreate(windowData)
 	return self
 end
 
-function WINDOW:SetupCategoryRow(categories)
+function SELF:SetupCategoryRow(categories)
 	local rowData = {
 		Categories = {}
 	}
@@ -112,7 +112,7 @@ function WINDOW:SetupCategoryRow(categories)
 	return rowData
 end
 
-function WINDOW:OnPress(pos, animPos)
+function SELF:OnPress(pos, animPos)
 	if pos.y <= -self.HD2 + self.CategoryHeight + 65 then
 		for rowId, rowData in pairs(self.CategoryRows) do
 			for butId, categoryData in pairs(rowData.Categories) do
@@ -132,14 +132,14 @@ function WINDOW:OnPress(pos, animPos)
 	end
 end
 
-function WINDOW:OnDraw(pos, animPos)
+function SELF:OnDraw(pos, animPos)
 	surface.SetDrawColor(255, 255, 255, 255 * animPos)
 
 	for rowId, rowData in pairs(self.CategoryRows) do
 		for butId, categoryData in pairs(rowData.Categories) do
 			local xRow = self.XOffset + ((butId - 0.5) - rowData.N / 2) * rowData.Width
 			local y = self.CategoryStart + (rowId - 1) * 35
-			
+
 			local state = Star_Trek.LCARS:GetButtonState(categoryData.Disabled, self:IsButtonHovered(xRow, y, rowData.Width - 3, 32, pos), self.Selected == categoryData.Id)
 
 			Star_Trek.LCARS:RenderButton(xRow, y, categoryData.MaterialData, state)

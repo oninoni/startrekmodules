@@ -17,13 +17,13 @@
 ---------------------------------------
 
 local SELF = WINDOW
-function WINDOW:OnCreate(windowData)
+function SELF:OnCreate(windowData)
 	return true
 end
 
 -- TODO: Redo modular with deriving
-function WINDOW:OnPress(pos, animPos)
+function SELF:OnPress(pos, animPos)
 end
 
-function WINDOW:OnDraw(pos, animPos)
+function SELF:OnDraw(pos, animPos)
 end

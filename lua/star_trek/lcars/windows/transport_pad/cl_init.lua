@@ -17,7 +17,7 @@
 ---------------------------------------
 
 local SELF = WINDOW
-function WINDOW:OnCreate(windowData)
+function SELF:OnCreate(windowData)
 	local success = SELF.Base.OnCreate(self, windowData)
 	if not success then
 		return false
@@ -49,7 +49,7 @@ local function isHovered(x, y, r, pos)
 	return false
 end
 
-function WINDOW:OnPress(pos, animPos)
+function SELF:OnPress(pos, animPos)
 	for i, pad in pairs(self.Pads) do
 		if isHovered(pad.X, pad.Y, self.PadRadius, pos) then
 			return i
@@ -94,7 +94,7 @@ local function drawPad(self, x, y, r, pos, round, selected, alpha)
 	end
 end
 
-function WINDOW:OnDraw(pos, animPos)
+function SELF:OnDraw(pos, animPos)
 	for i, pad in pairs(self.Pads) do
 		if pad.Type == "Round" then
 			drawPad(self, pad.X, pad.Y, self.PadRadius, pos, true, pad.Selected, animPos * 255)

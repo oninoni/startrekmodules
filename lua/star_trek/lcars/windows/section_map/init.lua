@@ -17,7 +17,7 @@
 ---------------------------------------
 
 local SELF = WINDOW
-function WINDOW:OnCreate(deck, hFlip)
+function SELF:OnCreate(deck, hFlip)
 	local success = SELF.Base.OnCreate(self, "", "DECK " .. deck, hFlip)
 	if not success then
 		return false
@@ -28,7 +28,7 @@ function WINDOW:OnCreate(deck, hFlip)
 	return self
 end
 
-function WINDOW:SetDeck(deck)
+function SELF:SetDeck(deck)
 	self.Sections = {}
 
 	local deckData = Star_Trek.Sections.Decks[deck]
@@ -57,7 +57,7 @@ function WINDOW:SetDeck(deck)
 	end
 end
 
-function WINDOW:GetSelected()
+function SELF:GetSelected()
 	local data = {}
 
 	for _, sectionData in pairs(self.Sections) do
@@ -67,7 +67,7 @@ function WINDOW:GetSelected()
 	return data
 end
 
-function WINDOW:SetSelected(data)
+function SELF:SetSelected(data)
 	for _, sectionData in pairs(self.Sections) do
 		if data[sectionData.Id] then
 			sectionData.Selected = true
@@ -77,14 +77,14 @@ function WINDOW:SetSelected(data)
 	end
 end
 
-function WINDOW:SetSectionActive(sectionId, active)
+function SELF:SetSectionActive(sectionId, active)
 	local selected = self:GetSelected()
 	selected[sectionId] = active
 
 	self:SetSelected(selected)
 end
 
-function WINDOW:OnPress(interfaceData, ent, buttonId, callback)
+function SELF:OnPress(interfaceData, ent, buttonId, callback)
 	local shouldUpdate = false
 
 	return shouldUpdate

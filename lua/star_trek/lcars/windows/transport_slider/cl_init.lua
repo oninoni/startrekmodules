@@ -17,7 +17,7 @@
 ---------------------------------------
 
 local SELF = WINDOW
-function WINDOW:OnCreate(windowData)
+function SELF:OnCreate(windowData)
 	local height = self.WHeight
 
 	self.State = -height / 2
@@ -26,7 +26,7 @@ function WINDOW:OnCreate(windowData)
 	return true
 end
 
-function WINDOW:OnPress(pos, animPos)
+function SELF:OnPress(pos, animPos)
 	if self.TargetState ~= self.State then return end
 
 	local height = self.WHeight
@@ -46,7 +46,7 @@ end
 
 -- TODO: Redo graphics with prerender functionality.
 -- TODO: Redo Graphics to have better quality.
-function WINDOW:OnDraw(pos, animPos)
+function SELF:OnDraw(pos, animPos)
 	local colorBlue = ColorAlpha(Star_Trek.LCARS.ColorBlue, animPos * 255)
 	local colorYellow = ColorAlpha(Star_Trek.LCARS.ColorOrange, animPos * 255)
 

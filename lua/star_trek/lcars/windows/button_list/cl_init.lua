@@ -20,12 +20,12 @@ local BUTTON_HEIGHT = 32
 -- TODO: Modularize the size of the buttons. (Interaction, Offsets, etc...)
 
 local SELF = WINDOW
-function WINDOW:OnCreate(windowData)
+function SELF:OnCreate(windowData)
 	local success = SELF.Base.OnCreate(self, windowData)
 	if not success then
 		return false
 	end
-	
+
 	self.Buttons = windowData.Buttons
 	self.MaxN = table.maxn(self.Buttons)
 
@@ -56,11 +56,11 @@ function WINDOW:OnCreate(windowData)
 	return true
 end
 
-function WINDOW:IsButtonHovered(x, y, width, height, pos)
-	return pos.x >= (x - width/2) and pos.x <= (x + width/2) and pos.y >= (y -1) and pos.y <= (y + height)
+function SELF:IsButtonHovered(x, y, width, height, pos)
+	return pos.x >= (x - width / 2) and pos.x <= (x + width / 2) and pos.y >= (y -1) and pos.y <= (y + height)
 end
 
-function WINDOW:OnPress(pos, animPos)
+function SELF:OnPress(pos, animPos)
 	local offset = Star_Trek.LCARS:GetButtonOffset(self.ButtonsStart, self.ButtonsHeight, self.MaxN, pos.y)
 
 	for i, button in pairs(self.Buttons) do
@@ -73,9 +73,9 @@ function WINDOW:OnPress(pos, animPos)
 	end
 end
 
-function WINDOW:OnDraw(pos, animPos)
+function SELF:OnDraw(pos, animPos)
 	local offset = Star_Trek.LCARS:GetButtonOffset(self.ButtonsStart, self.ButtonsHeight, self.MaxN, pos.y)
-	
+
 	for i, button in pairs(self.Buttons) do
 		local y = Star_Trek.LCARS:GetButtonYPos(self.ButtonsHeight, i, self.MaxN, offset)
 
@@ -93,9 +93,9 @@ function WINDOW:OnDraw(pos, animPos)
 		end
 		buttonAlpha = math.min(buttonAlpha, 255 * animPos)
 		surface.SetDrawColor(255, 255, 255, buttonAlpha)
-		
+
 		Star_Trek.LCARS:RenderButton(self.XOffset, y, button.MaterialData, state)
 	end
-	
+
 	SELF.Base.OnDraw(self, pos, animPos)
 end

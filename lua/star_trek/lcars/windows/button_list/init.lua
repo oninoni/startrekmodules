@@ -17,7 +17,7 @@
 ---------------------------------------
 
 local SELF = WINDOW
-function WINDOW:OnCreate(buttons, title, titleShort, hFlip, toggle)
+function SELF:OnCreate(buttons, title, titleShort, hFlip, toggle)
 	local success = SELF.Base.OnCreate(self, title, titleShort, hFlip)
 	if not success then
 		return false
@@ -33,7 +33,7 @@ function WINDOW:OnCreate(buttons, title, titleShort, hFlip, toggle)
 	return true
 end
 
-function WINDOW:SetButtons(buttons)
+function SELF:SetButtons(buttons)
 	self.Buttons = {}
 	for i, button in pairs(buttons) do
 		if not istable(button) then continue end
@@ -61,11 +61,11 @@ function WINDOW:SetButtons(buttons)
 	end
 end
 
-function WINDOW:SetToggle(toggle)
+function SELF:SetToggle(toggle)
 	self.Toggle = toggle or false
 end
 
-function WINDOW:GetSelected()
+function SELF:GetSelected()
 	local data = {}
 
 	for _, buttonData in pairs(self.Buttons) do
@@ -75,7 +75,7 @@ function WINDOW:GetSelected()
 	return data
 end
 
-function WINDOW:SetSelected(data)
+function SELF:SetSelected(data)
 	for _, buttonData in pairs(self.Buttons) do
 		if data[buttonData.Name] then
 			buttonData.Selected = true
@@ -85,7 +85,7 @@ function WINDOW:SetSelected(data)
 	end
 end
 
-function WINDOW:OnPress(interfaceData, ent, buttonId, callback)
+function SELF:OnPress(interfaceData, ent, buttonId, callback)
 	local shouldUpdate = false
 
 	if self.Toggle then

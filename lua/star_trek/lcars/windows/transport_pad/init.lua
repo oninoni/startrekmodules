@@ -17,7 +17,7 @@
 ---------------------------------------
 
 local SELF = WINDOW
-function WINDOW:OnCreate(padNumber, title, titleShort, hFlip)
+function SELF:OnCreate(padNumber, title, titleShort, hFlip)
 	local success = SELF.Base.OnCreate(self, title, titleShort, hFlip)
 	if not success then
 		return false
@@ -87,7 +87,7 @@ function WINDOW:OnCreate(padNumber, title, titleShort, hFlip)
 	return self
 end
 
-function WINDOW:GetSelected()
+function SELF:GetSelected()
 	local data = {}
 
 	for _, pad in pairs(self.Pads) do
@@ -97,7 +97,7 @@ function WINDOW:GetSelected()
 	return data
 end
 
-function WINDOW:SetSelected(data)
+function SELF:SetSelected(data)
 	for _, pad in pairs(self.Pads) do
 		pad.Selected = false
 
@@ -110,7 +110,7 @@ function WINDOW:SetSelected(data)
 	end
 end
 
-function WINDOW:OnPress(interfaceData, ent, buttonId, callback)
+function SELF:OnPress(interfaceData, ent, buttonId, callback)
 	local shouldUpdate = false
 
 	local pad = self.Pads[buttonId]
