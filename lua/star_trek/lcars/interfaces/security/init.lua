@@ -1,8 +1,26 @@
+---------------------------------------
+---------------------------------------
+--        Star Trek Utilities        --
+--                                   --
+--            Created by             --
+--       Jan 'Oninoni' Ziegler       --
+--                                   --
+-- This software can be used freely, --
+--    but only distributed by me.    --
+--                                   --
+--    Copyright © 2020 Jan Ziegler   --
+---------------------------------------
+---------------------------------------
+
+---------------------------------------
+--      LCARS Security | Server      --
+---------------------------------------
+
 local securityUtil = include("util.lua")
 
 function Star_Trek.LCARS:OpenSecurityMenu()
-	local success, interfaceEnt = self:GetInterfaceEntity(TRIGGER_PLAYER, CALLER)
-	if not success then
+	local success1, interfaceEnt = self:GetInterfaceEntity(TRIGGER_PLAYER, CALLER)
+	if not success1 then
 		Star_Trek:Message(interfaceEnt)
 		return
 	end

@@ -1,3 +1,21 @@
+---------------------------------------
+---------------------------------------
+--        Star Trek Utilities        --
+--                                   --
+--            Created by             --
+--       Jan 'Oninoni' Ziegler       --
+--                                   --
+-- This software can be used freely, --
+--    but only distributed by me.    --
+--                                   --
+--    Copyright © 2020 Jan Ziegler   --
+---------------------------------------
+---------------------------------------
+
+---------------------------------------
+--  LCARS Transporter | Window Util  --
+---------------------------------------
+
 local transporterUtil = include("util.lua")
 
 function transporterUtil.CreateMenuWindow(pos, angle, width, menuTable, hFlip, padNumber)

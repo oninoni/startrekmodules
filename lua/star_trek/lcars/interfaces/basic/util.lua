@@ -1,3 +1,21 @@
+---------------------------------------
+---------------------------------------
+--        Star Trek Utilities        --
+--                                   --
+--            Created by             --
+--       Jan 'Oninoni' Ziegler       --
+--                                   --
+-- This software can be used freely, --
+--    but only distributed by me.    --
+--                                   --
+--    Copyright © 2020 Jan Ziegler   --
+---------------------------------------
+---------------------------------------
+
+---------------------------------------
+--    LCARS Basic Interface | Util   --
+---------------------------------------
+
 local basicUtil = {}
 
 -- Generate the buttons for a general purpose menu.

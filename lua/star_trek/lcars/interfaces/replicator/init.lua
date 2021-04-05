@@ -1,6 +1,27 @@
+---------------------------------------
+---------------------------------------
+--        Star Trek Utilities        --
+--                                   --
+--            Created by             --
+--       Jan 'Oninoni' Ziegler       --
+--                                   --
+-- This software can be used freely, --
+--    but only distributed by me.    --
+--                                   --
+--    Copyright © 2020 Jan Ziegler   --
+---------------------------------------
+---------------------------------------
+
+---------------------------------------
+--     LCARS Replicator | Server     --
+---------------------------------------
+
+
+
+-- Opens the replicator menu.
 function Star_Trek.LCARS:OpenReplicatorMenu()
-	local success, ent = self:GetInterfaceEntity(TRIGGER_PLAYER, CALLER)
-	if not success then
+	local success1, ent = self:GetInterfaceEntity(TRIGGER_PLAYER, CALLER)
+	if not success1 then
 		Star_Trek:Message(ent)
 		return
 	end
