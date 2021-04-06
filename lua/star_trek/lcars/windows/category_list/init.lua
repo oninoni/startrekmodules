@@ -67,7 +67,7 @@ end
 function SELF:GetSelected()
 	local data = {}
 
-	data.Buttons = SELF.BASE.GetSelected(self)
+	data.Buttons = SELF.Base.GetSelected(self)
 	data.Selected = self.Selected
 
 	return data
@@ -77,13 +77,14 @@ function SELF:SetCategory(category)
 	self.Selected = category
 
 	local height2 = self.Height2
+	-- TODO: Replace with SetButtons Functions
 	SELF.Base.OnCreate(self, self.Categories[self.Selected].Buttons, self.Title, self.TitleShort, self.HFlip, self.Toggle)
 	self.Height2 = height2
 end
 
 function SELF:SetSelected(data)
 	self:SetCategory(data.Selected)
-	self.BASE.SetSelected(self, data.Buttons)
+	self.Base.SetSelected(self, data.Buttons)
 end
 
 function SELF:OnPress(interfaceData, ent, buttonId, callback)
@@ -100,23 +101,23 @@ function SELF:OnPress(interfaceData, ent, buttonId, callback)
 		self:SetCategory(buttonId)
 		shouldUpdate = true
 
-		ent:EmitSound("star_trek.lcars_beep") -- Modularize Sound
-
 		if isfunction(callback) then
 			callback(self, interfaceData, buttonId, nil)
 		end
 	else
 		buttonId = buttonId - categoryCount
 
-		if SELF.Base.OnPress(self, interfaceData, buttonId, nil) then
+		if SELF.Base.OnPress(self, interfaceData, ent, buttonId, nil) then
 			shouldUpdate = true
-
-			ent:EmitSound("star_trek.lcars_beep") -- Modularize Sound
 		end
 
 		if isfunction(callback) and callback(self, interfaceData, categoryId, buttonId) then
 			shouldUpdate = true
 		end
+	end
+
+	if shouldUpdate then
+		ent:EmitSound("star_trek.lcars_beep") -- Modularize Sound
 	end
 
 	return shouldUpdate

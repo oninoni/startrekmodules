@@ -53,7 +53,7 @@ function Star_Trek.LCARS:OpenTransporterMenu()
 		Star_Trek:Message(sourceMenuTable)
 		return
 	end
-	local success3, error = sourceMenuTable:SelectType(1)
+	local success3, error = sourceMenuTable:SelectType(sourceMenuTable.MenuTypes[1])
 	if not success3 then
 		Star_Trek:Message(error)
 		return
@@ -76,7 +76,7 @@ function Star_Trek.LCARS:OpenTransporterMenu()
 		Star_Trek:Message(targetMenuTable)
 		return
 	end
-	local success5, error2 = targetMenuTable:SelectType(2)
+	local success5, error2 = targetMenuTable:SelectType(targetMenuTable.MenuTypes[1])
 	if not success5 then
 		Star_Trek:Message(error2)
 		return
@@ -128,7 +128,7 @@ function Star_Trek.LCARS:OpenConsoleTransporterMenu()
 		Star_Trek:Message(sourceMenuTable)
 		return
 	end
-	local success3, error = sourceMenuTable:SelectType(1)
+	local success3, error = sourceMenuTable:SelectType(sourceMenuTable.MenuTypes[1])
 	if not success3 then
 		Star_Trek:Message(error)
 		return
@@ -150,7 +150,7 @@ function Star_Trek.LCARS:OpenConsoleTransporterMenu()
 		Star_Trek:Message(targetMenuTable)
 		return
 	end
-	local success5, error2 = targetMenuTable:SelectType(2)
+	local success5, error2 = targetMenuTable:SelectType(targetMenuTable.MenuTypes[2])
 	if not success5 then
 		Star_Trek:Message(error2)
 		return

@@ -18,25 +18,54 @@
 
 local transporterUtil = {}
 
-function transporterUtil.GetSelectionName(menuTable)
-	local selection = menuTable.MenuWindow.Selection
-	local selectionName = menuTable.MenuTypes[selection]
-	if istable(selectionName) then
-		if menuTable.Target then
-			selectionName = selectionName[2]
+local DEMAT_DELAY = 5
+
+function transporterUtil.GetMenuType(menuType, target)
+	if istable(menuType) then
+		if target then
+			menuType = menuType[2]
 		else
-			selectionName = selectionName[1]
+			menuType = menuType[1]
 		end
 	end
 
-	return selectionName
+	return menuType
 end
 
+function transporterUtil.GetSelectedMenuType(menuTable)
+	local selected = menuTable.MenuWindow:GetSelected()
+
+	local menuType
+	for type, active in pairs(selected) do
+		if active then
+			menuType = type
+		end
+	end
+
+	return menuType
+end
+
+-- Returns the name of the currently selected transporter mode.
+--
+-- @param Table menuTable
+-- @return String modeName
+function transporterUtil.GetMode(menuTable)
+	local menuType = transporterUtil.GetSelectedMenuType(menuTable)
+	local modeName = transporterUtil.GetMenuType(menuType, menuTable.Target)
+
+	return modeName
+end
+
+-- Scan the selected menuTable for entities and compile locations for a beamin.
+--
+-- @param table menuTable
+-- @param Boolean wideField
+-- @return table patterns
 function transporterUtil.GetPatternData(menuTable, wideField)
-	local selectionName = transporterUtil.GetSelectionName(menuTable)
+	local modeName = transporterUtil.GetMode(menuTable)
 	local mainWindow = menuTable.MainWindow
 
-	if selectionName == "Transporter Pad" then
+	if modeName == "Transporter Pad" then
 		local pads = {}
 		for _, pad in pairs(mainWindow.Pads) do
 			if pad.Selected then
@@ -45,7 +74,7 @@ function transporterUtil.GetPatternData(menuTable, wideField)
 		end
 
 		return Star_Trek.Transporter:GetPatternsFromPads(pads)
-	elseif selectionName == "Lifeforms" then
+	elseif modeName == "Lifeforms" then
 		local players = {}
 		for _, button in pairs(mainWindow.Buttons) do
 			if button.Selected then
@@ -54,7 +83,7 @@ function transporterUtil.GetPatternData(menuTable, wideField)
 		end
 
 		return Star_Trek.Transporter:GetPatternsFromPlayers(players, wideField)
-	elseif selectionName == "Sections" then
+	elseif modeName == "Sections" then
 		local positions = {}
 
 		if menuTable.Target then
@@ -84,7 +113,7 @@ function transporterUtil.GetPatternData(menuTable, wideField)
 
 			return Star_Trek.Transporter:GetPatternsFromAreas(deck, sectionIds)
 		end
-	elseif selectionName == "Buffer" then
+	elseif modeName == "Buffer" then
 		local entities = {}
 		for _, button in pairs(mainWindow.Buttons) do
 			if button.Selected then
@@ -93,7 +122,7 @@ function transporterUtil.GetPatternData(menuTable, wideField)
 		end
 
 		return Star_Trek.Transporter:GetPatternsFromBuffers(entities)
-	elseif selectionName == "Other Pads" or selectionName == "Transporter Pads"  then
+	elseif modeName == "Other Pads" or modeName == "Transporter Pads"  then
 		local pads = {}
 		for _, button in pairs(mainWindow.Buttons) do
 			if button.Selected then
@@ -107,7 +136,15 @@ function transporterUtil.GetPatternData(menuTable, wideField)
 	end
 end
 
-function transporterUtil.Energize(sourcePatterns, targetPatterns, callback)
+-- Engage a transporter system with the given menu tables and wide field.
+--
+-- @param Table sourceMenuTable
+-- @param Table targetMenuTable
+-- @param? Boolean wideField
+-- @param? Function callback
+function transporterUtil.Energize(sourceMenuTable, targetMenuTable, wideField, callback)
+	local sourcePatterns = transporterUtil.GetPatternData(sourceMenuTable, wideField)
+	local targetPatterns = transporterUtil.GetPatternData(targetMenuTable, false)
 	Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPatterns)
 
 	if isfunction(callback) then
@@ -115,27 +152,25 @@ function transporterUtil.Energize(sourcePatterns, targetPatterns, callback)
 	end
 end
 
--- Force Update of Buffer Table, by just switching.
--- Updating would require a callback (TODO)
+-- Force Update of Source Buffer Table, by just switching.
+--
+-- @param Table interfaceData
 function transporterUtil.UpdateBufferMenu(interfaceData)
 	local sourceMenuTable = interfaceData.SourceMenuTable
 
-	local success, error = sourceMenuTable:SelectType(1)
+	local success, error = sourceMenuTable:SelectType(sourceMenuTable.MenuTypes[1])
 	if not success then
 		Star_Trek:Message(error)
 		return
 	end
 
-	local ent = table.KeyFromValue(Star_Trek.LCARS.ActiveInterfaces, interfaceData)
-	if not IsValid(ent) then
-		Star_Trek:Message("Invalid Entity on Buffer Menu Update")
-		return
-	end
-
-	Star_Trek.LCARS:UpdateWindow(ent, sourceMenuTable.MenuWindow.Id, sourceMenuTable.MenuWindow)
-	Star_Trek.LCARS:UpdateWindow(ent, sourceMenuTable.MainWindow.Id, sourceMenuTable.MainWindow)
+	sourceMenuTable.MenuWindow:Update()
+	sourceMenuTable.MainWindow:Update()
 end
 
+-- Trigger a Transporter.
+--
+-- @param Table interfaceData
 function transporterUtil.TriggerTransporter(interfaceData)
 	local sourceMenuTable = interfaceData.SourceMenuTable
 	local targetMenuTable = interfaceData.TargetMenuTable
@@ -144,25 +179,20 @@ function transporterUtil.TriggerTransporter(interfaceData)
 	if isfunction(sourceMenuTable.GetUtilButtonState) then
 		wideField = sourceMenuTable:GetUtilButtonState()
 	end
+
 	local delayDematerialisation = false
 	if isfunction(targetMenuTable.GetUtilButtonState) then
 		delayDematerialisation = targetMenuTable:GetUtilButtonState()
 	end
 
 	if delayDematerialisation then
-		timer.Simple(5, function()
-			local sourcePatterns = transporterUtil.GetPatternData(sourceMenuTable, wideField)
-			local targetPatterns = transporterUtil.GetPatternData(targetMenuTable, false)
-
-			transporterUtil.Energize(sourcePatterns, targetPatterns, function()
+		timer.Simple(DEMAT_DELAY, function()
+			transporterUtil.Energize(sourceMenuTable, targetMenuTable, wideField, function()
 				if sourcePatterns.IsBuffer then transporterUtil.UpdateBufferMenu(interfaceData) end
 			end)
 		end)
 	else
-		local sourcePatterns = transporterUtil.GetPatternData(sourceMenuTable, wideField)
-		local targetPatterns = transporterUtil.GetPatternData(targetMenuTable, false)
-
-		transporterUtil.Energize(sourcePatterns, targetPatterns, function()
+		transporterUtil.Energize(sourceMenuTable, targetMenuTable, wideField, function()
 			if sourcePatterns.IsBuffer then transporterUtil.UpdateBufferMenu(interfaceData) end
 		end)
 	end

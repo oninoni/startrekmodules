@@ -113,22 +113,22 @@ function SELF:SetupCategoryRow(categories)
 end
 
 function SELF:OnPress(pos, animPos)
-	if pos.y <= -self.HD2 + self.CategoryHeight + 65 then
-		for rowId, rowData in pairs(self.CategoryRows) do
-			for butId, categoryData in pairs(rowData.Categories) do
-				local xRow = self.XOffset + ((butId - 0.5) - rowData.N / 2) * rowData.Width
-				local y = self.CategoryStart + (rowId - 1) * 35
+	for rowId, rowData in pairs(self.CategoryRows) do
+		for butId, categoryData in pairs(rowData.Categories) do
+			if categoryData.Disabled then continue end
 
-				if self:IsButtonHovered(xRow, y, rowData.Width - 3, 32, pos) then
-					return categoryData.Id
-				end
+			local xRow = self.XOffset + ((butId - 0.5) - rowData.N / 2) * rowData.Width
+			local y = self.CategoryStart + (rowId - 1) * 35
+
+			if self:IsButtonHovered(xRow, y, rowData.Width - 3, 32, pos) then
+				return categoryData.Id
 			end
 		end
-	else
-		local buttonId = SELF.Base.OnPress(self, pos, animPos)
-		if isnumber(buttonId) then
-			return #self.Categories + buttonId
-		end
+	end
+
+	local buttonId = SELF.Base.OnPress(self, pos, animPos)
+	if isnumber(buttonId) then
+		return #self.Categories + buttonId
 	end
 end
 

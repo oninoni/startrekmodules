@@ -74,12 +74,14 @@ hook.Add("AcceptInput", "Star_Trek.BlockDoorIfAlreadyDooring", function(ent, inp
 			timer.Simple(ent:SequenceDuration(value) / 2, function()
 				ent:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
 				ent:SetSolid(SOLID_NONE)
+				print("None")
 			end)
 		elseif value == "close" then
 			ent.Open = false
 
-			ent:SetCollisionGroup(COLLISION_GROUP_NONE)
-			ent:SetSolid(SOLID_VPHYSICS)
+			--ent:SetCollisionGroup(COLLISION_GROUP_NONE)
+			--ent:SetSolid(SOLID_VPHYSICS)
+			print("Solid")
 		end
 
 		if ent.LCARSKeyData then
@@ -89,6 +91,7 @@ hook.Add("AcceptInput", "Star_Trek.BlockDoorIfAlreadyDooring", function(ent, inp
 				for _, partnerDoor in pairs(partnerDoors) do
 					if partnerDoor == ent then continue end
 
+					print("Partnerdoor", value, ent, partnerDoor)
 					partnerDoor:Fire("SetAnimation", value)
 				end
 			end

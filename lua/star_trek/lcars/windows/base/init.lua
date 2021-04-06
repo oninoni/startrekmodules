@@ -29,7 +29,12 @@ function SELF:SetSelected(data)
 end
 
 function SELF:Update()
-	Star_Trek.LCARS:UpdateWindow(self.Ent, self.Id)
+	Star_Trek.LCARS:UpdateWindow(self.Ent, self.Id, self)
+end
+
+function SELF:Close()
+	windowData.Ent:EmitSound("star_trek.lcars_close")
+	Star_Trek.LCARS:CloseInterface(windowData.Ent)
 end
 
 function SELF:OnPress(interfaceData, ent, buttonId, callback)

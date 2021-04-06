@@ -54,8 +54,8 @@ function SELF:SetButtons(buttons)
 			end
 		end
 
-		buttonData.RandomS = button.RandomS
-		buttonData.RandomL = button.RandomL
+		buttonData.RandomS = button.RandomS or math.random(0, 99)
+		buttonData.RandomL = button.RandomL or math.random(0, 999999)
 
 		self.Buttons[i] = buttonData
 	end
@@ -93,13 +93,15 @@ function SELF:OnPress(interfaceData, ent, buttonId, callback)
 		if istable(buttonData) then
 			buttonData.Selected = not (buttonData.Selected or false)
 			shouldUpdate = true
-
-			ent:EmitSound("star_trek.lcars_beep") -- Modularize Sound
 		end
 	end
 
 	if isfunction(callback) then
 		shouldUpdate = shouldUpdate or callback(self, interfaceData, buttonId)
+	end
+
+	if shouldUpdate then
+		ent:EmitSound("star_trek.lcars_beep") -- Modularize Sound
 	end
 
 	return shouldUpdate
