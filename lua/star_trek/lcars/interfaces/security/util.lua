@@ -126,19 +126,15 @@ function securityUtil.CreateMenuWindow()
 		500,
 		height,
 		function(windowData, interfaceData, buttonId)
-			if buttonId == modeCount + 2 then
-				ent:EmitSound("star_trek.lcars_close")
-				Star_Trek.LCARS:CloseInterface(ent)
+			if buttonId > modeCount then
+				windowData:Close()
 			else
-				print("---")
-				PrintTable(windowData:GetSelected())
-				print("...")
 				windowData:SetSelected({
 					[buttonId] = true
 				})
 				PrintTable(windowData:GetSelected())
 
-				Star_Trek.LCARS:UpdateWindow(ent, windowData.Id, windowData)
+				return true
 			end
 		end,
 		buttons,

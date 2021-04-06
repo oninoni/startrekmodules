@@ -82,9 +82,17 @@ function Star_Trek.LCARS:OpenTransporterMenu()
 		return
 	end
 
-	local success6, sliderWindow = Star_Trek.LCARS:CreateWindow("transport_slider", Vector(0, -2, 6), Angle(0, 0, 30), 30, 200, 200, function(windowData, interfaceData, buttonId)
-		transporterUtil.TriggerTransporter(self.ActiveInterfaces[ent])
-	end)
+	local success6, sliderWindow = Star_Trek.LCARS:CreateWindow(
+		"transport_slider",
+		Vector(0, 0, 0),
+		Angle(0, 0, 0),
+		30,
+		200,
+		200,
+		function(windowData, interfaceData, buttonId)
+			transporterUtil.TriggerTransporter(self.ActiveInterfaces[ent])
+		end
+	)
 	if not success6 then
 		Star_Trek:Message(sliderWindow)
 		return

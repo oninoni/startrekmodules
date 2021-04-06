@@ -33,10 +33,10 @@ function SELF:Update()
 end
 
 function SELF:Close()
-	windowData.Ent:EmitSound("star_trek.lcars_close")
-	Star_Trek.LCARS:CloseInterface(windowData.Ent)
+	self.Ent:EmitSound("star_trek.lcars_close")
+	Star_Trek.LCARS:CloseInterface(self.Ent)
 end
 
 function SELF:OnPress(interfaceData, ent, buttonId, callback)
-	callback(windowData, interfaceData, buttonId)
+	callback(self, interfaceData, buttonId)
 end

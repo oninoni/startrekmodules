@@ -148,7 +148,7 @@ function transporterUtil.Energize(sourceMenuTable, targetMenuTable, wideField, c
 	Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPatterns)
 
 	if isfunction(callback) then
-		callback()
+		callback(sourcePatterns, targetPatterns)
 	end
 end
 
@@ -187,12 +187,12 @@ function transporterUtil.TriggerTransporter(interfaceData)
 
 	if delayDematerialisation then
 		timer.Simple(DEMAT_DELAY, function()
-			transporterUtil.Energize(sourceMenuTable, targetMenuTable, wideField, function()
+			transporterUtil.Energize(sourceMenuTable, targetMenuTable, wideField, function(sourcePatterns, targetPatterns)
 				if sourcePatterns.IsBuffer then transporterUtil.UpdateBufferMenu(interfaceData) end
 			end)
 		end)
 	else
-		transporterUtil.Energize(sourceMenuTable, targetMenuTable, wideField, function()
+		transporterUtil.Energize(sourceMenuTable, targetMenuTable, wideField, function(sourcePatterns, targetPatterns)
 			if sourcePatterns.IsBuffer then transporterUtil.UpdateBufferMenu(interfaceData) end
 		end)
 	end

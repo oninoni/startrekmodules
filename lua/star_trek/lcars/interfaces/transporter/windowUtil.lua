@@ -31,8 +31,12 @@ local transporterUtil = include("util.lua")
 function transporterUtil.CreateMenuWindow(pos, angle, width, menuTable, hFlip, padNumber)
 	local buttons = {}
 
+	local n = 0
 	for i, menuType in pairs(menuTable.MenuTypes) do
+		n = n + 1
+
 		local name = transporterUtil.GetMenuType(menuType, menuTable.Target)
+		if not name then continue end
 
 		local color = Star_Trek.LCARS.ColorBlue
 		if i % 2 == 0 then
@@ -52,8 +56,6 @@ function transporterUtil.CreateMenuWindow(pos, angle, width, menuTable, hFlip, p
 		table.insert(buttons, button)
 	end
 
-	local n = #buttons
-
 	if isnumber(padNumber) then
 		local utilButtonData = {}
 		if not menuTable.Target then
@@ -64,8 +66,9 @@ function transporterUtil.CreateMenuWindow(pos, angle, width, menuTable, hFlip, p
 			utilButtonData.Color = Star_Trek.LCARS.ColorOrange
 		end
 
-		buttons[table.Count(buttons) + 2] = utilButtonData
+		buttons[n + 2] = utilButtonData
 		menuTable.UtilButtonId = n + 2
+		n = n + 1
 
 		function menuTable:GetUtilButtonState()
 			return self.MenuWindow.Buttons[self.UtilButtonId].SelectedCustom or false
@@ -80,7 +83,8 @@ function transporterUtil.CreateMenuWindow(pos, angle, width, menuTable, hFlip, p
 		actionButtonData.Name = "Swap Sides"
 		actionButtonData.Color = Star_Trek.LCARS.ColorOrange
 	end
-	buttons[table.Count(buttons) + 2] = actionButtonData
+	buttons[n + 2] = actionButtonData
+	menuTable.ActionButtonId = n + 2
 
 	local height = table.maxn(buttons) * 35 + 80
 	local transporterType = menuTable.Target and "Target" or "Source"
@@ -139,7 +143,7 @@ function transporterUtil.CreateMenuWindow(pos, angle, width, menuTable, hFlip, p
 					local targetMenuTable = interfaceData.TargetMenuTable
 					local sourceMenuSelectionName = transporterUtil.GetSelectedMenuType(menuTable)
 					local targetMenuSelectionName = transporterUtil.GetSelectedMenuType(targetMenuTable)
-					if istable(sourceMenuSelectionName) or istable(targetMenuSelectionName) then
+					if sourceMenuSelectionName == "Buffer" then
 						windowData.Ent:EmitSound("star_trek.lcars_error")
 
 						return false
@@ -380,7 +384,8 @@ function transporterUtil.CreateWindowTable(menuPos, menuAngle, menuWidth, menuHF
 	end
 	menuTable.MenuWindow = menuWindow
 
-	function menuTable:SelectType(name)
+	function menuTable:SelectType(menuType)
+		local name = transporterUtil.GetMenuType(menuType, self.Target)
 		menuTable.MenuWindow:SetSelected({
 			[name] = true,
 		})
