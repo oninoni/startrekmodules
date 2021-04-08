@@ -111,9 +111,22 @@ hook.Add("KeyPress", "Star_Trek.OpenDoors", function(ply, key)
 		local trace = ply:GetEyeTrace()
 		local ent = trace.Entity
 		if IsValid(ent) and table.HasValue(Star_Trek.Doors.Doors, ent) then
-			local distance = trace.HitPos:Distance(ply:EyePos())
+			local distance = ent:GetPos():Distance(ply:EyePos())
 			if distance < 64 then
 				ent:Fire("SetAnimation", "open")
+				return
+			end
+
+			local partnerDoorName = ent.LCARSKeyData["lcars_partnerdoor"]
+			if isstring(partnerDoorName) then
+				local partnerDoors = ents.FindByName(partnerDoorName)
+				for _, partnerDoor in pairs(partnerDoors) do
+					local distance2 = partnerDoor:GetPos():Distance(ply:EyePos())
+					if distance2 < 64 then
+						ent:Fire("SetAnimation", "open")
+						return
+					end
+				end
 			end
 		end
 	end
@@ -128,12 +141,23 @@ local function checkPlayers(ent)
 			entPos.z = eyePos.z
 
 			local distance = eyePos:Distance(entPos)
-			if distance <= 32 then
+			if distance <= 32 or ent.Open then
 				return true
 			end
 
-			if nearbyEnt:GetEyeTrace().Entity == ent then
+			local traceEnt = nearbyEnt:GetEyeTrace().Entity
+			if traceEnt == ent then
 				return true
+			end
+
+			local partnerDoorName = ent.LCARSKeyData["lcars_partnerdoor"]
+			if isstring(partnerDoorName) then
+				local partnerDoors = ents.FindByName(partnerDoorName)
+				for _, partnerDoor in pairs(partnerDoors) do
+					if traceEnt == partnerDoor then
+						return true
+					end
+				end
 			end
 		end
 	end
@@ -157,11 +181,22 @@ end
 -- Think hook for auto-closing the doors.
 hook.Add("Think", "Star_Trek.DoorThink", function()
 	if Star_Trek.Doors.NextThink > CurTime() then return end
-	Star_Trek.Doors.NextThink = CurTime() + 0.2
+	Star_Trek.Doors.NextThink = CurTime() + Star_Trek.Doors.ThinkDelay
 
 	for _, ent in pairs(Star_Trek.Doors.Doors or {}) do
 		if ent.Open then
-			if not checkPlayers(ent) then
+			if checkPlayers(ent) then
+				ent.CloseAt = nil
+			else
+				if not ent.CloseAt then
+					ent.CloseAt = CurTime() + Star_Trek.Doors.CloseDelay
+					continue
+				end
+
+				if ent.CloseAt > CurTime() then
+					continue
+				end
+
 				if ent.LCARSKeyData then
 					local allDoorsFree = handleParterDoors(ent)
 

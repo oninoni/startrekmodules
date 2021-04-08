@@ -26,3 +26,7 @@ Star_Trek.Doors.Models = {
 	"models/kingpommes/startrek/intrepid/jef_doorhorizontal.mdl",
 	"models/kingpommes/startrek/intrepid/jef_doorvertical.mdl"
 }
+
+Star_Trek.Doors.CloseDelay = 2
+
+Star_Trek.Doors.ThinkDelay = 0.2
