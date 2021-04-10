@@ -63,6 +63,8 @@ function Star_Trek.LCARS:OpenMenu()
 
 			local keyValues = triggerEntity.LCARSKeyData
 			if istable(keyValues) and keyValues["lcars_keep_open"] then
+				ent:EmitSound("star_trek.lcars_beep")
+
 				return
 			end
 

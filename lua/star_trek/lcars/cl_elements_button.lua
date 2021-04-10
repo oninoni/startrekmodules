@@ -145,16 +145,16 @@ function Star_Trek.LCARS:DrawButton(yOffset, width, height, color, borderColor, 
 			},
 			xalign = TEXT_ALIGN_CENTER,
 			yalign = TEXT_ALIGN_CENTER,
-			color = borderColor
+			color = Star_Trek.LCARS.ColorBlack
 		})
 	else
 		-- Left Bar
 		draw.RoundedBoxEx(0,
 			height - BAR_WIDTH - 4,
-			yOffset,
+			yOffset + 1,
 			BAR_WIDTH,
-			height,
-		borderColor)
+			height - 2,
+		Star_Trek.LCARS.ColorBlack)
 
 		draw.Text({
 			text = text,
@@ -165,7 +165,7 @@ function Star_Trek.LCARS:DrawButton(yOffset, width, height, color, borderColor, 
 			},
 			xalign = TEXT_ALIGN_LEFT,
 			yalign = TEXT_ALIGN_BOTTOM,
-			color = borderColor
+			color = Star_Trek.LCARS.ColorBlack
 		})
 
 		-- Right Small Text
@@ -178,24 +178,24 @@ function Star_Trek.LCARS:DrawButton(yOffset, width, height, color, borderColor, 
 			},
 			xalign = TEXT_ALIGN_RIGHT,
 			yalign = TEXT_ALIGN_BOTTOM,
-			color = borderColor
+			color = Star_Trek.LCARS.ColorBlack
 		})
 
 		-- Right Bar
 		draw.RoundedBoxEx(0,
 			width - 56,
-			yOffset,
+			yOffset + 1,
 			BAR_WIDTH,
-			height,
-		borderColor)
+			height - 2,
+		Star_Trek.LCARS.ColorBlack)
 
 		-- Big Bar
 		draw.RoundedBoxEx(0,
 			width - 64 - 40,
-			yOffset,
+			yOffset + 1,
 			40,
-			height,
-		borderColor)
+			height - 2,
+		Star_Trek.LCARS.ColorBlack)
 
 		draw.Text({
 			text = smallTextNumber,
