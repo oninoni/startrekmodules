@@ -108,25 +108,18 @@ end)
 -- Open door when pressing use on them.
 hook.Add("KeyPress", "Star_Trek.OpenDoors", function(ply, key)
 	if key == IN_USE then
-		local trace = ply:GetEyeTrace()
+		local trace = util.RealTraceLine({
+			start = ply:EyePos(),
+			endpos = ply:EyePos() + ply:EyeAngles():Forward() * 128,
+			filter = ply,
+		})
+
 		local ent = trace.Entity
 		if IsValid(ent) and table.HasValue(Star_Trek.Doors.Doors, ent) then
 			local distance = ent:GetPos():Distance(ply:EyePos())
 			if distance < 64 then
 				ent:Fire("SetAnimation", "open")
 				return
-			end
-
-			local partnerDoorName = ent.LCARSKeyData["lcars_partnerdoor"]
-			if isstring(partnerDoorName) then
-				local partnerDoors = ents.FindByName(partnerDoorName)
-				for _, partnerDoor in pairs(partnerDoors) do
-					local distance2 = partnerDoor:GetPos():Distance(ply:EyePos())
-					if distance2 < 64 then
-						ent:Fire("SetAnimation", "open")
-						return
-					end
-				end
 			end
 		end
 	end
@@ -145,19 +138,14 @@ local function checkPlayers(ent)
 				return true
 			end
 
-			local traceEnt = nearbyEnt:GetEyeTrace().Entity
-			if traceEnt == ent then
-				return true
-			end
+			local trace = util.RealTraceLine({
+				start = nearbyEnt:EyePos(),
+				endpos = nearbyEnt:EyePos() + nearbyEnt:EyeAngles():Forward() * 128,
+				filter = nearbyEnt,
+			})
 
-			local partnerDoorName = ent.LCARSKeyData["lcars_partnerdoor"]
-			if isstring(partnerDoorName) then
-				local partnerDoors = ents.FindByName(partnerDoorName)
-				for _, partnerDoor in pairs(partnerDoors) do
-					if traceEnt == partnerDoor then
-						return true
-					end
-				end
+			if trace.Entity == ent then
+				return true
 			end
 		end
 	end
