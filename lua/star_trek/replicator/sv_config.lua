@@ -49,7 +49,7 @@ Star_Trek.Replicator.Categories = {
 	},
 	{
 		Name = "MEDICAL",
-		Disabled = false,
+		Disabled = true,
 		Buttons = {
 			{
 				Name = "Skull",
@@ -65,7 +65,7 @@ Star_Trek.Replicator.Categories = {
 	},
 	{
 		Name = "STUFF",
-		Disabled = false,
+		Disabled = true,
 		Buttons = {
 			{
 				Name = "Hula Doll",
@@ -80,7 +80,7 @@ Star_Trek.Replicator.Categories = {
 	},
 	{
 		Name = "WEAPONS",
-		Disabled = false,
+		Disabled = true,
 		Buttons = {
 			{
 				Name = "Antique Pistol",

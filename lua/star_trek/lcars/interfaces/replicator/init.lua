@@ -30,7 +30,7 @@ function Star_Trek.LCARS:OpenReplicatorMenu()
 		return
 	end
 
-	local categories = table.Copy(Star_Trek.Replicator.Categories)
+	local categories = Star_Trek.Replicator:GetReplicatorList(ent)
 	local categoryCount = #categories
 
 	table.insert(categories, {

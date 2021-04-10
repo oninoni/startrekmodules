@@ -16,6 +16,27 @@
 --        Replicator | Server        --
 ---------------------------------------
 
+function Star_Trek.Replicator:GetReplicatorList(ent)
+	local categories = table.Copy(Star_Trek.Replicator.Categories)
+
+	for _, category in pairs(categories) do
+		local name = category.Name
+		if category.Disabled then
+			local keyValues = ent.LCARSKeyData
+			if istable(keyValues) and keyValues["lcars_" .. string.lower(name) .. "_unlock"] then
+				category.Disabled = false
+			end
+		else
+			local keyValues = ent.LCARSKeyData
+			if istable(keyValues) and keyValues["lcars_" .. string.lower(name) .. "_lock"] then
+				category.Disabled = true
+			end
+		end
+	end
+
+	return categories
+end
+
 function Star_Trek.Replicator:CreateObject(data, pos, angle)
 	local class = "prop_physics"
 	local model = data
