@@ -64,7 +64,19 @@ Star_Trek.Replicator.Categories = {
 		},
 	},
 	{
-		Name = "STUFF",
+		Name = "WEAPONS",
+		Disabled = true,
+		Buttons = {
+			{
+				Name = "Antique Pistol",
+				Data = {
+					Class = "weapon_357"
+				}
+			}
+		},
+	},
+	{
+		Name = "MISC",
 		Disabled = true,
 		Buttons = {
 			{
@@ -76,18 +88,6 @@ Star_Trek.Replicator.Categories = {
 				Data = "models/props_lab/cactus.mdl",
 			}
 
-		},
-	},
-	{
-		Name = "WEAPONS",
-		Disabled = true,
-		Buttons = {
-			{
-				Name = "Antique Pistol",
-				Data = {
-					Class = "weapon_357"
-				}
-			}
 		},
 	},
 }
