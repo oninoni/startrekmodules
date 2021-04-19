@@ -18,7 +18,8 @@
 
 local MAP_SCALE = 5
 local MAP_OFFSET_X = 0
-local MAP_OFFSET_Y = -200
+local MAP_OFFSET_Y = 0
+local MAP_TIME = 20
 
 local SELF = WINDOW
 function SELF:OnCreate(windowData)
@@ -28,6 +29,8 @@ function SELF:OnCreate(windowData)
 	end
 
 	self.Sections = windowData.Sections
+	self.Objects = windowData.Objects
+	self.LastObjectTime = CurTime()
 
 	return self
 end
@@ -60,6 +63,17 @@ function SELF:OnDraw(pos, animPos)
 			local height = areaData.Height
 
 			draw.RoundedBox(0, x, y, width, height, sectionData.Selected and lcars_selected or lcars_inactive)
+		end
+	end
+
+	local diff = (self.LastObjectTime + MAP_TIME) - CurTime()
+	if diff > 0 then
+		local objectAlpha = math.min(1, diff) * alpha
+		for _, object in pairs(self.Objects) do
+			local x = object.Pos.x + MAP_OFFSET_X
+			local y = object.Pos.y + MAP_OFFSET_Y
+			draw.RoundedBox(16, x - 16, y - 16, 32, 32, ColorAlpha(Star_Trek.LCARS.ColorBlack, objectAlpha))
+			draw.RoundedBox(15, x - 15, y - 15, 30, 30, ColorAlpha(object.Color, objectAlpha))
 		end
 	end
 

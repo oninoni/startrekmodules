@@ -17,13 +17,14 @@
 ---------------------------------------
 
 local SELF = WINDOW
-function SELF:OnCreate(deck, hFlip)
+function SELF:OnCreate(deck, hFlip, objects)
 	local success = SELF.Base.OnCreate(self, "", "DECK " .. deck, hFlip)
 	if not success then
 		return false
 	end
 
 	self:SetDeck(deck)
+	self:SetObjects(objects)
 
 	return self
 end
@@ -45,7 +46,7 @@ function SELF:SetDeck(deck)
 
 			areaButtonData.Width = math.abs(areaData.Min.x) + math.abs(areaData.Max.x)
 			areaButtonData.Height = math.abs(areaData.Min.y) + math.abs(areaData.Max.y)
-			areaButtonData.Pos = areaData.Pos - Vector(0, 200, 0) + Vector(areaData.Min.x + areaData.Max.x, areaData.Min.y + areaData.Max.y, 0)
+			areaButtonData.Pos = areaData.Pos - Vector(areaData.Min.x + areaData.Max.x, areaData.Min.y + areaData.Max.y, 0)
 			areaButtonData.Pos.y = -areaButtonData.Pos.y
 
 			areaButtonData.Pos = areaButtonData.Pos - Vector(areaButtonData.Width / 2, areaButtonData.Height / 2, 0)
@@ -54,6 +55,33 @@ function SELF:SetDeck(deck)
 		end
 
 		table.insert(self.Sections, sectionButtonData)
+	end
+end
+
+function SELF:SetObjects(objects)
+	self.Objects = {}
+
+	for _, object in pairs(objects or {}) do
+		if istable(object) then
+			table.insert(self.Objects, object)
+			continue
+		end
+
+		if IsEntity(object) then
+			local objectTable = {
+				Pos = object:GetPos(),
+			}
+			objectTable.Pos.y = -objectTable.Pos.y
+
+			if object:IsPlayer() then
+				objectTable.Color = Star_Trek.LCARS.ColorRed
+			else
+				objectTable.Color = Star_Trek.LCARS.ColorBlue
+			end
+
+			table.insert(self.Objects, objectTable)
+			continue
+		end
 	end
 end
 

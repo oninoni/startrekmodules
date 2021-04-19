@@ -81,6 +81,12 @@ function securityUtil.GetModeButtons(mode)
 	return buttons
 end
 
+hook.Add("Star_Trek.Util.IsLifeForm", "CheckDefault", function(ent)
+	if ent:IsPlayer() or ent:IsNPC() or ent:IsNextBot() then
+		return true
+	end
+end)
+
 function securityUtil.CreateActionWindow(mode)
 	local buttons = securityUtil.GetModeButtons(mode)
 	local height = table.maxn(buttons) * 35 + 80
@@ -93,39 +99,111 @@ function securityUtil.CreateActionWindow(mode)
 		height,
 		function(windowData, interfaceData, buttonId)
 			local buttonName = windowData.Buttons[buttonId].Name
+			local sectionWindow = interfaceData.Windows[2]
+			local mapWindow = interfaceData.Windows[3]
+			local sectionIds = {}
+			for _, buttonData in pairs(sectionWindow.Buttons) do
+				if buttonData.Selected then
+					table.insert(sectionIds, buttonData.Data.Id)
+				end
+			end
 
--- Scan
+			local deck = sectionWindow.Selected
+
+-------- Scan --------
 
 			if buttonName == "Scan Lifeforms" then
+				local entities = Star_Trek.Sections:GetInSections(deck, sectionIds, function(objects, ent)
+					if not hook.Run("Star_Trek.Util.IsLifeForm", ent) then return true end
+				end)
+
+				mapWindow:SetObjects(entities)
+				mapWindow:Update()
 
 				return true
 			elseif buttonName == "Scan Objects" then
+				local entities = Star_Trek.Sections:GetInSections(deck, sectionIds, function(objects, ent)
+					if hook.Run("Star_Trek.Util.IsLifeForm", ent) then return true end
+				end)
+
+				mapWindow:SetObjects(entities)
+				mapWindow:Update()
 
 				return true
 			elseif buttonName == "Scan All" then
+				local entities = Star_Trek.Sections:GetInSections(deck, sectionIds)
+
+				mapWindow:SetObjects(entities)
+				mapWindow:Update()
 
 				return true
 
--- Lockdown
+-------- Lockdown --------
 
 			elseif buttonName == "Lock Doors" then
+				local doors = Star_Trek.Sections:GetInSections(deck, sectionIds, function(objects, ent)
+					if ent:GetClass() == "prop_dynamic" and table.HasValue(Star_Trek.Doors.Models, ent:GetModel()) then
+						return
+					end
+
+					return true
+				end, true)
+
+				for _, door in pairs(doors) do
+					door:Fire("AddOutput", "lcars_locked 1")
+				end
+
+				mapWindow:SetObjects(doors)
+				mapWindow:Update()
 
 				return true
 			elseif buttonName == "Unlock Doors" then
+				local doors = Star_Trek.Sections:GetInSections(deck, sectionIds, function(objects, ent)
+					if ent:GetClass() == "prop_dynamic" and table.HasValue(Star_Trek.Doors.Models, ent:GetModel()) then
+						return
+					end
+
+					return true
+				end, true)
+
+				for _, door in pairs(doors) do
+					door:Fire("AddOutput", "lcars_locked 0")
+				end
+
+				mapWindow:SetObjects(doors)
+				mapWindow:Update()
 
 				return true
 			elseif buttonName == "Enable Forcefields" then
+				-- TODO: Add Forcefields
 
 				return true
 			elseif buttonName == "Disable Forcefields" then
+				-- TODO: Add Forcefields
 
 				return true
 			elseif buttonName == "Unlock All" then
+				local doors = Star_Trek.Sections:GetInSections(deck, sectionIds, function(objects, ent)
+					if ent:GetClass() == "prop_dynamic" and table.HasValue(Star_Trek.Doors.Models, ent:GetModel()) then
+						return
+					end
+
+					return true
+				end, true)
+
+				for _, door in pairs(doors) do
+					door:Fire("AddOutput", "lcars_locked 0")
+				end
+				-- TODO: Add Forcefields
+
+				mapWindow:SetObjects(doors)
+				mapWindow:Update()
 
 				return true
 
--- Alerts
+-------- Alerts --------
 
+			-- TODO: Add When alerts exist.
 			elseif buttonName == "Red Alert" then
 
 				return true

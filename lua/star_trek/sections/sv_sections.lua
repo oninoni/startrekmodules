@@ -63,7 +63,7 @@ function Star_Trek.Sections:IsInSection(deck, sectionId, pos)
 	return false, "Not in area."
 end
 
-function Star_Trek.Sections:GetInSection(deck, sectionId, allowMap, allowChildren)
+function Star_Trek.Sections:GetInSection(deck, sectionId, filterCallback, allowMap, allowParent)
 	local sectionData, error = self:GetSection(deck, sectionId)
 	if not sectionData then
 		return false, error
@@ -85,17 +85,34 @@ function Star_Trek.Sections:GetInSection(deck, sectionId, allowMap, allowChildre
 		local potentialEnts = ents.FindInBox(realMin, realMax)
 		for _, ent in pairs(potentialEnts) do
 			if table.HasValue(objects, ent) then continue end
-			if not allowMap and ent:MapCreationID() ~= -1 then continue end
-			if not allowChildren and IsValid(ent:GetParent()) then continue end
+			if not allowMap and ent:MapCreationID() > -1 then continue end
+			if not allowParent and IsValid(ent:GetParent()) then continue end
+			if isfunction(filterCallback) and filterCallback(objects, ent) then continue end
 
 			local entPos = ent.EyePos and ent:EyePos() or ent:GetPos()
 			if self:IsInArea(areaData, entPos) then
 				table.insert(objects, ent)
 			end
 		end
+
 	end
 
 	return objects
+end
+
+function Star_Trek.Sections:GetInSections(deck, sectionIds, filterCallback, allowMap, allowParent)
+	local entities = {}
+
+	for _, sectionId in pairs(sectionIds) do
+		local sectionEntities = self:GetInSection(deck, sectionId, filterCallback, allowMap, allowParent)
+		for _, ent in pairs(sectionEntities) do
+			if table.HasValue(entities, ent) then continue end
+
+			table.insert(entities, ent)
+		end
+	end
+
+	return entities
 end
 
 function Star_Trek.Sections:SetupSections()

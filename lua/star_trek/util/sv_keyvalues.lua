@@ -19,6 +19,7 @@
 -- Capture all Keyvalues so they can be read when needed.
 hook.Add("EntityKeyValue", "Star_Trek.CaptureKeyValues", function(ent, key, value)
 	ent.LCARSKeyData = ent.LCARSKeyData or {}
+	print(ent, key, value)
 
 	if string.StartWith(key, "lcars") then
 		ent.LCARSKeyData[key] = value

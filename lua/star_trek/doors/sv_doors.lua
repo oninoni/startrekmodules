@@ -102,6 +102,16 @@ end)
 hook.Add("Star_Trek.ChangedKeyValue", "Star_Trek.LockDoors", function(ent, key, value)
 	if key == "lcars_locked" and isstring(value) and value == "1" and table.HasValue(Star_Trek.Doors.Doors, ent) then
 		ent:Fire("SetAnimation", "close")
+
+		local partnerDoorName = ent.LCARSKeyData["lcars_partnerdoor"]
+		if isstring(partnerDoorName) then
+			local partnerDoors = ents.FindByName(partnerDoorName)
+			for _, partnerDoor in pairs(partnerDoors) do
+				if partnerDoor == ent then continue end
+
+				partnerDoor.LCARSKeyData["lcars_locked"] = ent.LCARSKeyData["lcars_locked"]
+			end
+		end
 	end
 end)
 
