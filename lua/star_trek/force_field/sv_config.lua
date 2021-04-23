@@ -13,22 +13,13 @@
 ---------------------------------------
 
 ---------------------------------------
---           Main | Config           --
+--        Force Field | Config       --
 ---------------------------------------
 
--- Modules
-Star_Trek.Modules["util"] = true
-Star_Trek.Modules["portal_window"] = true
-Star_Trek.Modules["chairs"] = true
-Star_Trek.Modules["doors"] = true
-
-Star_Trek.Modules["lcars"] = true
-Star_Trek.Modules["tricorder"] = true
-Star_Trek.Modules["sections"] = true
-
-Star_Trek.Modules["turbolift"] = true
-Star_Trek.Modules["transporter"] = true
-Star_Trek.Modules["replicator"] = true
-
-Star_Trek.Modules["damage"] = true
-Star_Trek.Modules["force_field"] = true
+Star_Trek.Force_Field.FrameModels = {
+    ["models/kingpommes/startrek/intrepid/panel_beam1.mdl"] = {
+        Model = "models/hunter/plates/plate3x3.mdl",
+        Pos = Vector(4, 0, 0),
+        Ang = Angle(90, 0, 0),
+    },
+}

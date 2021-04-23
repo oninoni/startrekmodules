@@ -107,7 +107,7 @@ function transporterUtil.GetPatternData(menuTable, wideField)
 
 			for buttonId, buttonData in pairs(categoryData.Buttons) do
 				if buttonData.Selected then
-					table.insert(sectionIds, buttonData.Data.Id)
+					table.insert(sectionIds, buttonData.Data)
 				end
 			end
 

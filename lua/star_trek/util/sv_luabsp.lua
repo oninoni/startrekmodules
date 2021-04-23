@@ -16,14 +16,6 @@
 --          LuaBSP |  Server         --
 ---------------------------------------
 
-function Star_Trek.Util:LoadCurrentMap()
-	local mapName = game.GetMap()
-
-	self.MapData = self:LoadMap(mapName)
-
-	self.MapData:LoadStaticProps()
-end
-
 function Star_Trek.Util:GetStaticPropsByModel(model, callback)
 	local props = {}
 
@@ -56,9 +48,18 @@ function Star_Trek.Util:GetStaticPropsByModelList(modelList, callback)
 	return props
 end
 
+function Star_Trek.Util:LoadCurrentMap()
+	local mapName = game.GetMap()
+
+	self.MapData = self:LoadMap(mapName)
+
+	self.MapData:LoadStaticProps()
+
+	hook.Run("Star_Trek.Util.MapLoaded")
+end
+
 local function loadMap()
 	Star_Trek.Util:LoadCurrentMap()
-	hook.Run("Star_Trek.Util.MapLoaded")
 end
 
 hook.Add("InitPostEntity", "Star_Trek.Map.Setup", loadMap)

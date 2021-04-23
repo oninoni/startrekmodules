@@ -34,7 +34,7 @@ function Star_Trek.LCARS:GetSectionCategories(needsLocations)
 			for sectionId, sectionData in SortedPairs(deckData.Sections) do
 				local button = {
 					Name = "Section " .. sectionData.RealId .. " " .. sectionData.Name,
-					Data = sectionData,
+					Data = sectionData.Id,
 				}
 
 				if needsLocations and table.Count(sectionData.BeamLocations) == 0 then

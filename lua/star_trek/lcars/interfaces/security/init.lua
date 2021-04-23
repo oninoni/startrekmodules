@@ -52,7 +52,7 @@ function Star_Trek.LCARS:OpenSecurityMenu()
 			if isnumber(buttonId) then
 				local buttonData = windowData.Buttons[buttonId]
 
-				mapWindow:SetSectionActive(buttonData.Data.Id, buttonData.Selected)
+				mapWindow:SetSectionActive(buttonData.Data, buttonData.Selected)
 				mapWindow:Update()
 			else
 				mapWindow:SetDeck(categoryId)

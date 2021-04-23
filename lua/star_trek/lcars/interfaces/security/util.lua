@@ -104,7 +104,7 @@ function securityUtil.CreateActionWindow(mode)
 			local sectionIds = {}
 			for _, buttonData in pairs(sectionWindow.Buttons) do
 				if buttonData.Selected then
-					table.insert(sectionIds, buttonData.Data.Id)
+					table.insert(sectionIds, buttonData.Data)
 				end
 			end
 
@@ -175,11 +175,44 @@ function securityUtil.CreateActionWindow(mode)
 
 				return true
 			elseif buttonName == "Enable Forcefields" then
-				-- TODO: Add Forcefields
+				local forceFieldPositions, error = Star_Trek.Force_Field:EnableSections(deck, sectionIds)
+				if not forceFieldPositions then
+					Star_Trek:Message(error)
+					return
+				end
+
+				local objects = {}
+				for _, pos in pairs(forceFieldPositions) do
+					table.insert(objects, {
+						Pos = pos,
+						Color = Star_Trek.LCARS.ColorBlue,
+					})
+				end
+
+				mapWindow:SetObjects(objects)
+				mapWindow:Update()
 
 				return true
 			elseif buttonName == "Disable Forcefields" then
-				-- TODO: Add Forcefields
+				local forceFieldPositions, error = Star_Trek.Force_Field:DisableSections(deck, sectionIds)
+				if not forceFieldPositions then
+					Star_Trek:Message(error)
+					return
+				end
+
+				local objects = {}
+				for _, pos in pairs(forceFieldPositions) do
+					local objectTable = {
+						Pos = pos,
+						Color = Star_Trek.LCARS.ColorBlue,
+					}
+
+					objectTable.Pos.y = -objectTable.Pos.y
+					table.insert(objects, objectTable)
+				end
+
+				mapWindow:SetObjects(objects)
+				mapWindow:Update()
 
 				return true
 			elseif buttonName == "Unlock All" then
@@ -191,12 +224,24 @@ function securityUtil.CreateActionWindow(mode)
 					return true
 				end, true)
 
+				local forceFieldPositions, error = Star_Trek.Force_Field:DisableSections(deck, sectionIds)
+				if not forceFieldPositions then
+					Star_Trek:Message(error)
+					return
+				end
+
 				for _, door in pairs(doors) do
 					door:Fire("AddOutput", "lcars_locked 0")
 				end
-				-- TODO: Add Forcefields
 
 				mapWindow:SetObjects(doors)
+				for _, pos in pairs(forceFieldPositions) do
+					table.insert(mapWindow.Objects, {
+						Pos = pos,
+						Color = Star_Trek.LCARS.ColorBlue,
+					})
+				end
+
 				mapWindow:Update()
 
 				return true

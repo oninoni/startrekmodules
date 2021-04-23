@@ -63,7 +63,10 @@ function SELF:SetObjects(objects)
 
 	for _, object in pairs(objects or {}) do
 		if istable(object) then
-			table.insert(self.Objects, object)
+			local objectTable = table.Copy(object)
+			objectTable.Pos.y = -objectTable.Pos.y
+
+			table.insert(self.Objects, objectTable)
 			continue
 		end
 
