@@ -29,7 +29,7 @@ function SELF:Open(ent)
 		return
 	end
 
-	local success, window = self:CreateWindow(
+	local success, window = Star_Trek.LCARS:CreateWindow(
 		"button_list",
 		Vector(),
 		Angle(),
