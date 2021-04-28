@@ -13,31 +13,24 @@
 ---------------------------------------
 
 ---------------------------------------
---     LCARS Base Window | Client    --
+--   LCARS Base Interface | Server   --
 ---------------------------------------
 
-local SELF = WINDOW
-function SELF:OnCreate()
-	return true
-end
+local SELF = INTERFACE
 
-function SELF:GetSelected()
+-- Opens the Interface. Must return the windows in a table. -- TODO: Remove the return?
+-- 
+-- @return Table windows
+function SELF:Open()
 	return {}
 end
 
-function SELF:SetSelected(data)
+-- Updates a given Window.
+function SELF:UpdateWindow(windowId, windowData)
+	Star_Trek.LCARS:UpdateWindow(self.Ent, windowId, windowData)
 end
 
-function SELF:Update()
-	self.Interface:UpdateWindow(self.Id)
-end
-
+-- Closes the Interface.
 function SELF:Close()
-	self.Ent:EmitSound("star_trek.lcars_close") -- TODO: Modularize Sounds
-
-	self.Interface:Close()
-end
-
-function SELF:OnPress(interfaceData, ent, buttonId, callback)
-	callback(self, interfaceData, buttonId)
+	Star_Trek.LCARS:CloseInterface(self.Ent)
 end

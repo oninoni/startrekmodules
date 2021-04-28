@@ -13,29 +13,23 @@
 ---------------------------------------
 
 ---------------------------------------
---      LCARS Security | Server      --
+--   LCARS Bridge Security | Server  --
 ---------------------------------------
 
-local securityUtil = include("util.lua")
+include("util.lua")
 
-function Star_Trek.LCARS:OpenSecurityMenu()
-	local success1, interfaceEnt = self:GetInterfaceEntity(TRIGGER_PLAYER, CALLER)
-	if not success1 then
-		Star_Trek:Message(interfaceEnt)
-		return
-	end
+local SELF = INTERFACE
+SELF.BaseInterface = "base"
 
-	if istable(self.ActiveInterfaces[interfaceEnt]) then
-		return
-	end
-
-	local success2, menuWindow, actionWindow = securityUtil.CreateMenuWindow()
+-- Open a security Console
+function SELF:Open(ent)
+	local success2, menuWindow, actionWindow = self:CreateMenuWindow()
 	if not success2 then
 		Star_Trek:Message(menuWindow)
 		return
 	end
 
-	local success3, mapWindow = securityUtil.CreateMapWindow(1)
+	local success3, mapWindow = self:CreateMapWindow(1)
 	if not success3 then
 		Star_Trek:Message(mapWindow)
 		return
@@ -70,9 +64,10 @@ function Star_Trek.LCARS:OpenSecurityMenu()
 		return
 	end
 
-	local success5, error = self:OpenInterface(interfaceEnt, menuWindow, sectionWindow, mapWindow, actionWindow)
-	if not success5 then
-		Star_Trek:Message(error)
-		return
-	end
+	return {menuWindow, sectionWindow, mapWindow, actionWindow}
+end
+
+-- Wrap for use in Map.
+function Star_Trek.LCARS:OpenSecurityMenu()
+	Star_Trek.LCARS:OpenInterface(TRIGGER_PLAYER, CALLER, "bridge_security")
 end

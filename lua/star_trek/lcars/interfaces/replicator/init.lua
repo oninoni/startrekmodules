@@ -16,36 +16,16 @@
 --     LCARS Replicator | Server     --
 ---------------------------------------
 
+include("util.lua")
 
+local SELF = INTERFACE
+SELF.BaseInterface = "base"
 
 -- Opens the replicator menu.
-function Star_Trek.LCARS:OpenReplicatorMenu()
-	local success1, ent = self:GetInterfaceEntity(TRIGGER_PLAYER, CALLER)
-	if not success1 then
-		Star_Trek:Message(ent)
-		return
-	end
+function SELF:Open(ent)
+	local categories, categoryCount = self:GenerateCategories(ent)
 
-	if istable(self.ActiveInterfaces[ent]) then
-		return
-	end
-
-	local categories = Star_Trek.Replicator:GetReplicatorList(ent)
-	local categoryCount = #categories
-
-	table.insert(categories, {
-		Name = "CLEAN",
-		Color = Star_Trek.LCARS.ColorOrange,
-		Buttons = {},
-	})
-
-	table.insert(categories, {
-		Name = "CLOSE",
-		Color = Star_Trek.LCARS.ColorRed,
-		Buttons = {},
-	})
-
-	local success2, window = Star_Trek.LCARS:CreateWindow(
+	local success, window = Star_Trek.LCARS:CreateWindow(
 		"category_list",
 		Vector(0, 10, 0),
 		Angle(0, 0, 0),
@@ -68,7 +48,7 @@ function Star_Trek.LCARS:OpenReplicatorMenu()
 					end
 				end
 
-				Star_Trek.LCARS:CloseInterface(ent)
+				interfaceData:Close()
 			else
 				if categoryId == categoryCount + 1 then
 					local pos, angle = Star_Trek.LCARS:GetInterfacePosAngle(ent)
@@ -90,10 +70,9 @@ function Star_Trek.LCARS:OpenReplicatorMenu()
 						end
 					end
 
-					Star_Trek.LCARS:CloseInterface(ent)
+					interfaceData:Close()
 				elseif categoryId == categoryCount + 2 then
-					ent:EmitSound("star_trek.lcars_close")
-					Star_Trek.LCARS:CloseInterface(ent)
+					windowData:Close()
 				end
 			end
 		end,
@@ -102,13 +81,14 @@ function Star_Trek.LCARS:OpenReplicatorMenu()
 		"REPL",
 		true
 	)
-	if not success2 then
+	if not success then
 		Star_Trek:Message(menuWindow)
 	end
 
-	local success3, error = self:OpenInterface(ent, window)
-	if not success3 then
-		Star_Trek:Message(error)
-		return
-	end
+	return {window}
+end
+
+-- Wrap for use in Map.
+function Star_Trek.LCARS:OpenReplicatorMenu()
+	Star_Trek.LCARS:OpenInterface(TRIGGER_PLAYER, CALLER, "replicator")
 end

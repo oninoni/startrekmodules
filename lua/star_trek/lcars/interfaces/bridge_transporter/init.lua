@@ -13,35 +13,24 @@
 ---------------------------------------
 
 ---------------------------------------
---     LCARS Transporter | Server    --
+-- LCARS Bridge Transporter | Server --
 ---------------------------------------
 
-include("util.lua")
-include("windowUtil.lua")
-
 local SELF = INTERFACE
-SELF.BaseInterface = "base"
+SELF.BaseInterface = "transporter"
 
 function SELF:Open(ent)
-	local padNumber = false
-	local consoleName = ent:GetName()
-	if isstring(consoleName) and string.StartWith(consoleName, "TRConsole") then
-		local split = string.Split(consoleName, "_")
-		padNumber = tonumber(split[2])
-	end
-
 	local success2, sourceMenuTable = self:CreateWindowTable(
-		Vector(-13, -2, 6),
-		Angle(5, 15, 30),
-		350,
-		false,
-		Vector(-31, -12, 17),
-		Angle(15, 45, 60),
-		500,
+		Vector(-22, -34, 8.2),
+		Angle(0, 0, -90),
 		500,
 		false,
+		Vector(-28, -5, -2),
+		Angle(0, 0, 0),
+		500,
+		700,
 		false,
-		padNumber
+		false
 	)
 	if not success2 then
 		Star_Trek:Message(sourceMenuTable)
@@ -54,23 +43,22 @@ function SELF:Open(ent)
 	end
 
 	local success4, targetMenuTable = self:CreateWindowTable(
-		Vector(13, -2, 6),
-		Angle(-5, -15, 30),
-		350,
-		false,
-		Vector(31, -12, 17),
-		Angle(-15, -45, 60),
+		Vector(22, -34, 8.2),
+		Angle(0, 0, -90),
 		500,
-		500,
-		false,
 		true,
-		padNumber
+		Vector(28, -5, -2),
+		Angle(0, 0, 0),
+		500,
+		700,
+		true,
+		true
 	)
 	if not success4 then
 		Star_Trek:Message(targetMenuTable)
 		return
 	end
-	local success5, error2 = targetMenuTable:SelectType(targetMenuTable.MenuTypes[1])
+	local success5, error2 = targetMenuTable:SelectType(targetMenuTable.MenuTypes[2])
 	if not success5 then
 		Star_Trek:Message(error2)
 		return
@@ -78,9 +66,9 @@ function SELF:Open(ent)
 
 	local success6, sliderWindow = Star_Trek.LCARS:CreateWindow(
 		"transport_slider",
-		Vector(0, 0, 0),
-		Angle(0, 0, 0),
-		30,
+		Vector(0, -34, 8),
+		Angle(0, 0, -90),
+		20,
 		200,
 		200,
 		function(windowData, interfaceData, buttonId)
@@ -95,7 +83,6 @@ function SELF:Open(ent)
 	return {sourceMenuTable.MenuWindow, sourceMenuTable.MainWindow, targetMenuTable.MenuWindow, targetMenuTable.MainWindow, sliderWindow}
 end
 
--- Wrap for use in Map.
-function Star_Trek.LCARS:OpenTransporterMenu()
-	Star_Trek.LCARS:OpenInterface(TRIGGER_PLAYER, CALLER, "transporter")
+function Star_Trek.LCARS:OpenConsoleTransporterMenu()
+	Star_Trek.LCARS:OpenInterface(TRIGGER_PLAYER, CALLER, "bridge_transporter")
 end

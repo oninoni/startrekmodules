@@ -13,31 +13,27 @@
 ---------------------------------------
 
 ---------------------------------------
---     LCARS Base Window | Client    --
+--      LCARS Replicator | Util      --
 ---------------------------------------
 
-local SELF = WINDOW
-function SELF:OnCreate()
-	return true
-end
+local SELF = INTERFACE
 
-function SELF:GetSelected()
-	return {}
-end
+-- Generate the categories and buttons of the replicator.
+function SELF:GenerateCategories(ent)
+	local categories = Star_Trek.Replicator:GetReplicatorList(ent)
+	local categoryCount = #categories
 
-function SELF:SetSelected(data)
-end
+	table.insert(categories, {
+		Name = "CLEAN",
+		Color = Star_Trek.LCARS.ColorOrange,
+		Buttons = {},
+	})
 
-function SELF:Update()
-	self.Interface:UpdateWindow(self.Id)
-end
+	table.insert(categories, {
+		Name = "CLOSE",
+		Color = Star_Trek.LCARS.ColorRed,
+		Buttons = {},
+	})
 
-function SELF:Close()
-	self.Ent:EmitSound("star_trek.lcars_close") -- TODO: Modularize Sounds
-
-	self.Interface:Close()
-end
-
-function SELF:OnPress(interfaceData, ent, buttonId, callback)
-	callback(self, interfaceData, buttonId)
+	return categories, categoryCount
 end

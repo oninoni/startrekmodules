@@ -16,7 +16,7 @@
 --  LCARS Transporter | Window Util  --
 ---------------------------------------
 
-local transporterUtil = include("util.lua")
+local SELF = INTERFACE
 
 -- Create the menu window for a transporter screen.
 --
@@ -28,14 +28,14 @@ local transporterUtil = include("util.lua")
 -- @param? Number padNumber
 -- @return Boolean success 
 -- @return Table menuWindow
-function transporterUtil.CreateMenuWindow(pos, angle, width, menuTable, hFlip, padNumber)
+function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip, padNumber)
 	local buttons = {}
 
 	local n = 0
 	for i, menuType in pairs(menuTable.MenuTypes) do
 		n = n + 1
 
-		local name = transporterUtil.GetMenuType(menuType, menuTable.Target)
+		local name = self:GetMenuType(menuType, menuTable.Target)
 		if not name then continue end
 
 		local color = Star_Trek.LCARS.ColorBlue
@@ -141,10 +141,10 @@ function transporterUtil.CreateMenuWindow(pos, angle, width, menuTable, hFlip, p
 
 				if button.Name == "Swap Sides" then
 					local targetMenuTable = interfaceData.TargetMenuTable
-					local sourceMenuSelectionName = transporterUtil.GetSelectedMenuType(menuTable)
-					local targetMenuSelectionName = transporterUtil.GetSelectedMenuType(targetMenuTable)
+					local sourceMenuSelectionName = self:GetSelectedMenuType(menuTable)
+					local targetMenuSelectionName = self:GetSelectedMenuType(targetMenuTable)
 					if sourceMenuSelectionName == "Buffer" then
-						windowData.Ent:EmitSound("star_trek.lcars_error")
+						interfaceData.Ent:EmitSound("star_trek.lcars_error")
 
 						return false
 					end
@@ -208,8 +208,8 @@ end
 -- @param? Number padNumber
 -- @return Boolean success 
 -- @return Table mainWindow
-function transporterUtil.CreateMainWindow(pos, angle, width, height, menuTable, hFlip, padNumber)
-	local modeName = transporterUtil.GetMode(menuTable)
+function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip, padNumber)
+	local modeName = self:GetMode(menuTable)
 
 	-- Transport Pad Window
 	if modeName == "Transporter Pad" then
@@ -354,7 +354,7 @@ end
 -- @param? Number padNumber
 -- @return Boolean success 
 -- @return Table mainWindow
-function transporterUtil.CreateWindowTable(menuPos, menuAngle, menuWidth, menuHFlip, mainPos, mainAngle, mainWidth, mainHeight, mainHFlip, targetSide, padNumber)
+function SELF:CreateWindowTable(menuPos, menuAngle, menuWidth, menuHFlip, mainPos, mainAngle, mainWidth, mainHeight, mainHFlip, targetSide, padNumber)
 	local menuTypes = {
 		"Lifeforms",
 		"Transporter Pads",
@@ -378,25 +378,25 @@ function transporterUtil.CreateWindowTable(menuPos, menuAngle, menuWidth, menuHF
 		Target = targetSide or false,
 	}
 
-	local success, menuWindow = transporterUtil.CreateMenuWindow(menuPos, menuAngle, menuWidth, menuTable, menuHFlip, padNumber)
+	local success, menuWindow = self:CreateMenuWindow(menuPos, menuAngle, menuWidth, menuTable, menuHFlip, padNumber)
 	if not success then
 		return false, "Error on MenuWindow: " .. menuWindow
 	end
 	menuTable.MenuWindow = menuWindow
 
+	local interfaceData = self
 	function menuTable:SelectType(menuType)
-		local name = transporterUtil.GetMenuType(menuType, self.Target)
+		local name = interfaceData:GetMenuType(menuType, self.Target)
 		menuTable.MenuWindow:SetSelected({
 			[name] = true,
 		})
 
-		local success2, mainWindow = transporterUtil.CreateMainWindow(mainPos, mainAngle, mainWidth, mainHeight, self, mainHFlip, padNumber)
+		local success2, mainWindow = interfaceData:CreateMainWindow(mainPos, mainAngle, mainWidth, mainHeight, self, mainHFlip, padNumber)
 		if not success2 then
 			return false, "Error on MainWindow: " .. mainWindow
 		end
 		if istable(self.MainWindow) then
 			mainWindow.Id = self.MainWindow.Id
-			mainWindow.Ent = self.MainWindow.Ent
 		end
 		self.MainWindow = mainWindow
 
@@ -405,5 +405,3 @@ function transporterUtil.CreateWindowTable(menuPos, menuAngle, menuWidth, menuHF
 
 	return true, menuTable
 end
-
-return transporterUtil

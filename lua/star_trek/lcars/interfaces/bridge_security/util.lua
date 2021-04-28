@@ -13,16 +13,16 @@
 ---------------------------------------
 
 ---------------------------------------
---       LCARS Security | Util       --
+--    LCARS Bridge Security | Util   --
 ---------------------------------------
 
-local securityUtil = {}
+local SELF = INTERFACE
 
 local MODE_SCAN = 1
 local MODE_BLOCK = 2
 local MODE_ALERT = 3
 
-function securityUtil.GetModeButtons(mode)
+function SELF:GetModeButtons(mode)
 	mode = mode or MODE_SCAN
 
 	local actions = {}
@@ -87,8 +87,8 @@ hook.Add("Star_Trek.Util.IsLifeForm", "CheckDefault", function(ent)
 	end
 end)
 
-function securityUtil.CreateActionWindow(mode)
-	local buttons = securityUtil.GetModeButtons(mode)
+function SELF:CreateActionWindow(mode)
+	local buttons = self:GetModeButtons(mode)
 	local height = table.maxn(buttons) * 35 + 80
 	local success, actionWindow = Star_Trek.LCARS:CreateWindow(
 		"button_list",
@@ -110,8 +110,7 @@ function securityUtil.CreateActionWindow(mode)
 
 			local deck = sectionWindow.Selected
 
--------- Scan --------
-
+			-------- Scan --------
 			if buttonName == "Scan Lifeforms" then
 				local entities = Star_Trek.Sections:GetInSections(deck, sectionIds, function(objects, ent)
 					if not hook.Run("Star_Trek.Util.IsLifeForm", ent) then return true end
@@ -138,8 +137,7 @@ function securityUtil.CreateActionWindow(mode)
 
 				return true
 
--------- Lockdown --------
-
+			-------- Lockdown --------
 			elseif buttonName == "Lock Doors" then
 				local doors = Star_Trek.Sections:GetInSections(deck, sectionIds, function(objects, ent)
 					if ent:GetClass() == "prop_dynamic" and table.HasValue(Star_Trek.Doors.Models, ent:GetModel()) then
@@ -246,8 +244,7 @@ function securityUtil.CreateActionWindow(mode)
 
 				return true
 
--------- Alerts --------
-
+			-------- Alerts --------
 			-- TODO: Add When alerts exist.
 			elseif buttonName == "Red Alert" then
 
@@ -275,8 +272,8 @@ function securityUtil.CreateActionWindow(mode)
 	return true, actionWindow
 end
 
-function securityUtil.CreateMenuWindow()
-	local success, actionWindow = securityUtil.CreateActionWindow(1)
+function SELF:CreateMenuWindow()
+	local success, actionWindow = self:CreateActionWindow(1)
 	if not success then
 		return false, actionWindow
 	end
@@ -325,7 +322,7 @@ function securityUtil.CreateMenuWindow()
 					[buttonName] = true
 				})
 
-				actionWindow:SetButtons(securityUtil.GetModeButtons(buttonId))
+				actionWindow:SetButtons(self:GetModeButtons(buttonId))
 				actionWindow:Update()
 
 				return true
@@ -347,7 +344,7 @@ function securityUtil.CreateMenuWindow()
 end
 
 -- Generates the map view.
-function securityUtil.CreateMapWindow(deck)
+function SELF:CreateMapWindow(deck)
 	local success, mapWindow = Star_Trek.LCARS:CreateWindow("section_map", Vector(12.5, -2, -2), Angle(0, 0, 0), nil, 1100, 680, function(windowData, interfaceData, buttonId)
 		-- No Interactivity here yet.
 	end, deck)

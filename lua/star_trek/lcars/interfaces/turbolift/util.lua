@@ -16,9 +16,9 @@
 --       LCARS Turbolift | Util      --
 ---------------------------------------
 
-local turboliftUtil = {}
+local SELF = INTERFACE
 
-function turboliftUtil.GenerateButtons(ent, keyValues)
+function SELF:GenerateButtons(ent, keyValues)
 	local buttons = {}
 
 	local name = ""
@@ -49,5 +49,3 @@ function turboliftUtil.GenerateButtons(ent, keyValues)
 
 	return buttons
 end
-
-return turboliftUtil

@@ -16,10 +16,10 @@
 --    LCARS Basic Interface | Util   --
 ---------------------------------------
 
-local basicUtil = {}
+local SELF = INTERFACE
 
 -- Generate the buttons for a general purpose menu.
-function basicUtil.GenerateButtons(keyValues)
+function SELF:GenerateButtons(keyValues)
 	local buttons = {}
 	for i = 1, 20 do
 		local name = keyValues["lcars_name_" .. i]
@@ -38,7 +38,7 @@ function basicUtil.GenerateButtons(keyValues)
 	return buttons
 end
 
-function basicUtil.GetKeyValues(keyValues, buttons)
+function SELF:GetKeyValues(keyValues, buttons)
 	local scale = tonumber(keyValues["lcars_scale"])
 	local width = tonumber(keyValues["lcars_width"])
 	local height = tonumber(keyValues["lcars_height"])
@@ -55,16 +55,14 @@ function basicUtil.GetKeyValues(keyValues, buttons)
 	return scale, width, height, title, titleShort
 end
 
-function basicUtil.GetButtonData(ent)
+function SELF:GetButtonData(ent)
 	local keyValues = ent.LCARSKeyData
 	if not istable(keyValues) then
 		return false, "Invalid Key Values on OpenMenu"
 	end
 
-	local buttons = basicUtil.GenerateButtons(keyValues)
-	local scale, width, height, title, titleShort = basicUtil.GetKeyValues(keyValues, buttons)
+	local buttons = self:GenerateButtons(keyValues)
+	local scale, width, height, title, titleShort = self:GetKeyValues(keyValues, buttons)
 
 	return true, buttons, scale, width, height, title, titleShort
 end
-
-return basicUtil

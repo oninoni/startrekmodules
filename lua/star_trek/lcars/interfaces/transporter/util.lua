@@ -16,23 +16,11 @@
 --      LCARS Transporter | Util     --
 ---------------------------------------
 
-local transporterUtil = {}
+local SELF = INTERFACE
 
 local DEMAT_DELAY = 5
 
-function transporterUtil.GetMenuType(menuType, target)
-	if istable(menuType) then
-		if target then
-			menuType = menuType[2]
-		else
-			menuType = menuType[1]
-		end
-	end
-
-	return menuType
-end
-
-function transporterUtil.GetSelectedMenuType(menuTable)
+function SELF:GetSelectedMenuType(menuTable)
 	local selected = menuTable.MenuWindow:GetSelected()
 
 	local menuType
@@ -45,13 +33,25 @@ function transporterUtil.GetSelectedMenuType(menuTable)
 	return menuType
 end
 
+function SELF:GetMenuType(menuType, target)
+	if istable(menuType) then
+		if target then
+			menuType = menuType[2]
+		else
+			menuType = menuType[1]
+		end
+	end
+
+	return menuType
+end
+
 -- Returns the name of the currently selected transporter mode.
 --
 -- @param Table menuTable
 -- @return String modeName
-function transporterUtil.GetMode(menuTable)
-	local menuType = transporterUtil.GetSelectedMenuType(menuTable)
-	local modeName = transporterUtil.GetMenuType(menuType, menuTable.Target)
+function SELF:GetMode(menuTable)
+	local menuType = self:GetSelectedMenuType(menuTable)
+	local modeName = self:GetMenuType(menuType, menuTable.Target)
 
 	return modeName
 end
@@ -61,8 +61,8 @@ end
 -- @param table menuTable
 -- @param Boolean wideField
 -- @return table patterns
-function transporterUtil.GetPatternData(menuTable, wideField)
-	local modeName = transporterUtil.GetMode(menuTable)
+function SELF:GetPatternData(menuTable, wideField)
+	local modeName = self:GetMode(menuTable)
 	local mainWindow = menuTable.MainWindow
 
 	if modeName == "Transporter Pad" then
@@ -142,9 +142,9 @@ end
 -- @param Table targetMenuTable
 -- @param? Boolean wideField
 -- @param? Function callback
-function transporterUtil.Energize(sourceMenuTable, targetMenuTable, wideField, callback)
-	local sourcePatterns = transporterUtil.GetPatternData(sourceMenuTable, wideField)
-	local targetPatterns = transporterUtil.GetPatternData(targetMenuTable, false)
+function SELF:Energize(sourceMenuTable, targetMenuTable, wideField, callback)
+	local sourcePatterns = self:GetPatternData(sourceMenuTable, wideField)
+	local targetPatterns = self:GetPatternData(targetMenuTable, false)
 	Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPatterns)
 
 	if isfunction(callback) then
@@ -154,10 +154,8 @@ end
 
 -- Force Update of Source Buffer Table, by just switching.
 --
--- @param Table interfaceData
-function transporterUtil.UpdateBufferMenu(interfaceData)
-	local sourceMenuTable = interfaceData.SourceMenuTable
-
+-- @param Table sourceMenuTable
+function SELF:UpdateBufferMenu(sourceMenuTable)
 	local success, error = sourceMenuTable:SelectType(sourceMenuTable.MenuTypes[1])
 	if not success then
 		Star_Trek:Message(error)
@@ -170,11 +168,9 @@ end
 
 -- Trigger a Transporter.
 --
--- @param Table interfaceData
-function transporterUtil.TriggerTransporter(interfaceData)
-	local sourceMenuTable = interfaceData.SourceMenuTable
-	local targetMenuTable = interfaceData.TargetMenuTable
-
+-- @param Table sourceMenuTable
+-- @param Table targetMenuTable
+function SELF:TriggerTransporter(sourceMenuTable, targetMenuTable)
 	local wideField = false
 	if isfunction(sourceMenuTable.GetUtilButtonState) then
 		wideField = sourceMenuTable:GetUtilButtonState()
@@ -187,15 +183,13 @@ function transporterUtil.TriggerTransporter(interfaceData)
 
 	if delayDematerialisation then
 		timer.Simple(DEMAT_DELAY, function()
-			transporterUtil.Energize(sourceMenuTable, targetMenuTable, wideField, function(sourcePatterns, targetPatterns)
-				if sourcePatterns.IsBuffer then transporterUtil.UpdateBufferMenu(interfaceData) end
+			self:Energize(sourceMenuTable, targetMenuTable, wideField, function(sourcePatterns, targetPatterns)
+				if sourcePatterns.IsBuffer then self:UpdateBufferMenu(sourceMenuTable) end
 			end)
 		end)
 	else
-		transporterUtil.Energize(sourceMenuTable, targetMenuTable, wideField, function(sourcePatterns, targetPatterns)
-			if sourcePatterns.IsBuffer then transporterUtil.UpdateBufferMenu(interfaceData) end
+		self:Energize(sourceMenuTable, targetMenuTable, wideField, function(sourcePatterns, targetPatterns)
+			if sourcePatterns.IsBuffer then self:UpdateBufferMenu(sourceMenuTable) end
 		end)
 	end
 end
-
-return transporterUtil

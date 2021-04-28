@@ -16,30 +16,20 @@
 --      LCARS Turbolift | Server     --
 ---------------------------------------
 
-local turboliftUtil = include("util.lua")
+include("util.lua")
+
+local SELF = INTERFACE
+SELF.BaseInterface = "base"
 
 -- Opening a turbolift control menu.
-function Star_Trek.LCARS:OpenTurboliftMenu()
-	local success, ent = self:GetInterfaceEntity(TRIGGER_PLAYER, CALLER)
-	if not success then
-		-- Error Message
-		Star_Trek:Message(ent)
-		return
-	end
-
-	if istable(self.ActiveInterfaces[ent]) then
-		return
-	end
-
+function SELF:Open(ent)
 	local keyValues = ent.LCARSKeyData
 	if not istable(keyValues) then
 		Star_Trek:Message("Invalid Key Values on OpenTLMenu")
 		return
 	end
 
-	local buttons = turboliftUtil.GenerateButtons(ent, keyValues)
-
-	local success2, window = self:CreateWindow(
+	local success, window = self:CreateWindow(
 		"button_list",
 		Vector(),
 		Angle(),
@@ -69,18 +59,19 @@ function Star_Trek.LCARS:OpenTurboliftMenu()
 				end
 			end
 		end,
-		buttons,
+		self:GenerateButtons(ent, keyValues),
 		"TURBOLIFT",
 		"TRBLFT"
 	)
-	if not success2 then
+	if not success then
 		Star_Trek:Message(window)
 		return
 	end
 
-	local success3, error = self:OpenInterface(ent, window)
-	if not success3 then
-		Star_Trek:Message(error)
-		return
-	end
+	return {window}
+end
+
+-- Wrap for use in Map.
+function Star_Trek.LCARS:OpenTurboliftMenu()
+	Star_Trek.LCARS:OpenInterface(TRIGGER_PLAYER, CALLER, "turbolift")
 end

@@ -21,7 +21,6 @@ function SELF:OnCreate(windowData)
 	return true
 end
 
--- TODO: Redo modular with deriving
 function SELF:OnPress(pos, animPos)
 end
 

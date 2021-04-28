@@ -16,32 +16,29 @@
 --   LCARS Basic Interface | Server  --
 ---------------------------------------
 
-local basicUtil = include("util.lua")
+include("util.lua")
+
+local SELF = INTERFACE
+SELF.BaseInterface = "base"
 
 -- Opening general purpose menus.
-function Star_Trek.LCARS:OpenMenu()
-	local success1, ent = self:GetInterfaceEntity(TRIGGER_PLAYER, CALLER)
-	if not success1 then
-		Star_Trek:Message(ent)
-		return
-	end
-
-	if istable(self.ActiveInterfaces[ent]) then
-		return
-	end
-
+function SELF:Open(ent)
 	local triggerEntity = ent:GetParent()
 	if not IsValid(triggerEntity) then
 		triggerEntity = ent
 	end
+	triggerEntity.LCARSEnt = ent
 
-	local success2, buttons, scale, width, height, title, titleShort = basicUtil.GetButtonData(triggerEntity)
+	local success2, buttons, scale, width, height, title, titleShort = self:GetButtonData(triggerEntity)
 	if not success2 then
 		Star_Trek:Message(buttons)
 		return
 	end
 
-	local success3, window = self:CreateWindow(
+	local name = triggerEntity:GetName()
+	local caseEntities = ents.FindByName(name .. "_case")
+
+	local success3, window = Star_Trek.LCARS:CreateWindow(
 		"button_list",
 		Vector(),
 		Angle(),
@@ -50,8 +47,6 @@ function Star_Trek.LCARS:OpenMenu()
 		height,
 		function(windowData, interfaceData, buttonId)
 			if buttonId > 4 then
-				local name = triggerEntity:GetName()
-				local caseEntities = ents.FindByName(name .. "_case")
 				for _, caseEnt in pairs(caseEntities) do
 					if IsValid(caseEnt) then
 						caseEnt:Fire("InValue", buttonId - 4)
@@ -69,7 +64,7 @@ function Star_Trek.LCARS:OpenMenu()
 			end
 
 			ent:EmitSound("star_trek.lcars_close")
-			Star_Trek.LCARS:CloseInterface(ent)
+			interfaceData:Close()
 		end,
 		buttons,
 		title,
@@ -80,43 +75,27 @@ function Star_Trek.LCARS:OpenMenu()
 		return
 	end
 
-	local success4, error = self:OpenInterface(ent, window)
-	if not success4 then
-		Star_Trek:Message(error)
-		return
-	end
+	return {window}
 end
 
--- Update general purpose menus.
-hook.Add("Think", "Star_Trek.LCARS.BasicInterface", function()
-	for ent, interfaceData in pairs(Star_Trek.LCARS.ActiveInterfaces) do
-		if IsValid(ent) then
-			local triggerEntity = ent:GetParent()
-			if not IsValid(triggerEntity) then
-				triggerEntity = ent
-			end
-
-			if triggerEntity.LCARSMenuChanged then
-				local buttons = basicUtil.GenerateButtons(triggerEntity.LCARSKeyData)
-				for i, button in pairs(buttons) do
-					interfaceData.Windows[1].Buttons[i].Name = button.Name
-					interfaceData.Windows[1].Buttons[i].Disabled = button.Disabled
-				end
-
-				Star_Trek.LCARS:UpdateWindow(ent, 1)
-
-				triggerEntity.LCARSMenuChanged = false
-			end
-		end
-	end
-end)
-
 -- Detect updates in "lcars_name_i", "lcars_disabled_i".
-hook.Add("Star_Trek.ChangedKeyValue", "Star_Trek.LCARS.BasicInterface", function(ent, key, value)
+hook.Add("Star_Trek.ChangedKeyValue", "Star_Trek.LCARS.BasicInterface", function(triggerEntity, key, value)
 	if string.StartWith(key, "lcars_name_") or string.StartWith(key, "lcars_disabled_") then
-		local keyValues = ent.LCARSKeyData
+		local keyValues = triggerEntity.LCARSKeyData
 		if istable(keyValues) and keyValues["lcars_keep_open"] then
-			ent.LCARSMenuChanged = true
+			local ent = triggerEntity.LCARSEnt
+			if IsValid(ent) then
+				local interfaceData = Star_Trek.LCARS.ActiveInterfaces[ent]
+				if istable(interfaceData) then
+					interfaceData.Windows[1]:SetButtons(interfaceData:GenerateButtons(triggerEntity.LCARSKeyData))
+					interfaceData:UpdateWindow(1)
+				end
+			end
 		end
 	end
 end)
+
+-- Wrap for use in Map.
+function Star_Trek.LCARS:OpenMenu()
+	Star_Trek.LCARS:OpenInterface(TRIGGER_PLAYER, CALLER, "basic")
+end

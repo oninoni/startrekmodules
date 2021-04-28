@@ -56,10 +56,6 @@ function Star_Trek.LCARS:LoadWindowData(id, windowData, IPos, IAng)
 
 		WVis = false,
 
-		WVU = ang:Up(),
-		WVR = ang:Right(),
-		WVF = ang:Forward(),
-
 		WScale = windowData.WindowScale,
 		WWidth = windowData.WindowWidth,
 		WD2 = windowData.WindowWidth / 2,
@@ -120,10 +116,13 @@ end)
 --
 -- @param Table window
 -- @param Vector eyePos
--- @param Vector eyeVector
+-- @param Angle eyeAng
 -- @return Vector2D mousePos
-function Star_Trek.LCARS:Get3D2DMousePos(window, eyePos, eyeVector)
-	local pos = util.IntersectRayWithPlane(eyePos, eyeVector, window.WPos, window.WVU)
+function Star_Trek.LCARS:Get3D2DMousePos(window)
+	local x, y = input.GetCursorPos()
+	local rayDir = gui.ScreenToVector(x, y)
+
+	local pos = util.IntersectRayWithPlane(self.EyePos, rayDir, window.WPos, window.WAng:Up())
 	pos = WorldToLocal(pos or Vector(), Angle(), window.WPos, window.WAng)
 
 	return Vector(pos.x * window.WScale, pos.y * -window.WScale, 0)
@@ -199,9 +198,6 @@ hook.Add("KeyPress", "Star_Trek.LCARS.KeyPress", function(ply, key)
 
 	if key ~= IN_USE and key ~= IN_ATTACK and key ~= IN_ATTACK2 then return end
 
-	local eyePos = LocalPlayer():EyePos()
-	local eyeDir = EyeVector()
-
 	for id, interface in pairs(Star_Trek.LCARS.ActiveInterfaces) do
 		if not interface.IVis then
 			continue
@@ -218,7 +214,7 @@ hook.Add("KeyPress", "Star_Trek.LCARS.KeyPress", function(ply, key)
 
 			local width = window.WWidth
 			local height = window.WHeight
-			local pos = Star_Trek.LCARS:Get3D2DMousePos(window, eyePos, eyeDir)
+			local pos = Star_Trek.LCARS:Get3D2DMousePos(window)
 			if pos.x > -width / 2 and pos.x < width / 2
 			and pos.y > -height / 2 and pos.y < height / 2 then
 				local buttonId = window:OnPress(pos, interface.AnimPos)
@@ -234,37 +230,47 @@ hook.Add("KeyPress", "Star_Trek.LCARS.KeyPress", function(ply, key)
 	end
 end)
 
--- Main Render Hook for all LCARS Screens
-hook.Add("PostDrawOpaqueRenderables", "Star_Trek.LCARS.Draw", function(isDrawingDepth, isDrawSkyBox)
-	if isDrawSkyBox then return end
-	if ( wp.drawing ) then return end
+function Star_Trek.LCARS:DrawWindow(wPos, wAng, window, animPos)
+	if not window.WVis then
+		return
+	end
 
-	local eyePos = LocalPlayer():EyePos()
-	local eyeDir = EyeVector()
+	local width = window.WWidth
+	local height = window.WHeight
+	local pos = Star_Trek.LCARS:Get3D2DMousePos(window)
+	if pos.x > -width * 0.6 and pos.x < width * 0.6
+	and pos.y > -height * 0.6 and pos.y < height * 0.6 then
+		window.LastPos = pos
+	end
+
+	cam.Start3D2D(wPos, wAng, 1 / window.WScale)
+		window:OnDraw(window.LastPos or Vector(-width / 2, -height / 2), animPos)
+	cam.End3D2D()
+end
+
+hook.Add("PreDrawOpaqueRenderables", "Star_Trek.LCARS.PreDraw", function(isDrawingDepth, isDrawingSkybox)
+	if isDrawingSkybox then return end
+	if (wp.drawing) then return end
+
+	Star_Trek.LCARS.EyePos = LocalPlayer():EyePos()
+end)
+
+-- Main Render Hook for all LCARS Screens
+hook.Add("PostDrawOpaqueRenderables", "Star_Trek.LCARS.Draw", function(isDrawingDepth, isDrawingSkybox)
+	if isDrawingSkybox then return end
+	if (wp.drawing) then return end
 
 	for _, interface in pairs(Star_Trek.LCARS.ActiveInterfaces) do
 		if not interface.IVis then
 			continue
 		end
 
+		local animPos = interface.AnimPos
+
 		render.SuppressEngineLighting(true)
 
 		for _, window in pairs(interface.Windows) do
-			if not window.WVis then
-				continue
-			end
-
-			local width = window.WWidth
-			local height = window.WHeight
-			local pos = Star_Trek.LCARS:Get3D2DMousePos(window, eyePos, eyeDir)
-			if pos.x > -width * 0.6 and pos.x < width * 0.6
-			and pos.y > -height * 0.6 and pos.y < height * 0.6 then
-				window.LastPos = pos
-			end
-
-			cam.Start3D2D(window.WPos, window.WAng, 1 / window.WScale)
-				window:OnDraw(window.LastPos or Vector(-width / 2, -height / 2), interface.AnimPos)
-			cam.End3D2D()
+			Star_Trek.LCARS:DrawWindow(window.WPos, window.WAng, window, animPos)
 		end
 
 		surface.SetAlphaMultiplier(1)
