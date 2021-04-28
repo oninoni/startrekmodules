@@ -33,8 +33,6 @@ function SELF:Update()
 end
 
 function SELF:Close()
-	self.Ent:EmitSound("star_trek.lcars_close") -- TODO: Modularize Sounds
-
 	self.Interface:Close()
 end
 

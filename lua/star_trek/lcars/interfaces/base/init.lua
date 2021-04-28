@@ -32,5 +32,6 @@ end
 
 -- Closes the Interface.
 function SELF:Close()
+	self.Ent:EmitSound("star_trek.lcars_close") -- TODO: Modularize Sounds
 	Star_Trek.LCARS:CloseInterface(self.Ent)
 end
