@@ -13,23 +13,20 @@
 ---------------------------------------
 
 ---------------------------------------
---           Main | Config           --
+--            PADD | Index           --
 ---------------------------------------
 
--- Modules
-Star_Trek.Modules["util"] = true
-Star_Trek.Modules["portal_window"] = true
-Star_Trek.Modules["chairs"] = true
-Star_Trek.Modules["doors"] = true
+Star_Trek.PADD = Star_Trek.PADD or {}
 
-Star_Trek.Modules["lcars"] = true
-Star_Trek.Modules["tricorder"] = true
-Star_Trek.Modules["padd"] = true
-Star_Trek.Modules["sections"] = true
+if SERVER then
+	AddCSLuaFile("sh_padd.lua")
+	AddCSLuaFile("cl_padd.lua")
 
-Star_Trek.Modules["turbolift"] = true
-Star_Trek.Modules["transporter"] = true
-Star_Trek.Modules["replicator"] = true
+	include("sh_padd.lua")
+	include("sv_padd.lua")
+end
 
-Star_Trek.Modules["damage"] = true
-Star_Trek.Modules["force_field"] = true
+if CLIENT then
+	include("sh_padd.lua")
+	include("cl_padd.lua")
+end

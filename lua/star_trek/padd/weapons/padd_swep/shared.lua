@@ -13,23 +13,33 @@
 ---------------------------------------
 
 ---------------------------------------
---           Main | Config           --
+--        PADD Entity | Shared       --
 ---------------------------------------
 
--- Modules
-Star_Trek.Modules["util"] = true
-Star_Trek.Modules["portal_window"] = true
-Star_Trek.Modules["chairs"] = true
-Star_Trek.Modules["doors"] = true
+SWEP.PrintName = "PADD - Personal Access Display Device"
 
-Star_Trek.Modules["lcars"] = true
-Star_Trek.Modules["tricorder"] = true
-Star_Trek.Modules["padd"] = true
-Star_Trek.Modules["sections"] = true
+SWEP.Author = "Oninoni"
+SWEP.Contact = "https://einfach-gmod.de"
+SWEP.Purpose = "???"
+SWEP.Instructions = "???"
 
-Star_Trek.Modules["turbolift"] = true
-Star_Trek.Modules["transporter"] = true
-Star_Trek.Modules["replicator"] = true
+SWEP.Spawnable = true
+SWEP.AdminOnly = false
 
-Star_Trek.Modules["damage"] = true
-Star_Trek.Modules["force_field"] = true
+SWEP.Slot = 4
+SWEP.SlotPos = 42
+
+SWEP.ViewModelFOV = 70
+
+--SWEP.ViewModel = ""
+--SWEP.WorldModel = ""
+
+SWEP.Primary.Ammo = ""
+SWEP.Primary.ClipSize = 0
+SWEP.Primary.DefaultClip = 0
+SWEP.Primary.Automatic = false
+
+SWEP.Secondary.Ammo = ""
+SWEP.Secondary.ClipSize = 0
+SWEP.Secondary.DefaultClip = 0
+SWEP.Secondary.Automatic = false

@@ -13,23 +13,12 @@
 ---------------------------------------
 
 ---------------------------------------
---           Main | Config           --
+--        PADD Entity | Client       --
 ---------------------------------------
 
--- Modules
-Star_Trek.Modules["util"] = true
-Star_Trek.Modules["portal_window"] = true
-Star_Trek.Modules["chairs"] = true
-Star_Trek.Modules["doors"] = true
+SWEP.Category = "Star Trek"
 
-Star_Trek.Modules["lcars"] = true
-Star_Trek.Modules["tricorder"] = true
-Star_Trek.Modules["padd"] = true
-Star_Trek.Modules["sections"] = true
+SWEP.DrawAmmo = false
 
-Star_Trek.Modules["turbolift"] = true
-Star_Trek.Modules["transporter"] = true
-Star_Trek.Modules["replicator"] = true
-
-Star_Trek.Modules["damage"] = true
-Star_Trek.Modules["force_field"] = true
+function SWEP:Initialize()
+end
