@@ -17,7 +17,6 @@
 ---------------------------------------
 
 function SWEP:Reload()
-
 end
 
 function SWEP:PrimaryAttack()
@@ -33,5 +32,4 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
-
 end

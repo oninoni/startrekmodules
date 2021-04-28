@@ -18,10 +18,10 @@
 
 -- List all chair Models with their names.
 Star_Trek.Chairs.Models = {
-    ["Captains Chair"] = "models/kingpommes/startrek/intrepid/seat_captains.mdl",
-    ["Conference Room Chair"] = "models/kingpommes/startrek/intrepid/seat_conferenceroom.mdl",
-    ["Mess Hall Chair"] = "models/kingpommes/startrek/intrepid/seat_messhall.mdl",
-    ["Office Chair 1"] = "models/kingpommes/startrek/intrepid/seat_officechair_a.mdl",
-    ["Office Chair 2"] = "models/kingpommes/startrek/intrepid/seat_officechair_b.mdl",
-    ["Ready Room Chair"] = "models/kingpommes/startrek/intrepid/seat_readyroom.mdl",
+	["Captains Chair"] = "models/kingpommes/startrek/intrepid/seat_captains.mdl",
+	["Conference Room Chair"] = "models/kingpommes/startrek/intrepid/seat_conferenceroom.mdl",
+	["Mess Hall Chair"] = "models/kingpommes/startrek/intrepid/seat_messhall.mdl",
+	["Office Chair 1"] = "models/kingpommes/startrek/intrepid/seat_officechair_a.mdl",
+	["Office Chair 2"] = "models/kingpommes/startrek/intrepid/seat_officechair_b.mdl",
+	["Ready Room Chair"] = "models/kingpommes/startrek/intrepid/seat_readyroom.mdl",
 }

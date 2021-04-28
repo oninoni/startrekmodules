@@ -18,20 +18,20 @@
 
 -- Creates the entities from the model to allow placing the chairs as vehicles.
 for name, model in pairs(Star_Trek.Chairs.Models) do
-    local split = string.Split(model, "/")
-    split = string.Split(split[#split], ".")
-    local entityName = split[1]
+	local split = string.Split(model, "/")
+	split = string.Split(split[#split], ".")
+	local entityName = split[1]
 
-    local vehicleTable = {
-        Name = name,
-        Model = model,
-        Class = "prop_vehicle_prisoner_pod",
-        Category = "Star Trek Chairs",
-        Author = "Oninoni",
-        KeyValues = {
-            vehiclescript = "scripts/vehicles/prisoner_pod.txt",
-        },
-    }
+	local vehicleTable = {
+		Name = name,
+		Model = model,
+		Class = "prop_vehicle_prisoner_pod",
+		Category = "Star Trek Chairs",
+		Author = "Oninoni",
+		KeyValues = {
+			vehiclescript = "scripts/vehicles/prisoner_pod.txt",
+		},
+	}
 
-    list.Set("Vehicles", entityName, vehicleTable)
+	list.Set("Vehicles", entityName, vehicleTable)
 end
