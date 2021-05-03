@@ -16,39 +16,51 @@
 --        LCARS Util | Server        --
 ---------------------------------------
 
--- Retrieves the position and angle of the center of the created interface for that entity.
+-- Retrieves the global position and angle of the center of the created interface for that entity.
 -- Uses either the origin or an "button" attachment point of the entity.
 --
 -- @param Entity ent
--- @return Vector interfacePos
--- @return Angle interfaceAngle
-function Star_Trek.LCARS:GetInterfacePosAngle(ent)
-	local interfacePos = ent:GetPos()
-	local interfaceAngle = ent:GetUp():Angle()
+-- @return Vector globalInterfacePos
+-- @return Angle globalInterfaceAngle
+function Star_Trek.LCARS:GetInterfacePosAngleGlobal(ent)
+	local globalInterfacePos = ent:GetPos()
+	local globalInterfaceAngle = ent:GetUp():Angle()
 
-	-- If "movedir" keyvalue is set, then override interfaceAngle
+	-- If "movedir" keyvalue is set, then override globalInterfaceAngle
 	local moveDir = ent:GetKeyValues()["movedir"]
 	if isvector(moveDir) then
-		interfaceAngle = moveDir:Angle()
+		globalInterfaceAngle = moveDir:Angle()
 	end
 
 	-- If an "button" attachment exists on the model of the entity, then that is used instead.
 	local attachmentID = ent:LookupAttachment("button")
 	if isnumber(attachmentID) and attachmentID > 0 then
 		local attachmentPoint = ent:GetAttachment(attachmentID)
-		interfacePos = attachmentPoint.Pos
-		interfaceAngle = attachmentPoint.Ang
+		globalInterfacePos = attachmentPoint.Pos
+		globalInterfaceAngle = attachmentPoint.Ang
 	end
 
 	local modelSetting = self.ModelSettings[ent:GetModel()]
 	if istable(modelSetting) then
-		interfacePos = interfacePos + interfaceAngle:Forward() * modelSetting.Offset
+		globalInterfacePos = globalInterfacePos + globalInterfaceAngle:Forward() * modelSetting.Offset
 	end
 
-	interfaceAngle:RotateAroundAxis(interfaceAngle:Right(), -90)
-	interfaceAngle:RotateAroundAxis(interfaceAngle:Up(), 90)
+	globalInterfaceAngle:RotateAroundAxis(globalInterfaceAngle:Right(), -90)
+	globalInterfaceAngle:RotateAroundAxis(globalInterfaceAngle:Up(), 90)
 
-	return interfacePos, interfaceAngle
+	return globalInterfacePos, globalInterfaceAngle
+end
+
+-- Retrieves the Interface Position and Angle relative to the entitiy.
+--
+-- @param Entity ent
+-- @return Vector localInterfacePos
+-- @return Angle localInterfaceAngle
+function Star_Trek.LCARS:GetInterfacePosAngle(ent)
+	local globalInterfacePos, globalInterfaceAngle = Star_Trek.LCARS:GetInterfacePosAngleGlobal(ent)
+	local localInterfacePos, localInterfaceAngle = WorldToLocal(globalInterfacePos, globalInterfaceAngle, ent:GetPos(), ent:GetAngles())
+
+	return localInterfacePos, localInterfaceAngle
 end
 
 -- Retrieves the actual interface Entity from the entity that it is triggered from.
@@ -76,13 +88,50 @@ function Star_Trek.LCARS:GetInterfaceEntity(ply, triggerEntity)
 	-- Check if Eye Trace Entity is a child.
 	local ent = ply:GetEyeTrace().Entity
 	if not IsValid(ent) or ent:IsWorld() then
-		return false--, "Invalid Interface Eye Trace Entity"
+		return false, "Invalid Interface Eye Trace Entity"
 	end
 	if not table.HasValue(children, ent) then
-		return false--, "Interface Eye Trace Entity is not a child of the Trigger Entity."
+		return false, "Interface Eye Trace Entity is not a child of the Trigger Entity."
 	end
 
 	return true, ent
+end
+
+-- Returns filtered windowData, that can be safely transmitted to the client without issues.
+--
+-- @param Table windowData
+-- @return Table clientWindowData
+function Star_Trek.LCARS:GetClientWindowData(windowData)
+	local clientWindowData = table.Copy(windowData)
+	for id, data in pairs(windowData) do
+		if isfunction(data) then
+			clientWindowData[id] = nil
+		end
+	end
+
+	clientWindowData.Interface = nil
+
+	return clientWindowData
+end
+
+-- Returns filtered interfaceData, that can be safely transmitted to the client without issues.
+--
+-- @param Table interfaceData
+-- @return Table clientInterfaceData
+function Star_Trek.LCARS:GetClientInterfaceData(interfaceData)
+	local clientInterfaceData = table.Copy(interfaceData)
+	for id, data in pairs(interfaceData) do
+		if isfunction(data) then
+			clientInterfaceData[id] = nil
+		end
+	end
+	clientInterfaceData.Windows = {}
+
+	for id, windowData in pairs(interfaceData.Windows) do
+		clientInterfaceData.Windows[id] = self:GetClientWindowData(windowData)
+	end
+
+	return clientInterfaceData
 end
 
 -- Create a window of a given type and the given data.
@@ -141,7 +190,7 @@ function Star_Trek.LCARS:GetSectionCategories(needsLocations)
 		else
 			for sectionId, sectionData in SortedPairs(deckData.Sections) do
 				local button = {
-					Name = "Section " .. sectionData.RealId .. " " .. sectionData.Name,
+					Name = Star_Trek.Sections:GetSectionName(deck, sectionId),
 					Data = sectionData.Id,
 				}
 

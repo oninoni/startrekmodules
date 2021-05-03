@@ -92,6 +92,7 @@ function Star_Trek.Sections:GetInSection(deck, sectionId, filterCallback, allowM
 			local entPos = ent.EyePos and ent:EyePos() or ent:GetPos()
 			if self:IsInArea(areaData, entPos) then
 				table.insert(objects, ent)
+				ent.DetectedInSection = sectionId
 			end
 		end
 
@@ -113,6 +114,15 @@ function Star_Trek.Sections:GetInSections(deck, sectionIds, filterCallback, allo
 	end
 
 	return entities
+end
+
+function Star_Trek.Sections:GetSectionName(deck, sectionId)
+	local sectionData, error = self:GetSection(deck, sectionId)
+	if not sectionData then
+		return false, error
+	end
+
+	return "Section " .. sectionData.RealId .. " " .. sectionData.Name
 end
 
 function Star_Trek.Sections:SetupSections()

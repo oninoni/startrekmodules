@@ -32,10 +32,9 @@ util.AddNetworkString("Star_Trek.LCARS.Sync") -- TODO: Sync on Join Active Inter
 -- @return Boolean Success
 -- @return? String error
 function Star_Trek.LCARS:OpenInterface(ply, triggerEntity, interfaceName, ...)
-	local success, ent = self:GetInterfaceEntity(TRIGGER_PLAYER, CALLER)
+	local success, ent = self:GetInterfaceEntity(ply, triggerEntity)
 	if not success then
-		Star_Trek:Message(ent)
-		return false, "Invalid Interface Entities"
+		return false, ent
 	end
 
 	if istable(self.ActiveInterfaces[ent]) then
@@ -59,22 +58,26 @@ function Star_Trek.LCARS:OpenInterface(ply, triggerEntity, interfaceName, ...)
 	end
 	setmetatable(interfaceData, {__index = interfaceFunctions})
 
-	interfaceData.Windows = interfaceData:Open(ent, ...) -- TODO: Redo with Error / Success Return Value
+	local success2, windows = interfaceData:Open(ent, ...)
+	if not success2 then
+		return false, windows
+	end
 
+	if not istable(windows) or table.Count(windows) < 1 then
+		return false, "Invalid Interface Windows"
+	end
+
+	interfaceData.Windows = windows
 	for i, windowData in ipairs(interfaceData.Windows) do
 		windowData.Id = i
 		windowData.Interface = interfaceData
 	end
 
-	local interfaceDataClient = table.Copy(interfaceData)
-	for _, windowData in pairs(interfaceDataClient.Windows) do
-		windowData.Callback = nil
-		windowData.Interface = nil
-	end
+	local clientInterfaceData = Star_Trek.LCARS:GetClientInterfaceData(interfaceData)
 
 	net.Start("Star_Trek.LCARS.Open")
 		net.WriteInt(ent:EntIndex(), 32)
-		net.WriteTable(interfaceDataClient)
+		net.WriteTable(clientInterfaceData)
 	net.Broadcast()
 
 	self.ActiveInterfaces[ent] = interfaceData
@@ -139,7 +142,8 @@ hook.Add("Think", "Star_Trek.LCARS.ThinkClose", function()
 			continue
 		end
 
-		local entities = ents.FindInSphere(interfaceData.InterfacePos, 128)
+		local pos = ent:LocalToWorld(interfaceData.InterfacePos)
+		local entities = ents.FindInSphere(pos, 128)
 		local playersFound = false
 		for _, target in pairs(entities or {}) do
 			if target:IsPlayer() then
@@ -176,14 +180,12 @@ function Star_Trek.LCARS:UpdateWindow(ent, windowId, windowData)
 		interfaceData.Windows[windowId] = windowData
 	end
 
-	local windowDataClient = table.Copy(interfaceData.Windows[windowId])
-	windowDataClient.Callback = nil
-	windowDataClient.Interface = nil
+	local clientWindowData = self:GetClientWindowData(interfaceData.Windows[windowId])
 
 	net.Start("Star_Trek.LCARS.Update")
 		net.WriteInt(ent:EntIndex(), 32)
 		net.WriteInt(windowId, 32)
-		net.WriteTable(windowDataClient)
+		net.WriteTable(clientWindowData)
 	net.Broadcast()
 end
 

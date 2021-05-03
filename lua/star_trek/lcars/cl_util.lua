@@ -16,6 +16,19 @@
 --        LCARS Util | Client        --
 ---------------------------------------
 
+function Star_Trek.LCARS:GetInterfacePosAngle(ent, pos, ang)
+	if IsValid(ent) then
+		local newEnt = hook.Run("Star_Trek.LCARS.OverrideEntity", ent)
+		if IsValid(newEnt) then
+			ent = newEnt
+		end
+
+		pos, ang = LocalToWorld(pos, ang, ent:GetPos(), ent:GetAngles())
+	end
+
+	return pos, ang
+end
+
 -- Calculate the ammount of scroll/offset of a button list.
 --
 -- @param Number listOffset
@@ -23,14 +36,14 @@
 -- @param Number buttonCount
 -- @param Number mouseYPos
 -- @return Number offset
-function Star_Trek.LCARS:GetButtonOffset(listOffset, listHeight, buttonCount, mouseYPos)
-	local maxCount = math.floor(listHeight / 35) - 1
+function Star_Trek.LCARS:GetButtonOffset(listOffset, listHeight, buttonHeight, buttonCount, mouseYPos)
+	local maxCount = math.floor(listHeight / buttonHeight) - 1
 
 	local offset = listOffset
 	if buttonCount > maxCount then
-		local overFlow = math.min(0, listHeight - buttonCount * 35 + 4)
+		local overFlow = math.min(0, listHeight - buttonCount * buttonHeight + 4)
 
-		local relativePos = (mouseYPos - (listOffset + 35)) / (listHeight - 70)
+		local relativePos = (mouseYPos - (listOffset + buttonHeight)) / (listHeight - buttonHeight * 2)
 		offset = listOffset + relativePos * overFlow
 
 		offset = math.min(offset, listOffset)

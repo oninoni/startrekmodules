@@ -40,7 +40,7 @@ function SELF:Open(ent)
 					local buttonData = categoryData.Buttons[buttonId]
 
 					if istable(buttonData) then
-						local pos, angle = Star_Trek.LCARS:GetInterfacePosAngle(ent)
+						local pos, angle = Star_Trek.LCARS:GetInterfacePosAngleGlobal(ent)
 						pos = pos + angle:Up() * -7
 						pos = pos + angle:Right() * 6
 
@@ -51,7 +51,7 @@ function SELF:Open(ent)
 				interfaceData:Close()
 			else
 				if categoryId == categoryCount + 1 then
-					local pos, angle = Star_Trek.LCARS:GetInterfacePosAngle(ent)
+					local pos, angle = Star_Trek.LCARS:GetInterfacePosAngleGlobal(ent)
 					pos = pos + angle:Right() * 6
 
 					local targets = ents.FindInSphere(pos, 20)
@@ -82,10 +82,10 @@ function SELF:Open(ent)
 		true
 	)
 	if not success then
-		Star_Trek:Message(menuWindow)
+		return false, menuWindow
 	end
 
-	return {window}
+	return true, {window}
 end
 
 -- Wrap for use in Map.

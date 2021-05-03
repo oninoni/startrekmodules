@@ -99,6 +99,8 @@ function SELF:GetSelected()
 end
 
 function SELF:SetSelected(data)
+	self:SetObjects({})
+
 	for _, sectionData in pairs(self.Sections) do
 		if data[sectionData.Id] then
 			sectionData.Selected = true

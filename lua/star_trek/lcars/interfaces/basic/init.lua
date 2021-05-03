@@ -31,8 +31,7 @@ function SELF:Open(ent)
 
 	local success2, buttons, scale, width, height, title, titleShort = self:GetButtonData(triggerEntity)
 	if not success2 then
-		Star_Trek:Message(buttons)
-		return
+		return false, buttons
 	end
 
 	local name = triggerEntity:GetName()
@@ -71,11 +70,10 @@ function SELF:Open(ent)
 		titleShort
 	)
 	if not success3 then
-		Star_Trek:Message(window)
-		return
+		return false, window
 	end
 
-	return {window}
+	return true, {window}
 end
 
 -- Detect updates in "lcars_name_i", "lcars_disabled_i".

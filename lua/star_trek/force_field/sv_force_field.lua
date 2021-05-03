@@ -99,7 +99,10 @@ function Star_Trek.Force_Field:EnableSections(deck, sectionIds)
 		end
 
 		for _, pos in pairs(sectionPositions) do
-			table.insert(positions, pos)
+			table.insert(positions, {
+				Pos = pos,
+				DetectedInSection = sectionId,
+			})
 		end
 	end
 
@@ -133,7 +136,10 @@ function Star_Trek.Force_Field:DisableSections(deck, sectionIds)
 		end
 
 		for _, pos in pairs(sectionPositions) do
-			table.insert(positions, pos)
+			table.insert(positions, {
+				Pos = pos,
+				DetectedInSection = sectionId,
+			})
 		end
 	end
 

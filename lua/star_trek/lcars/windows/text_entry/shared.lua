@@ -13,25 +13,8 @@
 ---------------------------------------
 
 ---------------------------------------
---   LCARS Base Interface | Server   --
+--     LCARS Text Entry | Shared     --
 ---------------------------------------
 
-local SELF = INTERFACE
-
--- Opens the Interface. Must return the windows in a table. -- TODO: Remove the return?
--- 
--- @return Table windows
-function SELF:Open()
-	return false, "Do not use the Base Interface."
-end
-
--- Updates a given Window.
-function SELF:UpdateWindow(windowId, windowData)
-	Star_Trek.LCARS:UpdateWindow(self.Ent, windowId, windowData)
-end
-
--- Closes the Interface.
-function SELF:Close()
-	self.Ent:EmitSound("star_trek.lcars_close") -- TODO: Modularize Sounds
-	Star_Trek.LCARS:CloseInterface(self.Ent)
-end
+-- Determines the parent windows name for this one. (Like Deriving Classes)
+WINDOW.BaseWindow = "frame"

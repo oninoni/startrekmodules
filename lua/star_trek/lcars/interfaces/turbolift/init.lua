@@ -25,8 +25,7 @@ SELF.BaseInterface = "base"
 function SELF:Open(ent)
 	local keyValues = ent.LCARSKeyData
 	if not istable(keyValues) then
-		Star_Trek:Message("Invalid Key Values on OpenTLMenu")
-		return
+		return false, "Invalid Key Values on OpenTLMenu"
 	end
 
 	local success, window = Star_Trek.LCARS:CreateWindow(
@@ -64,11 +63,10 @@ function SELF:Open(ent)
 		"TRBLFT"
 	)
 	if not success then
-		Star_Trek:Message(window)
-		return
+		return false, window
 	end
 
-	return {window}
+	return true, {window}
 end
 
 -- Wrap for use in Map.

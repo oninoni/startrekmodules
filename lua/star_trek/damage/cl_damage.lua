@@ -39,7 +39,6 @@ hook.Add("PreDrawTranslucentRenderables", "Star_Trek.Damage.DrawDamages", functi
 		end
 
 		render.ClearStencil()
-
 		render.SetStencilEnable( true )
 			render.SetStencilCompareFunction( STENCILCOMPARISONFUNCTION_ALWAYS )
 

@@ -25,14 +25,12 @@ SELF.BaseInterface = "base"
 function SELF:Open(ent)
 	local success2, menuWindow, actionWindow = self:CreateMenuWindow()
 	if not success2 then
-		Star_Trek:Message(menuWindow)
-		return
+		return false, menuWindow
 	end
 
 	local success3, mapWindow = self:CreateMapWindow(1)
 	if not success3 then
-		Star_Trek:Message(mapWindow)
-		return
+		return false, mapWindow
 	end
 
 	local success4, sectionWindow = Star_Trek.LCARS:CreateWindow(
@@ -60,11 +58,29 @@ function SELF:Open(ent)
 		true
 	)
 	if not success4 then
-		Star_Trek:Message(menuWindow)
-		return
+		return false, menuWindow
 	end
 
-	return {menuWindow, sectionWindow, mapWindow, actionWindow}
+	local success5, textWindow = Star_Trek.LCARS:CreateWindow(
+		"text_entry",
+		Vector(0, -34, 8.2),
+		Angle(0, 0, -90),
+		24,
+		500,
+		290,
+		function(windowData, interfaceData, categoryId, buttonId)
+			return false
+		end,
+		Color(255, 255, 255),
+		"Log File",
+		"LOG",
+		false
+	)
+	if not success5 then
+		return false, textWindow
+	end
+
+	return true, {menuWindow, sectionWindow, mapWindow, actionWindow, textWindow}
 end
 
 -- Wrap for use in Map.

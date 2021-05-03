@@ -100,8 +100,10 @@ end)
 
 -- Handle being locked. (Autoclose)
 hook.Add("Star_Trek.ChangedKeyValue", "Star_Trek.LockDoors", function(ent, key, value)
-	if key == "lcars_locked" and isstring(value) and value == "1" and table.HasValue(Star_Trek.Doors.Doors, ent) then
-		ent:Fire("SetAnimation", "close")
+	if key == "lcars_locked" and isstring(value) and table.HasValue(Star_Trek.Doors.Doors, ent) then
+		if value == "1" and ent.Open then
+			ent:Fire("SetAnimation", "close")
+		end
 
 		local partnerDoorName = ent.LCARSKeyData["lcars_partnerdoor"]
 		if isstring(partnerDoorName) then

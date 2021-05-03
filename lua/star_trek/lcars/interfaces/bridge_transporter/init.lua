@@ -33,13 +33,11 @@ function SELF:Open(ent)
 		false
 	)
 	if not success2 then
-		Star_Trek:Message(sourceMenuTable)
-		return
+		return false, sourceMenuTable
 	end
 	local success3, error = sourceMenuTable:SelectType(sourceMenuTable.MenuTypes[1])
 	if not success3 then
-		Star_Trek:Message(error)
-		return
+		return false, error
 	end
 
 	local success4, targetMenuTable = self:CreateWindowTable(
@@ -55,13 +53,11 @@ function SELF:Open(ent)
 		true
 	)
 	if not success4 then
-		Star_Trek:Message(targetMenuTable)
-		return
+		return false, targetMenuTable
 	end
 	local success5, error2 = targetMenuTable:SelectType(targetMenuTable.MenuTypes[2])
 	if not success5 then
-		Star_Trek:Message(error2)
-		return
+		return false, error2
 	end
 
 	local success6, sliderWindow = Star_Trek.LCARS:CreateWindow(
@@ -76,11 +72,10 @@ function SELF:Open(ent)
 		end
 	)
 	if not success6 then
-		Star_Trek:Message(sliderWindow)
-		return
+		return false, sliderWindow
 	end
 
-	return {sourceMenuTable.MenuWindow, sourceMenuTable.MainWindow, targetMenuTable.MenuWindow, targetMenuTable.MainWindow, sliderWindow}
+	return true, {sourceMenuTable.MenuWindow, sourceMenuTable.MainWindow, targetMenuTable.MenuWindow, targetMenuTable.MainWindow, sliderWindow}
 end
 
 function Star_Trek.LCARS:OpenConsoleTransporterMenu()

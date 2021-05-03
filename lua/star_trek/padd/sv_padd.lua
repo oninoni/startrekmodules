@@ -29,10 +29,9 @@ function Star_Trek.PADD:Enable(padd, interfaceName)
 		return false, "Invalid Owner"
 	end
 
-	net.Start("Star_Trek.PADD.Enable")
-	net.Send(ply)
+	print(Star_Trek.LCARS:OpenInterface(ply, padd, "bridge_security"))
 
-	padd.Enabled = true
+	--padd.Enabled = true
 
 	return true
 end
@@ -47,10 +46,7 @@ function Star_Trek.PADD:Disable(padd)
 		return false, "Invalid Owner"
 	end
 
-	net.Start("Star_Trek.PADD.Disable")
-	net.Send(ply)
-
-	padd.Enabled = false
+	--padd.Enabled = false
 
 	return true
 end
@@ -63,11 +59,11 @@ function Star_Trek.PADD:LoadInterfaces()
 
 		include("interfaces/" .. interfaceName .. "/init.lua")
 
-		self.Interfaces[interfaceName] = INTERFACE
+		Star_Trek.LCARS.Interfaces[interfaceName] = INTERFACE
 		INTERFACE = nil
 
 		Star_Trek:Message("Loaded PADD Interface \"" .. interfaceName .. "\"")
 	end
 end
 
---Star_Trek.PADD:LoadInterfaces()
+Star_Trek.PADD:LoadInterfaces()
