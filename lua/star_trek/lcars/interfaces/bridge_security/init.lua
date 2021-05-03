@@ -22,6 +22,10 @@ local SELF = INTERFACE
 SELF.BaseInterface = "base"
 
 -- Open a security Console
+--
+-- @param Entity ent
+-- @return Boolean success
+-- @return? Table windows
 function SELF:Open(ent)
 	local success2, menuWindow, actionWindow = self:CreateMenuWindow()
 	if not success2 then
@@ -81,6 +85,13 @@ function SELF:Open(ent)
 	end
 
 	return true, {menuWindow, sectionWindow, mapWindow, actionWindow, textWindow}
+end
+
+-- Read out any Data, that can be retrieved externally.
+--
+-- @return? Table data
+function SELF:GetData()
+	return self.Windows[5].Lines
 end
 
 -- Wrap for use in Map.

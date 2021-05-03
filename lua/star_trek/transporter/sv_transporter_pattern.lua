@@ -171,7 +171,7 @@ function Star_Trek.Transporter:GetPatternsFromArea(deck, sectionId)
 		Pos = nil,
 	}
 
-	local entities = Star_Trek.Sections:GetInSection(deck, sectionId, false)
+	local entities = Star_Trek.Sections:GetInSection(deck, sectionId, nil, false)
 	for i, ent in pairs(entities) do
 		table.insert(pattern.Entities, ent)
 	end
@@ -229,7 +229,7 @@ function Star_Trek.Transporter:GetPatternFromLocation(pos, wideField)
 	return pattern
 end
 
--- Determines all of the pattern Data Tables for a given list of players.
+-- Determines all of the pattern Data Tables for a given list of locations.
 --
 -- @param Table positions
 -- @return Table patterns

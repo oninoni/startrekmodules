@@ -22,6 +22,84 @@ include("windowUtil.lua")
 local SELF = INTERFACE
 SELF.BaseInterface = "base"
 
+function SELF:OpenInternal(menuPos, menuAngle, menuWidth, mainPos, mainAngle, mainWidth, mainHeight, sliderPos, sliderAngle, textPos, textAngle, padNumber)
+	local menuPosSource = menuPos + Vector()
+	local menuPosTarget = menuPos + Vector()
+	menuPosTarget.x = -menuPosTarget.x
+
+	local menuAngleSource = menuAngle + Angle()
+	local menuAngleTarget = menuAngle + Angle()
+	menuAngleTarget.p = -menuAngleTarget.p
+	menuAngleTarget.y = -menuAngleTarget.y
+
+	local mainPosSource = mainPos + Vector()
+	local mainPosTarget = mainPos + Vector()
+	mainPosTarget.x = -mainPosTarget.x
+
+	local mainAngleSource = mainAngle + Angle()
+	local mainAngleTarget = mainAngle + Angle()
+	mainAngleTarget.p = -mainAngleTarget.p
+	mainAngleTarget.y = -mainAngleTarget.y
+
+	local sourceSuccess, sourceMenuTable = self:CreateWindowTable(
+		menuPosSource, menuAngleSource, menuWidth,
+		mainPosSource, mainAngleSource, mainWidth, mainHeight,
+		false, false, padNumber
+	)
+	if not sourceSuccess then
+		return false, sourceMenuTable
+	end
+
+	local targetSuccess, targetMenuTable = self:CreateWindowTable(
+		menuPosTarget, menuAngleTarget, menuWidth,
+		mainPosTarget, mainAngleTarget, mainWidth, mainHeight,
+		true , true , padNumber
+	)
+	if not targetSuccess then
+		return false, targetMenuTable
+	end
+
+	-- For Reference
+	sourceMenuTable.TargetMenuTable = targetMenuTable
+	targetMenuTable.SourceMenuTable = sourceMenuTable
+
+	local sliderSuccess, sliderWindow = Star_Trek.LCARS:CreateWindow(
+		"transport_slider",
+		sliderPos,
+		sliderAngle,
+		30,
+		200,
+		200,
+		function(windowData, interfaceData, buttonId)
+			self:TriggerTransporter(sourceMenuTable, targetMenuTable)
+		end
+	)
+	if not sliderSuccess then
+		return false, sliderWindow
+	end
+
+	local textSuccess, textWindow = Star_Trek.LCARS:CreateWindow(
+		"text_entry",
+		textPos,
+		textAngle,
+		24,
+		550,
+		720,
+		function(windowData, interfaceData, categoryId, buttonId)
+			return false
+		end,
+		Color(255, 255, 255),
+		"Log File",
+		"LOG",
+		false
+	)
+	if not textSuccess then
+		return false, textWindow
+	end
+
+	return true, {sourceMenuTable.MenuWindow, sourceMenuTable.MainWindow, targetMenuTable.MenuWindow, targetMenuTable.MainWindow, sliderWindow, textWindow}
+end
+
 function SELF:Open(ent)
 	local padNumber = false
 	local consoleName = ent:GetName()
@@ -30,64 +108,25 @@ function SELF:Open(ent)
 		padNumber = tonumber(split[2])
 	end
 
-	local success2, sourceMenuTable = self:CreateWindowTable(
+	local success, windows = self:OpenInternal(
 		Vector(-13, -2, 6),
 		Angle(5, 15, 30),
 		350,
-		false,
 		Vector(-31, -12, 17),
 		Angle(15, 45, 60),
 		500,
 		500,
-		false,
-		false,
-		padNumber
-	)
-	if not success2 then
-		return false, sourceMenuTable
-	end
-	local success3, error = sourceMenuTable:SelectType(sourceMenuTable.MenuTypes[1])
-	if not success3 then
-		return false, error
-	end
-
-	local success4, targetMenuTable = self:CreateWindowTable(
-		Vector(13, -2, 6),
-		Angle(-5, -15, 30),
-		350,
-		false,
-		Vector(31, -12, 17),
-		Angle(-15, -45, 60),
-		500,
-		500,
-		false,
-		true,
-		padNumber
-	)
-	if not success4 then
-		return false, targetMenuTable
-	end
-	local success5, error2 = targetMenuTable:SelectType(targetMenuTable.MenuTypes[1])
-	if not success5 then
-		return false, error2
-	end
-
-	local success6, sliderWindow = Star_Trek.LCARS:CreateWindow(
-		"transport_slider",
 		Vector(0, 0, 0),
 		Angle(0, 0, 0),
-		30,
-		200,
-		200,
-		function(windowData, interfaceData, buttonId)
-			self:TriggerTransporter(sourceMenuTable, targetMenuTable)
-		end
+		Vector(0, -115, 70),
+		Angle(0, 180, 110),
+		padNumber
 	)
-	if not success6 then
-		return false, sliderWindow
+	if not success then
+		return false, windows
 	end
 
-	return true, {sourceMenuTable.MenuWindow, sourceMenuTable.MainWindow, targetMenuTable.MenuWindow, targetMenuTable.MainWindow, sliderWindow}
+	return true, windows
 end
 
 -- Wrap for use in Map.

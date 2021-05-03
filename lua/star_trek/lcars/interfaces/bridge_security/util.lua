@@ -31,6 +31,7 @@ function SELF:GetModeButtons(mode)
 		actions = {
 			[1] = "Scan Lifeforms",
 			[2] = "Scan Objects",
+			[3] = "Scan Weapons",
 			[6] = "Scan All",
 		}
 		actionColors = {
@@ -148,6 +149,10 @@ function SELF:CreateActionWindow(mode)
 				textWindow:AddLine("Total: " .. table.Count(entities) .. " Non-Lifeforms found.", Star_Trek.LCARS.ColorRed)
 				textWindow:AddLine("")
 				textWindow:Update()
+
+				return true
+			elseif buttonName == "Scan Weapons" then
+				-- TODO
 
 				return true
 			elseif buttonName == "Scan All" then

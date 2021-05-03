@@ -140,7 +140,7 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip, padNumber)
 				end
 
 				if button.Name == "Swap Sides" then
-					local targetMenuTable = interfaceData.TargetMenuTable
+					local targetMenuTable = menuTable.TargetMenuTable
 					local sourceMenuSelectionName = self:GetSelectedMenuType(menuTable)
 					local targetMenuSelectionName = self:GetSelectedMenuType(targetMenuTable)
 					if sourceMenuSelectionName == "Buffer" then
@@ -344,17 +344,16 @@ end
 -- @param Vector menuPos
 -- @param Angle menuAngle
 -- @param Number menuWidth
--- @param Boolean menuHFlip
 -- @param Vector mainPos
 -- @param Angle mainAngle
 -- @param Number mainWidth
 -- @param Number mainHeight
--- @param Boolean mainHFlip
+-- @param Boolean hFlip
 -- @param Boolean targetSide
 -- @param? Number padNumber
 -- @return Boolean success 
 -- @return Table mainWindow
-function SELF:CreateWindowTable(menuPos, menuAngle, menuWidth, menuHFlip, mainPos, mainAngle, mainWidth, mainHeight, mainHFlip, targetSide, padNumber)
+function SELF:CreateWindowTable(menuPos, menuAngle, menuWidth, mainPos, mainAngle, mainWidth, mainHeight, hFlip, targetSide, padNumber)
 	local menuTypes = {
 		"Lifeforms",
 		"Transporter Pads",
@@ -378,7 +377,7 @@ function SELF:CreateWindowTable(menuPos, menuAngle, menuWidth, menuHFlip, mainPo
 		Target = targetSide or false,
 	}
 
-	local success, menuWindow = self:CreateMenuWindow(menuPos, menuAngle, menuWidth, menuTable, menuHFlip, padNumber)
+	local success, menuWindow = self:CreateMenuWindow(menuPos, menuAngle, menuWidth, menuTable, hFlip, padNumber)
 	if not success then
 		return false, "Error on MenuWindow: " .. menuWindow
 	end
@@ -391,16 +390,23 @@ function SELF:CreateWindowTable(menuPos, menuAngle, menuWidth, menuHFlip, mainPo
 			[name] = true,
 		})
 
-		local success2, mainWindow = interfaceData:CreateMainWindow(mainPos, mainAngle, mainWidth, mainHeight, self, mainHFlip, padNumber)
+		local success2, mainWindow = interfaceData:CreateMainWindow(mainPos, mainAngle, mainWidth, mainHeight, menuTable, hFlip, padNumber)
 		if not success2 then
 			return false, "Error on MainWindow: " .. mainWindow
 		end
 		if istable(self.MainWindow) then
 			mainWindow.Id = self.MainWindow.Id
+			mainWindow.Interface = self.MainWindow.Interface
 		end
 		self.MainWindow = mainWindow
 
 		return true
+	end
+
+	local defaultMenuType = targetSide and menuTable.MenuTypes[2] or menuTable.MenuTypes[1]
+	local selectSuccess, selectError = menuTable:SelectType(defaultMenuType)
+	if not selectSuccess then
+		return false, selectError
 	end
 
 	return true, menuTable

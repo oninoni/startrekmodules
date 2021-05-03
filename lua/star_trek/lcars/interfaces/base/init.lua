@@ -20,12 +20,16 @@ local SELF = INTERFACE
 
 -- Opens the Interface. Must return the windows in a table. -- TODO: Remove the return?
 -- 
--- @return Table windows
+-- @return Boolean success
+-- @return? Table windows
 function SELF:Open()
 	return false, "Do not use the Base Interface."
 end
 
 -- Updates a given Window.
+--
+-- @param Number windowId
+-- @param Table windowData
 function SELF:UpdateWindow(windowId, windowData)
 	Star_Trek.LCARS:UpdateWindow(self.Ent, windowId, windowData)
 end
@@ -34,4 +38,11 @@ end
 function SELF:Close()
 	self.Ent:EmitSound("star_trek.lcars_close") -- TODO: Modularize Sounds
 	Star_Trek.LCARS:CloseInterface(self.Ent)
+end
+
+-- Read out any Data, that can be retrieved externally.
+--
+-- @return? Table data
+function SELF:GetData()
+	return false
 end

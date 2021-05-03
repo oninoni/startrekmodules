@@ -20,62 +20,25 @@ local SELF = INTERFACE
 SELF.BaseInterface = "transporter"
 
 function SELF:Open(ent)
-	local success2, sourceMenuTable = self:CreateWindowTable(
+	local success, windows = self:OpenInternal(
 		Vector(-22, -34, 8.2),
 		Angle(0, 0, -90),
 		500,
-		false,
-		Vector(-28, -5, -2),
+		Vector(-26, -5, -2),
 		Angle(0, 0, 0),
-		500,
-		700,
-		false,
-		false
-	)
-	if not success2 then
-		return false, sourceMenuTable
-	end
-	local success3, error = sourceMenuTable:SelectType(sourceMenuTable.MenuTypes[1])
-	if not success3 then
-		return false, error
-	end
-
-	local success4, targetMenuTable = self:CreateWindowTable(
-		Vector(22, -34, 8.2),
-		Angle(0, 0, -90),
-		500,
-		true,
-		Vector(28, -5, -2),
-		Angle(0, 0, 0),
-		500,
-		700,
-		true,
-		true
-	)
-	if not success4 then
-		return false, targetMenuTable
-	end
-	local success5, error2 = targetMenuTable:SelectType(targetMenuTable.MenuTypes[2])
-	if not success5 then
-		return false, error2
-	end
-
-	local success6, sliderWindow = Star_Trek.LCARS:CreateWindow(
-		"transport_slider",
+		550,
+		720,
 		Vector(0, -34, 8),
 		Angle(0, 0, -90),
-		20,
-		200,
-		200,
-		function(windowData, interfaceData, buttonId)
-			self:TriggerTransporter(sourceMenuTable, targetMenuTable)
-		end
+		Vector(0, -0.5, -2),
+		Angle(0, 0, 0),
+		nil
 	)
-	if not success6 then
-		return false, sliderWindow
+	if not success then
+		return false, windows
 	end
 
-	return true, {sourceMenuTable.MenuWindow, sourceMenuTable.MainWindow, targetMenuTable.MenuWindow, targetMenuTable.MainWindow, sliderWindow}
+	return true, windows
 end
 
 function Star_Trek.LCARS:OpenConsoleTransporterMenu()

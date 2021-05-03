@@ -84,28 +84,30 @@ function SELF:GetPatternData(menuTable, wideField)
 
 		return Star_Trek.Transporter:GetPatternsFromPlayers(players, wideField)
 	elseif modeName == "Sections" then
-		local positions = {}
-
+		local deck = mainWindow.Selected
 		if menuTable.Target then
-			local categoryData = mainWindow.Categories[mainWindow.Selected]
-			for _, button in pairs(categoryData.Buttons or {}) do
-				if button.Selected then
-					local sectionData = button.Data or {}
+			local positions = {}
 
-					for _, pos in pairs(sectionData.BeamLocations or {}) do
-						table.insert(positions, pos)
-					end
+			for _, button in pairs(mainWindow.Buttons or {}) do
+				if not button.Selected then
+					continue
+				end
+
+				local sectionData = Star_Trek.Sections:GetSection(deck, button.Data)
+				if not sectionData then
+					continue
+				end
+
+				for _, pos in pairs(sectionData.BeamLocations or {}) do
+					table.insert(positions, pos)
 				end
 			end
 
 			return Star_Trek.Transporter:GetPatternsFromLocations(positions, wideField)
 		else
-			local deck = mainWindow.Selected
-			local categoryData = mainWindow.Categories[deck]
-
 			local sectionIds = {}
 
-			for buttonId, buttonData in pairs(categoryData.Buttons) do
+			for buttonId, buttonData in pairs(mainWindow.Buttons) do
 				if buttonData.Selected then
 					table.insert(sectionIds, buttonData.Data)
 				end

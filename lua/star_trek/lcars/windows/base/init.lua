@@ -29,7 +29,7 @@ function SELF:SetSelected(data)
 end
 
 function SELF:Update()
-	self.Interface:UpdateWindow(self.Id)
+	self.Interface:UpdateWindow(self.Id, self)
 end
 
 function SELF:Close()

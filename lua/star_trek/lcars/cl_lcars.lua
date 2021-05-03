@@ -96,7 +96,6 @@ function Star_Trek.LCARS:OpenMenu(id, interfaceData)
 		local window = Star_Trek.LCARS:LoadWindowData(id .. "_" .. i, windowData, pos, ang)
 		if istable(window) then
 			interface.Windows[i] = window
-
 			window.Interface = interface
 		end
 	end
@@ -184,12 +183,22 @@ net.Receive("Star_Trek.LCARS.Update", function()
 	end
 
 	local windowId = net.ReadInt(32)
-	local window = interface.Windows[windowId]
+	local currentWindow = interface.Windows[windowId]
 
 	local windowData = net.ReadTable()
-	local success = window:OnCreate(windowData)
-	if not success then
-		print("Update Error")
+	if currentWindow.WType ~= windowData.WindowType then
+		local pos, ang = Star_Trek.LCARS:GetInterfacePosAngle(interface.Ent, interface.IPos, interface.IAng)
+
+		local window = Star_Trek.LCARS:LoadWindowData(id .. "_" .. windowId, windowData, pos, ang)
+		if istable(window) then
+			interface.Windows[windowId] = window
+			window.Interface = interface
+		end
+	else
+		local success = currentWindow:OnCreate(windowData)
+		if not success then
+			print("Update Error")
+		end
 	end
 end)
 

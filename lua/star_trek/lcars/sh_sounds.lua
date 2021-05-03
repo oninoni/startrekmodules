@@ -60,5 +60,3 @@ sound.Add({
 	pitch = 100,
 	sound = "oninoni/startrek/lcars/lcars_confirm_long2.wav",
 })
-
-
