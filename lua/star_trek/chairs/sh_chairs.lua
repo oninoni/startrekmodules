@@ -17,7 +17,7 @@
 ---------------------------------------
 
 -- Creates the entities from the model to allow placing the chairs as vehicles.
-for name, model in pairs(Star_Trek.Chairs.Models) do
+for model, name in pairs(Star_Trek.Chairs.ModelNames) do
 	local split = string.Split(model, "/")
 	split = string.Split(split[#split], ".")
 	local entityName = split[1]

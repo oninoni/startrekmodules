@@ -96,7 +96,6 @@ function Star_Trek.Sections:GetInSection(deck, sectionId, filterCallback, allowM
 				ent.DetectedOndeck = deck
 			end
 		end
-
 	end
 
 	return objects
