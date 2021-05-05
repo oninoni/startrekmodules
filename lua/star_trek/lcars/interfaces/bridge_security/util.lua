@@ -187,7 +187,7 @@ function SELF:CreateActionWindow(mode)
 			-------- Lockdown --------
 			elseif buttonName == "Lock Doors" then
 				local doors = Star_Trek.Sections:GetInSections(deck, sectionIds, function(objects, ent)
-					if ent:GetClass() == "prop_dynamic" and table.HasValue(Star_Trek.Doors.Models, ent:GetModel()) then
+					if Star_Trek.Doors.Doors[ent] then
 						return
 					end
 
@@ -211,7 +211,7 @@ function SELF:CreateActionWindow(mode)
 				return true
 			elseif buttonName == "Unlock Doors" then
 				local doors = Star_Trek.Sections:GetInSections(deck, sectionIds, function(objects, ent)
-					if ent:GetClass() == "prop_dynamic" and table.HasValue(Star_Trek.Doors.Models, ent:GetModel()) then
+					if Star_Trek.Doors.Doors[ent] then
 						return
 					end
 
@@ -291,7 +291,7 @@ function SELF:CreateActionWindow(mode)
 				return true
 			elseif buttonName == "Unlock All" then
 				local doors = Star_Trek.Sections:GetInSections(deck, sectionIds, function(objects, ent)
-					if ent:GetClass() == "prop_dynamic" and table.HasValue(Star_Trek.Doors.Models, ent:GetModel()) then
+					if Star_Trek.Doors.Doors[ent] then
 						return
 					end
 

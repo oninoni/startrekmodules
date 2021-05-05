@@ -16,7 +16,7 @@
 --          Chairs | Config          --
 ---------------------------------------
 
--- List all chair Models with their names.
+-- List all Chair Models with their names.
 Star_Trek.Chairs.ModelNames = {
 	["models/kingpommes/startrek/intrepid/seat_captains.mdl"]		= "Captains Chair",
 	["models/kingpommes/startrek/intrepid/seat_conferenceroom.mdl"]	= "Conference Room Chair",

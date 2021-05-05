@@ -26,8 +26,8 @@ local setupDoors = function()
 	for _, ent in pairs(ents.GetAll()) do
 		ent.DoorLastSequenceStart = CurTime()
 
-		if ent:GetClass() == "prop_dynamic" and table.HasValue(Star_Trek.Doors.Models, ent:GetModel()) then
-			table.insert(Star_Trek.Doors.Doors, ent)
+		if ent:GetClass() == "prop_dynamic" and Star_Trek.Doors.ModelNames[ent:GetModel()] then
+			Star_Trek.Doors.Doors[ent] = true
 		end
 	end
 end
@@ -36,7 +36,7 @@ hook.Add("PostCleanupMap", "Star_Trek.DoorPostCleanupMap", setupDoors)
 
 -- Block Doors aborting animations.
 hook.Add("AcceptInput", "Star_Trek.BlockDoorIfAlreadyDooring", function(ent, input, activator, caller, value)
-	if table.HasValue(Star_Trek.Doors.Doors, ent) and input == "SetAnimation" then
+	if Star_Trek.Doors.Doors[ent] and input == "SetAnimation" then
 		-- Prevent the same animation again.
 		local currentSequence = ent:GetSequence()
 		local sequence = ent:LookupSequence(value)
@@ -100,7 +100,7 @@ end)
 
 -- Handle being locked. (Autoclose)
 hook.Add("Star_Trek.ChangedKeyValue", "Star_Trek.LockDoors", function(ent, key, value)
-	if key == "lcars_locked" and isstring(value) and table.HasValue(Star_Trek.Doors.Doors, ent) then
+	if key == "lcars_locked" and isstring(value) and Star_Trek.Doors.Doors[ent] then
 		if value == "1" and ent.Open then
 			ent:Fire("SetAnimation", "close")
 		end
@@ -127,7 +127,7 @@ hook.Add("KeyPress", "Star_Trek.OpenDoors", function(ply, key)
 		})
 
 		local ent = trace.Entity
-		if IsValid(ent) and table.HasValue(Star_Trek.Doors.Doors, ent) then
+		if IsValid(ent) and Star_Trek.Doors.Doors[ent] then
 			local distance = ent:GetPos():Distance(ply:EyePos())
 			if distance < 64 then
 				ent:Fire("SetAnimation", "open")
@@ -183,7 +183,7 @@ hook.Add("Think", "Star_Trek.DoorThink", function()
 	if Star_Trek.Doors.NextThink > CurTime() then return end
 	Star_Trek.Doors.NextThink = CurTime() + Star_Trek.Doors.ThinkDelay
 
-	for _, ent in pairs(Star_Trek.Doors.Doors or {}) do
+	for ent, _ in pairs(Star_Trek.Doors.Doors or {}) do
 		if ent.Open then
 			if checkPlayers(ent) then
 				ent.CloseAt = nil
