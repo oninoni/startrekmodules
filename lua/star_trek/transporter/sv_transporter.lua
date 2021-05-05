@@ -92,9 +92,14 @@ function Star_Trek.Transporter:CleanUpTargetPatterns(patterns)
 	return patterns
 end
 
-function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPatterns)
+function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPatterns, textWindow)
 	sourcePatterns = self:CleanUpSourcePatterns(sourcePatterns)
 	targetPatterns = self:CleanUpTargetPatterns(targetPatterns)
+
+	textWindow:AddLine("Initialising Transporter...")
+	textWindow:AddLine(table.Count(sourcePatterns) .. " Pattern Sources Selected.")
+	textWindow:AddLine(table.Count(sourcePatterns) .. " Pattern Targets Selected.")
+	textWindow:AddLine("Dematerialising...")
 
 	local remainingEntities = {}
 	if not istable(targetPatterns) then
@@ -117,6 +122,7 @@ function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPattern
 						end
 
 						self:BeamObject(ent, targetPattern.Pos, sourcePattern.Pad, targetPattern.Pad, false)
+						textWindow:AddLine("Dematerialising Object...") -- TODO: Sensor Detection of ent Type (Like Security Menu also needs.)
 
 						i = i + 1
 					elseif isbool(targetPattern) then
@@ -136,8 +142,13 @@ function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPattern
 		for _, ent in pairs(remainingEntities) do
 			table.insert(Star_Trek.Transporter.Buffer.Entities, ent)
 			self:BeamObject(ent, Vector(), ent.Pad, nil, true)
+			textWindow:AddLine("Dematerialising Object...") -- TODO: Sensor Detection of ent Type (Like Security Menu also needs.)
+			textWindow:AddLine("Warning: No Target Pattern Available! Storing in Buffer!", Star_Trek.LCARS.ColorRed)
 		end
 	end
+
+	textWindow:AddLine("")
+	textWindow:Update()
 end
 
 hook.Add("PlayerCanPickupItem", "Star_Trek.Transporter.PreventPickup", function(ply, ent)

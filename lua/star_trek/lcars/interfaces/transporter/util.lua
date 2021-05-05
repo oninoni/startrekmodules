@@ -144,10 +144,12 @@ end
 -- @param Table targetMenuTable
 -- @param? Boolean wideField
 -- @param? Function callback
-function SELF:Energize(sourceMenuTable, targetMenuTable, wideField, callback)
+function SELF:Energize(sourceMenuTable, targetMenuTable, wideField, textWindow, callback)
 	local sourcePatterns = self:GetPatternData(sourceMenuTable, wideField)
 	local targetPatterns = self:GetPatternData(targetMenuTable, false)
-	Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPatterns)
+	Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPatterns, textWindow)
+
+	--ent:EmitSound("star_trek.lcars_transporter_lock") -- TODO: Move
 
 	if isfunction(callback) then
 		callback(sourcePatterns, targetPatterns)
@@ -172,7 +174,7 @@ end
 --
 -- @param Table sourceMenuTable
 -- @param Table targetMenuTable
-function SELF:TriggerTransporter(sourceMenuTable, targetMenuTable)
+function SELF:TriggerTransporter(sourceMenuTable, targetMenuTable, textWindow)
 	local wideField = false
 	if isfunction(sourceMenuTable.GetUtilButtonState) then
 		wideField = sourceMenuTable:GetUtilButtonState()
@@ -185,12 +187,12 @@ function SELF:TriggerTransporter(sourceMenuTable, targetMenuTable)
 
 	if delayDematerialisation then
 		timer.Simple(DEMAT_DELAY, function()
-			self:Energize(sourceMenuTable, targetMenuTable, wideField, function(sourcePatterns, targetPatterns)
+			self:Energize(sourceMenuTable, targetMenuTable, wideField, textWindow, function(sourcePatterns, targetPatterns)
 				if sourcePatterns.IsBuffer then self:UpdateBufferMenu(sourceMenuTable) end
 			end)
 		end)
 	else
-		self:Energize(sourceMenuTable, targetMenuTable, wideField, function(sourcePatterns, targetPatterns)
+		self:Energize(sourceMenuTable, targetMenuTable, wideField, textWindow, function(sourcePatterns, targetPatterns)
 			if sourcePatterns.IsBuffer then self:UpdateBufferMenu(sourceMenuTable) end
 		end)
 	end

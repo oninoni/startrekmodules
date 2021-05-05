@@ -102,6 +102,7 @@ function Star_Trek.Force_Field:EnableSections(deck, sectionIds)
 			table.insert(positions, {
 				Pos = pos,
 				DetectedInSection = sectionId,
+				DetectedOndeck = deck,
 			})
 		end
 	end
@@ -139,6 +140,7 @@ function Star_Trek.Force_Field:DisableSections(deck, sectionIds)
 			table.insert(positions, {
 				Pos = pos,
 				DetectedInSection = sectionId,
+				DetectedOndeck = deck,
 			})
 		end
 	end

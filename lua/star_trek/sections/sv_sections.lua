@@ -93,6 +93,7 @@ function Star_Trek.Sections:GetInSection(deck, sectionId, filterCallback, allowM
 			if self:IsInArea(areaData, entPos) then
 				table.insert(objects, ent)
 				ent.DetectedInSection = sectionId
+				ent.DetectedOndeck = deck
 			end
 		end
 

@@ -13,7 +13,35 @@
 ---------------------------------------
 
 ---------------------------------------
---    PADD Test Interface | Server   --
+--       Damages SWEP | Shared       --
 ---------------------------------------
 
-local SELF = INTERFACE
+SWEP.Base = "lcars_base_swep"
+
+SWEP.PrintName = "Damages SWEP"
+
+SWEP.Author = "Oninoni"
+SWEP.Contact = "https://einfach-gmod.de"
+SWEP.Purpose = "???"
+SWEP.Instructions = "???"
+
+SWEP.Spawnable = true
+SWEP.AdminOnly = false
+
+SWEP.Slot = 4
+SWEP.SlotPos = 42
+
+SWEP.ViewModelFOV = 70
+
+--SWEP.ViewModel = ""
+--SWEP.WorldModel = ""
+
+SWEP.Primary.Ammo = ""
+SWEP.Primary.ClipSize = 0
+SWEP.Primary.DefaultClip = 0
+SWEP.Primary.Automatic = false
+
+SWEP.Secondary.Ammo = ""
+SWEP.Secondary.ClipSize = 0
+SWEP.Secondary.DefaultClip = 0
+SWEP.Secondary.Automatic = false

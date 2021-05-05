@@ -13,23 +13,35 @@
 ---------------------------------------
 
 ---------------------------------------
---     Tricorder Entity | Shared     --
+--      LCARS Base SWEP | Shared     --
 ---------------------------------------
 
-SWEP.Base = "lcars_base_swep"
-
-SWEP.PrintName = "TR-590 Tricorder X"
+SWEP.PrintName = "LCARS Base SWEP"
 
 SWEP.Author = "Oninoni"
 SWEP.Contact = "https://einfach-gmod.de"
-SWEP.Purpose = "Multifunctional device"
-SWEP.Instructions = "Select from installed functions using R"
+SWEP.Purpose = "Base Entity, that allows the usage of LCARS Interfaces on the Viewmodel."
+SWEP.Instructions = "Use as Base for other Entities."
 
-SWEP.Spawnable = true
+SWEP.Spawnable = false
 SWEP.AdminOnly = false
 
 SWEP.Slot = 4
 SWEP.SlotPos = 42
 
---SWEP.ViewModel = ""
---SWEP.WorldModel = ""
+SWEP.ViewModelFOV = 70
+
+SWEP.Primary.Ammo = ""
+SWEP.Primary.ClipSize = 0
+SWEP.Primary.DefaultClip = 0
+SWEP.Primary.Automatic = false
+
+SWEP.Secondary.Ammo = ""
+SWEP.Secondary.ClipSize = 0
+SWEP.Secondary.DefaultClip = 0
+SWEP.Secondary.Automatic = false
+
+SWEP.IsLCARS = true
+
+function SWEP:Initialize()
+end

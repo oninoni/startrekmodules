@@ -63,21 +63,6 @@ function SELF:OpenInternal(menuPos, menuAngle, menuWidth, mainPos, mainAngle, ma
 	sourceMenuTable.TargetMenuTable = targetMenuTable
 	targetMenuTable.SourceMenuTable = sourceMenuTable
 
-	local sliderSuccess, sliderWindow = Star_Trek.LCARS:CreateWindow(
-		"transport_slider",
-		sliderPos,
-		sliderAngle,
-		30,
-		200,
-		200,
-		function(windowData, interfaceData, buttonId)
-			self:TriggerTransporter(sourceMenuTable, targetMenuTable)
-		end
-	)
-	if not sliderSuccess then
-		return false, sliderWindow
-	end
-
 	local textSuccess, textWindow = Star_Trek.LCARS:CreateWindow(
 		"text_entry",
 		textPos,
@@ -95,6 +80,21 @@ function SELF:OpenInternal(menuPos, menuAngle, menuWidth, mainPos, mainAngle, ma
 	)
 	if not textSuccess then
 		return false, textWindow
+	end
+
+	local sliderSuccess, sliderWindow = Star_Trek.LCARS:CreateWindow(
+		"transport_slider",
+		sliderPos,
+		sliderAngle,
+		30,
+		200,
+		200,
+		function(windowData, interfaceData, buttonId)
+			self:TriggerTransporter(sourceMenuTable, targetMenuTable, textWindow)
+		end
+	)
+	if not sliderSuccess then
+		return false, sliderWindow
 	end
 
 	return true, {sourceMenuTable.MenuWindow, sourceMenuTable.MainWindow, targetMenuTable.MenuWindow, targetMenuTable.MainWindow, sliderWindow, textWindow}

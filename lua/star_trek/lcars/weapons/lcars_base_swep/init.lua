@@ -13,5 +13,14 @@
 ---------------------------------------
 
 ---------------------------------------
---           PADD | Shared           --
+--      LCARS Base SWEP | Server     --
 ---------------------------------------
+
+function SWEP:Reload()
+end
+
+function SWEP:PrimaryAttack()
+end
+
+function SWEP:SecondaryAttack()
+end

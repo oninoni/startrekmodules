@@ -19,14 +19,5 @@
 Star_Trek.PADD = Star_Trek.PADD or {}
 
 if SERVER then
-	AddCSLuaFile("sh_padd.lua")
-	AddCSLuaFile("cl_padd.lua")
-
-	include("sh_padd.lua")
 	include("sv_padd.lua")
-end
-
-if CLIENT then
-	include("sh_padd.lua")
-	include("cl_padd.lua")
 end

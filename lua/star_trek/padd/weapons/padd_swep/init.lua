@@ -16,10 +16,6 @@
 --        PADD Entity | Server       --
 ---------------------------------------
 
-function SWEP:Initialize()
-	self.Enabled = false
-end
-
 function SWEP:Reload()
 end
 

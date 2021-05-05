@@ -18,9 +18,9 @@
 
 function Star_Trek.LCARS:GetInterfacePosAngle(ent, pos, ang)
 	if IsValid(ent) then
-		local newEnt = hook.Run("Star_Trek.LCARS.OverrideEntity", ent)
-		if IsValid(newEnt) then
-			ent = newEnt
+		local oPos, oAng = hook.Run("Star_Trek.LCARS.OverridePosAng", ent, pos, ang)
+		if isvector(oPos) and isangle(oAng) then
+			return oPos, oAng
 		end
 
 		pos, ang = LocalToWorld(pos, ang, ent:GetPos(), ent:GetAngles())

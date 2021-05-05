@@ -13,9 +13,14 @@
 ---------------------------------------
 
 ---------------------------------------
---        PADD Entity | Client       --
+--       Damages SWEP | Server       --
 ---------------------------------------
 
-SWEP.Category = "Star Trek"
+function SWEP:Reload()
+end
 
-SWEP.DrawAmmo = false
+function SWEP:PrimaryAttack()
+end
+
+function SWEP:SecondaryAttack()
+end
