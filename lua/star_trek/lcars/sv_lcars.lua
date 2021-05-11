@@ -227,49 +227,51 @@ end)
 
 -- Load a given interface.
 --
+-- @param String moduleName
+-- @param String interfaceDirectory
 -- @param String interfaceName
 -- @return Boolean success
--- @return Table interface
-function Star_Trek.LCARS:LoadInterface(interfaceName)
-	if istable(self.Interfaces[interfaceName]) then
-		return true, self.Interfaces[interfaceName]
-	end
-
+-- @return String error
+function Star_Trek.LCARS:LoadInterface(moduleName, interfaceDirectory, interfaceName)
 	INTERFACE = {}
 
-	include("interfaces/" .. interfaceName .. "/init.lua")
+	local success = pcall(function()
+		include(interfaceDirectory .. "/" .. interfaceName .. "/init.lua")
+	end)
+	if not success then
+		return false, "Cannot load LCARS Interface Type \"" .. interfaceName .. "\" from module " .. moduleName
+	end
 
-	local interface = INTERFACE
+	local baseInterface = INTERFACE.BaseInterface
+	if isstring(baseInterface) then
+		timer.Simple(0, function()
+			local baseInterfaceData = self.Interfaces[baseInterface]
+			if istable(baseInterfaceData) then
+				self.Interfaces[interfaceName].Base = baseInterfaceData
+				setmetatable(self.Interfaces[interfaceName], {__index = baseInterfaceData})
+			else
+				Star_Trek:Message("Failed, to load Base Interface \"" .. baseInterface .. "\"")
+			end
+		end)
+	end
+
+	self.Interfaces[interfaceName] = INTERFACE
 	INTERFACE = nil
 
-	if isstring(interface.BaseInterface) then
-		local success, baseInterface = self:LoadInterface(interface.BaseInterface)
-		if not success then
-			return false, baseInterface
-		end
-
-		interface.Base = baseInterface
-		setmetatable(interface, {__index = baseInterface})
-	end
-
-	self.Interfaces[interfaceName] = interface
-
-	return true, self.Interfaces[interfaceName]
+	return true
 end
 
--- Load all interfaces.
-function Star_Trek.LCARS:LoadInterfaces()
-	self.Interfaces = {}
+hook.Add("Star_Trek.LoadModule", "Star_Trek.LCARS.LoadInterfaces", function(moduleName, moduleDirectory)
+	Star_Trek.LCARS.Interfaces = Star_Trek.LCARS.Interfaces or {}
 
-	local _, directories = file.Find("star_trek/lcars/interfaces/*", "LUA")
-
-	for _, interfaceName in pairs(directories) do
-		local success, interface = self:LoadInterface(interfaceName)
+	local interfaceDirectory = moduleDirectory .. "interfaces/"
+	local _, interfaceDirectories = file.Find(interfaceDirectory .. "*", "LUA")
+	for _, interfaceName in pairs(interfaceDirectories) do
+		local success, error = Star_Trek.LCARS:LoadInterface(moduleName, interfaceDirectory, interfaceName)
 		if success then
-			Star_Trek:Message("Loaded LCARS Interface Type \"" .. interfaceName .. "\"")
+			Star_Trek:Message("Loaded LCARS Interface Type \"" .. interfaceName .. "\" from module " .. moduleName)
 		else
-			Star_Trek:Message(interface)
+			Star_Trek:Message(error)
 		end
 	end
-end
-Star_Trek.LCARS:LoadInterfaces()
+end)

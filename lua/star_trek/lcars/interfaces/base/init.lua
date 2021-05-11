@@ -20,9 +20,10 @@ local SELF = INTERFACE
 
 -- Opens the Interface. Must return the windows in a table. -- TODO: Remove the return?
 -- 
+-- @param Entity ent
 -- @return Boolean success
 -- @return? Table windows
-function SELF:Open()
+function SELF:Open(ent)
 	return false, "Do not use the Base Interface."
 end
 

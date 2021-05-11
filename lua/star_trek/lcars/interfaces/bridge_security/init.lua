@@ -91,7 +91,12 @@ end
 --
 -- @return? Table data
 function SELF:GetData()
-	return self.Windows[5].Lines
+	local data = {}
+
+	data.LogData = self.Windows[5].Lines
+	data.LogTitle = "Security"
+
+	return data
 end
 
 -- Wrap for use in Map.

@@ -22,6 +22,8 @@ Star_Trek.Transporter.SelfActive = Star_Trek.Transporter.SelfActive or false
 Star_Trek.Transporter.SelfRefrac = Star_Trek.Transporter.SelfRefrac or 0
 
 function Star_Trek.Transporter:TriggerEffect(ent, remat, replicator)
+	if not IsValid(ent) then return end
+
 	local transportData = {
 		Ent = ent,
 		Remat = remat,

@@ -51,8 +51,6 @@ local function loadModule(name)
 	include(moduleDirectory .. "sh_index.lua")
 
 	local entityDirectory = moduleDirectory .. "entities/"
-	local weaponDirectory = moduleDirectory .. "weapons/"
-
 	local _, entityDirectories = file.Find(entityDirectory .. "*", "LUA")
 	for _, entityName in pairs(entityDirectories) do
 		local entDirectory = entityDirectory .. entityName .. "/"
@@ -82,6 +80,7 @@ local function loadModule(name)
 		Star_Trek:Message("Loaded Entity \"" .. entityName .. "\"")
 	end
 
+	local weaponDirectory = moduleDirectory .. "weapons/"
 	local _, weaponDirectories = file.Find(weaponDirectory .. "*", "LUA")
 	for _, weaponName in pairs(weaponDirectories) do
 		local wepDirectory = weaponDirectory .. weaponName .. "/"
@@ -112,6 +111,8 @@ local function loadModule(name)
 
 		Star_Trek:Message("Loaded Weapon \"" .. weaponName .. "\"")
 	end
+
+	hook.Run("Star_Trek.LoadModule", name, moduleDirectory)
 
 	Star_Trek:Message("Loaded Module \"" .. name .. "\"")
 end

@@ -13,30 +13,32 @@
 ---------------------------------------
 
 ---------------------------------------
---           PADD | Server           --
+--      LCARS PADD Logs | Server     --
 ---------------------------------------
 
-function Star_Trek.PADD:Enable(padd, interfaceName)
-	local ply = padd:GetOwner()
-	if not IsValid(ply) then
-		return false, "Invalid Owner"
+local SELF = INTERFACE
+SELF.BaseInterface = "base"
+
+function SELF:Open(ent, logType, lines)
+	local success, window = Star_Trek.LCARS:CreateWindow(
+		"text_entry",
+		Vector(),
+		Angle(),
+		nil,
+		300,
+		500,
+		function(windowData, interfaceData, buttonId)
+
+		end,
+		Color(255, 255, 255),
+		logType .. " Logs",
+		"LOGS",
+		false,
+		lines
+	)
+	if not success then
+		return false, window
 	end
 
-	Star_Trek.LCARS:CloseInterface(padd)
-
-	local ent = ply:GetEyeTrace().Entity
-	if IsValid(ent) then
-		local data = ent.LastData
-
-		local interfaceData = Star_Trek.LCARS.ActiveInterfaces[ent]
-		if interfaceData then
-			data = interfaceData:GetData()
-		end
-
-		if data and data.LogData then
-			print(Star_Trek.LCARS:OpenInterface(ply, padd, "padd_log", data.LogTitle, data.LogData))
-		end
-	end
-
-	return true
+	return true, {window}
 end
