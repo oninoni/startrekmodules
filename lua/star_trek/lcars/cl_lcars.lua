@@ -100,6 +100,10 @@ function Star_Trek.LCARS:OpenMenu(id, interfaceData)
 		end
 	end
 
+	if IsValid(interfaceData.Ent) then
+		interfaceData.Ent.InterfaceId = id
+	end
+
 	self.ActiveInterfaces[id] = interface
 end
 
@@ -270,17 +274,21 @@ hook.Add("PostDrawTranslucentRenderables", "Star_Trek.LCARS.Draw", function(isDr
 	if isDrawingSkybox then return end
 	if (wp.drawing) then return end
 
+
 	for _, interface in pairs(Star_Trek.LCARS.ActiveInterfaces) do
 		if not interface.IVis then
 			continue
 		end
 
-		local animPos = interface.AnimPos
+		local ent = interface.Ent
+		if IsValid(ent) and ent:IsWeapon() and IsValid(ent:GetOwner()) and ent:GetOwner() == LocalPlayer() then
+			continue
+		end
 
 		render.SuppressEngineLighting(true)
 
 		for _, window in pairs(interface.Windows) do
-			Star_Trek.LCARS:DrawWindow(window.WPosG, window.WAngG, window, animPos)
+			Star_Trek.LCARS:DrawWindow(window.WPosG, window.WAngG, window, interface.AnimPos)
 		end
 
 		surface.SetAlphaMultiplier(1)

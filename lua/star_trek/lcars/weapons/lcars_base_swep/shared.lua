@@ -30,6 +30,17 @@ SWEP.Slot = 4
 SWEP.SlotPos = 42
 
 SWEP.ViewModelFOV = 70
+SWEP.ViewModel = "models/weapons/v_bugbait.mdl"
+SWEP.WorldModel = ""
+
+SWEP.CustomViewModel = ""
+SWEP.CustomViewModelBone = "ValveBiped.Bip01_R_Hand"
+SWEP.CustomViewModelOffset = Vector()
+SWEP.CustomViewModelAngle = Angle()
+SWEP.CustomViewModelScale = 1
+
+SWEP.MenuOffset = Vector()
+SWEP.MenuAngle = Angle()
 
 SWEP.Primary.Ammo = ""
 SWEP.Primary.ClipSize = 0

@@ -24,9 +24,9 @@ function SELF:Open(ent, logType, lines)
 		"text_entry",
 		Vector(),
 		Angle(),
-		nil,
-		300,
-		500,
+		35,
+		325,
+		540,
 		function(windowData, interfaceData, buttonId)
 
 		end,
