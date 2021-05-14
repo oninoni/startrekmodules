@@ -20,8 +20,11 @@
 --
 -- @param Number id
 function Star_Trek.LCARS:CloseInterface(id)
-	if self.ActiveInterfaces[id] then
-		self.ActiveInterfaces[id].Closing = true
+	local interface = self.ActiveInterfaces[id]
+	if interface then
+		interface.Closing = true
+
+		hook.Run("Star_Trek.LCARS.CloseInterface", id, interface)
 	end
 end
 
@@ -104,6 +107,8 @@ function Star_Trek.LCARS:OpenMenu(id, interfaceData)
 		interfaceData.Ent.InterfaceId = id
 	end
 
+	hook.Run("Star_Trek.LCARS.OpenMenu", id, interfaceData, interface)
+
 	self.ActiveInterfaces[id] = interface
 end
 
@@ -127,8 +132,14 @@ function Star_Trek.LCARS:Get3D2DMousePos(window)
 
 	local pos = util.IntersectRayWithPlane(self.EyePos, rayDir, window.WPosG, window.WAngG:Up())
 	pos = WorldToLocal(pos or Vector(), Angle(), window.WPosG, window.WAngG)
+	pos = Vector(pos.x * window.WScale, pos.y * -window.WScale, 0)
 
-	return Vector(pos.x * window.WScale, pos.y * -window.WScale, 0)
+	local overriddenPos = hook.Run("Star_Trek.LCARS.Get3D2DMousePos", window, pos)
+	if isvector(overriddenPos) then
+		return overriddenPos
+	end
+
+	return pos
 end
 
 -- Main Think Hook for all LCARS Screens
@@ -206,11 +217,8 @@ net.Receive("Star_Trek.LCARS.Update", function()
 	end
 end)
 
--- Recording interact presses and checking interaction with panel
-hook.Add("KeyPress", "Star_Trek.LCARS.KeyPress", function(ply, key)
-	if not (game.SinglePlayer() or IsFirstTimePredicted()) then return end
-
-	if key ~= IN_USE and key ~= IN_ATTACK and key ~= IN_ATTACK2 then return end
+function Star_Trek.LCARS:PlayerButtonDown(ply, button)
+	if button ~= KEY_E and button ~= MOUSE_LEFT and button ~= MOUSE_RIGHT then return end
 
 	for id, interface in pairs(Star_Trek.LCARS.ActiveInterfaces) do
 		if not interface.IVis then
@@ -242,9 +250,22 @@ hook.Add("KeyPress", "Star_Trek.LCARS.KeyPress", function(ply, key)
 			end
 		end
 	end
+end
+
+-- MultiPlayer PlayerButtonDown Hook.
+hook.Add("PlayerButtonDown", "Star_Trek.LCARS.PlayerButtonDown", function(ply, button)
+	if not (game.SinglePlayer() or IsFirstTimePredicted()) then return end
+
+	Star_Trek.LCARS:PlayerButtonDown(ply, button)
 end)
 
-function Star_Trek.LCARS:DrawWindow(wPos, wAng, window, animPos)
+-- SinglePlayer PlayerButtonDown Net.
+net.Receive("Star_Trek.LCARS.PlayerButtonDown", function()
+	local button = net.ReadInt(32)
+	Star_Trek.LCARS:PlayerButtonDown(LocalPlayer(), button)
+end)
+
+function Star_Trek.LCARS:DrawWindow(wPos, wAng, window, animPos, drawCursor)
 	if not window.WVis then
 		return
 	end
@@ -259,6 +280,12 @@ function Star_Trek.LCARS:DrawWindow(wPos, wAng, window, animPos)
 
 	cam.Start3D2D(wPos, wAng, 1 / window.WScale)
 		window:OnDraw(window.LastPos or Vector(-width / 2, -height / 2), animPos)
+
+		if drawCursor then
+			surface.SetDrawColor(255, 255, 255, 255)
+			surface.SetMaterial(Material("sprites/arrow"))
+			surface.DrawTexturedRect(pos.x - 25, pos.y - 25, 50, 50)
+		end
 	cam.End3D2D()
 end
 

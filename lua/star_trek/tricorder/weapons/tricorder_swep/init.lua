@@ -17,19 +17,22 @@
 ---------------------------------------
 
 function SWEP:Reload()
+	if not IsFirstTimePredicted() then return end
+
+	local interfaceData = Star_Trek.LCARS.ActiveInterfaces[self]
+	if istable(interfaceData) and interfaceData.InterfaceName == "tricorder_modes" then return end
+
+	Star_Trek.LCARS:CloseInterface(self, function()
+		Star_Trek.LCARS:OpenInterface(self:GetOwner(), self, "tricorder_modes", {})
+	end)
 end
 
+-- TODO: Add Force Close Interface (For Switching Between fast.) Or Callback in Close
+
 function SWEP:PrimaryAttack()
-	local trace = self:GetOwner():GetEyeTrace()
-
-	debugoverlay.Cross(trace.HitPos, 10, 2, Color(255, 0, 0), true)
-
-	local entities = ents.FindInSphere(trace.HitPos, 100)
-	for _, ent in pairs(entities) do
-		debugoverlay.Cross(ent:GetPos(), 10, 2, Color(0, 255, 0), true)
-		debugoverlay.Text(ent:GetPos(), ent:GetClass(), 2, false)
-	end
+	if not IsFirstTimePredicted() then return end
 end
 
 function SWEP:SecondaryAttack()
+	if not IsFirstTimePredicted() then return end
 end

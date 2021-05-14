@@ -28,8 +28,18 @@ SWEP.Instructions = "Select from installed functions using R"
 SWEP.Spawnable = true
 SWEP.AdminOnly = false
 
+SWEP.WorldModel = "models/nova_canterra/props_items/padd_large.mdl"
+
+SWEP.CustomViewModel = "models/ef2weapons/tricorder_stx/tricorder.mdl"
+SWEP.CustomViewModelOffset = Vector(4, -5, 0)
+SWEP.CustomViewModelAngle = Angle(0, 190, -35)
+SWEP.CustomViewModelScale = 1.2
+
+SWEP.MenuOffset = Vector(1, 0, 0)
+SWEP.MenuAngle = Angle(90, 0, 0)
+
 SWEP.Slot = 4
 SWEP.SlotPos = 42
 
 --SWEP.ViewModel = ""
---SWEP.WorldModel = ""
+--SWEP.WorldModel = "" 

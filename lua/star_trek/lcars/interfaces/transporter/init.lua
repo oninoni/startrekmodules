@@ -129,6 +129,18 @@ function SELF:Open(ent)
 	return true, windows
 end
 
+-- Read out any Data, that can be retrieved externally.
+--
+-- @return? Table data
+function SELF:GetData()
+	local data = {}
+
+	data.LogData = self.Windows[6].Lines
+	data.LogTitle = "Transporter"
+
+	return data
+end
+
 -- Wrap for use in Map.
 function Star_Trek.LCARS:OpenTransporterMenu()
 	Star_Trek.LCARS:OpenInterface(TRIGGER_PLAYER, CALLER, "transporter")

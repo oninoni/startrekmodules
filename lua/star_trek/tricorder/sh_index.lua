@@ -17,3 +17,7 @@
 ---------------------------------------
 
 Star_Trek.Tricorder = Star_Trek.Tricorder or {}
+
+if SERVER then
+	include("sv_tricorder.lua")
+end

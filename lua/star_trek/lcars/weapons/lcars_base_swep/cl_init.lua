@@ -36,6 +36,56 @@ hook.Add("Star_Trek.LCARS.OverridePosAng", "Star_Trek.LCARS.OverrideSWEPViewmode
 	return oPos, oAng
 end)
 
+function SWEP:Holster(weapon)
+	local owner = self:GetOwner()
+	if not IsValid(owner) or owner ~= LocalPlayer() then return end
+
+	local vm = owner:GetViewModel()
+	if not IsValid(vm) then return end
+
+	for i = 0, vm:GetBoneCount() - 1 do
+		vm:ManipulateBonePosition(i, Vector())
+		vm:ManipulateBoneAngles(i, Angle())
+		vm:ManipulateBoneScale(i, Vector(1, 1, 1))
+	end
+
+	if IsValid(self.CustomViewModelEntity) then
+		self.CustomViewModelEntity:Remove()
+	end
+end
+
+function SWEP:UnlockMouse()
+	gui.EnableScreenClicker(true)
+
+	self.Panel = vgui.Create("DPanel")
+	self.Panel:SetSize(ScrW(), ScrH())
+	self.Panel:SetCursor("blank")
+	function self.Panel:Paint(ww, hh)
+	end
+end
+
+hook.Add("Star_Trek.LCARS.OpenMenu", "Star_Trek.LCARS.OpenSWEPMenu", function(id, interfaceData, interface)
+	local ent = interfaceData.Ent
+	if not ent.IsLCARS then return end
+
+	ent:UnlockMouse()
+end)
+
+function SWEP:LockMouse()
+	gui.EnableScreenClicker(false)
+
+	if IsValid(self.Panel) then
+		self.Panel:Remove()
+	end
+end
+
+hook.Add("Star_Trek.LCARS.CloseInterface", "Star_Trek.LCARS.CloseSWEPInterface", function(id, interfaceData, interface)
+	local ent = interfaceData.Ent
+	if not ent.IsLCARS then return end
+
+	ent:LockMouse()
+end)
+
 function SWEP:PostDrawViewModel(vm, weapon, ply)
 	if not IsValid(self.CustomViewModelEntity) then
 		self.CustomViewModelEntity = ClientsideModel(self.CustomViewModel)
@@ -43,7 +93,7 @@ function SWEP:PostDrawViewModel(vm, weapon, ply)
 			return
 		end
 
-		-- Removing Bugbai from Viewmodel
+		-- Removing Bugbait from Viewmodel
 		vm:ManipulateBonePosition(vm:LookupBone("ValveBiped.cube3"), Vector(0, 0, 100))
 		vm:ManipulateBoneAngles(vm:LookupBone("ValveBiped.Bip01_Spine"), Angle(0, 0, -20))
 
@@ -71,7 +121,7 @@ function SWEP:PostDrawViewModel(vm, weapon, ply)
 			window.WPosG, window.WAngG = LocalToWorld(window.WPos, window.WAng, iPos, iAng)
 			window.WVis = true
 
-			Star_Trek.LCARS:DrawWindow(window.WPosG, window.WAngG, window, interface.AnimPos)
+			Star_Trek.LCARS:DrawWindow(window.WPosG, window.WAngG, window, interface.AnimPos, not interface.Closing)
 		end
 
 		surface.SetAlphaMultiplier(1)

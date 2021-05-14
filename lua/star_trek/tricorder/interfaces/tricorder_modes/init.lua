@@ -13,30 +13,40 @@
 ---------------------------------------
 
 ---------------------------------------
---           PADD | Server           --
+--   LCARS Tricorder Modes | Server  --
 ---------------------------------------
 
-function Star_Trek.PADD:Enable(padd, interfaceName)
-	local ply = padd:GetOwner()
-	if not IsValid(ply) then
-		return false, "Invalid Owner"
+local SELF = INTERFACE
+SELF.BaseInterface = "base"
+
+function SELF:Open(ent, modes)
+	local buttons = {}
+
+	table.insert(buttons, {
+		Name = "Close",
+	})
+
+	local success, window = Star_Trek.LCARS:CreateWindow(
+		"button_list",
+		Vector(),
+		Angle(),
+		50,
+		300,
+		400,
+		function(windowData, interfaceData, buttonId)
+			if buttonId == table.Count(modes) + 1 then
+				interfaceData:Close()
+			else
+				print(buttonId)
+			end
+		end,
+		buttons,
+		"Tricorder Modes",
+		"MODES"
+	)
+	if not success then
+		return false, window
 	end
 
-	Star_Trek.LCARS:CloseInterface(padd)
-
-	local ent = ply:GetEyeTrace().Entity
-	if IsValid(ent) then
-		local data = ent.LastData
-
-		local interfaceData = Star_Trek.LCARS.ActiveInterfaces[ent]
-		if interfaceData then
-			data = interfaceData:GetData()
-		end
-
-		if data and data.LogData then
-			Star_Trek.LCARS:OpenInterface(ply, padd, "padd_log", data.LogTitle, data.LogData)
-		end
-	end
-
-	return true
+	return true, {window}
 end
