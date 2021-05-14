@@ -3,7 +3,7 @@
 --        Star Trek Utilities        --
 --                                   --
 --            Created by             --
---       Jan 'Oninoni' Ziegler       --
+--       Jan "Oninoni" Ziegler       --
 --                                   --
 -- This software can be used freely, --
 --    but only distributed by me.    --
@@ -18,26 +18,35 @@
 
 -- This is a Mapping Tool, not used in gameplay.
 
-local SCALE = 1
+local SCALE = 2
 local RESOLUTION = 1024
 
-local ZOFFSET = 10
-local ZFAR = 20
+local ZOFFSET = 200
+local ZSLIVER = 10
 
-local function renderMapPart(origin, x, y)
-	local texture = GetRenderTarget("LCARS_" .. RESOLUTION .. "_" .. x .. "_" .. y, RESOLUTION, RESOLUTION)
-	local pos = origin + Vector(x * RESOLUTION, y * RESOLUTION, ZOFFSET)
-	print(pos)
+local mapTextureName = "LCARS_MAP_" .. RESOLUTION * SCALE
+Star_Trek.Util.MapTexture = GetRenderTarget(mapTextureName, RESOLUTION * SCALE, RESOLUTION * SCALE)
+Star_Trek.Util.MapMaterial = CreateMaterial(mapTextureName, "UnlitGeneric", {
+	["$basetexture"] = mapTextureName,
+})
 
-	render.EnableClipping(false)
-	render.SetRenderTarget(texture)
+local saveTextureName = "LCARS_SAVE_" .. RESOLUTION
+Star_Trek.Util.SavingTexture = GetRenderTarget(saveTextureName, RESOLUTION, RESOLUTION)
+Star_Trek.Util.SavingMaterial = CreateMaterial(saveTextureName, "UnlitGeneric", {
+	["$basetexture"] = saveTextureName,
+})
+
+local function renderMapView(x, y)
+	local pos = LocalPlayer():GetPos() + Vector(x or 0, y or 0, ZOFFSET)
+
+	render.SetRenderTarget(Star_Trek.Util.MapTexture)
 		render.RenderView({
 			origin = pos,
 			angles = Vector(0, 0, -1):AngleEx(Vector(1, 0, 0)),
 			x = 0,
 			y = 0,
-			w = RESOLUTION,
-			h = RESOLUTION,
+			w = RESOLUTION * SCALE,
+			h = RESOLUTION * SCALE,
 			aspectratio = 1,
 			drawhud = false,
 			drawmonitors = false,
@@ -48,42 +57,90 @@ local function renderMapPart(origin, x, y)
 				top = -SCALE * RESOLUTION / 2,
 				bottom = SCALE * RESOLUTION / 2,
 			},
-			znear = 1,
-			zfar = ZFAR,
+			znear = ZOFFSET - ZSLIVER,
+			zfar = ZOFFSET + ZSLIVER,
 			bloomtone = false,
 		})
-
-		local data = render.Capture({
-			format = "png",
-			x = 0,
-			y = 0,
-			w = RESOLUTION,
-			h = RESOLUTION,
-			alpha = false,
-		})
-
-		file.Write("LCARS_" .. RESOLUTION .. "_" .. x .. "_" .. y .. ".png", data)
 	render.PopRenderTarget()
-	render.EnableClipping(true)
+
+	surface.SetDrawColor(255,255,255)
+	surface.SetMaterial(Star_Trek.Util.MapMaterial)
+	surface.DrawTexturedRectUV(0, 0, 512 , 512, 0, 0, 1, 1)
 end
 
-concommand.Add("lcars_rendermap", function(ply, cmd, args, argStr)
-	--RunConsoleCommand("mat_fullbright", 1)
-	print("Please Unpause the game, to render the images.")
+local function drawSave()
+	surface.SetDrawColor(255,255,255)
+	surface.SetMaterial(Star_Trek.Util.SavingMaterial)
+	surface.DrawTexturedRectUV(0, 0, 512 , 512, 0, 0, 1, 1)
+end
 
-	local xMax = args[1]
-	local yMax = args[2]
+lastCalc = CurTime()
+local function renderSaveFile()
+	if lastCalc + 0.2 < CurTime() then
+		lastCalc = CurTime()
+	else
+		drawSave()
+		return
+	end
+	
+	if Star_Trek.Util.SavingY == SCALE then
+		Star_Trek.Util.Saving = false
+		return
+	end
 
-	timer.Simple(0, function()
-		for x = 1, xMax do
-			local xPos = x - (xMax * 0.5) - 0.5
-			for y = 1, yMax do
-				local yPos = y - (yMax * 0.5) - 0.5
+	print(Star_Trek.Util.SavingX, Star_Trek.Util.SavingY)
 
-				renderMapPart(ply:GetPos(), xPos, yPos)
-			end
-		end
+	local u1 = Star_Trek.Util.SavingX / SCALE
+	local u2 = u1 + 1 / SCALE
+	local v1 = Star_Trek.Util.SavingY / SCALE
+	local v2 = v1 + 1 / SCALE
 
-		RunConsoleCommand("mat_fullbright", 0)
-	end)
+	local oldW, oldH = ScrW(), ScrH()
+	render.SetViewPort(0, 0, RESOLUTION, RESOLUTION)
+	cam.Start2D()
+		render.SetRenderTarget(Star_Trek.Util.SavingTexture)
+			render.Clear(0,0,0,0, true, true)
+
+			surface.SetDrawColor(255,255,255)
+			surface.SetMaterial(Star_Trek.Util.MapMaterial)
+			surface.DrawTexturedRectUV(0, 0, RESOLUTION , RESOLUTION, u1, v1, u2, v2)
+
+			local data = render.Capture({
+				format = "png",
+				x = 0,
+				y = 0,
+				w = RESOLUTION,
+				h = RESOLUTION,
+				alpha = false,
+			})
+
+			file.Write("LCARS_" .. RESOLUTION .. "_" .. Star_Trek.Util.SavingX .. "_" .. Star_Trek.Util.SavingY .. ".png", data)
+		render.PopRenderTarget()
+	cam.End2D()
+	render.SetViewPort(0, 0, oldW, oldH)
+
+	if Star_Trek.Util.SavingX == SCALE - 1 then
+		Star_Trek.Util.SavingX = 0
+		Star_Trek.Util.SavingY = Star_Trek.Util.SavingY + 1
+	else
+		Star_Trek.Util.SavingX = Star_Trek.Util.SavingX + 1
+	end
+
+	drawSave()
+end
+
+concommand.Add("lcars_saveRT", function()
+	Star_Trek.Util.Saving = true
+	Star_Trek.Util.SavingX = 0
+	Star_Trek.Util.SavingY = 0
+
+	print("---")
+end)
+
+hook.Add("HUDPaint", "Test", function()
+	if Star_Trek.Util.Saving then
+		renderSaveFile()
+	else
+		renderMapView()
+	end
 end)

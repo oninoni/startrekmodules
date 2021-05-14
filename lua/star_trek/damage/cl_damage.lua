@@ -19,8 +19,9 @@
 Star_Trek.Damage.Entities = Star_Trek.Damage.Entities or {}
 
 hook.Add("PreDrawTranslucentRenderables", "Star_Trek.Damage.DrawDamages", function(isDrawingDepth, isDrawingSkybox)
+	if not wp then return end
 	if isDrawSkyBox then return end
-	if ( wp.drawing ) then return end
+	if wp.drawing then return end
 
 	render.SetStencilWriteMask( 255 )
 	render.SetStencilTestMask( 255 )

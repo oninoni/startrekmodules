@@ -18,6 +18,8 @@
 
 -- Render views from the windows
 hook.Add( "RenderScene", "Star_Trek.RenderWindow", function( plyOrigin, plyAngle )
+	if not wp then return end
+
 	wp.windows = ents.FindByClass( "linked_portal_window" )
 
 	if ( not wp.windows ) then return end

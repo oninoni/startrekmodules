@@ -117,8 +117,12 @@ hook.Add("Star_Trek.ChangedKeyValue", "Star_Trek.LockDoors", function(ent, key, 
 	end
 end)
 
+local traceLine = util.TraceLine
+
 -- Open door when pressing use on them.
 hook.Add("KeyPress", "Star_Trek.OpenDoors", function(ply, key)
+	print(traceLine, util.RealTraceLine)
+
 	if key == IN_USE then
 		local trace = util.RealTraceLine({
 			start = ply:EyePos(),
