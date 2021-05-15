@@ -20,22 +20,6 @@ SWEP.Category = "Star Trek"
 
 SWEP.DrawAmmo = false
 
-hook.Add("Star_Trek.LCARS.OverridePosAng", "Star_Trek.LCARS.OverrideSWEPViewmodel", function(ent, pos, ang)
-	if not ent.IsLCARS then return end
-
-	local owner = ent:GetOwner()
-	if not IsValid(owner) or owner ~= LocalPlayer() then return end
-
-	local vm = owner:GetViewModel()
-	if not IsValid(vm) then return end
-
-	local m = vm:GetBoneMatrix(vm:LookupBone(ent.CustomViewModelBone))
-	local oPos, oAng = LocalToWorld(ent.CustomViewModelOffset, ent.CustomViewModelAngle, m:GetTranslation(), m:GetAngles())
-	oPos, oAng = LocalToWorld(ent.MenuOffset, ent.MenuAngle, oPos, oAng)
-
-	return oPos, oAng
-end)
-
 function SWEP:Holster(weapon)
 	local owner = self:GetOwner()
 	if not IsValid(owner) or owner ~= LocalPlayer() then return end
@@ -53,38 +37,6 @@ function SWEP:Holster(weapon)
 		self.CustomViewModelEntity:Remove()
 	end
 end
-
-function SWEP:UnlockMouse()
-	gui.EnableScreenClicker(true)
-
-	self.Panel = vgui.Create("DPanel")
-	self.Panel:SetSize(ScrW(), ScrH())
-	self.Panel:SetCursor("blank")
-	function self.Panel:Paint(ww, hh)
-	end
-end
-
-hook.Add("Star_Trek.LCARS.OpenMenu", "Star_Trek.LCARS.OpenSWEPMenu", function(id, interfaceData, interface)
-	local ent = interfaceData.Ent
-	if not ent.IsLCARS then return end
-
-	ent:UnlockMouse()
-end)
-
-function SWEP:LockMouse()
-	gui.EnableScreenClicker(false)
-
-	if IsValid(self.Panel) then
-		self.Panel:Remove()
-	end
-end
-
-hook.Add("Star_Trek.LCARS.CloseInterface", "Star_Trek.LCARS.CloseSWEPInterface", function(id, interfaceData, interface)
-	local ent = interfaceData.Ent
-	if not ent.IsLCARS then return end
-
-	ent:LockMouse()
-end)
 
 function SWEP:PostDrawViewModel(vm, weapon, ply)
 	if not IsValid(self.CustomViewModelEntity) then

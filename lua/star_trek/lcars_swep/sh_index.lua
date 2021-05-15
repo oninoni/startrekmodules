@@ -13,12 +13,20 @@
 ---------------------------------------
 
 ---------------------------------------
---        PADD Entity | Server       --
+--         LCARS SWEP | Index        --
 ---------------------------------------
 
-function SWEP:PrimaryAttack()
-	Star_Trek.PADD:Enable(self)
+Star_Trek.LCARS_SWEP = Star_Trek.LCARS_SWEP or {}
+
+if SERVER then
+	AddCSLuaFile("sh_lcars_swep.lua")
+	AddCSLuaFile("cl_lcars_swep.lua")
+
+	include("sh_lcars_swep.lua")
+	include("sv_lcars_swep.lua")
 end
 
-function SWEP:SecondaryAttack()
+if CLIENT then
+	include("sh_lcars_swep.lua")
+	include("cl_lcars_swep.lua")
 end

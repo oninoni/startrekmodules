@@ -13,12 +13,12 @@
 ---------------------------------------
 
 ---------------------------------------
---        PADD Entity | Server       --
+--        LCARS SWEP | Server        --
 ---------------------------------------
 
-function SWEP:PrimaryAttack()
-	Star_Trek.PADD:Enable(self)
-end
-
-function SWEP:SecondaryAttack()
+util.AddNetworkString("Star_Trek.LCARS.EnableScreenClicker")
+function Star_Trek.LCARS:EnableScreenClicker(ply, enabled)
+	net.Start("Star_Trek.LCARS.EnableScreenClicker")
+		net.WriteBool(enabled)
+	net.Send(ply)
 end

@@ -19,7 +19,7 @@
 Star_Trek.Util = Star_Trek.Util or {}
 
 if SERVER then
-	AddCSLuaFile("cl_rendermap.lua")
+	--AddCSLuaFile("cl_rendermap.lua")
 
 	include("sv_positions.lua")
 	include("sv_keyvalues.lua")
@@ -31,5 +31,5 @@ if SERVER then
 end
 
 if CLIENT then
-	include("cl_rendermap.lua")
+	--include("cl_rendermap.lua")
 end

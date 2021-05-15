@@ -16,19 +16,6 @@
 --     Tricorder Entity | Server     --
 ---------------------------------------
 
-function SWEP:Reload()
-	if not IsFirstTimePredicted() then return end
-
-	local interfaceData = Star_Trek.LCARS.ActiveInterfaces[self]
-	if istable(interfaceData) and interfaceData.InterfaceName == "tricorder_modes" then return end
-
-	Star_Trek.LCARS:CloseInterface(self, function()
-		Star_Trek.LCARS:OpenInterface(self:GetOwner(), self, "tricorder_modes", {})
-	end)
-end
-
--- TODO: Add Force Close Interface (For Switching Between fast.) Or Callback in Close
-
 function SWEP:PrimaryAttack()
 	if not IsFirstTimePredicted() then return end
 end
