@@ -16,8 +16,6 @@
 --          Damage | Server          --
 ---------------------------------------
 
--- TODO: Rewrite Caching on Star_Trek.Util.MapLoaded + Star_Trek.Sections.Loaded with the Positions preloaded per Type.
-
 function Star_Trek.Damage:DamageSection(deck, sectionId, damageType)
 	local damageTypeData = Star_Trek.Damage.DamageTypes[damageType]
 	if not (istable(damageTypeData) and istable(damageTypeData.StaticProps)) then

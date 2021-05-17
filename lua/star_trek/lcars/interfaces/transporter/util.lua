@@ -149,7 +149,7 @@ function SELF:Energize(sourceMenuTable, targetMenuTable, wideField, textWindow, 
 	local targetPatterns = self:GetPatternData(targetMenuTable, false)
 	Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPatterns, textWindow)
 
-	--ent:EmitSound("star_trek.lcars_transporter_lock") -- TODO: Move
+	--ent:EmitSound("star_trek.lcars_transporter_lock") -- TODO: Move to Activate Transporter and change + Add Check if anything is to beam at all -> Error
 
 	if isfunction(callback) then
 		callback(sourcePatterns, targetPatterns)

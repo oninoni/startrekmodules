@@ -18,6 +18,7 @@
 
 local BUTTON_HEIGHT = 32
 -- TODO: Modularize the size of the buttons. (Interaction, Offsets, etc...)
+-- IMPORTANT: Testing. Button integraion in the util functions is probably still partly hardcoded.
 
 local SELF = WINDOW
 function SELF:OnCreate(windowData)
@@ -44,7 +45,7 @@ function SELF:OnCreate(windowData)
 			self.ButtonWidth,
 			BUTTON_HEIGHT,
 			button.Color,
-			Star_Trek.LCARS.ColorYellow, -- TODO: Modularize
+			button.ActiveColor,
 			button.Name or "[ERROR]",
 			false,
 			false,

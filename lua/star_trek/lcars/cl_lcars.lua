@@ -41,7 +41,8 @@ end)
 -- @param Table windowData
 -- @param Vector iPos
 -- @param Angle iAng
--- @return window
+-- @return Boolean success
+-- @return? Table window
 function Star_Trek.LCARS:LoadWindowData(id, windowData, pos, ang)
 	local window = {
 		WType = windowData.WindowType,
@@ -63,23 +64,25 @@ function Star_Trek.LCARS:LoadWindowData(id, windowData, pos, ang)
 
 	local windowFunctions = self.Windows[windowData.WindowType]
 	if not istable(windowFunctions) then
-		return false -- TODO: Add Errors
+		return false, "Invalid Window Type"
 	end
 	setmetatable(window, {__index = windowFunctions})
 
 	local success = window:OnCreate(windowData)
 	if not success then
-		return false -- TODO: Add Errors
+		return false, "Window Creation Failed"
 	end
 
-	return window
+	return true, window
 end
 
 -- Open a given interface and loads the data for all windows.
 --
 -- @param Number id
 -- @param Table interfaceData
-function Star_Trek.LCARS:OpenMenu(id, interfaceData)
+-- @return Boolean success
+-- @return? Table interface
+function Star_Trek.LCARS:OpenMenu(id, interfaceData) -- TODO: Handle Error in all Calls
 	local interface = {
 		Ent = interfaceData.Ent,
 		IPos = interfaceData.InterfacePos,
@@ -96,7 +99,11 @@ function Star_Trek.LCARS:OpenMenu(id, interfaceData)
 	local pos, ang = Star_Trek.LCARS:GetInterfacePosAngle(interface.Ent, interface.IPos, interface.IAng)
 
 	for i, windowData in pairs(interfaceData.Windows) do
-		local window = Star_Trek.LCARS:LoadWindowData(id .. "_" .. i, windowData, pos, ang)
+		local success, window = Star_Trek.LCARS:LoadWindowData(id .. "_" .. i, windowData, pos, ang)
+		if not success then
+			return false, window
+		end
+
 		if istable(window) then
 			interface.Windows[i] = window
 			window.Interface = interface
@@ -110,6 +117,8 @@ function Star_Trek.LCARS:OpenMenu(id, interfaceData)
 	hook.Run("Star_Trek.LCARS.OpenMenu", id, interfaceData, interface)
 
 	self.ActiveInterfaces[id] = interface
+
+	return true, interface
 end
 
 -- Receive the network message, to open an interface.
@@ -204,7 +213,11 @@ net.Receive("Star_Trek.LCARS.Update", function()
 	if currentWindow.WType ~= windowData.WindowType then
 		local pos, ang = Star_Trek.LCARS:GetInterfacePosAngle(interface.Ent, interface.IPos, interface.IAng)
 
-		local window = Star_Trek.LCARS:LoadWindowData(id .. "_" .. windowId, windowData, pos, ang)
+		local success, window = Star_Trek.LCARS:LoadWindowData(id .. "_" .. windowId, windowData, pos, ang)
+		if not success then
+			print(window)
+		end
+
 		if istable(window) then
 			interface.Windows[windowId] = window
 			window.Interface = interface
@@ -281,7 +294,7 @@ net.Receive("Star_Trek.LCARS.PlayerButtonDown", function()
 	Star_Trek.LCARS:PlayerButtonDown(LocalPlayer(), button)
 end)
 
-function Star_Trek.LCARS:DrawWindow(wPos, wAng, window, animPos, drawCursor) -- TODO: Reduce pow, ang to just window since its now in the window table.
+function Star_Trek.LCARS:DrawWindow(window, animPos, drawCursor)
 	if not window.WVis then
 		return
 	end
@@ -294,7 +307,7 @@ function Star_Trek.LCARS:DrawWindow(wPos, wAng, window, animPos, drawCursor) -- 
 		window.LastPos = pos
 	end
 
-	cam.Start3D2D(wPos, wAng, 1 / window.WScale)
+	cam.Start3D2D(window.WPosG, window.WAngG, 1 / window.WScale)
 		window:OnDraw(window.LastPos or Vector(-width / 2, -height / 2), animPos)
 
 		if drawCursor then
@@ -332,7 +345,7 @@ hook.Add("PostDrawTranslucentRenderables", "Star_Trek.LCARS.Draw", function(isDr
 		render.SuppressEngineLighting(true)
 
 		for _, window in pairs(interface.Windows) do
-			Star_Trek.LCARS:DrawWindow(window.WPosG, window.WAngG, window, interface.AnimPos)
+			Star_Trek.LCARS:DrawWindow(window, interface.AnimPos)
 		end
 
 		surface.SetAlphaMultiplier(1)

@@ -17,7 +17,8 @@
 ---------------------------------------
 
 local BUTTON_HEIGHT = 32
--- TODO: Modularize the size of the buttons. (Interaction, Offsets, etc...)
+-- TODO: Modularize the size of the categories. (Interaction, Offsets, etc...)
+-- IMPORTANT: Testing. Button integraion in the util functions is probably still partly hardcoded. (Will require same code as button_list)
 
 local SELF = WINDOW
 function SELF:OnCreate(windowData)

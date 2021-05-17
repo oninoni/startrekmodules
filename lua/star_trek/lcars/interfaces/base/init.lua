@@ -19,7 +19,7 @@
 local SELF = INTERFACE
 SELF.BaseInterface = nil
 
--- Opens the Interface. Must return the windows in a table. -- TODO: Remove the return?
+-- Opens the Interface. Must return the windows in a table.
 -- 
 -- @param Entity ent
 -- @return Boolean success
@@ -38,7 +38,7 @@ end
 
 -- Closes the Interface.
 function SELF:Close(callback)
-	self.Ent:EmitSound("star_trek.lcars_close") -- TODO: Modularize Sounds
+	self.Ent:EmitSound("star_trek.lcars_close")
 	Star_Trek.LCARS:CloseInterface(self.Ent, callback)
 end
 

@@ -73,7 +73,7 @@ function SWEP:PostDrawViewModel(vm, weapon, ply)
 			window.WPosG, window.WAngG = LocalToWorld(window.WPos, window.WAng, iPos, iAng)
 			window.WVis = true
 
-			Star_Trek.LCARS:DrawWindow(window.WPosG, window.WAngG, window, interface.AnimPos, (not interface.Closing) and IsValid(self.Panel))
+			Star_Trek.LCARS:DrawWindow(window, interface.AnimPos, (not interface.Closing) and IsValid(self.Panel))
 		end
 
 		surface.SetAlphaMultiplier(1)

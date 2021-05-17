@@ -48,7 +48,7 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip, padNumber)
 			Color = color,
 		}
 
-		-- TODO: Temporary disable External
+		-- TODO: Implement External Transporter Sources. (Tricorder Markers, Planetary "Default" Beamdown Locations (Event SWEP?))
 		if name == "External" then
 			button.Disabled = true
 		end
@@ -282,7 +282,7 @@ function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip, padN
 			if className == "prop_physics" then
 				name = "Pattern"
 			end
-			-- TODO: Scanner implementation to identify stuff?
+			-- TODO: Scanner implementation to identify stuff? (Sensors Module)
 
 			table.insert(buttons, {
 				Name = name,

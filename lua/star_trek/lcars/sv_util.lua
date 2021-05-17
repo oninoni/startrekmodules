@@ -145,7 +145,7 @@ end
 -- @param? vararg ...
 -- @return Boolean Success
 -- @return? String/Table error/windowData
-function Star_Trek.LCARS:CreateWindow(windowType, pos, angles, scale, width, height, callback, ...) -- TODO: Rework as self:CreateWindow on the interface Data?
+function Star_Trek.LCARS:CreateWindow(windowType, pos, angles, scale, width, height, callback, ...)
 	local windowFunctions = self.Windows[windowType]
 	if not istable(windowFunctions) then
 		return false, "Invalid Window Type!"
