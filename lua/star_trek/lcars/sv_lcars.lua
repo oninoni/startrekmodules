@@ -82,6 +82,7 @@ function Star_Trek.LCARS:OpenInterface(ply, triggerEntity, interfaceName, ...)
 	net.Broadcast()
 
 	self.ActiveInterfaces[ent] = interfaceData
+	ent.Interface = interfaceData
 
 	return true
 end
@@ -121,6 +122,8 @@ function Star_Trek.LCARS:CloseInterface(ent, callback)
 
 		timer.Create("Star_Trek.LCARS." .. ent:EntIndex(), 0.5, 1, function()
 			Star_Trek.LCARS.ActiveInterfaces[ent] = nil
+			ent.Interface = nil
+
 			timer.Remove("Star_Trek.LCARS." .. ent:EntIndex())
 
 			if isfunction(callback) then
@@ -288,8 +291,6 @@ hook.Add("Star_Trek.LoadModule", "Star_Trek.LCARS.LoadInterfaces", function(modu
 
 	local interfaceDirectory = moduleDirectory .. "interfaces/"
 	local _, interfaceDirectories = file.Find(interfaceDirectory .. "*", "LUA")
-	print(moduleName, interfaceDirectory, interfaceDirectories)
-	PrintTable(interfaceDirectories)
 	for _, interfaceName in pairs(interfaceDirectories) do
 		local success, error = Star_Trek.LCARS:LoadInterface(moduleName, interfaceDirectory, interfaceName)
 		if success then

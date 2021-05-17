@@ -39,9 +39,6 @@ SWEP.CustomViewModelOffset = Vector()
 SWEP.CustomViewModelAngle = Angle()
 SWEP.CustomViewModelScale = 1
 
-SWEP.MenuOffset = Vector()
-SWEP.MenuAngle = Angle()
-
 SWEP.Primary.Ammo = ""
 SWEP.Primary.ClipSize = 0
 SWEP.Primary.DefaultClip = 0
@@ -54,5 +51,12 @@ SWEP.Secondary.Automatic = false
 
 SWEP.IsLCARS = true
 
-function SWEP:Initialize()
-end
+SWEP.MenuOffset = Vector()
+SWEP.MenuAngle = Angle()
+
+SWEP.MenuScale = 50
+SWEP.MenuWidth = 300
+SWEP.MenuHeight = 400
+SWEP.MenuName = "LCARS"
+
+SWEP.Modes = {}

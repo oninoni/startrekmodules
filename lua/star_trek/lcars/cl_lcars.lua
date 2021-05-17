@@ -229,6 +229,22 @@ function Star_Trek.LCARS:PlayerButtonDown(ply, button)
 			continue
 		end
 
+		-- Splitting Inputs, if a weapon and a world Interface is both used.
+		local weapon = ply:GetActiveWeapon()
+		if weapon.IsLCARS then
+			print(button == KEY_E, interface.Ent ~= weapon)
+
+			if button == KEY_E
+			and interface.Ent == weapon then
+				continue
+			end
+
+			if (button == MOUSE_LEFT or button == MOUSE_RIGHT)
+			and interface.Ent ~= weapon then
+				continue
+			end
+		end
+
 		for i, window in pairs(interface.Windows) do
 			if not window.WVis then
 				continue
@@ -265,7 +281,7 @@ net.Receive("Star_Trek.LCARS.PlayerButtonDown", function()
 	Star_Trek.LCARS:PlayerButtonDown(LocalPlayer(), button)
 end)
 
-function Star_Trek.LCARS:DrawWindow(wPos, wAng, window, animPos, drawCursor)
+function Star_Trek.LCARS:DrawWindow(wPos, wAng, window, animPos, drawCursor) -- TODO: Reduce pow, ang to just window since its now in the window table.
 	if not window.WVis then
 		return
 	end
@@ -302,7 +318,6 @@ hook.Add("PostDrawTranslucentRenderables", "Star_Trek.LCARS.Draw", function(isDr
 	if isDrawingSkybox then return end
 	if not wp then return end
 	if (wp.drawing) then return end
-
 
 	for _, interface in pairs(Star_Trek.LCARS.ActiveInterfaces) do
 		if not interface.IVis then

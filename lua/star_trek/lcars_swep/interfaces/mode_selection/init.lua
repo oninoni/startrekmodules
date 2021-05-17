@@ -22,39 +22,49 @@ SELF.BaseInterface = "base"
 function SELF:Open(ent, modes)
 	local buttons = {}
 
-	for _, mode in pairs(modes) do
+	for _, modeName in pairs(modes) do
+		local modeData = Star_Trek.LCARS_SWEP.Modes[modeName]
+		if istable(modeData) then
+			local button = {
+				Name = modeData.Name,
+				Color = modeData.MenuColor,
+				Data = modeName,
+			}
 
-		table.insert(buttons, {
-			Name = "Close",
-			Disabled = false, -- TODO: Maybe disable if not applicable?
-		})
+			if isfunction(modeData.CanActivate) and not modeData:CanActivate(ent) then
+				button.Disabled = true
+			end
+
+			table.insert(buttons, button)
+		end
 	end
 
+	local buttonCount = table.Count(buttons)
 	table.insert(buttons, {
 		Name = "Close",
 	})
 
-	local owner = ent:GetOwner()
-	Star_Trek.LCARS:EnableScreenClicker(owner, true)
+	ent:EnableScreenClicker(true)
 
 	local success, window = Star_Trek.LCARS:CreateWindow(
 		"button_list",
 		Vector(),
 		Angle(),
-		50,
-		300,
-		400,
+		ent.MenuScale or 50,
+		ent.MenuWidth or 300,
+		ent.MenuHeight or 400,
 		function(windowData, interfaceData, buttonId)
-			if buttonId == table.Count(modes) + 1 then
-				interfaceData:Close()
+			ent:EnableScreenClicker(false)
 
-				Star_Trek.LCARS:EnableScreenClicker(owner, false)
-			else
-				print(buttonId)
-			end
+			interfaceData:Close(function()
+				if buttonId < buttonCount + 1 then
+					local buttonData = windowData.Buttons[buttonId]
+					ent:ActivateMode(buttonData.Data)
+				end
+			end)
 		end,
 		buttons,
-		"Tricorder Modes",
+		(ent.MenuName or "LCARS") .. " Modes",
 		"MODES"
 	)
 	if not success then

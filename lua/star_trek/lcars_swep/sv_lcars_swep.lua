@@ -16,9 +16,53 @@
 --        LCARS SWEP | Server        --
 ---------------------------------------
 
-util.AddNetworkString("Star_Trek.LCARS.EnableScreenClicker")
-function Star_Trek.LCARS:EnableScreenClicker(ply, enabled)
-	net.Start("Star_Trek.LCARS.EnableScreenClicker")
-		net.WriteBool(enabled)
-	net.Send(ply)
+-- Load a given mode.
+--
+-- @param String moduleName
+-- @param String modeDirectory
+-- @param String modeName
+-- @return Boolean success
+-- @return String error
+function Star_Trek.LCARS_SWEP:LoadMode(moduleName, modeDirectory, modeName)
+	MODE = {}
+
+	local success = pcall(function()
+		include(modeDirectory .. "/" .. modeName .. "/init.lua")
+	end)
+	if not success then
+		return false, "Cannot load LCARS Mode Type \"" .. modeName .. "\" from module " .. moduleName
+	end
+
+	local baseMode = MODE.BaseMode
+	if isstring(baseMode) then
+		timer.Simple(0, function()
+			local baseModeData = self.Modes[baseMode]
+			if istable(baseModeData) then
+				self.Modes[modeName].Base = baseModeData
+				setmetatable(self.Modes[modeName], {__index = baseModeData})
+			else
+				Star_Trek:Message("Failed, to load Base Mode \"" .. baseMode .. "\"")
+			end
+		end)
+	end
+
+	self.Modes[modeName] = MODE
+	MODE = nil
+
+	return true
 end
+
+hook.Add("Star_Trek.LoadModule", "Star_Trek.LCARS_SWEP.LoadModes", function(moduleName, moduleDirectory)
+	Star_Trek.LCARS_SWEP.Modes = Star_Trek.LCARS_SWEP.Modes or {}
+
+	local modeDirectory = moduleDirectory .. "modes/"
+	local _, modeDirectories = file.Find(modeDirectory .. "*", "LUA")
+	for _, modeName in pairs(modeDirectories) do
+		local success, error = Star_Trek.LCARS_SWEP:LoadMode(moduleName, modeDirectory, modeName)
+		if success then
+			Star_Trek:Message("Loaded LCARS Mode Type \"" .. modeName .. "\" from module " .. moduleName)
+		else
+			Star_Trek:Message(error)
+		end
+	end
+end)

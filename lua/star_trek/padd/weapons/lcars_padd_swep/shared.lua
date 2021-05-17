@@ -22,8 +22,8 @@ SWEP.PrintName = "PADD - Personal Access Display Device"
 
 SWEP.Author = "Oninoni"
 SWEP.Contact = "https://einfach-gmod.de"
-SWEP.Purpose = "???"
-SWEP.Instructions = "???"
+SWEP.Purpose = "Multifunctional device"
+SWEP.Instructions = "Select from installed functions using R"
 
 SWEP.Spawnable = true
 SWEP.AdminOnly = false
@@ -35,11 +35,17 @@ SWEP.CustomViewModelOffset = Vector(2, -10, 0)
 SWEP.CustomViewModelAngle = Angle(55, 90, -90)
 SWEP.CustomViewModelScale = 2
 
-SWEP.MenuOffset = Vector(-0.2, 1.05, 0)
-SWEP.MenuAngle = Angle(0, 0, 0)
-
 SWEP.Slot = 4
 SWEP.SlotPos = 42
 
---SWEP.ViewModel = ""
---SWEP.WorldModel = ""
+SWEP.MenuOffset = Vector(-0.2, 1.05, 0)
+SWEP.MenuAngle = Angle(0, 0, 0)
+
+SWEP.MenuScale = 35
+SWEP.MenuWidth = 325
+SWEP.MenuHeight = 540
+SWEP.MenuName = "PADD"
+
+SWEP.Modes = {
+	"padd_log"
+}

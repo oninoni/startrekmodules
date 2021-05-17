@@ -18,7 +18,7 @@
 
 -- This is a Mapping Tool, not used in gameplay.
 
-local SCALE = 2
+local SCALE = 3
 local RESOLUTION = 1024
 
 local ZOFFSET = 200
@@ -82,13 +82,11 @@ local function renderSaveFile()
 		drawSave()
 		return
 	end
-	
+
 	if Star_Trek.Util.SavingY == SCALE then
 		Star_Trek.Util.Saving = false
 		return
 	end
-
-	print(Star_Trek.Util.SavingX, Star_Trek.Util.SavingY)
 
 	local u1 = Star_Trek.Util.SavingX / SCALE
 	local u2 = u1 + 1 / SCALE

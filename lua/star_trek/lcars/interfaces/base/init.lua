@@ -17,6 +17,7 @@
 ---------------------------------------
 
 local SELF = INTERFACE
+SELF.BaseInterface = nil
 
 -- Opens the Interface. Must return the windows in a table. -- TODO: Remove the return?
 -- 
@@ -36,9 +37,9 @@ function SELF:UpdateWindow(windowId, windowData)
 end
 
 -- Closes the Interface.
-function SELF:Close()
+function SELF:Close(callback)
 	self.Ent:EmitSound("star_trek.lcars_close") -- TODO: Modularize Sounds
-	Star_Trek.LCARS:CloseInterface(self.Ent)
+	Star_Trek.LCARS:CloseInterface(self.Ent, callback)
 end
 
 -- Read out any Data, that can be retrieved externally.

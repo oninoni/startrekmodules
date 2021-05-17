@@ -35,11 +35,17 @@ SWEP.CustomViewModelOffset = Vector(4, -5, 0)
 SWEP.CustomViewModelAngle = Angle(0, 190, -35)
 SWEP.CustomViewModelScale = 1.2
 
-SWEP.MenuOffset = Vector(1, 0, 0)
-SWEP.MenuAngle = Angle(90, 0, 0)
-
 SWEP.Slot = 4
 SWEP.SlotPos = 42
 
---SWEP.ViewModel = ""
---SWEP.WorldModel = "" 
+SWEP.MenuOffset = Vector(1, 0, 0)
+SWEP.MenuAngle = Angle(90, 0, 0)
+
+SWEP.MenuScale = 50
+SWEP.MenuWidth = 300
+SWEP.MenuHeight = 400
+SWEP.MenuName = "Tricorder"
+
+SWEP.Modes = {
+	"padd_log"
+}
