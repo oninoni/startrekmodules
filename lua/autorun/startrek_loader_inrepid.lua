@@ -16,22 +16,31 @@
 --               Loader              --
 ---------------------------------------
 
+local skip = true
+
+local convar = CreateConVar("star_trek_enable", "0")
+if convar:GetBool() then
+	skip = false
+end
+
 local detectMapStrings = {
 	"rp_voyager",
 	"rp_intrepid_v",
 	"rp_intrepid_dev_v",
 }
-
-local skip = true
 for _, mapString in pairs(detectMapStrings) do
 	if string.StartWith(game.GetMap(), mapString) then
 		skip = false
 		continue
 	end
 end
+
 if skip then return end
 
--- TODO: Add override convar for workshop release
+-- TODO: Rework all "if not success" in hooks or NW to display the Error properly.
+-- TODO: Check if all errors are caught.
+-- TODO: Modularize all Sounds in LCARS Windows. (Controllable from LCARS Interfaces)
+-- TODO: "Sensors" Module
 
 Star_Trek = Star_Trek or {}
 Star_Trek.Modules = Star_Trek.Modules or {}
