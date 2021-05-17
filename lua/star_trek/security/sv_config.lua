@@ -13,11 +13,19 @@
 ---------------------------------------
 
 ---------------------------------------
---           Doors | Config          --
+--         Security | Config         --
 ---------------------------------------
 
+Star_Trek.Security.FrameModels = {
+	["models/kingpommes/startrek/intrepid/panel_beam1.mdl"] = {
+		Model = "models/hunter/plates/plate3x3.mdl",
+		Pos = Vector(4, 0, 0),
+		Ang = Angle(90, 0, 0),
+	},
+}
+
 -- List all Door Models with their names.
-Star_Trek.Doors.ModelNames = {
+Star_Trek.Security.DoorModelNames = {
 	["models/kingpommes/startrek/intrepid/door_128a.mdl"]			= "Wide ?x128 A",
 	["models/kingpommes/startrek/intrepid/door_128b.mdl"]			= "Wide ?x128 B",
 	["models/kingpommes/startrek/intrepid/door_104.mdl"]			= "Door ?x104",
@@ -27,6 +35,6 @@ Star_Trek.Doors.ModelNames = {
 	["models/kingpommes/startrek/intrepid/jef_doorvertical.mdl"]	= "Jeffries Ladder Hatch",
 }
 
-Star_Trek.Doors.CloseDelay = 2
+Star_Trek.Security.DoorCloseDelay = 2
 
-Star_Trek.Doors.ThinkDelay = 0.2
+Star_Trek.Security.DoorThinkDelay = 0.2

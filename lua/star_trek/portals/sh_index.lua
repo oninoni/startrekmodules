@@ -16,6 +16,8 @@
 --       Portal Window | Index       --
 ---------------------------------------
 
+-- TODO: Doors Addon removed Compatibility
+
 if SERVER then
 	AddCSLuaFile("cl_portal_window.lua")
 

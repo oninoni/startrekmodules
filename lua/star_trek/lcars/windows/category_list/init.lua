@@ -76,10 +76,7 @@ end
 function SELF:SetCategory(category)
 	self.Selected = category
 
-	local height2 = self.Height2
-	-- TODO: Replace with SetButtons Functions
-	SELF.Base.OnCreate(self, self.Categories[self.Selected].Buttons, self.Title, self.TitleShort, self.HFlip, self.Toggle)
-	self.Height2 = height2
+	self:SetButtons(self.Categories[self.Selected].Buttons)
 end
 
 function SELF:SetSelected(data)
@@ -101,8 +98,8 @@ function SELF:OnPress(interfaceData, ent, buttonId, callback)
 		self:SetCategory(buttonId)
 		shouldUpdate = true
 
-		if isfunction(callback) then
-			callback(self, interfaceData, buttonId, nil)
+		if isfunction(callback) and callback(self, interfaceData, buttonId, nil) == false then
+			shouldUpdate = false
 		end
 	else
 		buttonId = buttonId - categoryCount

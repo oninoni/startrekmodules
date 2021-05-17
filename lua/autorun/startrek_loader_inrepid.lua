@@ -39,8 +39,8 @@ if skip then return end
 
 -- TODO: Rework all "if not success" in hooks or NW to display the Error properly.
 -- TODO: Check if all errors are caught.
--- TODO: Modularize all Sounds in LCARS Windows. (Controllable from LCARS Interfaces)
 -- TODO: "Sensors" Module
+-- TODO: "Alert" Module + LCARS Animations
 
 Star_Trek = Star_Trek or {}
 Star_Trek.Modules = Star_Trek.Modules or {}

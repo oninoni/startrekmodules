@@ -122,7 +122,7 @@ function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPattern
 						end
 
 						self:BeamObject(ent, targetPattern.Pos, sourcePattern.Pad, targetPattern.Pad, false)
-						textWindow:AddLine("Dematerialising Object...") -- TODO: Sensor Detection of ent Type (Like Security Menu also needs.)
+						textWindow:AddLine("Dematerialising Object...") -- TODO: Sensor Detection of ent Type (Sensors Module)
 
 						i = i + 1
 					elseif isbool(targetPattern) then
@@ -142,7 +142,7 @@ function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPattern
 		for _, ent in pairs(remainingEntities) do
 			table.insert(Star_Trek.Transporter.Buffer.Entities, ent)
 			self:BeamObject(ent, Vector(), ent.Pad, nil, true)
-			textWindow:AddLine("Dematerialising Object...") -- TODO: Sensor Detection of ent Type (Like Security Menu also needs.)
+			textWindow:AddLine("Dematerialising Object...") -- TODO: Sensor Detection of ent Type (Sensors Module)
 			textWindow:AddLine("Warning: No Target Pattern Available! Storing in Buffer!", Star_Trek.LCARS.ColorRed)
 		end
 	end

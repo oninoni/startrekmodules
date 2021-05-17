@@ -71,8 +71,12 @@ function SELF:Open(ent)
 					end
 
 					interfaceData:Close()
+
+					return false
 				elseif categoryId == categoryCount + 2 then
 					windowData:Close()
+
+					return false
 				end
 			end
 		end,

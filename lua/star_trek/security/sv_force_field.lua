@@ -13,44 +13,10 @@
 ---------------------------------------
 
 ---------------------------------------
---        Force Field | Server       --
+--   Security Force Fields | Server  --
 ---------------------------------------
 
-local function loadForceField(deck, sectionId, models)
-	local forceFields = {}
-
-	for modelName, data in pairs(models) do
-		local props = Star_Trek.Util:GetStaticPropsByModel(modelName, function(entry)
-			local s, _ = Star_Trek.Sections:IsInSection(deck, sectionId, entry.Origin)
-
-			if s then
-				return true
-			end
-
-			return false
-		end)
-
-		forceFields[modelName] = {
-			Props = props,
-			Data = data,
-		}
-	end
-
-	return forceFields
-end
-
-hook.Add("Star_Trek.Util.MapLoaded", "Star_Trek.Force_Field.Load", function()
-	timer.Simple(0, function()
-		for deck, deckData in pairs(Star_Trek.Sections.Decks) do
-			for sectionId, sectionData in pairs(deckData.Sections) do
-				sectionData.FrameForceFields = loadForceField(deck, sectionId, Star_Trek.Force_Field.FrameModels)
-				sectionData.ActiveForceFields = {}
-			end
-		end
-	end)
-end)
-
-function Star_Trek.Force_Field:Enable(deck, sectionId)
+function Star_Trek.Security:EnableForceFields(deck, sectionId)
 	local sectionData, error = Star_Trek.Sections:GetSection(deck, sectionId)
 	if not sectionData then
 		return false, error
@@ -90,10 +56,10 @@ function Star_Trek.Force_Field:Enable(deck, sectionId)
 	return true, positions
 end
 
-function Star_Trek.Force_Field:EnableSections(deck, sectionIds)
+function Star_Trek.Security:EnableForceFieldsInSections(deck, sectionIds)
 	local positions = {}
 	for _, sectionId in pairs(sectionIds) do
-		local success, sectionPositions = Star_Trek.Force_Field:Enable(deck, sectionId)
+		local success, sectionPositions = self:EnableForceFields(deck, sectionId)
 		if not success then
 			return false, sectionPositions
 		end
@@ -110,7 +76,7 @@ function Star_Trek.Force_Field:EnableSections(deck, sectionIds)
 	return positions
 end
 
-function Star_Trek.Force_Field:Disable(deck, sectionId)
+function Star_Trek.Security:DisableForceFields(deck, sectionId)
 	local sectionData, error = Star_Trek.Sections:GetSection(deck, sectionId)
 	if not sectionData then
 		return false, error
@@ -128,10 +94,10 @@ function Star_Trek.Force_Field:Disable(deck, sectionId)
 	return true, positions
 end
 
-function Star_Trek.Force_Field:DisableSections(deck, sectionIds)
+function Star_Trek.Security:DisableForceFieldsInSections(deck, sectionIds)
 	local positions = {}
 	for _, sectionId in pairs(sectionIds) do
-		local success, sectionPositions = Star_Trek.Force_Field:Disable(deck, sectionId)
+		local success, sectionPositions = self:DisableForceFields(deck, sectionId)
 		if not success then
 			return false, sectionPositions
 		end
@@ -147,3 +113,37 @@ function Star_Trek.Force_Field:DisableSections(deck, sectionIds)
 
 	return positions
 end
+
+local function loadForceField(deck, sectionId, models)
+	local forceFields = {}
+
+	for modelName, data in pairs(models) do
+		local props = Star_Trek.Util:GetStaticPropsByModel(modelName, function(entry)
+			local s, _ = Star_Trek.Sections:IsInSection(deck, sectionId, entry.Origin)
+
+			if s then
+				return true
+			end
+
+			return false
+		end)
+
+		forceFields[modelName] = {
+			Props = props,
+			Data = data,
+		}
+	end
+
+	return forceFields
+end
+
+hook.Add("Star_Trek.Util.MapLoaded", "Star_Trek.Security.Load", function()
+	timer.Simple(0, function()
+		for deck, deckData in pairs(Star_Trek.Sections.Decks) do
+			for sectionId, sectionData in pairs(deckData.Sections) do
+				sectionData.FrameForceFields = loadForceField(deck, sectionId, Star_Trek.Security.FrameModels)
+				sectionData.ActiveForceFields = {}
+			end
+		end
+	end)
+end)

@@ -13,21 +13,20 @@
 ---------------------------------------
 
 ---------------------------------------
---           Doors | Server          --
+--      Security Doors | Server      --
 ---------------------------------------
 
-Star_Trek.Doors.NextThink = CurTime()
-Star_Trek.Doors.Doors = Star_Trek.Doors.Doors or {}
+Star_Trek.Security.Doors = Star_Trek.Security.Doors or {}
 
 -- Setting up Doors.
 local setupDoors = function()
-	Star_Trek.Doors.Doors = {}
+	Star_Trek.Security.Doors = {}
 
 	for _, ent in pairs(ents.GetAll()) do
 		ent.DoorLastSequenceStart = CurTime()
 
-		if ent:GetClass() == "prop_dynamic" and Star_Trek.Doors.ModelNames[ent:GetModel()] then
-			Star_Trek.Doors.Doors[ent] = true
+		if ent:GetClass() == "prop_dynamic" and Star_Trek.Security.DoorModelNames[ent:GetModel()] then
+			Star_Trek.Security.Doors[ent] = true
 		end
 	end
 end
@@ -36,7 +35,7 @@ hook.Add("PostCleanupMap", "Star_Trek.DoorPostCleanupMap", setupDoors)
 
 -- Block Doors aborting animations.
 hook.Add("AcceptInput", "Star_Trek.BlockDoorIfAlreadyDooring", function(ent, input, activator, caller, value)
-	if Star_Trek.Doors.Doors[ent] and input == "SetAnimation" then
+	if Star_Trek.Security.Doors[ent] and input == "SetAnimation" then
 		-- Prevent the same animation again.
 		local currentSequence = ent:GetSequence()
 		local sequence = ent:LookupSequence(value)
@@ -100,7 +99,7 @@ end)
 
 -- Handle being locked. (Autoclose)
 hook.Add("Star_Trek.ChangedKeyValue", "Star_Trek.LockDoors", function(ent, key, value)
-	if key == "lcars_locked" and isstring(value) and Star_Trek.Doors.Doors[ent] then
+	if key == "lcars_locked" and isstring(value) and Star_Trek.Security.Doors[ent] then
 		if value == "1" and ent.Open then
 			ent:Fire("SetAnimation", "close")
 		end
@@ -117,8 +116,6 @@ hook.Add("Star_Trek.ChangedKeyValue", "Star_Trek.LockDoors", function(ent, key, 
 	end
 end)
 
-local traceLine = util.TraceLine
-
 -- Open door when pressing use on them.
 hook.Add("KeyPress", "Star_Trek.OpenDoors", function(ply, key)
 	if key == IN_USE then
@@ -129,7 +126,7 @@ hook.Add("KeyPress", "Star_Trek.OpenDoors", function(ply, key)
 		})
 
 		local ent = trace.Entity
-		if IsValid(ent) and Star_Trek.Doors.Doors[ent] then
+		if IsValid(ent) and Star_Trek.Security.Doors[ent] then
 			local distance = ent:GetPos():Distance(ply:EyePos())
 			if distance < 64 then
 				ent:Fire("SetAnimation", "open")
@@ -180,18 +177,20 @@ local function handleParterDoors(ent)
 	return allDoorsFree
 end
 
--- Think hook for auto-closing the doors.
-hook.Add("Think", "Star_Trek.DoorThink", function()
-	if Star_Trek.Doors.NextThink > CurTime() then return end
-	Star_Trek.Doors.NextThink = CurTime() + Star_Trek.Doors.ThinkDelay
+Star_Trek.Security.NextDoorThink = CurTime()
 
-	for ent, _ in pairs(Star_Trek.Doors.Doors or {}) do
+-- Think hook for auto-closing the doors.
+hook.Add("Think", "Star_Trek.Security.DoorThink", function()
+	if Star_Trek.Security.NextDoorThink > CurTime() then return end
+	Star_Trek.Security.NextDoorThink = CurTime() + Star_Trek.Security.DoorThinkDelay
+
+	for ent, _ in pairs(Star_Trek.Security.Doors or {}) do
 		if ent.Open then
 			if checkPlayers(ent) then
 				ent.CloseAt = nil
 			else
 				if not ent.CloseAt then
-					ent.CloseAt = CurTime() + Star_Trek.Doors.CloseDelay
+					ent.CloseAt = CurTime() + Star_Trek.Security.DoorCloseDelay
 					continue
 				end
 

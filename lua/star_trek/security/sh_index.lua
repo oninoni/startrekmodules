@@ -13,15 +13,20 @@
 ---------------------------------------
 
 ---------------------------------------
---       Portal Window | Server      --
+--          Security | Index         --
 ---------------------------------------
 
--- Add all portal visleafs to server's potentially visible set
-hook.Add("SetupPlayerVisibility", "WorldWindows_AddPVS", function(ply, ent)
-	for _, portal in ipairs(ents.FindByClass("linked_portal_window")) do
-		local exit = portal:GetExit()
-		if IsValid(exit) then
-			AddOriginToPVS(exit:GetPos())
-		end
-	end
-end)
+Star_Trek.Security = Star_Trek.Security or {}
+
+if SERVER then
+	AddCSLuaFile("sh_sounds.lua")
+
+	include("sh_sounds.lua")
+	include("sv_config.lua")
+	include("sv_doors.lua")
+	include("sv_force_field.lua")
+end
+
+if CLIENT then
+	include("sh_sounds.lua")
+end

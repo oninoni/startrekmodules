@@ -187,7 +187,7 @@ function SELF:CreateActionWindow(mode)
 			-------- Lockdown --------
 			elseif buttonName == "Lock Doors" then
 				local doors = Star_Trek.Sections:GetInSections(deck, sectionIds, function(objects, ent)
-					if Star_Trek.Doors.Doors[ent] then
+					if Star_Trek.Security.Doors[ent] then
 						return
 					end
 
@@ -211,7 +211,7 @@ function SELF:CreateActionWindow(mode)
 				return true
 			elseif buttonName == "Unlock Doors" then
 				local doors = Star_Trek.Sections:GetInSections(deck, sectionIds, function(objects, ent)
-					if Star_Trek.Doors.Doors[ent] then
+					if Star_Trek.Security.Doors[ent] then
 						return
 					end
 
@@ -234,7 +234,7 @@ function SELF:CreateActionWindow(mode)
 
 				return true
 			elseif buttonName == "Enable Forcefields" then
-				local forceFieldPositions, error = Star_Trek.Force_Field:EnableSections(deck, sectionIds)
+				local forceFieldPositions, error = Star_Trek.Security:EnableForceFieldsInSections(deck, sectionIds)
 				if not forceFieldPositions then
 					Star_Trek:Message(error)
 					return
@@ -262,7 +262,7 @@ function SELF:CreateActionWindow(mode)
 
 				return true
 			elseif buttonName == "Disable Forcefields" then
-				local forceFieldPositions, error = Star_Trek.Force_Field:DisableSections(deck, sectionIds)
+				local forceFieldPositions, error = Star_Trek.Security:DisableForceFieldsInSections(deck, sectionIds)
 				if not forceFieldPositions then
 					Star_Trek:Message(error)
 					return
@@ -291,14 +291,14 @@ function SELF:CreateActionWindow(mode)
 				return true
 			elseif buttonName == "Unlock All" then
 				local doors = Star_Trek.Sections:GetInSections(deck, sectionIds, function(objects, ent)
-					if Star_Trek.Doors.Doors[ent] then
+					if Star_Trek.Security.Doors[ent] then
 						return
 					end
 
 					return true
 				end, true)
 
-				local forceFieldPositions, error = Star_Trek.Force_Field:DisableSections(deck, sectionIds)
+				local forceFieldPositions, error = Star_Trek.Security:DisableForceFieldsInSections(deck, sectionIds)
 				if not forceFieldPositions then
 					Star_Trek:Message(error)
 					return
