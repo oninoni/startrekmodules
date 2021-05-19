@@ -16,6 +16,8 @@
 --          Portals | Index          --
 ---------------------------------------
 
+Star_Trek:RequireModules()
+
 -- TODO: Doors Addon removed Compatibility
 
 if SERVER then

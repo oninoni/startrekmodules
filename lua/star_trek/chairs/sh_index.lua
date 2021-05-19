@@ -16,6 +16,8 @@
 --           Chairs | Index          --
 ---------------------------------------
 
+Star_Trek:RequireModules()
+
 Star_Trek.Chairs = Star_Trek.Chairs or {}
 
 if SERVER then

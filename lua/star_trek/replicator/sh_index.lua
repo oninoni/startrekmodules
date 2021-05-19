@@ -16,6 +16,8 @@
 --         Replicator | Index        --
 ---------------------------------------
 
+Star_Trek:RequireModules("util", "lcars")
+
 Star_Trek.Replicator = Star_Trek.Replicator or {}
 
 if SERVER then

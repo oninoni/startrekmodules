@@ -16,6 +16,8 @@
 --           LCARS | Index           --
 ---------------------------------------
 
+Star_Trek:RequireModules("util")
+
 Star_Trek.LCARS = Star_Trek.LCARS or {}
 
 if SERVER then

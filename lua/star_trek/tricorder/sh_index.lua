@@ -16,6 +16,8 @@
 --         Tricorder | Index         --
 ---------------------------------------
 
+Star_Trek:RequireModules("lcars_swep")
+
 Star_Trek.Tricorder = Star_Trek.Tricorder or {}
 
 if SERVER then

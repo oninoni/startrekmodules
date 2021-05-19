@@ -16,6 +16,8 @@
 --           Damage | Index          --
 ---------------------------------------
 
+Star_Trek:RequireModules("lcars", "lcars_swep", "sections")
+
 Star_Trek.Damage = Star_Trek.Damage or {}
 
 if CLIENT then

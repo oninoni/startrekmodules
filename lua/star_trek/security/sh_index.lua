@@ -16,6 +16,8 @@
 --          Security | Index         --
 ---------------------------------------
 
+Star_Trek:RequireModules("sections", "lcars")
+
 Star_Trek.Security = Star_Trek.Security or {}
 
 if SERVER then

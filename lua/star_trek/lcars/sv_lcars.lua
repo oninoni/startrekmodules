@@ -32,6 +32,8 @@ util.AddNetworkString("Star_Trek.LCARS.Open")
 -- @return Boolean Success
 -- @return? String error
 function Star_Trek.LCARS:OpenInterface(ply, triggerEntity, interfaceName, ...)
+	print(ply, triggerEntity, interfaceName)
+
 	local success, ent = self:GetInterfaceEntity(ply, triggerEntity)
 	if not success then
 		return false, ent

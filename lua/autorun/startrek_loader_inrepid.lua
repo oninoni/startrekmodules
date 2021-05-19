@@ -131,6 +131,16 @@ function Star_Trek:LoadModule(name)
 	Star_Trek:Message("Loaded Module \"" .. name .. "\"")
 end
 
+function Star_Trek:RequireModules(...)
+	for _, moduleName in pairs({...}) do
+		if Star_Trek.Modules[moduleName] then
+			self:LoadModule(moduleName)
+		else
+			self:Message("Module \"" .. moduleName .. "\" is required! Please enable it!")
+		end
+	end
+end
+
 hook.Add("PostGamemodeLoaded", "Star_Trek.Load", function()
 	if SERVER then
 		AddCSLuaFile("star_trek/config.lua")

@@ -16,6 +16,8 @@
 --         Turbolift | Index         --
 ---------------------------------------
 
+Star_Trek:RequireModules("util", "lcars")
+
 Star_Trek.Turbolift = Star_Trek.Turbolift or {}
 
 if SERVER then

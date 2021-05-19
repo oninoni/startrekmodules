@@ -16,6 +16,8 @@
 --        Transporter | Index        --
 ---------------------------------------
 
+Star_Trek:RequireModules("util", "sections", "lcars")
+
 Star_Trek.Transporter = Star_Trek.Transporter or {}
 
 if SERVER then

@@ -47,5 +47,4 @@ SWEP.MenuHeight = 400
 SWEP.MenuName = "Tricorder"
 
 SWEP.Modes = {
-	"padd_log"
 }

@@ -101,5 +101,6 @@ end
 
 -- Wrap for use in Map.
 function Star_Trek.LCARS:OpenSecurityMenu()
+	print("Opening...")
 	Star_Trek.LCARS:OpenInterface(TRIGGER_PLAYER, CALLER, "bridge_security")
 end

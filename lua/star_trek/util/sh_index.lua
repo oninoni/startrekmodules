@@ -16,6 +16,8 @@
 --         Utilities | Index         --
 ---------------------------------------
 
+Star_Trek:RequireModules()
+
 Star_Trek.Util = Star_Trek.Util or {}
 
 if SERVER then

@@ -16,6 +16,8 @@
 --         LCARS SWEP | Index        --
 ---------------------------------------
 
+Star_Trek:RequireModules("lcars")
+
 Star_Trek.LCARS_SWEP = Star_Trek.LCARS_SWEP or {}
 
 if SERVER then

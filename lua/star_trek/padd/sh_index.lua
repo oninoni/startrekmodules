@@ -16,6 +16,8 @@
 --            PADD | Index           --
 ---------------------------------------
 
+Star_Trek:RequireModules("lcars_swep")
+
 Star_Trek.PADD = Star_Trek.PADD or {}
 
 if SERVER then
