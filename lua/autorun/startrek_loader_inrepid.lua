@@ -37,13 +37,14 @@ end
 
 if skip then return end
 
--- TODO: Rework all "if not success" in hooks or NW to display the Error properly.
+-- TODO: Rework all "if not success", to display the Error properly. (Mostly Net, Hook and Clientside Errors)
 -- TODO: Check if all errors are caught.
--- TODO: "Sensors" Module
--- TODO: "Alert" Module + LCARS Animations
+-- TODO: "Sensors" Module.
+-- TODO: "Alert" Module + LCARS Animations.
 
 Star_Trek = Star_Trek or {}
 Star_Trek.Modules = Star_Trek.Modules or {}
+Star_Trek.LoadedModules = Star_Trek.LoadedModules or {}
 
 function Star_Trek:Message(msg)
 	if msg then
@@ -51,7 +52,9 @@ function Star_Trek:Message(msg)
 	end
 end
 
-local function loadModule(name)
+function Star_Trek:LoadModule(name)
+	if Star_Trek.LoadedModules[name] then return end
+
 	local moduleDirectory = "star_trek/" .. name .. "/"
 
 	if SERVER then
@@ -123,6 +126,8 @@ local function loadModule(name)
 
 	hook.Run("Star_Trek.LoadModule", name, moduleDirectory)
 
+	Star_Trek.LoadedModules[name] = true
+
 	Star_Trek:Message("Loaded Module \"" .. name .. "\"")
 end
 
@@ -131,11 +136,15 @@ hook.Add("PostGamemodeLoaded", "Star_Trek.Load", function()
 		AddCSLuaFile("star_trek/config.lua")
 	end
 
+	Star_Trek.LoadedModules = {}
+
+	-- TODO: Rewrite for using Dependencies
+
 	include("star_trek/config.lua")
 
-	for moduleName, enabled in SortedPairs(Star_Trek.Modules) do
+	for moduleName, enabled in pairs(Star_Trek.Modules) do
 		if enabled then
-			loadModule(moduleName)
+			Star_Trek:LoadModule(moduleName)
 		end
 	end
 end)

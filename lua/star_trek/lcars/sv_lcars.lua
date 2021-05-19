@@ -21,7 +21,7 @@
 ---------------------------------------
 
 util.AddNetworkString("Star_Trek.LCARS.Open")
-util.AddNetworkString("Star_Trek.LCARS.Sync") -- TODO: Sync on Join Active Interfaces
+-- TODO: Sync on Join Active Interfaces
 
 -- Opens an interface of the given name.
 --

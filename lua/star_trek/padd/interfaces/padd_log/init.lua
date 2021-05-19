@@ -19,7 +19,7 @@
 local SELF = INTERFACE
 SELF.BaseInterface = "base"
 
-function SELF:Open(ent)
+function SELF:Open(ent, title, lines)
 	local success, window = Star_Trek.LCARS:CreateWindow(
 		"text_entry",
 		Vector(),
@@ -31,9 +31,10 @@ function SELF:Open(ent)
 
 		end,
 		Color(255, 255, 255),
-		"Logs",
+		title or "Logs",
 		"LOGS",
-		false
+		false,
+		lines
 	)
 	if not success then
 		return false, window
@@ -44,10 +45,13 @@ end
 
 function SELF:SetData(logType, lines)
 	local window = self.Windows[1]
-	if istable(window) then
-		window.Title = logType
-		window.Lines = lines
+	window.Title = logType
+	window.Lines = lines
 
-		window:Update()
-	end
+	window:Update()
+end
+
+function SELF:GetData()
+	local window = self.Windows[1]
+	return window.Title, window.Lines
 end

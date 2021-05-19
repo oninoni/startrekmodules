@@ -16,11 +16,6 @@
 --       Damages SWEP | Server       --
 ---------------------------------------
 
+-- Override, to prevent Mode Switching.
 function SWEP:Reload()
-end
-
-function SWEP:PrimaryAttack()
-end
-
-function SWEP:SecondaryAttack()
 end

@@ -26,18 +26,31 @@ function MODE:CanActivate(ent)
 end
 
 function MODE:Activate(ent)
+	print("A", self.Title, self.LogData)
+
 	local ply = ent:GetOwner()
 	if not IsValid(ply) then
 		return false, "Invalid Owner"
 	end
 
-	Star_Trek.LCARS:OpenInterface(ply, ent, "padd_log")
+	Star_Trek.LCARS:OpenInterface(ply, ent, "padd_log", self.Title, self.LogData)
+
+	return true
 end
 
-function MODE:Deactivate(ent)
+function MODE:Deactivate(ent, callback)
+	print("D", self.Title, self.LogData)
+
 	if istable(ent.Interface) then
-		ent.Interface:Close()
+		self.Title, self.LogData = ent.Interface:GetData()
+
+		ent.Interface:Close(callback)
+
+		return true
 	end
+
+	callback()
+	return true
 end
 
 function MODE:PrimaryAttack(ent)

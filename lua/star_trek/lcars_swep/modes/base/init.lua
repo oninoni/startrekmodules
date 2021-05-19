@@ -26,9 +26,12 @@ function MODE:CanActivate(ent)
 end
 
 function MODE:Activate(ent)
+	return false, "Not Implemented"
 end
 
-function MODE:Deactivate(ent)
+function MODE:Deactivate(ent, callback)
+	callback()
+	return false, "Not Implemented"
 end
 
 function MODE:PrimaryAttack(ent)

@@ -59,8 +59,8 @@ end
 -- @param Number buttonCount
 -- @param Number offset
 -- @return Number yPos
-function Star_Trek.LCARS:GetButtonYPos(listHeight, i, buttonCount, offset)
-	local y = (i - 1) * 35 + offset
+function Star_Trek.LCARS:GetButtonYPos(listHeight, buttonHeight, i, buttonCount, offset)
+	local y = (i - 1) * (buttonHeight + 2) + offset
 
 	return y
 end

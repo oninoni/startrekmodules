@@ -17,7 +17,7 @@
 ---------------------------------------
 
 local SELF = WINDOW
-function SELF:OnCreate(buttons, title, titleShort, hFlip, toggle)
+function SELF:OnCreate(buttons, title, titleShort, hFlip, toggle, buttonHeight)
 	local success = SELF.Base.OnCreate(self, title, titleShort, hFlip)
 	if not success then
 		return false
@@ -27,6 +27,7 @@ function SELF:OnCreate(buttons, title, titleShort, hFlip, toggle)
 		return false
 	end
 
+	self:SetButtonHeight(buttonHeight)
 	self:SetButtons(buttons)
 	self:SetToggle(toggle)
 
@@ -67,6 +68,10 @@ function SELF:SetToggle(toggle)
 	self.Toggle = toggle or false
 end
 
+function SELF:SetButtonHeight(buttonHeight)
+	self.ButtonHeight = buttonHeight or 32
+end
+
 function SELF:GetSelected()
 	local data = {}
 
@@ -103,7 +108,7 @@ function SELF:OnPress(interfaceData, ent, buttonId, callback)
 	end
 
 	if shouldUpdate then
-		ent:EmitSound("star_trek.lcars_beep") -- Modularize Sound
+		ent:EmitSound("star_trek.lcars_beep")
 	end
 
 	return shouldUpdate

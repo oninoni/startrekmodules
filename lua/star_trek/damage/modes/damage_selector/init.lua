@@ -13,17 +13,31 @@
 ---------------------------------------
 
 ---------------------------------------
---          Portals | Index          --
+--  LCARS SWEP Mode: Damage | Server --
 ---------------------------------------
 
--- TODO: Doors Addon removed Compatibility
+-- TODO: Implement
 
-if SERVER then
-	AddCSLuaFile("cl_portals.lua")
+MODE.BaseMode = "base"
 
-	include("sv_portals.lua")
+MODE.Name = "Damage Selector"
+MODE.MenuColor = Star_Trek.LCARS.ColorRed
+
+function MODE:CanActivate(ent)
+	return false
 end
 
-if CLIENT then
-	include("cl_portals.lua")
+function MODE:Activate(ent)
+	return false, "Not Implemented"
+end
+
+function MODE:Deactivate(ent, callback)
+	callback()
+	return false, "Not Implemented"
+end
+
+function MODE:PrimaryAttack(ent)
+end
+
+function MODE:SecondaryAttack(ent)
 end

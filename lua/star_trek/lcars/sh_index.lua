@@ -16,8 +16,6 @@
 --           LCARS | Index           --
 ---------------------------------------
 
--- TODO: Modularize all Sounds in LCARS Windows. (Controllable from LCARS Interfaces)
-
 Star_Trek.LCARS = Star_Trek.LCARS or {}
 
 if SERVER then

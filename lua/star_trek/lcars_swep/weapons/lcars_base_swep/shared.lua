@@ -60,3 +60,4 @@ SWEP.MenuHeight = 400
 SWEP.MenuName = "LCARS"
 
 SWEP.Modes = {}
+SWEP.DefaultMode = false

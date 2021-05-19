@@ -22,26 +22,31 @@ SWEP.PrintName = "Damages SWEP"
 
 SWEP.Author = "Oninoni"
 SWEP.Contact = "https://einfach-gmod.de"
-SWEP.Purpose = "???"
-SWEP.Instructions = "???"
+SWEP.Purpose = "Admin Device"
+SWEP.Instructions = "Create Damage around the ship."
 
 SWEP.Spawnable = true
 SWEP.AdminOnly = false
 
+SWEP.WorldModel = "models/nova_canterra/props_items/padd_large.mdl"
+
+SWEP.CustomViewModel = "models/nova_canterra/props_items/padd_large.mdl"
+SWEP.CustomViewModelOffset = Vector(2, -10, 0)
+SWEP.CustomViewModelAngle = Angle(55, 90, -90)
+SWEP.CustomViewModelScale = 2
+
 SWEP.Slot = 4
 SWEP.SlotPos = 42
 
-SWEP.ViewModelFOV = 70
+SWEP.MenuOffset = Vector(-0.2, 1.05, 0)
+SWEP.MenuAngle = Angle(0, 0, 0)
 
---SWEP.ViewModel = ""
---SWEP.WorldModel = ""
+SWEP.MenuScale = 35
+SWEP.MenuWidth = 325
+SWEP.MenuHeight = 540
+SWEP.MenuName = "PADD"
 
-SWEP.Primary.Ammo = ""
-SWEP.Primary.ClipSize = 0
-SWEP.Primary.DefaultClip = 0
-SWEP.Primary.Automatic = false
-
-SWEP.Secondary.Ammo = ""
-SWEP.Secondary.ClipSize = 0
-SWEP.Secondary.DefaultClip = 0
-SWEP.Secondary.Automatic = false
+SWEP.Modes = {
+	"damage_selector"
+}
+SWEP.DefaultMode = "damage_selector"

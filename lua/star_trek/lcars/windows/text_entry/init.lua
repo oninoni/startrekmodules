@@ -50,7 +50,7 @@ function SELF:OnPress(interfaceData, ent, buttonId, callback)
 	if buttonId == 1 then
 		self.Active = not self.Active
 
-		ent:EmitSound("star_trek.lcars_beep") -- Modularize Sound
+		ent:EmitSound("star_trek.lcars_beep")
 
 		return true
 	end

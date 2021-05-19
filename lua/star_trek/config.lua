@@ -20,11 +20,10 @@
 Star_Trek.Modules["util"] = true
 Star_Trek.Modules["portals"] = true
 
-Star_Trek.Modules["chairs"] = true
-
 Star_Trek.Modules["lcars"] = true
-
 Star_Trek.Modules["lcars_swep"] = true
+
+Star_Trek.Modules["chairs"] = true
 Star_Trek.Modules["tricorder"] = true
 Star_Trek.Modules["padd"] = true
 

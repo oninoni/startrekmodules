@@ -99,7 +99,7 @@ function SELF:ProcessText(lines)
 end
 
 function SELF:OnPress(pos, animPos)
-	return 1
+	return 1 -- TODO: Check if Text Area was clicked.
 end
 
 function SELF:OnDraw(pos, animPos)

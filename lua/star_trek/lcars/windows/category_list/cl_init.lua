@@ -16,16 +16,14 @@
 --    LCARS Category List | Client   --
 ---------------------------------------
 
-local BUTTON_HEIGHT = 32
--- TODO: Modularize the size of the categories. (Interaction, Offsets, etc...)
--- IMPORTANT: Testing. Button integraion in the util functions is probably still partly hardcoded. (Will require same code as button_list)
-
 local SELF = WINDOW
 function SELF:OnCreate(windowData)
 	local success = SELF.Base.OnCreate(self, windowData)
 	if not success then
 		return false
 	end
+
+	self.CategoryButtonHeight = windowData.CategoryButtonHeight
 
 	self.Selected = windowData.Selected
 	self.Categories = windowData.Categories
@@ -63,7 +61,7 @@ function SELF:OnCreate(windowData)
 			categoryData.MaterialData = Star_Trek.LCARS:CreateButton(
 				self.Id .. "_Cat_" .. rowId .. "_" .. butId,
 				rowData.Width,
-				BUTTON_HEIGHT,
+				self.CategoryButtonHeight,
 				categoryData.Color,
 				Star_Trek.LCARS.ColorYellow,
 				categoryData.Name or "[ERROR]",
@@ -119,9 +117,9 @@ function SELF:OnPress(pos, animPos)
 			if categoryData.Disabled then continue end
 
 			local xRow = self.XOffset + ((butId - 0.5) - rowData.N / 2) * rowData.Width
-			local y = self.CategoryStart + (rowId - 1) * 35
+			local y = self.CategoryStart + (rowId - 1) * (self.CategoryButtonHeight + 3)
 
-			if self:IsButtonHovered(xRow, y, rowData.Width - 3, 32, pos) then
+			if self:IsButtonHovered(xRow, y, rowData.Width - 3, self.CategoryButtonHeight, pos) then
 				return categoryData.Id
 			end
 		end
@@ -139,9 +137,9 @@ function SELF:OnDraw(pos, animPos)
 	for rowId, rowData in pairs(self.CategoryRows) do
 		for butId, categoryData in pairs(rowData.Categories) do
 			local xRow = self.XOffset + ((butId - 0.5) - rowData.N / 2) * rowData.Width
-			local y = self.CategoryStart + (rowId - 1) * 35
+			local y = self.CategoryStart + (rowId - 1) * (self.CategoryButtonHeight + 3)
 
-			local state = Star_Trek.LCARS:GetButtonState(categoryData.Disabled, self:IsButtonHovered(xRow, y, rowData.Width - 3, 32, pos), self.Selected == categoryData.Id)
+			local state = Star_Trek.LCARS:GetButtonState(categoryData.Disabled, self:IsButtonHovered(xRow, y, rowData.Width - 3, self.CategoryButtonHeight, pos), self.Selected == categoryData.Id)
 
 			Star_Trek.LCARS:RenderButton(xRow, y, categoryData.MaterialData, state)
 		end

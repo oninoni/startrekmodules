@@ -16,10 +16,6 @@
 --     LCARS Button List | Client    --
 ---------------------------------------
 
-local BUTTON_HEIGHT = 32
--- TODO: Modularize the size of the buttons. (Interaction, Offsets, etc...)
--- IMPORTANT: Testing. Button integraion in the util functions is probably still partly hardcoded.
-
 local SELF = WINDOW
 function SELF:OnCreate(windowData)
 	local success = SELF.Base.OnCreate(self, windowData)
@@ -27,6 +23,7 @@ function SELF:OnCreate(windowData)
 		return false
 	end
 
+	self.ButtonHeight = windowData.ButtonHeight
 	self.Buttons = windowData.Buttons
 	self.MaxN = table.maxn(self.Buttons)
 
@@ -43,7 +40,7 @@ function SELF:OnCreate(windowData)
 		button.MaterialData = Star_Trek.LCARS:CreateButton(
 			self.Id .. "_" .. id,
 			self.ButtonWidth,
-			BUTTON_HEIGHT,
+			self.ButtonHeight,
 			button.Color,
 			button.ActiveColor,
 			button.Name or "[ERROR]",
@@ -62,25 +59,25 @@ function SELF:IsButtonHovered(x, y, width, height, pos)
 end
 
 function SELF:OnPress(pos, animPos)
-	local offset = Star_Trek.LCARS:GetButtonOffset(self.ButtonsStart, self.ButtonsHeight, BUTTON_HEIGHT + 3, self.MaxN, pos.y)
+	local offset = Star_Trek.LCARS:GetButtonOffset(self.ButtonsStart, self.ButtonsHeight, self.ButtonHeight + 3, self.MaxN, pos.y)
 
 	for i, button in pairs(self.Buttons) do
 		if button.Disabled then continue end
 
-		local y = Star_Trek.LCARS:GetButtonYPos(self.ButtonsHeight, i, self.MaxN, offset)
-		if self:IsButtonHovered(self.XOffset, y, self.ButtonWidth, BUTTON_HEIGHT, pos) then
+		local y = Star_Trek.LCARS:GetButtonYPos(self.ButtonsHeight, self.ButtonHeight, i, self.MaxN, offset)
+		if self:IsButtonHovered(self.XOffset, y, self.ButtonWidth, self.ButtonHeight, pos) then
 			return i
 		end
 	end
 end
 
 function SELF:OnDraw(pos, animPos)
-	local offset = Star_Trek.LCARS:GetButtonOffset(self.ButtonsStart, self.ButtonsHeight, BUTTON_HEIGHT + 3, self.MaxN, pos.y)
+	local offset = Star_Trek.LCARS:GetButtonOffset(self.ButtonsStart, self.ButtonsHeight, self.ButtonHeight + 3, self.MaxN, pos.y)
 
 	for i, button in pairs(self.Buttons) do
-		local y = Star_Trek.LCARS:GetButtonYPos(self.ButtonsHeight, i, self.MaxN, offset)
+		local y = Star_Trek.LCARS:GetButtonYPos(self.ButtonsHeight, self.ButtonHeight, i, self.MaxN, offset)
 
-		local state = Star_Trek.LCARS:GetButtonState(button.Disabled, self:IsButtonHovered(self.XOffset, y, self.ButtonWidth, BUTTON_HEIGHT, pos), button.Selected)
+		local state = Star_Trek.LCARS:GetButtonState(button.Disabled, self:IsButtonHovered(self.XOffset, y, self.ButtonWidth, self.ButtonHeight, pos), button.Selected)
 
 		local buttonAlpha = 255
 		if y < self.ButtonsTopAlpha or y > self.ButtonsBotAlpha then

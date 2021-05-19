@@ -17,8 +17,8 @@
 ---------------------------------------
 
 local SELF = WINDOW
-function SELF:OnCreate(categories, title, titleShort, hFlip, toggle)
-	local success = SELF.Base.OnCreate(self, {}, title, titleShort, hFlip, toggle)
+function SELF:OnCreate(categories, title, titleShort, hFlip, toggle, buttonHeight, categoryButtonHeight)
+	local success = SELF.Base.OnCreate(self, {}, title, titleShort, hFlip, toggle, buttonHeight)
 	if not success then
 		return false
 	end
@@ -27,6 +27,7 @@ function SELF:OnCreate(categories, title, titleShort, hFlip, toggle)
 		return false
 	end
 
+	self:SetCategoryButtonHeight(categoryButtonHeight)
 	self:SetCategories(categories)
 
 	return true
@@ -62,6 +63,10 @@ function SELF:SetCategories(categories, default)
 
 	self.Selected = default or 1
 	self:SetCategory(self.Selected)
+end
+
+function SELF:SetCategoryButtonHeight(categoryButtonHeight)
+	self.CategoryButtonHeight = categoryButtonHeight or 32
 end
 
 function SELF:GetSelected()
@@ -114,7 +119,7 @@ function SELF:OnPress(interfaceData, ent, buttonId, callback)
 	end
 
 	if shouldUpdate then
-		ent:EmitSound("star_trek.lcars_beep") -- Modularize Sound
+		ent:EmitSound("star_trek.lcars_beep")
 	end
 
 	return shouldUpdate

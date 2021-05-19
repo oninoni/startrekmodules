@@ -21,7 +21,6 @@ Star_Trek.Damage.DamageTypes = {}
 Star_Trek.Damage.DamageTypes["eps_breach"] = {
 	Name = "EPS Conduit Breach",
 	Entity = "plasma_conduit",
-	CanChain = true, -- TODO: Chain Explosions
 	StaticProps = {
 		["models/kingpommes/startrek/intrepid/panel_wall48.mdl"] = {
 			Locations = {

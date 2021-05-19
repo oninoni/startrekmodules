@@ -144,6 +144,8 @@ function Star_Trek.Turbolift:Teleport(sourceLift, targetLift, objects)
 end
 
 -- Start the journey from the given lift to an entity
+--
+-- @return Boolean canStart
 function Star_Trek.Turbolift:StartLift(sourceLift, targetLiftId)
 	local sourceLiftData = sourceLift.Data
 	local targetLiftData = self.Lifts[targetLiftId]
@@ -175,9 +177,11 @@ function Star_Trek.Turbolift:StartLift(sourceLift, targetLiftId)
 				sourceLiftData.InUse = false
 			end
 		else
-			sourceLift:EmitSound("star_trek.lcars_error")
+			return false
 		end
 	end
+
+	return true
 end
 
 function Star_Trek.Turbolift:StopPod(podData)

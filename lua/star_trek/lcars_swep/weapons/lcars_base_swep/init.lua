@@ -18,21 +18,28 @@
 
 function SWEP:Initialize()
 	self.ActiveMode = false
+	self.ModeCache = {}
+
+	if self.DefaultMode then
+		self:ActivateMode(self.DefaultMode)
+	end
 end
 
 function SWEP:Reload()
 	if not IsFirstTimePredicted() then return end
 
-	self.ActiveMode = false
-
 	local interfaceData = Star_Trek.LCARS.ActiveInterfaces[self]
 	if istable(interfaceData) and interfaceData.InterfaceName == "mode_selection" then return end
 
-	Star_Trek.LCARS:CloseInterface(self, function()
-		self:DeactivateMode()
-
-		Star_Trek.LCARS:OpenInterface(self:GetOwner(), self, "mode_selection", self.Modes)
-	end)
+	if self.ActiveMode then
+		self:DeactivateMode(function()
+			Star_Trek.LCARS:OpenInterface(self:GetOwner(), self, "mode_selection", self.Modes)
+		end)
+	else
+		Star_Trek.LCARS:CloseInterface(self, function()
+			Star_Trek.LCARS:OpenInterface(self:GetOwner(), self, "mode_selection", self.Modes)
+		end)
+	end
 end
 
 function SWEP:PrimaryAttack()
@@ -51,20 +58,36 @@ function SWEP:SecondaryAttack()
 	self.ActiveMode:SecondaryAttack(self)
 end
 
-function SWEP:DeactivateMode()
-	if istable(self.ActiveMode) then
-		self.ActiveMode:Deactivate(self)
-		self.ActiveMode = false
-	end
+function SWEP:ActivateMode(modeName)
+	self:DeactivateMode(function()
+		local mode = {}
+		if istable(self.ModeCache[modeName]) then
+			mode = self.ModeCache[modeName]
+		else
+			local modeFunctions = Star_Trek.LCARS_SWEP.Modes[modeName]
+			if istable(modeFunctions) then
+				setmetatable(mode, {__index = modeFunctions})
+				self.ModeCache[modeName] = mode
+			else
+				return
+			end
+		end
+
+		mode:Activate(self) -- TODO Process the Return Values
+
+		self.ActiveMode = mode
+	end)
 end
 
-function SWEP:ActivateMode(modeName)
-	self:DeactivateMode()
-
-	self.ActiveMode = Star_Trek.LCARS_SWEP.Modes[modeName]
+function SWEP:DeactivateMode(callback)
 	if istable(self.ActiveMode) then
-		self.ActiveMode:Activate(self)
+		self.ActiveMode:Deactivate(self, callback) -- TODO Process the Return Values
+		self.ActiveMode = false
+
+		return
 	end
+
+	callback()
 end
 
 util.AddNetworkString("Star_Trek.LCARS_SWEP.EnableScreenClicker")

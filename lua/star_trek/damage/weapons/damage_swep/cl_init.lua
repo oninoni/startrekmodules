@@ -16,6 +16,6 @@
 --       Damages SWEP | Client       --
 ---------------------------------------
 
-SWEP.Category = "Star Trek"
+SWEP.Category = "Star Trek (Administrative)"
 
 SWEP.DrawAmmo = false

@@ -37,10 +37,13 @@ function SELF:Open(ent)
 		325,
 		function(windowData, interfaceData, buttonId)
 			if ent.IsTurbolift then
-				Star_Trek.Turbolift:StartLift(ent, buttonId)
-
-				ent:EmitSound("star_trek.lcars_close")
-				Star_Trek.LCARS:CloseInterface(ent)
+				local canStart = Star_Trek.Turbolift:StartLift(ent, buttonId)
+				if canStart then
+					ent:EmitSound("star_trek.lcars_close")
+					Star_Trek.LCARS:CloseInterface(ent)
+				else
+					sourceLift:EmitSound("star_trek.lcars_error")
+				end
 			elseif ent.IsPod then
 				if buttonId == 1 then
 					if Star_Trek.Turbolift:TogglePos(ent) then

@@ -82,7 +82,7 @@ end
 -- @param Table interfaceData
 -- @return Boolean success
 -- @return? Table interface
-function Star_Trek.LCARS:OpenMenu(id, interfaceData) -- TODO: Handle Error in all Calls
+function Star_Trek.LCARS:OpenMenu(id, interfaceData)
 	local interface = {
 		Ent = interfaceData.Ent,
 		IPos = interfaceData.InterfacePos,
@@ -245,8 +245,6 @@ function Star_Trek.LCARS:PlayerButtonDown(ply, button)
 		-- Splitting Inputs, if a weapon and a world Interface is both used.
 		local weapon = ply:GetActiveWeapon()
 		if weapon.IsLCARS then
-			print(button == KEY_E, interface.Ent ~= weapon)
-
 			if button == KEY_E
 			and interface.Ent == weapon then
 				continue
@@ -313,7 +311,7 @@ function Star_Trek.LCARS:DrawWindow(window, animPos, drawCursor)
 		if drawCursor then
 			surface.SetDrawColor(255, 255, 255, 255)
 			surface.SetMaterial(Material("sprites/arrow"))
-			surface.DrawTexturedRect(pos.x - 25, pos.y - 25, 50, 50)
+			surface.DrawTexturedRect(pos.x - 15, pos.y - 15, 30, 30)
 		end
 	cam.End3D2D()
 end
