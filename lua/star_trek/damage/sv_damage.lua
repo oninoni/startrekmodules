@@ -71,6 +71,8 @@ function Star_Trek.Damage:DamageSection(deck, sectionId, damageType)
 
 	ent.StaticProp = staticProp
 	staticProp.Damaged[damageType] = ent
+
+	return true
 end
 
 hook.Add("Star_Trek.Util.MapLoaded", "Star_Trek.Damage.Initialize", function()

@@ -41,9 +41,9 @@ SWEP.SlotPos = 42
 SWEP.MenuOffset = Vector(-0.2, 1.05, 0)
 SWEP.MenuAngle = Angle(0, 0, 0)
 
-SWEP.MenuScale = 35
-SWEP.MenuWidth = 325
-SWEP.MenuHeight = 540
+SWEP.MenuScale = 50
+SWEP.MenuWidth = 450
+SWEP.MenuHeight = 750
 SWEP.MenuName = "PADD"
 
 SWEP.Modes = {

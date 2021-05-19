@@ -21,7 +21,9 @@ function SWEP:Initialize()
 	self.ModeCache = {}
 
 	if self.DefaultMode then
-		self:ActivateMode(self.DefaultMode)
+		timer.Simple(0, function()
+			self:ActivateMode(self.DefaultMode)
+		end)
 	end
 end
 
@@ -93,6 +95,8 @@ end
 util.AddNetworkString("Star_Trek.LCARS_SWEP.EnableScreenClicker")
 function SWEP:EnableScreenClicker(enabled)
 	local ply = self:GetOwner()
+
+	self.ScreenClickerEnabled = enabled
 
 	net.Start("Star_Trek.LCARS_SWEP.EnableScreenClicker")
 		net.WriteEntity(self)

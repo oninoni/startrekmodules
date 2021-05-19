@@ -28,15 +28,28 @@ function MODE:CanActivate(ent)
 end
 
 function MODE:Activate(ent)
-	return false, "Not Implemented"
+	local ply = ent:GetOwner()
+	if not IsValid(ply) then
+		return false, "Invalid Owner"
+	end
+
+	Star_Trek.LCARS:OpenInterface(ply, ent, "damage_selector")
+
+	return true
 end
 
 function MODE:Deactivate(ent, callback)
+	if istable(ent.Interface) then
+		ent.Interface:Close(callback)
+		return true
+	end
+
 	callback()
-	return false, "Not Implemented"
+	return true
 end
 
 function MODE:PrimaryAttack(ent)
+	ent:EnableScreenClicker(true)
 end
 
 function MODE:SecondaryAttack(ent)

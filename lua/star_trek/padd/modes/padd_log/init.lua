@@ -26,8 +26,6 @@ function MODE:CanActivate(ent)
 end
 
 function MODE:Activate(ent)
-	print("A", self.Title, self.LogData)
-
 	local ply = ent:GetOwner()
 	if not IsValid(ply) then
 		return false, "Invalid Owner"
@@ -39,13 +37,10 @@ function MODE:Activate(ent)
 end
 
 function MODE:Deactivate(ent, callback)
-	print("D", self.Title, self.LogData)
-
 	if istable(ent.Interface) then
 		self.Title, self.LogData = ent.Interface:GetData()
 
 		ent.Interface:Close(callback)
-
 		return true
 	end
 
