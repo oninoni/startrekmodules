@@ -84,7 +84,7 @@ function SELF:Open(ent)
 		return false, textWindow
 	end
 
-	return true, {menuWindow, sectionWindow, mapWindow, actionWindow, textWindow}
+	return true, {menuWindow, sectionWindow, mapWindow, actionWindow, textWindow}, Vector(0, 32, -11.5), Angle(0, 0, -8)
 end
 
 -- Read out any Data, that can be retrieved externally.

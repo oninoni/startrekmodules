@@ -32,8 +32,6 @@ util.AddNetworkString("Star_Trek.LCARS.Open")
 -- @return Boolean Success
 -- @return? String error
 function Star_Trek.LCARS:OpenInterface(ply, triggerEntity, interfaceName, ...)
-	print(ply, triggerEntity, interfaceName)
-
 	local success, ent = self:GetInterfaceEntity(ply, triggerEntity)
 	if not success then
 		return false, ent
@@ -61,7 +59,7 @@ function Star_Trek.LCARS:OpenInterface(ply, triggerEntity, interfaceName, ...)
 	end
 	setmetatable(interfaceData, {__index = interfaceFunctions})
 
-	local success2, windows = interfaceData:Open(ent, ...)
+	local success2, windows, offsetPos, offsetAng = interfaceData:Open(ent, ...)
 	if not success2 then
 		return false, windows
 	end
@@ -74,6 +72,12 @@ function Star_Trek.LCARS:OpenInterface(ply, triggerEntity, interfaceName, ...)
 	for i, windowData in ipairs(interfaceData.Windows) do
 		windowData.Id = i
 		windowData.Interface = interfaceData
+
+		if isvector(offsetPos) and isangle(offsetAng) then
+			local newPosOrig, newAngOrig = LocalToWorld(offsetPos, offsetAng, ent:GetPos(), ent:GetAngles())
+			local newPosWorld, newAngWorld = LocalToWorld(windowData.WindowPos, windowData.WindowAngles, newPosOrig, newAngOrig)
+			windowData.WindowPos, windowData.WindowAngles = WorldToLocal(newPosWorld, newAngWorld, ent:GetPos(), ent:GetAngles())
+		end
 	end
 
 	local clientInterfaceData = Star_Trek.LCARS:GetClientInterfaceData(interfaceData)

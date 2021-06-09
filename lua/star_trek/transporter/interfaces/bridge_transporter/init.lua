@@ -38,7 +38,7 @@ function SELF:Open(ent)
 		return false, windows
 	end
 
-	return true, windows
+	return true, windows, Vector(0, 32, -11.5), Angle(0, 0, -8)
 end
 
 function Star_Trek.LCARS:OpenConsoleTransporterMenu()
