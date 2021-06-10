@@ -148,8 +148,6 @@ hook.Add("PostGamemodeLoaded", "Star_Trek.Load", function()
 
 	Star_Trek.LoadedModules = {}
 
-	-- TODO: Rewrite for using Dependencies
-
 	include("star_trek/config.lua")
 
 	for moduleName, enabled in pairs(Star_Trek.Modules) do

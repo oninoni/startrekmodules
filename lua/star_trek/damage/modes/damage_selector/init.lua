@@ -16,8 +16,6 @@
 --  LCARS SWEP Mode: Damage | Server --
 ---------------------------------------
 
--- TODO: Implement
-
 MODE.BaseMode = "base"
 
 MODE.Name = "Damage Selector"
