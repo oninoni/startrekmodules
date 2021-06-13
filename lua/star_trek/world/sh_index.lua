@@ -13,26 +13,17 @@
 ---------------------------------------
 
 ---------------------------------------
---           Main | Config           --
+--           World | Index           --
 ---------------------------------------
 
--- Modules
-Star_Trek.Modules["util"] = true
-Star_Trek.Modules["chairs"] = true
-Star_Trek.Modules["portals"] = true
-Star_Trek.Modules["alarm"] = true
+Star_Trek:RequireModules()
 
-Star_Trek.Modules["world"] = true
+Star_Trek.World = Star_Trek.World or {}
 
-Star_Trek.Modules["lcars"] = true
-Star_Trek.Modules["lcars_swep"] = true
+if SERVER then
+	AddCSLuaFile("cl_world.lua")
+end
 
-Star_Trek.Modules["sections"] = true
-Star_Trek.Modules["turbolift"] = true
-Star_Trek.Modules["transporter"] = true
-Star_Trek.Modules["replicator"] = true
-Star_Trek.Modules["damage"] = true
-Star_Trek.Modules["security"] = true
-
-Star_Trek.Modules["tricorder"] = true
-Star_Trek.Modules["padd"] = true
+if CLIENT then
+	include("cl_world.lua")
+end
