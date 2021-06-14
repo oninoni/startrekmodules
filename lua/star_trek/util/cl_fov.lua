@@ -3,7 +3,7 @@
 --        Star Trek Utilities        --
 --                                   --
 --            Created by             --
---       Jan 'Oninoni' Ziegler       --
+--       Jan "Oninoni" Ziegler       --
 --                                   --
 -- This software can be used freely, --
 --    but only distributed by me.    --
@@ -13,27 +13,17 @@
 ---------------------------------------
 
 ---------------------------------------
---         Utilities | Index         --
+--         FOV Util | Client         --
 ---------------------------------------
 
-Star_Trek:RequireModules()
+function Star_Trek.Util:GetFOV()
+	local topVector = gui.ScreenToVector(ScrW() * 0.5, 0)
+	topVector:Normalize()
+	local botVector = gui.ScreenToVector(ScrW() * 0.5, ScrH() - 1)
+	botVector:Normalize()
 
-Star_Trek.Util = Star_Trek.Util or {}
+	local fov = math.acos(topVector:Dot(botVector))
+	fov = fov / math.pi * 180
 
-if SERVER then
-	--AddCSLuaFile("cl_rendermap.lua")
-	AddCSLuaFile("cl_fov.lua")
-
-	include("sv_positions.lua")
-	include("sv_keyvalues.lua")
-	include("sv_holodeck.lua")
-	include("sv_models.lua")
-
-	include("luabsp.lua")
-	include("sv_luabsp.lua")
-end
-
-if CLIENT then
-	--include("cl_rendermap.lua")
-	include("cl_fov.lua")
+	return fov
 end
