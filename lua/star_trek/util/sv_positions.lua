@@ -26,12 +26,12 @@
 function Star_Trek.Util:IsEmptyPos(pos, lower, higher, radius)
 	radius = radius or 35
 
-	if pos.x < lower.x
-	or pos.x > higher.x
-	or pos.y < lower.y
-	or pos.y > higher.y
-	or pos.z < lower.z
-	or pos.z > higher.z then
+	if pos[1] < lower.x
+	or pos[1] > higher.x
+	or pos[2] < lower.y
+	or pos[2] > higher.y
+	or pos[3] < lower.z
+	or pos[3] > higher[3] then
 		return false
 	end
 

@@ -139,7 +139,7 @@ end
 local function is_point_inside_planes(planes, point)
 	for i = 1, #planes do
 		local plane = planes[i]
-		local t = point.x * plane.A + point.y * plane.B + point.z * plane.C
+		local t = point[1] * plane.A + point[2] * plane.B + point[3] * plane.C
 		if t - plane.D > 0.01 then return false end
 	end
 	return true
@@ -196,8 +196,8 @@ end
 
 local function find_uv(point, textureVecs, texSizeX, texSizeY)
 	local x,y,z = point.x, point.y, point.z
-	local u = textureVecs[1].x * x + textureVecs[1].y * y + textureVecs[1].z * z + textureVecs[1].offset
-	local v = textureVecs[2].x * x + textureVecs[2].y * y + textureVecs[2].z * z + textureVecs[2].offset
+	local u = textureVecs[1][1] * x + textureVecs[1][2] * y + textureVecs[1][3] * z + textureVecs[1].offset
+	local v = textureVecs[2][1] * x + textureVecs[2][2] * y + textureVecs[2][3] * z + textureVecs[2].offset
 	return u / texSizeX, v / texSizeY
 end
 
@@ -749,7 +749,7 @@ do
 					points = {},
 				}
 				for __, point in pairs(brush.p_points) do
-					local t = point.x * plane.A + point.y * plane.B + point.z * plane.C
+					local t = point[1] * plane.A + point[2] * plane.B + point[3] * plane.C
 					if math.abs(t-plane.D) > 0.01  then continue end -- Not on a plane
 
 					render_data.points[#render_data.points + 1] = point

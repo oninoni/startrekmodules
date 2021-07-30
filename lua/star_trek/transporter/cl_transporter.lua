@@ -39,11 +39,11 @@ function Star_Trek.Transporter:TriggerEffect(ent, remat, replicator)
 
 	-- Detect Size, for effect to use.
 	local low, high = ent:GetCollisionBounds()
-	local width = high.x - low.x
-	local depth = high.y - low.y
+	local width = high[1] - low.x
+	local depth = high[2] - low.y
 	transportData.ObjectSize = (width + depth) / 2
-	transportData.ObjectHeight = high.z - low.z
-	local offset = high.z + low.z
+	transportData.ObjectHeight = high[3] - low.z
+	local offset = high[3] + low.z
 	transportData.Offset = offset / 2
 
 	if remat then
@@ -101,7 +101,7 @@ end
 
 hook.Add("PostDrawTranslucentRenderables", "Voyager.Transporter.MainRender", function()
 	local vec = EyeVector()
-	vec.z = 0
+	vec[3] = 0
 
 	local frameTime = SysTime() - lastSysTime
 	lastSysTime = SysTime()

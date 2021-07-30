@@ -36,7 +36,7 @@ hook.Add("PreDrawSkyBox", "Star_Trek.Skybox.Render", function(...)
 		local p = LocalPlayer():GetPos() + pos
 		render.DrawLine(p, p + Vector(50, 0, 0), Color(255, 255, 255))
 
-		pos.x = pos.x + FrameTime() * SPEED
+		pos[1] = pos[1] + FrameTime() * SPEED
 	end
 
 	return true]]

@@ -47,8 +47,8 @@ function SELF:OnDraw(pos, animPos)
 
 	for _, sectionData in pairs(self.Sections) do
 		for _, areaData in pairs(sectionData.Areas) do
-			local x = areaData.Pos.x + MAP_OFFSET_X
-			local y = areaData.Pos.y + MAP_OFFSET_Y
+			local x = areaData.Pos[1] + MAP_OFFSET_X
+			local y = areaData.Pos[2] + MAP_OFFSET_Y
 			local width = areaData.Width
 			local height = areaData.Height
 
@@ -58,8 +58,8 @@ function SELF:OnDraw(pos, animPos)
 
 	for _, sectionData in pairs(self.Sections) do
 		for _, areaData in pairs(sectionData.Areas) do
-			local x = areaData.Pos.x + MAP_OFFSET_X
-			local y = areaData.Pos.y + MAP_OFFSET_Y
+			local x = areaData.Pos[1] + MAP_OFFSET_X
+			local y = areaData.Pos[2] + MAP_OFFSET_Y
 			local width = areaData.Width
 			local height = areaData.Height
 
@@ -71,8 +71,8 @@ function SELF:OnDraw(pos, animPos)
 	for i, object in pairs(self.Objects) do
 		local timeOffset = diff - (i - 1) * 0.2
 		if timeOffset > 0 then
-			local x = object.Pos.x + MAP_OFFSET_X
-			local y = object.Pos.y + MAP_OFFSET_Y
+			local x = object.Pos[1] + MAP_OFFSET_X
+			local y = object.Pos[2] + MAP_OFFSET_Y
 
 			local markTime = MARK_TIME - timeOffset
 			if timeOffset < MARK_TIME then

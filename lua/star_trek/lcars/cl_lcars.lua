@@ -141,7 +141,7 @@ function Star_Trek.LCARS:Get3D2DMousePos(window)
 
 	local pos = util.IntersectRayWithPlane(self.EyePos, rayDir, window.WPosG, window.WAngG:Up())
 	pos = WorldToLocal(pos or Vector(), Angle(), window.WPosG, window.WAngG)
-	pos = Vector(pos.x * window.WScale, pos.y * -window.WScale, 0)
+	pos = Vector(pos[1] * window.WScale, pos[2] * -window.WScale, 0)
 
 	local overriddenPos = hook.Run("Star_Trek.LCARS.Get3D2DMousePos", window, pos)
 	if isvector(overriddenPos) then
@@ -264,8 +264,8 @@ function Star_Trek.LCARS:PlayerButtonDown(ply, button)
 			local width = window.WWidth
 			local height = window.WHeight
 			local pos = Star_Trek.LCARS:Get3D2DMousePos(window)
-			if pos.x > -width / 2 and pos.x < width / 2
-			and pos.y > -height / 2 and pos.y < height / 2 then
+			if pos[1] > -width / 2 and pos[1] < width / 2
+			and pos[2] > -height / 2 and pos[2] < height / 2 then
 				local buttonId = window:OnPress(pos, interface.AnimPos)
 				if buttonId then
 					net.Start("Star_Trek.LCARS.Pressed")
@@ -300,8 +300,8 @@ function Star_Trek.LCARS:DrawWindow(window, animPos, drawCursor)
 	local width = window.WWidth
 	local height = window.WHeight
 	local pos = Star_Trek.LCARS:Get3D2DMousePos(window)
-	if pos.x > -width * 0.6 and pos.x < width * 0.6
-	and pos.y > -height * 0.6 and pos.y < height * 0.6 then
+	if pos[1] > -width * 0.6 and pos[1] < width * 0.6
+	and pos[2] > -height * 0.6 and pos[2] < height * 0.6 then
 		window.LastPos = pos
 	end
 
@@ -311,7 +311,7 @@ function Star_Trek.LCARS:DrawWindow(window, animPos, drawCursor)
 		if drawCursor then
 			surface.SetDrawColor(255, 255, 255, 255)
 			surface.SetMaterial(Material("sprites/arrow"))
-			surface.DrawTexturedRect(pos.x - 15, pos.y - 15, 30, 30)
+			surface.DrawTexturedRect(pos[1] - 15, pos[2] - 15, 30, 30)
 		end
 	cam.End3D2D()
 end

@@ -64,8 +64,8 @@ local function drawHexaeder(self, x, y, r, color)
 	local hex = {{x = x, y = y}}
 	for _, vert in pairs(self.HexValues) do
 		table.insert( hex, {
-			x = x + (vert.x * r),
-			y = y + (vert.y * r),
+			x = x + (vert[1] * r),
+			y = y + (vert[2] * r),
 		})
 	end
 
