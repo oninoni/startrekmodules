@@ -118,19 +118,23 @@ end
 
 function Star_Trek.World:Draw()
 	local shipPos, shipAng = Star_Trek.World:GetShipPos()
+	if not shipPos then return end
 
-	cam.Start3D(EyePos(), EyeAngles(), nil, nil, nil, nil, nil, 0, 10000000)
-		local camPos = SKY_CAM_POS + (EyePos() * SKY_CAM_SCALE)
+	local eyePos = EyePos()
+	cam.Start3D(eyePos, EyeAngles(), nil, nil, nil, nil, nil, 0.0005, 10000000)
+		local camPos = SKY_CAM_POS + (eyePos * SKY_CAM_SCALE)
 
-		for i, obj in pairs(Star_Trek.World.Objects) do
-			local pos, ang = WorldToLocal(obj.Pos, obj.Ang, shipPos, shipAng)
+		for i, ent in pairs(self.Entities) do
+			if i == 1 then continue end
+			-- TODO: Dont Render Self sometimes?
 
-			if obj.FullBright then
-				render.SetLightingMode(1)
-			end
-			Star_Trek.World:DrawEntity(obj.Ent, camPos, pos, ang)
+			local pos, ang = WorldToLocalBig(ent.Pos, ent.Ang, shipPos, shipAng)
 
-			render.SetLightingMode(0)
+			ent:Draw(camPos, pos, ang)
 		end
 	cam.End3D()
 end
+
+hook.Add("PostDraw2DSkyBox", "Star_Trek.World.Draw", function()
+	Star_Trek.World:Draw()
+end)

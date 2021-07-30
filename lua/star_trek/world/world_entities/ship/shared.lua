@@ -13,18 +13,8 @@
 ---------------------------------------
 
 ---------------------------------------
---           World | Server          --
+--            World Entity           --
+--           Ship | Shared           --
 ---------------------------------------
 
-util.AddNetworkString("Star_Trek.World.Init")
-util.AddNetworkString("Star_Trek.World.SyncOnJoin")
-util.AddNetworkString("Star_Trek.World.Remove")
-util.AddNetworkString("Star_Trek.World.Sync")
-
-function Star_Trek.World:Init(i, pos, ang, model, scale)
-	self:AddObject(i, pos, ang, model, scale)
-
-	net.Start("Star_Trek.World.Init")
-
-	net.Broadcast()
-end
+ENT.BaseClass = "base_dynamic"

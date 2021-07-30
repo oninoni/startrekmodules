@@ -150,3 +150,22 @@ function Star_Trek.World.Vector:Length()
 	local temp = self.Big * BIG_SCALE + self.Small
 	return temp:Length()
 end
+
+function WorldToLocalBig(pos, ang, newSystemOrigin, newSystemAngles)
+	local offsetPos = pos - newSystemOrigin
+
+	return WorldToLocal(offsetPos:ToVector(), ang, Vector(), newSystemAngles)
+end
+
+function net.ReadWorldVector()
+	local big   = net.ReadVector()
+	local small = net.ReadVector()
+
+	return WorldVector(big, small)
+end
+
+function net.WriteWorldVector(vec)
+	net.WriteVector(vec.Big)
+	net.WriteVector(vec.Small)
+end
+

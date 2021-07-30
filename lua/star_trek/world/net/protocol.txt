@@ -1,0 +1,26 @@
+Networking Protocol:
+
+On Creation / Load / SyncOnJoin All Data of Object is networked.
+Dynamic + Static informations.
+
+On Deletion / Unload / id is networked, to remove Clientside.
+Just ID!
+
+Dynamic Information is networked in regular intervals >>> 1 tick ~ 1s?
+All Physics / Other Things should be done Shared for prediction.
+
+Dynamic Information is also updated on Control Inputs?
+	OR:
+Control Inputs are networked to all Clients and handled using prediction.
+
+
+
+
+
+
+
+
+
+
+
+AI? <- Dont Think about it yet ! xD

@@ -13,23 +13,6 @@
 ---------------------------------------
 
 ---------------------------------------
---           World | Shared          --
+--            World Entity           --
+--          Planet | Client          --
 ---------------------------------------
-
-Star_Trek.World.Objects = {}
-
-function Star_Trek.World:AddObject(i, pos, ang, model, scale)
-	local obj = {
-		Pos = pos,
-		Ang = ang,
-
-		Scale = scale,
-		Model = model,
-	}
-
-	self.Objects[i] = obj
-end
-
-function Star_Trek.World:RemoveObject(i)
-	self.Objects[i] = nil
-end
