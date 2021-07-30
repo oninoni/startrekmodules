@@ -29,9 +29,6 @@ local BIG_SCALE = (1024 * 1024 * 1024 * 8)
 -- ist wirklich ne AU
 BIG_SCALE = 7668351790
 
--- Testing
-BIG_SCALE = 8
-
 -- Add the given Vector or World Vector to the World Vector
 --
 -- @param WorldVector a
@@ -39,10 +36,10 @@ BIG_SCALE = 8
 -- @return WorldVector result
 local function __add(a, b)
 	if isvector(b) then
-		return WorldVector(a.Big, a.Small + b)
+		return WorldVector(a[1], a[2] + b)
 	end
 
-	return WorldVector(a.Big + b.Big, a.Small + b.Small)
+	return WorldVector(a[1] + b[1], a[2] + b[2])
 end
 
 -- Substract the given Vector or World Vector from the World Vector
@@ -52,10 +49,10 @@ end
 -- @return WorldVector result
 local function __sub(a, b)
 	if isvector(b) then
-		return WorldVector(a.Big, a.Small - b)
+		return WorldVector(a[1], a[2] - b)
 	end
 
-	return WorldVector(a.Big - b.Big, a.Small - b.Small)
+	return WorldVector(a[1] - b[1], a[2] - b[2])
 end
 
 -- Mutliplies a given vector with a scalar.
@@ -64,7 +61,7 @@ end
 -- @param Number b
 -- @return WorldVector result
 local function __mul(a, b)
-	return WorldVector(a.Big * b, a.Small * b)
+	return WorldVector(a[1] * b, a[2] * b)
 end
 
 -- Divides a given vector by a scalar.
@@ -73,7 +70,7 @@ end
 -- @param Number b
 -- @return WorldVector result
 local function __div(a, b)
-	return WorldVector(a.Big / b, a.Small / b)
+	return WorldVector(a[1] / b, a[2] / b)
 end
 
 -- Compares two vectors with each other for being the same.
@@ -82,7 +79,7 @@ end
 -- @param WorldVector b
 -- @return Boolean equal
 local function  __eq(a, b)
-	return (a.Big == b.Big) and (a.Small == b.Small)
+	return (a[1] == b[1]) and (a[2] == b[2])
 end
 
 -- Converts the vector into a string, to be printed.
@@ -90,7 +87,7 @@ end
 -- @param WorldVector a
 -- @return Strint string
 local function __tostring(a)
-	return tostring(a.Big) .. " | " .. tostring(a.Small)
+	return tostring(a[1]) .. " | " .. tostring(a[2])
 end
 
 -- Define the Meta Table here. Optimisation!
@@ -121,33 +118,33 @@ end
 -- Reduces the Value to its minimum "Small" Vector Size.
 -- Should be called after any operation.
 function Star_Trek.World.Vector:FixValue()
-	local s = self.Small
+	local s = self[2]
 
-	self.Small = Vector(
-		s.x % BIG_SCALE,
-		s.y % BIG_SCALE,
-		s.z % BIG_SCALE
+	self[2] = Vector(
+		s[1] % BIG_SCALE,
+		s[2] % BIG_SCALE,
+		s[3] % BIG_SCALE
 	)
 
-	local temp = (s - self.Small) / 8
-	self.Big = Vector(
-		self.Big.x + math.floor(temp.x),
-		self.Big.y + math.floor(temp.y),
-		self.Big.z + math.floor(temp.z)
+	local temp = (s - self[2]) / 8
+	self[1] = Vector(
+		self[1][1] + math.floor(temp.x),
+		self[1][2] + math.floor(temp.y),
+		self[1][3] + math.floor(temp.z)
 	)
 end
 
 function Star_Trek.World.Vector:ToVector()
-	return self.Big * BIG_SCALE + self.Small
+	return self[1] * BIG_SCALE + self[2]
 end
 
 function Star_Trek.World.Vector:LengthSqr()
-	local temp = self.Big * BIG_SCALE + self.Small
+	local temp = self[1] * BIG_SCALE + self[2]
 	return temp:LengthSqr()
 end
 
 function Star_Trek.World.Vector:Length()
-	local temp = self.Big * BIG_SCALE + self.Small
+	local temp = self[1] * BIG_SCALE + self[2]
 	return temp:Length()
 end
 
@@ -165,7 +162,7 @@ function net.ReadWorldVector()
 end
 
 function net.WriteWorldVector(vec)
-	net.WriteVector(vec.Big)
-	net.WriteVector(vec.Small)
+	net.WriteVector(vec[1])
+	net.WriteVector(vec[2])
 end
 

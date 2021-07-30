@@ -44,7 +44,7 @@ end
 
 local function IntersectWithBorder(pos, dir)
 	local direction = 1
-	if dir.x < 0 then
+	if dir[1] < 0 then
 		direction = 2
 	end
 
@@ -54,7 +54,7 @@ local function IntersectWithBorder(pos, dir)
 	end
 
 	direction = 3
-	if dir.x < 0 then
+	if dir[1] < 0 then
 		direction = 4
 	end
 
@@ -64,7 +64,7 @@ local function IntersectWithBorder(pos, dir)
 	end
 
 	direction = 5
-	if dir.x < 0 then
+	if dir[1] < 0 then
 		direction = 6
 	end
 

@@ -20,7 +20,7 @@ local function fixBigVectors(data)
 	for k, v in pairs(data) do
 		if istable(v) and table.Count(v) == 2
 		and v["Big"] and v["Small"] then
-			data[k] = WorldVector(v.Big, v.Small)
+			data[k] = WorldVector(v[1], v[2])
 		end
 	end
 end
@@ -64,8 +64,6 @@ net.Receive("Star_Trek.World.Sync", function()
 		fixBigVectors(dynData)
 
 		local ent = Star_Trek.World.Entities[id]
-
-		print("DIFF", (ent.Pos - dynData.Pos):Length())
 
 		ent:SetDynData(dynData)
 	end
