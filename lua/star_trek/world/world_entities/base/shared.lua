@@ -45,3 +45,6 @@ function ENT:GetData()
 
 	return data
 end
+
+function ENT:Think(deltaT)
+end

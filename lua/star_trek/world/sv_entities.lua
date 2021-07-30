@@ -37,12 +37,12 @@ function Star_Trek.World:LoadEntity(id, class, data)
 	return true
 end
 
-function AddTestingShip(id, pos, ang, scale)
+function AddTestingShip(id, pos, ang, scale, vel, angVel)
 	print(Star_Trek.World:LoadEntity(id, "ship", {
 		Pos = WorldVector(Vector(), pos),
 		Ang = ang,
-		Vel = Vector(),
-		AngVel = Vector(),
+		Vel = vel,
+		AngVel = angVel,
 		Models = {
 			[1] = {
 				Model = "models/apwninthedarks_starship_pack/uss_defiant.mdl",
@@ -52,14 +52,15 @@ function AddTestingShip(id, pos, ang, scale)
 	}))
 end
 
-
 timer.Simple(2, function()
-	AddTestingShip(1, Vector(), Angle(), 0)
+	AddTestingShip(1, Vector(), Angle(), 0, Vector(), Angle())
 end)
 
--- lua_run AddTestingShip(2, Vector(1, -10, -3), Angle(0, 180, 0), 6)
+timer.Create("TestingSync", 1, 0, function()
+	Star_Trek.World:NetworkSync()
+end)
 
-
+-- lua_run AddTestingShip(2, Vector(1, -10, -3), Angle(0, 180, 0), 1, Vector(1, 0, 0), Angle())
 
 -- Networks all loaded entities for the new player.
 hook.Add("PlayerInitialSpawn", "Star_Trek.World.NetworkLoaded", function(ply)

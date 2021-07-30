@@ -56,12 +56,17 @@ net.Receive("Star_Trek.World.UnLoad", function()
 	Star_Trek.World:UnLoadEntity(id)
 end)
 
+-- TODO: Maybe more custom to be more efficient?
 net.Receive("Star_Trek.World.Sync", function()
-	local allData = net.ReadTable()
+	local data = net.ReadTable()
 
-	for id, dynData in pairs(allData) do
-		fixBigVectors(data)
+	for id, dynData in pairs(data) do
+		fixBigVectors(dynData)
 
-		-- TODO: Maybe more custom to be more efficient?
+		local ent = Star_Trek.World.Entities[id]
+
+		print("DIFF", (ent.Pos - dynData.Pos):Length())
+
+		ent:SetDynData(dynData)
 	end
 end)

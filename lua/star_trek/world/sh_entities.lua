@@ -47,3 +47,18 @@ function Star_Trek.World:TerminateEntity(id)
 
 	return true
 end
+
+function Star_Trek.World:Think(deltaT)
+	for _, ent in pairs(self.Entities) do
+		ent:Think(deltaT)
+	end
+end
+
+local lasTime = SysTime()
+hook.Add("Think", "Star_Trek.World.Think", function()
+	local sysTime = SysTime()
+	local deltaT = lasTime - sysTime
+	lasTime = sysTime
+
+	Star_Trek.World:Think(deltaT)
+end)

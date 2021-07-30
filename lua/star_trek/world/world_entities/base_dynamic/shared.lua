@@ -52,3 +52,8 @@ function ENT:GetData()
 
 	return data
 end
+
+function ENT:Think(deltaT)
+	self.Pos = self.Pos + (self.Vel * deltaT)
+	self.Ang = self.Ang + (self.AngVel * deltaT)
+end

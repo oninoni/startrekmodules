@@ -66,14 +66,14 @@ end
 
 util.AddNetworkString("Star_Trek.World.Sync")
 function Star_Trek.World:NetworkSync()
-	local allData = {}
+	local data = {}
 
 	for id, ent in pairs(self.Entities) do
-		allData[id] = ent:GetDynData()
+		data[id] = ent:GetDynData()
 	end
 
 	net.Start("Star_Trek.World.Sync")
-		net.WriteTable(allData) -- TODO: Optimise
+		net.WriteTable(data) -- TODO: Optimise
 	net.Broadcast()
 end
 
