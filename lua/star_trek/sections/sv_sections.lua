@@ -39,9 +39,9 @@ function Star_Trek.Sections:IsInArea(areaData, entPos)
 	local localPos = -WorldToLocal(pos, Angle(), entPos, Angle())
 	-- TODO: No idea why there needs to be a "-" here!
 
-	if  localPos.x > min.x and localPos.x < max.x
-	and localPos.y > min.y and localPos.y < max.y
-	and localPos.z > min.z and localPos.z < max.z then
+	if  localPos[1] > min[1] and localPos[1] < max.x
+	and localPos[2] > min[2] and localPos[2] < max.y
+	and localPos[3] > min[3] and localPos[3] < max[3] then
 		return true
 	end
 

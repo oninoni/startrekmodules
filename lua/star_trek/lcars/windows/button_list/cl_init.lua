@@ -55,7 +55,7 @@ function SELF:OnCreate(windowData)
 end
 
 function SELF:IsButtonHovered(x, y, width, height, pos)
-	return pos.x >= (x - width / 2) and pos.x <= (x + width / 2) and pos.y >= (y -1) and pos.y <= (y + height)
+	return pos[1] >= (x - width / 2) and pos[1] <= (x + width / 2) and pos[2] >= (y -1) and pos[2] <= (y + height)
 end
 
 function SELF:OnPress(pos, animPos)

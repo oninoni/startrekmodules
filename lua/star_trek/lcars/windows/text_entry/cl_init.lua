@@ -104,8 +104,8 @@ end
 
 function SELF:OnDraw(pos, animPos)
 	if self.Active
-	and pos.x > -self.WD2 and pos.x < self.WD2
-	and pos.y > -self.HD2 and pos.y < self.HD2 then
+	and pos[1] > -self.WD2 and pos[1] < self.WD2
+	and pos[2] > -self.HD2 and pos[2] < self.HD2 then
 		local offsetTarget = Star_Trek.LCARS:GetButtonOffset(self.TextStartY, self.TextHeight, 16, self.MaxN, pos.y)
 		self.Offset = Lerp(0.005, self.Offset, offsetTarget)
 	else
