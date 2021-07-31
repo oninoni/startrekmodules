@@ -34,7 +34,6 @@ function Star_Trek.Security:EnableForceFields(deck, sectionId)
 
 			local ent = ents.Create("prop_physics")
 			ent:SetModel(force_fields.Data.Model)
-			ent:SetMaterial("models/props_combine/stasisshield_sheet")
 			ent:SetPos(pos)
 			ent:SetAngles(ang)
 
