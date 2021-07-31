@@ -16,56 +16,18 @@
 --       World Vector | Shared       --
 ---------------------------------------
 
--- Concept:
-
--- 2 Floats per Coordiate
--- Split at 1024*1024
--- plenty precision for ,... !
--- INT RANGE: (1024*1024*1024*1024*64) * (1024*1024), (1024 * 1024 * 1024 * 64)
--- 
-
 Star_Trek.World.Vector = {}
 
-local metaTable = {
-	__index = 
-}
+local BIG_SCALE = (1024 * 1024 * 1024 * 8)
+-- 8.589.934.592 Skybox Units
+-- 167.576.548.336 Meter
+-- Ist ~ 1 AU
 
-local BX = 1
-local BY = 2
-local BZ = 3
-local SX = 4
-local SY = 5
-local SZ = 6
-
-function WorldVector(bx, by, bz, sx, sy, sz)
-	local vector = {
-		[BX] = bx,
-		[BY] = by,
-		[BZ] = bz,
-		[SX] = sx,
-		[SY] = sy,
-		[SZ] = sz,
-	}
-
-end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
---[[
-
-
-
+-- 149.597.870.700 Meter
+-- 7.852.392.233.043 Units
+-- 7.668.351.790 Skybox Units
+-- ist wirklich ne AU
+BIG_SCALE = 8
 
 
 
@@ -174,16 +136,6 @@ function Star_Trek.World.Vector:FixValue()
 		b[3] + math.floor(temp[3])
 	)
 	self[2] = s2
-
-	if SERVER and false then
-		print("...")
-		print("B", b)
-		print("S", s)
-		print("S2", s2)
-		print("S-S2", s - s2)
-		print("T", temp)
-		print(self[1], self[2])
-	end
 end
 
 function Star_Trek.World.Vector:ToVector()
@@ -218,4 +170,45 @@ function net.WriteWorldVector(vec)
 	net.WriteVector(vec[2])
 end
 
-]]
+
+local startTime = SysTime()
+
+local results = {}
+
+for i = 0, 1024 * 32 do
+	local x = WorldVector(
+		Vector(
+			math.random(-(1024 * 1024 * 16), 1024 * 1024 * 16),
+			math.random(-(1024 * 1024 * 16), 1024 * 1024 * 16),
+			math.random(-(1024 * 1024 * 16), 1024 * 1024 * 16)
+		),
+		Vector(
+			math.random(-(1024 * 1024 * 16), 1024 * 1024 * 16),
+			math.random(-(1024 * 1024 * 16), 1024 * 1024 * 16),
+			math.random(-(1024 * 1024 * 16), 1024 * 1024 * 16)
+		)
+	)
+
+	local y = WorldVector(
+		Vector(
+			math.random(-(1024 * 1024 * 16), 1024 * 1024 * 16),
+			math.random(-(1024 * 1024 * 16), 1024 * 1024 * 16),
+			math.random(-(1024 * 1024 * 16), 1024 * 1024 * 16)
+		),
+		Vector(
+			math.random(-(1024 * 1024 * 16), 1024 * 1024 * 16),
+			math.random(-(1024 * 1024 * 16), 1024 * 1024 * 16),
+			math.random(-(1024 * 1024 * 16), 1024 * 1024 * 16)
+		)
+	)
+
+	results[i] = {}
+	results[i][1] = x + y
+	results[i][2] = x - y
+	results[i][3] = x * 2
+	results[i][4] = y / 2
+end
+
+local endTime = SysTime()
+
+print("Time: " .. endTime - startTime)

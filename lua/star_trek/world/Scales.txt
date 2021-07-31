@@ -1,0 +1,57 @@
+Base Scale Values:
+Skybox Unit -> Unit:
+1 : 1024
+
+Meter -> Unit
+1 : 52,49
+
+Unit -> Meter
+1 : 0,01869508319
+
+km -> Skybox Unit
+1 : 52.2363281336
+
+AE -> km
+1 : 1,496 e+8
+
+LY -> km
+1 : 9,461 e+12
+
+
+This means:
+Skybox Unit -> m
+1 : 19,1437651866
+
+Skybox Unit -> km
+1 : 0,0191437651866
+
+Skybox Unit -> AE
+1 : 7,814 e+9
+
+Skybox Unit -> LY
+1 : 4,942 e+14
+
+
+I need:
+>1k AU Resolution in + & - (We are signed so one direction is fine.)
+
+That would mean at LEAST
+
+1024 * 1024 * 1024 for ~1 AU
+1024 * 1024 * 1024 * 1024 for what we need.
+
+I need:
+< 1 cm Resolution
+
+Downwards we need 
+
+1024 to compensate Skybox
+1024 * 2 to get to 1 cm
+
+
+
+Total:
+
+(1024 ^5) * 2
+This is RIGHT at the border to double precision.
+* 8 seems to work (more investigation needed)

@@ -70,10 +70,19 @@ function Star_Trek.World:NetworkSync()
 
 	for id, ent in pairs(self.Entities) do
 		data[id] = ent:GetDynData()
+
+		--print(data[id].Pos)
 	end
+	--net.WriteTable(data) -- TODO: Optimise
+
+	--print(util.TableToJSON(data))
+	local dataString = util.Compress(util.TableToJSON(data))
+	--print(#dataString / #util.TableToJSON(data) * 100)
+	--print(#dataString)
 
 	net.Start("Star_Trek.World.Sync")
-		net.WriteTable(data) -- TODO: Optimise
+		net.WriteInt(#dataString, 32)
+		net.WriteData(dataString, #dataString)
 	net.Broadcast()
 end
 

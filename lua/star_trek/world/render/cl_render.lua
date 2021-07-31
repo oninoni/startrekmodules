@@ -49,7 +49,7 @@ local function IntersectWithBorder(pos, dir)
 	end
 
 	local xHit = IntersectPlaneAxis(pos, dir, direction)
-	if xHit and math.abs(xHit.y) < VECTOR_MAX and math.abs(xHit.z) < VECTOR_MAX then
+	if xHit and math.abs(xHit[2]) < VECTOR_MAX and math.abs(xHit[3]) < VECTOR_MAX then
 		return xHit
 	end
 
@@ -59,7 +59,7 @@ local function IntersectWithBorder(pos, dir)
 	end
 
 	local yHit = IntersectPlaneAxis(pos, dir, direction)
-	if yHit and math.abs(yHit.x) < VECTOR_MAX and math.abs(yHit.y) < VECTOR_MAX then
+	if yHit and math.abs(yHit[1]) < VECTOR_MAX and math.abs(yHit[2]) < VECTOR_MAX then
 		return yHit
 	end
 
@@ -68,8 +68,8 @@ local function IntersectWithBorder(pos, dir)
 		direction = 6
 	end
 
-	local zHit = IntersectPlaneAxis(pos, dir, border_id)
-	if zHit and math.abs(zHit.x) < VECTOR_MAX and math.abs(zHit.y) < VECTOR_MAX then
+	local zHit = IntersectPlaneAxis(pos, dir, direction)
+	if zHit and math.abs(zHit[1]) < VECTOR_MAX and math.abs(zHit[2]) < VECTOR_MAX then
 		return zHit
 	end
 
@@ -87,9 +87,9 @@ function Star_Trek.World:DrawEntity(ent, camPos, relPos, relAng)
 
 	-- Check if in within Vector_Max
 	local maxValue = math.max(
-		math.abs(relWorldPos.x),
-		math.abs(relWorldPos.y),
-		math.abs(relWorldPos.z)
+		math.abs(relWorldPos[1]),
+		math.abs(relWorldPos[2]),
+		math.abs(relWorldPos[3])
 	)
 
 	if maxValue >= VECTOR_MAX then
@@ -136,5 +136,5 @@ function Star_Trek.World:Draw()
 end
 
 hook.Add("PostDraw2DSkyBox", "Star_Trek.World.Draw", function()
-	Star_Trek.World:Draw()
+	--Star_Trek.World:Draw()
 end)
