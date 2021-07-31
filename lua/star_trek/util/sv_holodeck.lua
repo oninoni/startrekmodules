@@ -53,10 +53,10 @@ function Star_Trek.Util:CompressPlayers(outerName, innerName)
 
 	for _, ent in pairs(outerEnts) do
 		if ent:IsPlayer() then
-			local xPos = math.random(innerBoundsLow.x, innerBoundsHigh.x)
-			local yPos = math.random(innerBoundsLow.y, innerBoundsHigh.y)
+			local xPos = math.random(innerBoundsLow[1], innerBoundsHigh[1])
+			local yPos = math.random(innerBoundsLow[2], innerBoundsHigh[2])
 
-			local pos = Vector(xPos, yPos, innerBoundsLow.z)
+			local pos = Vector(xPos, yPos, innerBoundsLow[3])
 			local emptyPos = self:FindEmptyPosWithin(pos, innerBoundsLow, innerBoundsHigh)
 
 			if emptyPos then

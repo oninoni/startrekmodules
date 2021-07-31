@@ -26,11 +26,11 @@
 function Star_Trek.Util:IsEmptyPos(pos, lower, higher, radius)
 	radius = radius or 35
 
-	if pos[1] < lower.x
-	or pos[1] > higher.x
-	or pos[2] < lower.y
-	or pos[2] > higher.y
-	or pos[3] < lower.z
+	if pos[1] < lower[1]
+	or pos[1] > higher[1]
+	or pos[2] < lower[2]
+	or pos[2] > higher[2]
+	or pos[3] < lower[3]
 	or pos[3] > higher[3] then
 		return false
 	end
@@ -70,9 +70,9 @@ end
 -- @param Vector pos
 -- @return Vector pos or Boolean false if no empty position was found.
 function Star_Trek.Util:FindEmptyPosWithin(pos, lower, higher)
-	local x = pos.x
-	local y = pos.y
-	local z = pos.z
+	local x = pos[1]
+	local y = pos[2]
+	local z = pos[3]
 	local apos
 
 	if self:IsEmptyPos(pos, lower, higher) then

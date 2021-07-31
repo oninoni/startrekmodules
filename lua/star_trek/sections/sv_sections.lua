@@ -39,8 +39,8 @@ function Star_Trek.Sections:IsInArea(areaData, entPos)
 	local localPos = -WorldToLocal(pos, Angle(), entPos, Angle())
 	-- TODO: No idea why there needs to be a "-" here!
 
-	if  localPos[1] > min[1] and localPos[1] < max.x
-	and localPos[2] > min[2] and localPos[2] < max.y
+	if  localPos[1] > min[1] and localPos[1] < max[1]
+	and localPos[2] > min[2] and localPos[2] < max[2]
 	and localPos[3] > min[3] and localPos[3] < max[3] then
 		return true
 	end
@@ -79,8 +79,8 @@ function Star_Trek.Sections:GetInSection(deck, sectionId, filterCallback, allowM
 		local rotMin = LocalToWorld(pos, Angle(), min, Angle())
 		local rotMax = LocalToWorld(pos, Angle(), max, Angle())
 
-		local realMin = Vector(math.min(rotMin.x, rotMax.x), math.min(rotMin.y, rotMax.y), math.min(rotMin.z, rotMax.z))
-		local realMax = Vector(math.max(rotMin.x, rotMax.x), math.max(rotMin.y, rotMax.y), math.max(rotMin.z, rotMax.z))
+		local realMin = Vector(math.min(rotMin[1], rotMax[1]), math.min(rotMin[2], rotMax[2]), math.min(rotMin[3], rotMax[3]))
+		local realMax = Vector(math.max(rotMin[1], rotMax[1]), math.max(rotMin[2], rotMax[2]), math.max(rotMin[3], rotMax[3]))
 
 		local potentialEnts = ents.FindInBox(realMin, realMax)
 		for _, ent in pairs(potentialEnts) do

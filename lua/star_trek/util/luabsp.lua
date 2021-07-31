@@ -195,7 +195,7 @@ end
 ]]
 
 local function find_uv(point, textureVecs, texSizeX, texSizeY)
-	local x,y,z = point.x, point.y, point.z
+	local x,y,z = point[1], point[2], point[3]
 	local u = textureVecs[1][1] * x + textureVecs[1][2] * y + textureVecs[1][3] * z + textureVecs[1].offset
 	local v = textureVecs[2][1] * x + textureVecs[2][2] * y + textureVecs[2][3] * z + textureVecs[2].offset
 	return u / texSizeX, v / texSizeY
@@ -768,9 +768,9 @@ do
 				-- local norm = render_data.norm
 				local dot = math.abs( norm:Dot(Vector(-1,100,100):GetNormalized()) )
 				local color = Color(100 + 55 * dot,100 + 55 * dot,100 + 55 * dot) -- Color( 40357164 / 255 )
-				color.r = color.r * base_color.x
-				color.g = color.g * base_color.y
-				color.b = color.b * base_color.z
+				color.r = color.r * base_color[1]
+				color.g = color.g * base_color[2]
+				color.b = color.b * base_color[3]
 				color.a = 255
 
 				--local texinfo = self.lumps[LUMP_TEXINFO]["data"][render_data.texinfo]
@@ -783,8 +783,8 @@ do
 				local tv1 = norm:Cross( ref ):Cross( norm ):GetNormalized()
 				local tv2 = norm:Cross( tv1 )
 
-				local textureVecs = {{x = tv2.x, y = tv2.y, z = tv2.z, offset = 0},
-									 {x = tv1.x, y = tv1.y, z = tv1.z, offset = 0}}-- texinfo.textureVecs
+				local textureVecs = {{x = tv2[1], y = tv2[2], z = tv2[3], offset = 0},
+									 {x = tv1[1], y = tv1[2], z = tv1[3], offset = 0}}-- texinfo.textureVecs
 
 				for j = 1, #points - 2 do
 					u1, v1 = find_uv(points[1]    , textureVecs, 32, 32)
