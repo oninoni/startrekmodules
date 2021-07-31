@@ -21,8 +21,6 @@ Star_Trek.Modules["util"] = true
 Star_Trek.Modules["chairs"] = true
 Star_Trek.Modules["portals"] = true
 
-Star_Trek.Modules["skybox"] = true
-
 Star_Trek.Modules["lcars"] = true
 Star_Trek.Modules["lcars_swep"] = true
 
