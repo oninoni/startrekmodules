@@ -18,9 +18,9 @@
 
 Star_Trek.Security.FrameModels = {
 	["models/kingpommes/startrek/intrepid/panel_beam1.mdl"] = {
-		Model = "models/hunter/plates/plate3x3.mdl",
+		Model = "models/kingpommes/startrek/intrepid/forcefield_hallway.mdl",
 		Pos = Vector(4, 0, 0),
-		Ang = Angle(90, 0, 0),
+		Ang = Angle(0, 0, 0),
 	},
 }
 
