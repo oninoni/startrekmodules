@@ -25,21 +25,21 @@ SELF.BaseInterface = "base"
 function SELF:OpenInternal(menuPos, menuAngle, menuWidth, mainPos, mainAngle, mainWidth, mainHeight, sliderPos, sliderAngle, textPos, textAngle, padNumber)
 	local menuPosSource = menuPos + Vector()
 	local menuPosTarget = menuPos + Vector()
-	menuPosTarget[1] = -menuPosTarget.x
+	menuPosTarget[1] = -menuPosTarget[1]
 
 	local menuAngleSource = menuAngle + Angle()
 	local menuAngleTarget = menuAngle + Angle()
 	menuAngleTarget.p = -menuAngleTarget.p
-	menuAngleTarget[2] = -menuAngleTarget.y
+	menuAngleTarget[2] = -menuAngleTarget[2]
 
 	local mainPosSource = mainPos + Vector()
 	local mainPosTarget = mainPos + Vector()
-	mainPosTarget[1] = -mainPosTarget.x
+	mainPosTarget[1] = -mainPosTarget[1]
 
 	local mainAngleSource = mainAngle + Angle()
 	local mainAngleTarget = mainAngle + Angle()
 	mainAngleTarget.p = -mainAngleTarget.p
-	mainAngleTarget[2] = -mainAngleTarget.y
+	mainAngleTarget[2] = -mainAngleTarget[2]
 
 	local sourceSuccess, sourceMenuTable = self:CreateWindowTable(
 		menuPosSource, menuAngleSource, menuWidth,

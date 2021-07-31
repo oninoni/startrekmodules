@@ -39,11 +39,11 @@ function Star_Trek.Transporter:TriggerEffect(ent, remat, replicator)
 
 	-- Detect Size, for effect to use.
 	local low, high = ent:GetCollisionBounds()
-	local width = high[1] - low.x
-	local depth = high[2] - low.y
+	local width = high[1] - low[1]
+	local depth = high[2] - low[2]
 	transportData.ObjectSize = (width + depth) / 2
-	transportData.ObjectHeight = high[3] - low.z
-	local offset = high[3] + low.z
+	transportData.ObjectHeight = high[3] - low[3]
+	local offset = high[3] + low[3]
 	transportData.Offset = offset / 2
 
 	if remat then

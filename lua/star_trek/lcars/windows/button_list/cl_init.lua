@@ -59,7 +59,7 @@ function SELF:IsButtonHovered(x, y, width, height, pos)
 end
 
 function SELF:OnPress(pos, animPos)
-	local offset = Star_Trek.LCARS:GetButtonOffset(self.ButtonsStart, self.ButtonsHeight, self.ButtonHeight + 3, self.MaxN, pos.y)
+	local offset = Star_Trek.LCARS:GetButtonOffset(self.ButtonsStart, self.ButtonsHeight, self.ButtonHeight + 3, self.MaxN, pos[2])
 
 	for i, button in pairs(self.Buttons) do
 		if button.Disabled then continue end
@@ -72,7 +72,7 @@ function SELF:OnPress(pos, animPos)
 end
 
 function SELF:OnDraw(pos, animPos)
-	local offset = Star_Trek.LCARS:GetButtonOffset(self.ButtonsStart, self.ButtonsHeight, self.ButtonHeight + 3, self.MaxN, pos.y)
+	local offset = Star_Trek.LCARS:GetButtonOffset(self.ButtonsStart, self.ButtonsHeight, self.ButtonHeight + 3, self.MaxN, pos[2])
 
 	for i, button in pairs(self.Buttons) do
 		local y = Star_Trek.LCARS:GetButtonYPos(self.ButtonsHeight, self.ButtonHeight, i, self.MaxN, offset)

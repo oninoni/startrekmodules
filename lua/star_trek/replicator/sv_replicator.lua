@@ -53,7 +53,7 @@ function Star_Trek.Replicator:CreateObject(data, pos, angle)
 		end
 
 		local min, _ = ent:GetCollisionBounds()
-		ent:SetPos(pos - Vector(0, 0, min.z))
+		ent:SetPos(pos - Vector(0, 0, min[3]))
 		ent:SetAngles(angle)
 
 		ent:Spawn()

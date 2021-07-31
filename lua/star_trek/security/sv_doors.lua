@@ -142,7 +142,7 @@ local function checkPlayers(ent)
 		if nearbyEnt:IsPlayer() then
 			local eyePos = nearbyEnt:EyePos()
 			local entPos = ent:GetPos()
-			entPos[3] = eyePos.z
+			entPos[3] = eyePos[3]
 
 			local distance = eyePos:Distance(entPos)
 			if distance <= 32 or ent.Open then
