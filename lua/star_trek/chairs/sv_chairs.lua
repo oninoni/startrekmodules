@@ -56,6 +56,7 @@ hook.Add("PostCleanupMap", "Star_Trek.ChairsPostCleanupMap", setupChairs)
 hook.Add("CanExitVehicle", "Star_Trek.CheckLeaveChair", function(chair, ply)
 	if isStarTrekChair(chair) then
 		ply.STPrevViewAngle = ply:EyeAngles()
+		ply.STPrevViewAngle.r = 0
 	end
 end)
 
