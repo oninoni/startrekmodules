@@ -13,24 +13,23 @@
 ---------------------------------------
 
 ---------------------------------------
---         Turbolift | Index         --
+--     Turbolift Sounds | Shared     --
 ---------------------------------------
 
-Star_Trek:RequireModules("util", "lcars")
+sound.Add({
+	name = "star_trek.turbolift_start",
+	channel = CHAN_USER_BASE + 1,
+	volume = 1,
+	level = 100,
+	pitch = 100,
+	sound = "oninoni/startrek/turbolift/tng_turbolift_movestart_loop.wav",
+})
 
-Star_Trek.Turbolift = Star_Trek.Turbolift or {}
-
-if SERVER then
-	AddCSLuaFile("sh_sounds.lua")
-
-	include("sh_sounds.lua")
-
-	include("sv_config.lua")
-	include("sv_doors.lua")
-	include("sv_path.lua")
-	include("sv_turbolift.lua")
-end
-
-if CLIENT then
-	include("sh_sounds.lua")
-end
+sound.Add({
+	name = "star_trek.turbolift_stop",
+	channel = CHAN_USER_BASE + 1,
+	volume = 1,
+	level = 70,
+	pitch = 100,
+	sound = "oninoni/startrek/turbolift/tng_turbolift_movestop_clean.wav",
+})
