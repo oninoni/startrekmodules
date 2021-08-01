@@ -32,13 +32,15 @@ function SELF:Open(ent)
 		Angle(0, 0, -90),
 		Vector(0, -0.5, -2),
 		Angle(0, 0, 0),
+		550,
+		720,
 		nil
 	)
 	if not success then
 		return false, windows
 	end
 
-	return true, windows, Vector(0, 32, -11.5), Angle(0, 0, -8)
+	return true, windows, Vector(0, 11.5, -4), Angle(0, 0, -8)
 end
 
 function Star_Trek.LCARS:OpenConsoleTransporterMenu()

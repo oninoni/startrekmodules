@@ -285,6 +285,12 @@ hook.Add("Think", "Star_Trek.Turbolift.Think", function()
 					if currentDirection == "R" then
 						podData.Entity:SetSkin(4)
 					end
+					if currentDirection == "F" then
+						podData.Entity:SetSkin(5)
+					end
+					if currentDirection == "B" then
+						podData.Entity:SetSkin(6)
+					end
 				else
 					podData.Entity:SetSkin(math.random(1, 4))
 				end

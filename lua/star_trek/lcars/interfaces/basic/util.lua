@@ -20,11 +20,14 @@ local SELF = INTERFACE
 
 -- Generate the buttons for a general purpose menu.
 function SELF:GenerateButtons(keyValues)
+	print("Updating...")
+	PrintTable(keyValues)
+
 	local buttons = {}
 	for i = 1, 20 do
 		local name = keyValues["lcars_name_" .. i]
 		if isstring(name) then
-			local disabled = keyValues["lcars_disabled_" .. i]
+			local disabled = tobool(keyValues["lcars_disabled_" .. i])
 
 			buttons[i] = {
 				Name = name,
