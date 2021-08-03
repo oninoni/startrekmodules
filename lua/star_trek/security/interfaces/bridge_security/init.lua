@@ -26,7 +26,7 @@ SELF.BaseInterface = "base"
 -- @param Entity ent
 -- @return Boolean success
 -- @return? Table windows
-function SELF:Open(ent)
+function SELF:Open(ent, engineering)
 	local success2, menuWindow, actionWindow = self:CreateMenuWindow()
 	if not success2 then
 		return false, menuWindow
