@@ -53,6 +53,7 @@ function SELF:GetModeButtons(mode)
 			[1] = "Red Alert",
 			[2] = "Yellow Alert",
 			[3] = "Intruder Alert",
+			[4] = "Blue Alert",
 			[6] = "Disable Alert",
 		}
 		actionColors = {
@@ -335,9 +336,8 @@ function SELF:CreateActionWindow(mode)
 				return true
 
 			-------- Alerts --------
-			-- TODO: Add When alerts exist.
 			elseif buttonName == "Red Alert" then
-
+				Star_Trek.Alert:Enable("red")
 
 				textWindow:AddLine("RED ALERT!", Star_Trek.LCARS.ColorRed)
 				textWindow:AddLine("")
@@ -345,7 +345,7 @@ function SELF:CreateActionWindow(mode)
 
 				return true
 			elseif buttonName == "Yellow Alert" then
-
+				Star_Trek.Alert:Enable("yellow")
 
 				textWindow:AddLine("YELLOW ALERT!", Star_Trek.LCARS.ColorYellow)
 				textWindow:AddLine("")
@@ -353,15 +353,23 @@ function SELF:CreateActionWindow(mode)
 
 				return true
 			elseif buttonName == "Intruder Alert" then
+				Star_Trek.Alert:Enable("intruder")
 
+				textWindow:AddLine("INTRUDER ALERT!", Star_Trek.LCARS.ColorYellow)
+				textWindow:AddLine("")
+				textWindow:Update()
 
-				textWindow:AddLine("Intruder ALERT!", Star_Trek.LCARS.ColorBlue)
+				return true
+			elseif buttonName == "Blue Alert" then
+				Star_Trek.Alert:Enable("blue")
+
+				textWindow:AddLine("BLUE ALERT!", Star_Trek.LCARS.ColorBlue)
 				textWindow:AddLine("")
 				textWindow:Update()
 
 				return true
 			elseif buttonName == "Disable Alert" then
-
+				Star_Trek.Alert:Disable()
 
 				textWindow:AddLine("Alerts Disabled!")
 				textWindow:AddLine("")

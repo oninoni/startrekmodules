@@ -13,16 +13,25 @@
 ---------------------------------------
 
 ---------------------------------------
---           Alarm | Shared          --
+--           Alert | Index           --
 ---------------------------------------
 
-function Star_Trek.Alarm:Register(type, onEnable, onDisable)
-	local typeCapitalized = string.upper(string.sub(type, 1,1)) .. string.sub(type, 2)
+Star_Trek:RequireModules()
 
-	self["Enable" .. typeCapitalized .. "Alert"] = onEnable
-	self["Disable" .. typeCapitalized .. "Alert"] = onDisable
+Star_Trek.Alert = Star_Trek.Alert or {}
+
+if SERVER then
+	AddCSLuaFile("sh_config.lua")
+	AddCSLuaFile("sh_sounds.lua")
+	AddCSLuaFile("cl_alert.lua")
+
+	include("sh_config.lua")
+	include("sh_sounds.lua")
+	include("sv_alert.lua")
 end
 
-Star_Trek.Alarm:Register("yellow", onEnable, onDisable)
-Star_Trek.Alarm:Register("blue", onEnable, onDisable)
-Star_Trek.Alarm:Register("red", onEnable, onDisable)
+if CLIENT then
+	include("sh_config.lua")
+	include("sh_sounds.lua")
+	include("cl_alert.lua")
+end
