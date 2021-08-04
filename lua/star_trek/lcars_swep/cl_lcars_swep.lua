@@ -17,19 +17,20 @@
 ---------------------------------------
 
 hook.Add("Star_Trek.LCARS.OverridePosAng", "Star_Trek.LCARS_SWEP.OverrideSWEPViewmodel", function(ent, pos, ang)
-	if not ent.IsLCARS then return end
+	if IsValid(ent) and ent:IsWeapon() and ent.IsLCARS then
+		if ent.DrawingViewModelActive then
+			return ent:GetPosAngle(false)
+		else
+			return ent:GetPosAngle(true)
+		end
+	end
+end)
 
-	local owner = ent:GetOwner()
-	if not IsValid(owner) or owner ~= LocalPlayer() then return end
-
-	local vm = owner:GetViewModel()
-	if not IsValid(vm) then return end
-
-	local m = vm:GetBoneMatrix(vm:LookupBone(ent.CustomViewModelBone))
-	local oPos, oAng = LocalToWorld(ent.CustomViewModelOffset, ent.CustomViewModelAngle, m:GetTranslation(), m:GetAngles())
-	oPos, oAng = LocalToWorld(ent.MenuOffset, ent.MenuAngle, oPos, oAng)
-
-	return oPos, oAng
+hook.Add("Star_Trek.LCARS.PreventRender", "Star_Trek.LCARS_SWEP.PreventRender", function(interface)
+	local ent = interface.Ent
+	if IsValid(ent) and ent:IsWeapon() and ent.IsLCARS and ent.DrawingViewModelActive then
+		return true
+	end
 end)
 
 hook.Add("Star_Trek.LCARS.OpenMenu", "Star_Trek.LCARS_SWEP.OpenSWEPMenu", function(id, interfaceData, interface)

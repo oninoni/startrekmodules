@@ -13,45 +13,36 @@
 ---------------------------------------
 
 ---------------------------------------
---      LCARS PADD Logs | Server     --
+--  LCARS Engi Transporter | Server  --
 ---------------------------------------
 
 local SELF = INTERFACE
-SELF.BaseInterface = "base"
+SELF.BaseInterface = "transporter"
 
-function SELF:Open(ent, title, lines)
-	local success, window = Star_Trek.LCARS:CreateWindow(
-		"text_entry",
-		Vector(),
-		Angle(),
-		ent.MenuScale,
-		ent.MenuWidth,
-		ent.MenuHeight,
-		function(windowData, interfaceData, buttonId)
-
-		end,
-		Color(255, 255, 255),
-		title or "Logs",
-		"LOGS",
-		false,
-		lines
+function SELF:Open(ent)
+	local success, windows = self:OpenInternal(
+		Vector(-12, 4, -14.25),
+		Angle(0, 0, 0),
+		580,
+		Vector(-15, -26.25, 2.5),
+		Angle(0, 0, -76.5),
+		600,
+		600,
+		Vector(12, -8, -14.25),
+		Angle(0, 0, 0),
+		Vector(-12, -8, -14.25),
+		Angle(0, 0, 0),
+		580,
+		280,
+		nil
 	)
 	if not success then
-		return false, window
+		return false, windows
 	end
 
-	return true, {window}
+	return true, windows, Vector(0, 0, 0), Angle(0, 0, 0)
 end
 
-function SELF:SetData(logType, lines)
-	local window = self.Windows[1]
-	window.Title = logType
-	window.Lines = lines
-
-	window:Update()
-end
-
-function SELF:GetData()
-	local window = self.Windows[1]
-	return window.Title, window.Lines
+function Star_Trek.LCARS:OpenTransporterEngMenu()
+	Star_Trek.LCARS:OpenInterface(TRIGGER_PLAYER, CALLER, "eng_transporter")
 end

@@ -76,7 +76,12 @@ function SELF:OnCreate(padNumber, title, titleShort, hFlip)
 			end
 
 			-- Pad Offset (Frame)
-			pad.X = pad.X + 30
+			if hFlip then
+				pad.X = pad.X - 20
+			else
+				pad.X = pad.X + 20
+			end
+
 			pad.Y = pad.Y + 30
 
 			self.Pads[k] = pad

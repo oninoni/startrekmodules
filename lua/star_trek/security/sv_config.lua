@@ -22,6 +22,21 @@ Star_Trek.Security.FrameModels = {
 		Pos = Vector(4, 0, 0),
 		Ang = Angle(0, 0, 0),
 	},
+	["models/kingpommes/startrek/intrepid/sickbay_op.mdl"] = {
+		Model = "models/kingpommes/startrek/intrepid/forcefield_sickbay.mdl",
+		Pos = Vector(0, 0, 0),
+		Ang = Angle(0, 0, 0),
+	},
+	["models/kingpommes/startrek/intrepid/transporter_pad.mdl"] = {
+		Model = "models/kingpommes/startrek/intrepid/forcefield_sickbay.mdl",
+		Pos = Vector(0, 0, 0),
+		Ang = Angle(0, -90, 0),
+	},
+	["models/kingpommes/startrek/intrepid/brig_fieldemitter.mdl"] = {
+		Model = "models/kingpommes/startrek/intrepid/forcefield_brig.mdl",
+		Pos = Vector(0, 0, 0),
+		Ang = Angle(0, 0, 0),
+	},
 }
 
 -- List all Door Models with their names.

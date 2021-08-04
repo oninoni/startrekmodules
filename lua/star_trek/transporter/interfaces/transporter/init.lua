@@ -22,14 +22,14 @@ include("windowUtil.lua")
 local SELF = INTERFACE
 SELF.BaseInterface = "base"
 
-function SELF:OpenInternal(menuPos, menuAngle, menuWidth, mainPos, mainAngle, mainWidth, mainHeight, sliderPos, sliderAngle, textPos, textAngle, padNumber)
+function SELF:OpenInternal(menuPos, menuAngle, menuWidth, mainPos, mainAngle, mainWidth, mainHeight, sliderPos, sliderAngle, textPos, textAngle, textWidth, textHeight, padNumber)
 	local menuPosSource = menuPos + Vector()
 	local menuPosTarget = menuPos + Vector()
 	menuPosTarget[1] = -menuPosTarget[1]
 
 	local menuAngleSource = menuAngle + Angle()
 	local menuAngleTarget = menuAngle + Angle()
-	menuAngleTarget.p = -menuAngleTarget.p
+	menuAngleTarget[1] = -menuAngleTarget[1]
 	menuAngleTarget[2] = -menuAngleTarget[2]
 
 	local mainPosSource = mainPos + Vector()
@@ -38,7 +38,7 @@ function SELF:OpenInternal(menuPos, menuAngle, menuWidth, mainPos, mainAngle, ma
 
 	local mainAngleSource = mainAngle + Angle()
 	local mainAngleTarget = mainAngle + Angle()
-	mainAngleTarget.p = -mainAngleTarget.p
+	mainAngleTarget[1] = -mainAngleTarget[1]
 	mainAngleTarget[2] = -mainAngleTarget[2]
 
 	local sourceSuccess, sourceMenuTable = self:CreateWindowTable(
@@ -68,8 +68,8 @@ function SELF:OpenInternal(menuPos, menuAngle, menuWidth, mainPos, mainAngle, ma
 		textPos,
 		textAngle,
 		24,
-		550,
-		720,
+		textWidth,
+		textHeight,
 		function(windowData, interfaceData, categoryId, buttonId)
 			return false
 		end,
@@ -103,23 +103,25 @@ end
 function SELF:Open(ent)
 	local padNumber = false
 	local consoleName = ent:GetName()
-	if isstring(consoleName) and string.StartWith(consoleName, "TRConsole") then
+	if isstring(consoleName) and string.StartWith(consoleName, "TRButton") then
 		local split = string.Split(consoleName, "_")
 		padNumber = tonumber(split[2])
 	end
 
 	local success, windows = self:OpenInternal(
-		Vector(-13, -2, 6),
-		Angle(5, 15, 30),
+		Vector(-13, 0, 6),
+		Angle(20, 0, -20),
 		350,
-		Vector(-31, -12, 17),
-		Angle(15, 45, 60),
+		Vector(-30, 4, 19),
+		Angle(55, 0, -20),
 		500,
 		500,
-		Vector(0, 0, 0),
-		Angle(0, 0, 0),
-		Vector(0, -115, 70),
-		Angle(0, 180, 110),
+		Vector(0, -4, -0.5),
+		Angle(0, 0, -68),
+		Vector(22, 24.5, 126.5),
+		Angle(192, 0, 0),
+		670,
+		650,
 		padNumber
 	)
 	if not success then

@@ -41,6 +41,8 @@ function Star_Trek.Security:EnableForceFields(deck, sectionId)
 			ent:Activate()
 
 			ent:SetPersistent(true)
+			ent:SetRenderMode(RENDERGROUP_BOTH)
+			ent:DrawShadow(false)
 
 			local phys = ent:GetPhysicsObject()
 			if IsValid(phys) then

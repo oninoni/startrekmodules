@@ -131,8 +131,6 @@ concommand.Add("lcars_saveRT", function()
 	Star_Trek.Util.Saving = true
 	Star_Trek.Util.SavingX = 0
 	Star_Trek.Util.SavingY = 0
-
-	print("---")
 end)
 
 hook.Add("HUDPaint", "Test", function()

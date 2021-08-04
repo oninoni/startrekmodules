@@ -335,8 +335,7 @@ hook.Add("PostDrawTranslucentRenderables", "Star_Trek.LCARS.Draw", function(isDr
 			continue
 		end
 
-		local ent = interface.Ent
-		if IsValid(ent) and ent:IsWeapon() and IsValid(ent:GetOwner()) and ent:GetOwner() == LocalPlayer() then
+		if hook.Run("Star_Trek.LCARS.PreventRender", interface) then
 			continue
 		end
 

@@ -19,12 +19,20 @@
 function SWEP:Initialize()
 	self.ActiveMode = false
 	self.ModeCache = {}
+end
 
+function SWEP:Deploy()
 	if self.DefaultMode then
 		timer.Simple(0, function()
 			self:ActivateMode(self.DefaultMode)
 		end)
 	end
+end
+
+function SWEP:OnDrop()
+	--if self.ActiveMode then
+	--	self:DeactivateMode()
+	--end
 end
 
 function SWEP:Reload()

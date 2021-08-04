@@ -13,17 +13,28 @@
 ---------------------------------------
 
 ---------------------------------------
---           LCARS | Config          --
+--           Alert | Config          --
 ---------------------------------------
 
-Star_Trek.LCARS.ModelSettings = {}
+Star_Trek.Alert.AlertMaterial = "models/kingpommes/startrek/intrepid/light_alarm"
 
-Star_Trek.LCARS.ModelSettings["models/dav0r/buttons/button.mdl"] = {
-	Offset = -4,
+Star_Trek.Alert.AlertTypes = {
+	red = {
+		Sound = "star_trek.red_alert",
+		Color = Color(255, 0, 0),
+	},
+	yellow = {
+		Sound = nil,
+		Color = Color(255, 191, 0),
+	},
+	intruder = {
+		Sound = "star_trek.blue_alert",
+		Color = Color(255, 0, 0),
+	},
+	blue = {
+		Sound = "star_trek.blue_alert",
+		Color = Color(0, 0, 255),
+	},
 }
-Star_Trek.LCARS.ModelSettings["models/maxofs2d/button_05.mdl"] = {
-	Offset = 8,
-}
-Star_Trek.LCARS.ModelSettings["models/kingpommes/startrek/voyager/turbolift_button.mdl"] = {
-	Offset = 1,
-}
+
+Star_Trek.Alert.OffFrame = 1

@@ -40,11 +40,6 @@ function Star_Trek.LCARS:GetInterfacePosAngleGlobal(ent)
 		globalInterfaceAngle = attachmentPoint.Ang
 	end
 
-	local modelSetting = self.ModelSettings[ent:GetModel()]
-	if istable(modelSetting) then
-		globalInterfacePos = globalInterfacePos + globalInterfaceAngle:Forward() * modelSetting.Offset
-	end
-
 	globalInterfaceAngle:RotateAroundAxis(globalInterfaceAngle:Right(), -90)
 	globalInterfaceAngle:RotateAroundAxis(globalInterfaceAngle:Up(), 90)
 

@@ -23,18 +23,12 @@ SELF.BaseInterface = "base"
 
 -- Opening general purpose menus.
 function SELF:Open(ent)
-	local triggerEntity = ent:GetParent()
-	if not IsValid(triggerEntity) then
-		triggerEntity = ent
-	end
-	triggerEntity.LCARSEnt = ent
-
-	local success2, buttons, scale, width, height, title, titleShort = self:GetButtonData(triggerEntity)
+	local success2, buttons, scale, width, height, title, titleShort = self:GetButtonData(ent)
 	if not success2 then
 		return false, buttons
 	end
 
-	local name = triggerEntity:GetName()
+	local name = ent:GetName()
 	local caseEntities = ents.FindByName(name .. "_case")
 
 	local success3, window = Star_Trek.LCARS:CreateWindow(
@@ -52,10 +46,10 @@ function SELF:Open(ent)
 					end
 				end
 			else
-				triggerEntity:Fire("FireUser" .. buttonId)
+				ent:Fire("FireUser" .. buttonId)
 			end
 
-			local keyValues = triggerEntity.LCARSKeyData
+			local keyValues = ent.LCARSKeyData
 			if istable(keyValues) and keyValues["lcars_keep_open"] then
 				ent:EmitSound("star_trek.lcars_beep")
 
@@ -77,17 +71,15 @@ function SELF:Open(ent)
 end
 
 -- Detect updates in "lcars_name_i", "lcars_disabled_i".
-hook.Add("Star_Trek.ChangedKeyValue", "Star_Trek.LCARS.BasicInterface", function(triggerEntity, key, value)
+hook.Add("Star_Trek.ChangedKeyValue", "Star_Trek.LCARS.BasicInterface", function(ent, key, value)
 	if string.StartWith(key, "lcars_name_") or string.StartWith(key, "lcars_disabled_") then
-		local keyValues = triggerEntity.LCARSKeyData
+
+		local keyValues = ent.LCARSKeyData
 		if istable(keyValues) and keyValues["lcars_keep_open"] then
-			local ent = triggerEntity.LCARSEnt
-			if IsValid(ent) then
-				local interfaceData = Star_Trek.LCARS.ActiveInterfaces[ent]
-				if istable(interfaceData) then
-					interfaceData.Windows[1]:SetButtons(interfaceData:GenerateButtons(triggerEntity.LCARSKeyData))
-					interfaceData:UpdateWindow(1)
-				end
+			local interfaceData = Star_Trek.LCARS.ActiveInterfaces[ent]
+			if istable(interfaceData) then
+				interfaceData.Windows[1]:SetButtons(interfaceData:GenerateButtons(ent.LCARSKeyData))
+				interfaceData:UpdateWindow(1)
 			end
 		end
 	end

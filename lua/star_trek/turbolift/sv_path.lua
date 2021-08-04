@@ -33,7 +33,7 @@ function Star_Trek.Turbolift:GetDeckNumber(liftData)
 end
 
 local ud = "UD"
-local lr = "LR"
+local sides = "LRBF"
 -- Returns the path, that the lift needs to take in its animation, to reach the target decks.
 --
 -- @param Number sourceDeck
@@ -63,7 +63,7 @@ function Star_Trek.Turbolift:GetPath(sourceDeck, targetDeck)
 
 		for i = 1, travelTime-2 do
 			if math.random(1, 2) == 1 or i == 1 then
-				travelPath = travelPath .. lr[math.random(1, 2)]
+				travelPath = travelPath .. sides[math.random(1, 4)]
 			else
 				travelPath = travelPath .. travelPath[#travelPath]
 			end
@@ -91,14 +91,14 @@ function Star_Trek.Turbolift:GetPath(sourceDeck, targetDeck)
 
 		for i = 1, travelTime do
 			if vertTravelled == deckDiff then
-				travelPath = travelPath .. lr[math.random(1, 2)]
+				travelPath = travelPath .. sides[math.random(1, 4)]
 			else
 				if (travelTime - i) > vertTravelled then
 					if math.random(1, 2) == 1 then
 						travelPath = travelPath .. travelDirection
 						vertTravelled = vertTravelled + 1
 					else
-						travelPath = travelPath .. lr[math.random(1, 2)]
+						travelPath = travelPath .. sides[math.random(1, 4)]
 					end
 				else
 					travelPath = travelPath .. travelDirection

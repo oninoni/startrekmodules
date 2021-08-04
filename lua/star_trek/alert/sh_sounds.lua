@@ -13,22 +13,23 @@
 ---------------------------------------
 
 ---------------------------------------
---           Alarm | Index           --
+--       Alert Sounds | Shared       --
 ---------------------------------------
 
-Star_Trek:RequireModules()
+sound.Add({
+	name = "star_trek.blue_alert",
+	channel = CHAN_BODY,
+	volume = .8,
+	level = 0,
+	pitch = 100,
+	sound = "oninoni/startrek/alert/voy_bluealert.wav",
+})
 
-Star_Trek.Alarm = Star_Trek.Alarm or {}
-
-if SERVER then
-	AddCSLuaFile("sh_alarm.lua")
-	AddCSLuaFile("cl_alarm.lua")
-
-	include("sh_alarm.lua")
-	include("sv_alarm.lua")
-end
-
-if CLIENT then
-	include("sh_alarm.lua")
-	include("cl_alarm.lua")
-end
+sound.Add({
+	name = "star_trek.red_alert",
+	channel = CHAN_BODY,
+	volume = 1,
+	level = 0,
+	pitch = 100,
+	sound = "oninoni/startrek/alert/voy_redalert.wav",
+})

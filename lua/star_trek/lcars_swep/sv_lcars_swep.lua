@@ -16,6 +16,14 @@
 --        LCARS SWEP | Server        --
 ---------------------------------------
 
+--[[
+hook.Add("Star_Trek.LCARS.IsPrivate", "Star_Trek.LCARS_SWEP.MakePrivate", function(ply, ent, interfaceData)
+	if IsValid(ent) and ent:IsWeapon() and ent.IsLCARS then
+		return true
+	end
+end)
+]]
+
 -- Load a given mode.
 --
 -- @param String moduleName
@@ -56,9 +64,7 @@ hook.Add("Star_Trek.LoadModule", "Star_Trek.LCARS_SWEP.LoadModes", function(modu
 	Star_Trek.LCARS_SWEP.Modes = Star_Trek.LCARS_SWEP.Modes or {}
 
 	local modeDirectory = moduleDirectory .. "modes/"
-	print(modeDirectory)
 	local _, modeDirectories = file.Find(modeDirectory .. "*", "LUA")
-	PrintTable(modeDirectories)
 	for _, modeName in pairs(modeDirectories) do
 		local success, error = Star_Trek.LCARS_SWEP:LoadMode(moduleName, modeDirectory, modeName)
 		if success then

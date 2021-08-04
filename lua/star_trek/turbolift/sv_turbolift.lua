@@ -154,12 +154,18 @@ function Star_Trek.Turbolift:StartLift(sourceLift, targetLiftId)
 		if podData then
 			self:LockDoors(sourceLift)
 
+
 			sourceLiftData.InUse = true
 			sourceLiftData.ClosingTime = 1
 			sourceLiftData.CloseCallback = function()
 				local sourceLiftObjects = self:GetObjects(sourceLift)
 				if table.Count(sourceLiftObjects) > 0 then
 					self:Teleport(sourceLift, podData.Entity, sourceLiftObjects)
+
+					local filter = RecipientFilter()
+					filter:AddAllPlayers()
+
+					podData.LoopId = podData.Entity:StartLoopingSound("star_trek.turbolift_start")
 
 					-- Target Pod and calc travel time/path.
 					podData.TravelTarget = targetLiftData
@@ -186,10 +192,15 @@ end
 
 function Star_Trek.Turbolift:StopPod(podData)
 	podData.Stopped = true
+
+	podData.Entity:EmitSound("star_trek.turbolift_stop")
+	podData.Entity:StopLoopingSound(podData.LoopId)
 end
 
 function Star_Trek.Turbolift:ResumePod(podData)
 	podData.Stopped = false
+
+	podData.LoopId = podData.Entity:StartLoopingSound("star_trek.turbolift_start")
 end
 
 function Star_Trek.Turbolift:TogglePos(pod)
@@ -285,6 +296,12 @@ hook.Add("Think", "Star_Trek.Turbolift.Think", function()
 					if currentDirection == "R" then
 						podData.Entity:SetSkin(4)
 					end
+					if currentDirection == "F" then
+						podData.Entity:SetSkin(5)
+					end
+					if currentDirection == "B" then
+						podData.Entity:SetSkin(6)
+					end
 				else
 					podData.Entity:SetSkin(math.random(1, 4))
 				end
@@ -296,6 +313,9 @@ hook.Add("Think", "Star_Trek.Turbolift.Think", function()
 
 				if not table.HasValue(targetLiftData.Queue, podData) then
 					table.insert(targetLiftData.Queue, podData)
+
+					podData.Entity:EmitSound("star_trek.turbolift_stop")
+					podData.Entity:StopLoopingSound(podData.LoopId)
 				end
 
 				if targetLiftData.Queue[1] == podData and not targetLiftData.InUse then

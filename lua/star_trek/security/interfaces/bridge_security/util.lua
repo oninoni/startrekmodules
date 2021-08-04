@@ -53,6 +53,7 @@ function SELF:GetModeButtons(mode)
 			[1] = "Red Alert",
 			[2] = "Yellow Alert",
 			[3] = "Intruder Alert",
+			[4] = "Blue Alert",
 			[6] = "Disable Alert",
 		}
 		actionColors = {
@@ -88,15 +89,15 @@ hook.Add("Star_Trek.Util.IsLifeForm", "CheckDefault", function(ent)
 	end
 end)
 
-function SELF:CreateActionWindow(mode)
+function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 	local buttons = self:GetModeButtons(mode)
 	local height = table.maxn(buttons) * 35 + 80
 	local success, actionWindow = Star_Trek.LCARS:CreateWindow(
 		"button_list",
-		Vector(22, -34, 8.2),
-		Angle(0, 0, -90),
+		pos,
+		ang,
 		24,
-		500,
+		width,
 		height,
 		function(windowData, interfaceData, buttonId)
 			local buttonName = windowData.Buttons[buttonId].Name
@@ -335,9 +336,8 @@ function SELF:CreateActionWindow(mode)
 				return true
 
 			-------- Alerts --------
-			-- TODO: Add When alerts exist.
 			elseif buttonName == "Red Alert" then
-
+				Star_Trek.Alert:Enable("red")
 
 				textWindow:AddLine("RED ALERT!", Star_Trek.LCARS.ColorRed)
 				textWindow:AddLine("")
@@ -345,7 +345,7 @@ function SELF:CreateActionWindow(mode)
 
 				return true
 			elseif buttonName == "Yellow Alert" then
-
+				Star_Trek.Alert:Enable("yellow")
 
 				textWindow:AddLine("YELLOW ALERT!", Star_Trek.LCARS.ColorYellow)
 				textWindow:AddLine("")
@@ -353,15 +353,23 @@ function SELF:CreateActionWindow(mode)
 
 				return true
 			elseif buttonName == "Intruder Alert" then
+				Star_Trek.Alert:Enable("intruder")
 
+				textWindow:AddLine("INTRUDER ALERT!", Star_Trek.LCARS.ColorYellow)
+				textWindow:AddLine("")
+				textWindow:Update()
 
-				textWindow:AddLine("Intruder ALERT!", Star_Trek.LCARS.ColorBlue)
+				return true
+			elseif buttonName == "Blue Alert" then
+				Star_Trek.Alert:Enable("blue")
+
+				textWindow:AddLine("BLUE ALERT!", Star_Trek.LCARS.ColorBlue)
 				textWindow:AddLine("")
 				textWindow:Update()
 
 				return true
 			elseif buttonName == "Disable Alert" then
-
+				Star_Trek.Alert:Disable()
 
 				textWindow:AddLine("Alerts Disabled!")
 				textWindow:AddLine("")
@@ -373,7 +381,7 @@ function SELF:CreateActionWindow(mode)
 		buttons,
 		"Stuff",
 		nil,
-		true
+		flip
 	)
 	if not success then
 		return false, actionWindow
@@ -382,8 +390,8 @@ function SELF:CreateActionWindow(mode)
 	return true, actionWindow
 end
 
-function SELF:CreateMenuWindow()
-	local success, actionWindow = self:CreateActionWindow(1)
+function SELF:CreateMenuWindow(pos, ang, width, actionPos, actionAng, actionWidth, flipAction)
+	local success, actionWindow = self:CreateActionWindow(actionPos, actionAng, actionWidth, flipAction, 1)
 	if not success then
 		return false, actionWindow
 	end
@@ -418,10 +426,10 @@ function SELF:CreateMenuWindow()
 	local height = table.maxn(buttons) * 35 + 80
 	local success2, menuWindow = Star_Trek.LCARS:CreateWindow(
 		"button_list",
-		Vector(-22, -34, 8.2),
-		Angle(0, 0, -90),
+		pos,
+		ang,
 		24,
-		500,
+		width,
 		height,
 		function(windowData, interfaceData, buttonId)
 			if buttonId > modeCount then
@@ -454,8 +462,8 @@ function SELF:CreateMenuWindow()
 end
 
 -- Generates the map view.
-function SELF:CreateMapWindow(deck)
-	local success, mapWindow = Star_Trek.LCARS:CreateWindow("section_map", Vector(12.5, -2, -2), Angle(0, 0, 0), nil, 1100, 680, function(windowData, interfaceData, buttonId)
+function SELF:CreateMapWindow(pos, ang, width, height, deck)
+	local success, mapWindow = Star_Trek.LCARS:CreateWindow("section_map", pos, ang, nil, width, height, function(windowData, interfaceData, buttonId)
 		-- No Interactivity here yet.
 	end, deck)
 	if not success then
