@@ -44,7 +44,5 @@ function SELF:Open(ent)
 end
 
 function Star_Trek.LCARS:OpenTransporterEngMenu()
-	print(CALLER:MapCreationID())
-
 	Star_Trek.LCARS:OpenInterface(TRIGGER_PLAYER, CALLER, "eng_transporter")
 end

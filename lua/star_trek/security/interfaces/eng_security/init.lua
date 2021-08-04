@@ -55,7 +55,5 @@ end
 
 -- Wrap for use in Map.
 function Star_Trek.LCARS:OpenSecurityEngMenu()
-	print(CALLER:MapCreationID())
-
 	Star_Trek.LCARS:OpenInterface(TRIGGER_PLAYER, CALLER, "eng_security", true)
 end
