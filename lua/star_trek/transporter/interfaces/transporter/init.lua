@@ -29,7 +29,7 @@ function SELF:OpenInternal(menuPos, menuAngle, menuWidth, mainPos, mainAngle, ma
 
 	local menuAngleSource = menuAngle + Angle()
 	local menuAngleTarget = menuAngle + Angle()
-	menuAngleTarget.p = -menuAngleTarget.p
+	menuAngleTarget[1] = -menuAngleTarget[1]
 	menuAngleTarget[2] = -menuAngleTarget[2]
 
 	local mainPosSource = mainPos + Vector()
@@ -38,7 +38,7 @@ function SELF:OpenInternal(menuPos, menuAngle, menuWidth, mainPos, mainAngle, ma
 
 	local mainAngleSource = mainAngle + Angle()
 	local mainAngleTarget = mainAngle + Angle()
-	mainAngleTarget.p = -mainAngleTarget.p
+	mainAngleTarget[1] = -mainAngleTarget[1]
 	mainAngleTarget[2] = -mainAngleTarget[2]
 
 	local sourceSuccess, sourceMenuTable = self:CreateWindowTable(

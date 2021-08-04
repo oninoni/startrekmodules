@@ -21,29 +21,24 @@ include("util.lua")
 local SELF = INTERFACE
 SELF.BaseInterface = "base"
 
--- Open a security Console
---
--- @param Entity ent
--- @return Boolean success
--- @return? Table windows
-function SELF:Open(ent, engineering)
-	local success2, menuWindow, actionWindow = self:CreateMenuWindow()
+function SELF:OpenInternal(menuPos, menuAng, menuWidth, actionPos, actionAng, actionWidth, actionFlip, mapPos, mapAng, mapWidth, mapHeight, sectionPos, sectionAng, sectionWidth, sectionHeight, textPos, textAng, textWidth, textHeight)
+	local success2, menuWindow, actionWindow = self:CreateMenuWindow(menuPos, menuAng, menuWidth, actionPos, actionAng, actionWidth, actionFlip)
 	if not success2 then
 		return false, menuWindow
 	end
 
-	local success3, mapWindow = self:CreateMapWindow(1)
+	local success3, mapWindow = self:CreateMapWindow(mapPos, mapAng, mapWidth, mapHeight, 1)
 	if not success3 then
 		return false, mapWindow
 	end
 
 	local success4, sectionWindow = Star_Trek.LCARS:CreateWindow(
 		"category_list",
-		Vector(-28, -5, -2),
-		Angle(0, 0, 0),
+		sectionPos,
+		sectionAng,
 		nil,
-		500,
-		700,
+		sectionWidth,
+		sectionHeight,
 		function(windowData, interfaceData, categoryId, buttonId)
 			if isnumber(buttonId) then
 				local buttonData = windowData.Buttons[buttonId]
@@ -67,11 +62,11 @@ function SELF:Open(ent, engineering)
 
 	local success5, textWindow = Star_Trek.LCARS:CreateWindow(
 		"text_entry",
-		Vector(0, -34, 8.2),
-		Angle(0, 0, -90),
+		textPos,
+		textAng,
 		24,
-		500,
-		290,
+		textWidth,
+		textHeight,
 		function(windowData, interfaceData, categoryId, buttonId)
 			return false
 		end,
@@ -84,7 +79,41 @@ function SELF:Open(ent, engineering)
 		return false, textWindow
 	end
 
-	return true, {menuWindow, sectionWindow, mapWindow, actionWindow, textWindow}, Vector(0, 11.5, -4), Angle(0, 0, -8)
+	return true, {menuWindow, sectionWindow, mapWindow, actionWindow, textWindow}
+end
+
+-- Open a security Console
+--
+-- @param Entity ent
+-- @return Boolean success
+-- @return? Table windows
+function SELF:Open(ent, engineering)
+	local success, windows = self:OpenInternal(
+		Vector(-22, -34, 8.2),
+		Angle(0, 0, -90),
+		500,
+		Vector(22, -34, 8.2),
+		Angle(0, 0, -90),
+		500,
+		true,
+		Vector(12.5, -2, -2),
+		Angle(0, 0, 0),
+		1100,
+		680,
+		Vector(-28, -5, -2),
+		Angle(0, 0, 0),
+		500,
+		700,
+		Vector(0, -34, 8.2),
+		Angle(0, 0, -90),
+		500,
+		290
+	)
+	if not success then
+		return false, windows
+	end
+
+	return true, windows, Vector(0, 11.5, -4), Angle(0, 0, -8)
 end
 
 -- Read out any Data, that can be retrieved externally.

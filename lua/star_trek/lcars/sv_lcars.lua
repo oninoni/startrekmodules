@@ -199,6 +199,9 @@ util.AddNetworkString("Star_Trek.LCARS.Pressed")
 -- @param? Table windowData
 function Star_Trek.LCARS:UpdateWindow(ent, windowId, windowData)
 	local interfaceData = self.ActiveInterfaces[ent]
+	if not istable(interfaceData) then
+		return
+	end
 
 	if istable(windowData) then
 		interfaceData.Windows[windowId] = windowData
