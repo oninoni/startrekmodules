@@ -82,10 +82,21 @@ function Star_Trek.LCARS:OpenInterface(ply, triggerEntity, interfaceName, ...)
 
 	local clientInterfaceData = Star_Trek.LCARS:GetClientInterfaceData(interfaceData)
 
-	net.Start("Star_Trek.LCARS.Open")
-		net.WriteInt(ent:EntIndex(), 32)
-		net.WriteTable(clientInterfaceData)
-	net.Broadcast()
+	if hook.Run("Star_Trek.LCARS.IsPrivate", ply, ent, interfaceData) then
+		interfaceData.Private = ply
+	end
+
+	if interfaceData.Private then
+		net.Start("Star_Trek.LCARS.Open")
+			net.WriteInt(ent:EntIndex(), 32)
+			net.WriteTable(clientInterfaceData)
+		net.Send(interfaceData.Private)
+	else
+		net.Start("Star_Trek.LCARS.Open")
+			net.WriteInt(ent:EntIndex(), 32)
+			net.WriteTable(clientInterfaceData)
+		net.Broadcast()
+	end
 
 	self.ActiveInterfaces[ent] = interfaceData
 	ent.Interface = interfaceData
@@ -114,12 +125,18 @@ function Star_Trek.LCARS:CloseInterface(ent, callback)
 		return true
 	end
 
-	net.Start("Star_Trek.LCARS.Close")
-		net.WriteInt(ent:EntIndex(), 32)
-	net.Broadcast()
-
 	local interfaceData = Star_Trek.LCARS.ActiveInterfaces[ent]
 	if interfaceData then
+		if interfaceData.Private then
+			net.Start("Star_Trek.LCARS.Close")
+				net.WriteInt(ent:EntIndex(), 32)
+			net.Send(interfaceData.Private)
+		else
+			net.Start("Star_Trek.LCARS.Close")
+				net.WriteInt(ent:EntIndex(), 32)
+			net.Broadcast()
+		end
+
 		interfaceData.Closing = true
 		ent.LastData = interfaceData:GetData()
 		if istable(ent.LastDat) and table.Count(ent.LastData) == 0 then
@@ -209,11 +226,19 @@ function Star_Trek.LCARS:UpdateWindow(ent, windowId, windowData)
 
 	local clientWindowData = self:GetClientWindowData(interfaceData.Windows[windowId])
 
-	net.Start("Star_Trek.LCARS.Update")
-		net.WriteInt(ent:EntIndex(), 32)
-		net.WriteInt(windowId, 32)
-		net.WriteTable(clientWindowData)
-	net.Broadcast()
+	if interfaceData.Private then
+		net.Start("Star_Trek.LCARS.Update")
+			net.WriteInt(ent:EntIndex(), 32)
+			net.WriteInt(windowId, 32)
+			net.WriteTable(clientWindowData)
+		net.Send(interfaceData.Private)
+	else
+		net.Start("Star_Trek.LCARS.Update")
+			net.WriteInt(ent:EntIndex(), 32)
+			net.WriteInt(windowId, 32)
+			net.WriteTable(clientWindowData)
+		net.Broadcast()
+	end
 end
 
 -- Receive the pressed event from the client when a user presses his panel.
@@ -229,6 +254,10 @@ net.Receive("Star_Trek.LCARS.Pressed", function(len, ply)
 
 	local interfaceData = Star_Trek.LCARS.ActiveInterfaces[ent]
 	if not istable(interfaceData) then
+		return
+	end
+
+	if IsValid(interfaceData.Private) and interfaceData.Private ~= ply then
 		return
 	end
 

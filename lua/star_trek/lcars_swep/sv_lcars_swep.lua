@@ -16,6 +16,14 @@
 --        LCARS SWEP | Server        --
 ---------------------------------------
 
+--[[
+hook.Add("Star_Trek.LCARS.IsPrivate", "Star_Trek.LCARS_SWEP.MakePrivate", function(ply, ent, interfaceData)
+	if IsValid(ent) and ent:IsWeapon() and ent.IsLCARS then
+		return true
+	end
+end)
+]]
+
 -- Load a given mode.
 --
 -- @param String moduleName

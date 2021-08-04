@@ -24,9 +24,9 @@ function SELF:Open(ent, title, lines)
 		"text_entry",
 		Vector(),
 		Angle(),
-		ent.MenuScale or 35,
-		ent.MenuWidth or 325,
-		ent.MenuHeight or 540,
+		ent.MenuScale,
+		ent.MenuWidth,
+		ent.MenuHeight,
 		function(windowData, interfaceData, buttonId)
 
 		end,

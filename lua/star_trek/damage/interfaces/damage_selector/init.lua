@@ -24,9 +24,9 @@ function SELF:Open(ent, title, lines)
 		"category_list",
 		Vector(),
 		Angle(),
-		ent.MenuScale or 35,
-		ent.MenuWidth or 325,
-		ent.MenuHeight or 540,
+		ent.MenuScale,
+		ent.MenuWidth,
+		ent.MenuHeight,
 		function(windowData, interfaceData, categoryId, buttonId)
 			if buttonId then
 				local buttonData = windowData.Buttons[buttonId]

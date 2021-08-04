@@ -50,9 +50,9 @@ function SELF:Open(ent, modes)
 		"button_list",
 		Vector(),
 		Angle(),
-		ent.MenuScale or 50,
-		ent.MenuWidth or 300,
-		ent.MenuHeight or 400,
+		ent.MenuScale,
+		ent.MenuWidth,
+		ent.MenuHeight,
 		function(windowData, interfaceData, buttonId)
 			ent:EnableScreenClicker(false)
 
