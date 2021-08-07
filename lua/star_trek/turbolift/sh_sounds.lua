@@ -18,7 +18,7 @@
 
 sound.Add({
 	name = "star_trek.turbolift_start",
-	channel = CHAN_USER_BASE + 1,
+	channel = CHAN_AUTO,
 	volume = 1,
 	level = 100,
 	pitch = 100,
@@ -27,7 +27,7 @@ sound.Add({
 
 sound.Add({
 	name = "star_trek.turbolift_stop",
-	channel = CHAN_USER_BASE + 1,
+	channel = CHAN_AUTO,
 	volume = 1,
 	level = 70,
 	pitch = 100,

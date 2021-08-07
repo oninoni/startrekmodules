@@ -18,7 +18,7 @@
 
 sound.Add({
 	name = "star_trek.doors_48",
-	channel = CHAN_BODY,
+	channel = CHAN_AUTO,
 	volume = .8,
 	level = 70,
 	pitch = {95, 105},
@@ -27,7 +27,7 @@ sound.Add({
 
 sound.Add({
 	name = "star_trek.doors_80",
-	channel = CHAN_BODY,
+	channel = CHAN_AUTO,
 	volume = .8,
 	level = 70,
 	pitch = {85, 95},
@@ -36,7 +36,7 @@ sound.Add({
 
 sound.Add({
 	name = "star_trek.doors_128",
-	channel = CHAN_BODY,
+	channel = CHAN_AUTO,
 	volume = .8,
 	level = 100,
 	pitch = {95, 105},

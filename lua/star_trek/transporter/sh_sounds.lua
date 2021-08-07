@@ -18,7 +18,7 @@
 
 sound.Add({
 	name = "star_trek.voy_beam_up",
-	channel = CHAN_BODY,
+	channel = CHAN_AUTO,
 	volume = .8,
 	level = 70,
 	pitch = 100,
@@ -27,7 +27,7 @@ sound.Add({
 
 sound.Add({
 	name = "star_trek.voy_beam_down",
-	channel = CHAN_BODY,
+	channel = CHAN_AUTO,
 	volume = .8,
 	level = 70,
 	pitch = 100,
@@ -36,7 +36,7 @@ sound.Add({
 
 sound.Add({
 	name = "star_trek.tng_replicator",
-	channel = CHAN_BODY,
+	channel = CHAN_AUTO,
 	volume = .8,
 	level = 70,
 	pitch = 100,
