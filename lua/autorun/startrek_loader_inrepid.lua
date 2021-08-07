@@ -48,7 +48,7 @@ Star_Trek.LoadedModules = Star_Trek.LoadedModules or {}
 
 function Star_Trek:Message(msg)
 	if msg then
-		print("[Star Trek] " .. msg)
+		MsgC(Color(255, 255, 0), "[Star Trek] " .. msg .. "\n")
 	end
 end
 

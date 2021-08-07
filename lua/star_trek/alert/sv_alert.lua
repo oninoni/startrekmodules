@@ -37,7 +37,8 @@ function Star_Trek.Alert:Enable(type)
 	end
 
 	if isstring(alertType.Sound) then
-		self.ActiveAlertSound = CreateSound(game.GetWorld(), alertType.Sound)
+		self.ActiveAlertSound = CreateSound(Entity(1), alertType.Sound)
+		self.ActiveAlertSound:SetSoundLevel(0)
 		self.ActiveAlertSound:Play()
 	end
 
