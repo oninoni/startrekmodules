@@ -21,7 +21,7 @@ SWEP.Base = "lcars_base_swep"
 SWEP.PrintName = "TR-590 Tricorder X"
 
 SWEP.Author = "Oninoni"
-SWEP.Contact = "https://einfach-gmod.de"
+SWEP.Contact = "Discord: Oninoni#8830"
 SWEP.Purpose = "Multifunctional device"
 SWEP.Instructions = "Select from installed functions using R"
 
@@ -30,10 +30,15 @@ SWEP.AdminOnly = false
 
 SWEP.WorldModel = "models/nova_canterra/props_items/padd_large.mdl"
 
-SWEP.CustomViewModel = "models/ef2weapons/tricorder_stx/tricorder.mdl"
-SWEP.CustomViewModelOffset = Vector(4, -5, 0)
-SWEP.CustomViewModelAngle = Angle(0, 190, -35)
-SWEP.CustomViewModelScale = 1.2
+SWEP.CustomViewModel = "models/nova_canterra/props_items/padd_large.mdl"
+SWEP.CustomViewModelOffset = Vector(2, -10, 0)
+SWEP.CustomViewModelAngle = Angle(55, 90, -90)
+
+SWEP.CustomDrawWorldModel = true
+SWEP.CustomWorldModelOffset = Vector(4, -5, -3)
+SWEP.CustomWorldModelAngle = Angle(0, 90, -90)
+
+SWEP.CustomScale = 1.6
 
 SWEP.Slot = 4
 SWEP.SlotPos = 42

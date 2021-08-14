@@ -21,7 +21,7 @@ SWEP.Base = "lcars_base_swep"
 SWEP.PrintName = "Damages SWEP"
 
 SWEP.Author = "Oninoni"
-SWEP.Contact = "https://einfach-gmod.de"
+SWEP.Contact = "Discord: Oninoni#8830"
 SWEP.Purpose = "Admin Device"
 SWEP.Instructions = "Create Damage around the ship."
 

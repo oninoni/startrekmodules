@@ -16,7 +16,7 @@
 --      LCARS Base SWEP | Server     --
 ---------------------------------------
 
-function SWEP:Initialize()
+function SWEP:InitializeCustom()
 	self.ActiveMode = false
 	self.ModeCache = {}
 end

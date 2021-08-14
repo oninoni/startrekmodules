@@ -16,18 +16,20 @@
 --      LCARS Base SWEP | Shared     --
 ---------------------------------------
 
+SWEP.Base = "oni_base"
+
 SWEP.PrintName = "LCARS Base SWEP"
 
 SWEP.Author = "Oninoni"
-SWEP.Contact = "https://einfach-gmod.de"
+SWEP.Contact = "Discord: Oninoni#8830"
 SWEP.Purpose = "Base Entity, that allows the usage of LCARS Interfaces on the Viewmodel."
 SWEP.Instructions = "Use as Base for other Entities."
 
 SWEP.Spawnable = false
 SWEP.AdminOnly = false
 
-SWEP.Slot = 4
-SWEP.SlotPos = 42
+SWEP.Slot = 0
+SWEP.SlotPos = 0
 
 SWEP.ViewModelFOV = 70
 SWEP.ViewModel = "models/weapons/v_bugbait.mdl"
@@ -38,7 +40,7 @@ SWEP.CustomViewModelBone = "ValveBiped.Bip01_R_Hand"
 SWEP.CustomViewModelOffset = Vector()
 SWEP.CustomViewModelAngle = Angle()
 
-SWEP.CustomWorldModel = ""
+SWEP.CustomDrawWorldModel = false
 SWEP.CustomWorldModelBone = "ValveBiped.Bip01_R_Hand"
 SWEP.CustomWorldModelOffset = Vector()
 SWEP.CustomWorldModelAngle = Angle()
