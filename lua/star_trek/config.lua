@@ -34,3 +34,6 @@ Star_Trek.Modules["alert"] = true
 
 Star_Trek.Modules["tricorder"] = true
 Star_Trek.Modules["padd"] = true
+
+-- Server Custom Modules
+Star_Trek.Modules["weapons"] = true
