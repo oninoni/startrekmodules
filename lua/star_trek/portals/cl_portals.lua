@@ -18,13 +18,36 @@
 
 -- Stop rendering the portal on a closed door.
 hook.Add("wp-shouldrender", "Star_Trek.HidePortalInDoors", function(portal, exitPortal )
-	local camOrigin = LocalPlayer():EyePos()
+	local ply = LocalPlayer()
+	local camOrigin = ply:EyePos()
+
+	-- EGM:RP Gamemode Thirdperson Support
+	local isThirdPerson = false
+	if istable(ThirdPerson) and ThirdPerson:IsActive() then
+		isThirdPerson = true
+		camOrigin = ply.ThirdPersonOrigin
+	end
+
 	local distance = camOrigin:Distance( portal:GetPos() )
 	local disappearDist = portal:GetDisappearDist()
 	if not (disappearDist <= 0) and distance > disappearDist then return false end
 
 	if Star_Trek.Portals:IsBlocked(portal) then
 		return false, true
+	end
+
+	-- EGM:RP Gamemode Thirdperson Support
+	if isThirdPerson then
+		local camAngle = ply:EyeAngles()
+		local camFOV = LocalPlayer():GetFOV()
+
+		--don't render if the view is behind the portal
+		local behind = wp.IsBehind( camOrigin, portal:GetPos(), portal:GetForward() )
+		if behind then return false end
+		local lookingAt = wp.IsLookingAt( portal, camOrigin, camAngle, camFOV )
+		if not lookingAt then return false end
+
+		return true
 	end
 end)
 
