@@ -18,6 +18,20 @@
 
 Star_Trek.Security.Doors = Star_Trek.Security.Doors or {}
 
+--[[
+local function breakDoor(ent)
+	local leftDoorId = ent:LookupBone("left")
+	local rightDoorId = ent:LookupBone("right")
+	if leftDoorId and rightDoorId then
+		ent:ManipulateBonePosition(rightDoorId, Vector(0, 0, 20))
+		ent:ManipulateBoneAngles(rightDoorId, Angle(5, 0, -3))
+
+		ent:ManipulateBonePosition(leftDoorId, Vector(2, 5, -25))
+		ent:ManipulateBoneAngles(leftDoorId, Angle(0, 5, 10))
+	end
+end
+]]
+
 -- Setting up Doors.
 local setupDoors = function()
 	Star_Trek.Security.Doors = {}
@@ -27,6 +41,8 @@ local setupDoors = function()
 
 		if ent:GetClass() == "prop_dynamic" and Star_Trek.Security.DoorModelNames[ent:GetModel()] then
 			Star_Trek.Security.Doors[ent] = true
+
+			--breakDoor(ent)
 		end
 	end
 end
