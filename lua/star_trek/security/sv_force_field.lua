@@ -16,135 +16,249 @@
 --   Security Force Fields | Server  --
 ---------------------------------------
 
-function Star_Trek.Security:EnableForceFields(deck, sectionId)
-	local sectionData, error = Star_Trek.Sections:GetSection(deck, sectionId)
-	if not sectionData then
-		return false, error
+-- TODO Finish Entity
+-- TODO Rework Interface
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+-- Enables the given force field.
+--
+-- @param Table forceFieldData
+-- @return Boolean success
+-- @return Vector pos
+function Star_Trek.Security:EnableForceField(forceFieldData)
+	if not istable(forceFieldData) then
+		return false
 	end
 
-	if table.Count(sectionData.ActiveForceFields) > 0 then
-		return false, "Already Active"
-	end
+	local ent = ents.Create("force_field")
+	ent:SetModel(forceFieldData.Model)
+	ent:SetPos(forceFieldData.Pos)
+	ent:SetAngles(forceFieldData.Ang)
 
-	local positions = {}
+	ent:Spawn()
+	ent:Activate()
 
-	for modelName, force_fields in pairs(sectionData.FrameForceFields) do
-		for _, staticProp in pairs(force_fields.Props) do -- Probably bad, because only allows one type at once.
-			local pos, ang = LocalToWorld(force_fields.Data.Pos, force_fields.Data.Ang, staticProp.Origin, staticProp.Angles)
+	forceFieldData.Entity = ent
 
-			local ent = ents.Create("prop_physics")
-			ent:SetModel(force_fields.Data.Model)
-			ent:SetPos(pos)
-			ent:SetAngles(ang)
-
-			ent:Spawn()
-			ent:Activate()
-
-			ent:SetPersistent(true)
-			ent:SetRenderMode(RENDERGROUP_BOTH)
-			ent:DrawShadow(false)
-
-			local phys = ent:GetPhysicsObject()
-			if IsValid(phys) then
-				phys:EnableMotion(false)
-			end
-
-			table.insert(positions, pos)
-			table.insert(sectionData.ActiveForceFields, ent)
-		end
-	end
-
-	return true, positions
+	return true, ent:GetPos()
 end
 
+-- Change use to use success.
 function Star_Trek.Security:EnableForceFieldsInSections(deck, sectionIds)
 	local positions = {}
-	for _, sectionId in pairs(sectionIds) do
-		local success, sectionPositions = self:EnableForceFields(deck, sectionId)
-		if not success then
-			return false, sectionPositions
+
+	local deckData = Star_Trek.Sections.Decks[deck]
+	if not istable(deckData) then
+		return false
+	end
+
+	for _, sectionId in pairs(sectionIds or {}) do
+		local sectionData = deckData.Sections[sectionId]
+		if not istable(sectionData) then
+			continue
 		end
 
-		for _, pos in pairs(sectionPositions) do
-			table.insert(positions, {
-				Pos = pos,
-				DetectedInSection = sectionId,
-				DetectedOndeck = deck,
-			})
+		for _, forceFieldId in pairs(sectionData.ForceFields or {}) do
+			local forceFieldData = self.ForceFields[forceFieldId]
+			local success, pos = self:EnableForceField(forceFieldData)
+			if success then
+				table.insert(positions, {
+					DetectedInSection = sectionId,
+					DetectedOndeck = deck,
+
+					Pos = pos,
+				})
+			end
 		end
 	end
-
-	return positions
-end
-
-function Star_Trek.Security:DisableForceFields(deck, sectionId)
-	local sectionData, error = Star_Trek.Sections:GetSection(deck, sectionId)
-	if not sectionData then
-		return false, error
-	end
-
-	local positions = {}
-
-	for _, ent in pairs(sectionData.ActiveForceFields) do
-		table.insert(positions, ent:GetPos())
-		ent:Remove()
-	end
-
-	sectionData.ActiveForceFields = {}
 
 	return true, positions
 end
 
+-- Enables the named force fields.
+--
+-- @param String name
+function Star_Trek.Security:EnableNamedForceField(name)
+	for _, forceFieldData in pairs(self.NamedForceFields[name] or {}) do
+		self:EnableForceField(forceFieldData)
+	end
+end
+
+-- Disables the given force field.
+--
+-- @param Table forceFieldData
+-- @return Boolean success
+-- @return Vector pos
+function Star_Trek.Security:DisableForceField(forceFieldData)
+	local ent = forceFieldData.Entity
+	if not IsValid(ent) then
+		return false
+	end
+
+	local pos = ent:GetPos()
+
+	SafeRemoveEntity(ent)
+	forceFieldData.Entity = nil
+
+	return true, pos
+end
+
+-- Change use to use success.
 function Star_Trek.Security:DisableForceFieldsInSections(deck, sectionIds)
 	local positions = {}
-	for _, sectionId in pairs(sectionIds) do
-		local success, sectionPositions = self:DisableForceFields(deck, sectionId)
-		if not success then
-			return false, sectionPositions
+
+	local deckData = Star_Trek.Sections.Decks[deck]
+	if not istable(deckData) then
+		return false
+	end
+
+	for _, sectionId in pairs(sectionIds or {}) do
+		local sectionData = deckData.Sections[sectionId]
+		if not istable(sectionData) then
+			continue
 		end
 
-		for _, pos in pairs(sectionPositions) do
-			table.insert(positions, {
-				Pos = pos,
-				DetectedInSection = sectionId,
-				DetectedOndeck = deck,
-			})
+		for _, forceFieldId in pairs(sectionData.ForceFields or {}) do
+			local forceFieldData = self.ForceFields[forceFieldId]
+			local success, pos = self:DisableForceField(forceFieldData)
+			if success then
+				table.insert(positions, {
+					DetectedInSection = sectionId,
+					DetectedOndeck = deck,
+
+					Pos = pos,
+				})
+			end
 		end
 	end
 
-	return positions
+	return true, positions
 end
 
-local function loadForceField(deck, sectionId, models)
-	local forceFields = {}
+-- Disables the named force fields.
+--
+-- @param String name
+function Star_Trek.Security:DisableNamedForceField(name)
+	for _, forceFieldData in pairs(self.NamedForceFields[name] or {}) do
+		self:DisableForceField(forceFieldData)
+	end
+end
 
-	for modelName, data in pairs(models) do
-		local props = Star_Trek.Util:GetStaticPropsByModel(modelName, function(entry)
-			local s, _ = Star_Trek.Sections:IsInSection(deck, sectionId, entry.Origin)
+-------------
+--- Setup ---
+-------------
 
-			if s then
-				return true
-			end
 
-			return false
-		end)
+function Star_Trek.Security:SetupForceField(ent)
+	local forceFieldData = {
+		Pos = ent:GetPos(),
+		Ang = ent:GetAngles(),
 
-		forceFields[modelName] = {
-			Props = props,
-			Data = data,
-		}
+		Model = ent:GetModel(),
+		Entity = ent,
+	}
+
+	local keyValues = ent.LCARSKeyData
+	if istable(keyValues) then
+		local name = keyValues["lcars_forcefield_name"]
+		if isstring(name) and name ~= "" then
+			forceFieldData.Name = name
+
+			Star_Trek.Security.NamedForceFields[name] = Star_Trek.Security.NamedForceFields[name] or {}
+
+			table.insert(Star_Trek.Security.NamedForceFields[name], forceFieldData)
+		end
+
+		local alwaysOn = keyValues["lcars_forcefield_alwayson"]
+		if isstring(alwaysOn) and alwaysOn == "1" then
+			forceFieldData.AlwaysOn = true
+		end
 	end
 
-	return forceFields
+	ent.ForceFieldData = forceFieldData
+
+	local id = table.insert(self.ForceFields, forceFieldData)
+	forceFieldData.ForceFieldId = id
+
+	return id
 end
 
-hook.Add("Star_Trek.Util.MapLoaded", "Star_Trek.Security.Load", function()
-	timer.Simple(0, function()
-		for deck, deckData in pairs(Star_Trek.Sections.Decks) do
-			for sectionId, sectionData in pairs(deckData.Sections) do
-				sectionData.FrameForceFields = loadForceField(deck, sectionId, Star_Trek.Security.FrameModels)
-				sectionData.ActiveForceFields = {}
+function Star_Trek.Security:SetUpPortalForceField(forceField)
+	local forceFieldData = forceField.ForceFieldData
+	if not istable(forceFieldData) then
+		return
+	end
+
+	local sourceEntities = ents.FindInSphere(forceField:GetPos(), 1)
+	for _, door in pairs(sourceEntities) do
+		if door == forceField then
+			continue
+		end
+
+		if not door.LCARSKeyData then
+			continue
+		end
+
+		local partnerDoorName = door.LCARSKeyData["lcars_partnerdoor"]
+		if not isstring(partnerDoorName) then
+			continue
+		end
+
+		local partnerDoors = ents.FindByName(partnerDoorName)
+		for _, partnerDoor in pairs(partnerDoors) do
+			if door == partnerDoor then
+				continue
+			end
+
+			local targetEntities = ents.FindInSphere(partnerDoor:GetPos(), 1)
+			for _, partnerForceField in pairs(targetEntities) do
+				if partnerForceField:GetName() == "lcars_forcefield" then
+					local partnerForceFieldData = partnerForceField.forceFieldData
+					if not istable(partnerForceFieldData) then
+						continue
+					end
+
+					partnerForceFieldData.Partner = partnerForceFieldData.Partner or {}
+					forceFieldData.Partner 		  = forceFieldData.Partner or {}
+
+					table.insert(forceFieldData.Partner, partnerForceFieldData.ForceFieldId)
+					table.insert(partnerForceFieldData.Partner, forceFieldData.ForceFieldId)
+				end
 			end
 		end
-	end)
+	end
+end
+
+hook.Add("Star_Trek.Sections.Loaded", "Star_Trek.Security.DetectForceFields", function()
+	Star_Trek.Security.ForceFields = {}
+	Star_Trek.Security.NamedForceFields = {}
+
+	for deck, deckData in pairs(Star_Trek.Sections.Decks) do
+		for sectionId, sectionData in pairs(deckData.Sections) do
+			sectionData.ForceFields = {}
+			local entities = Star_Trek.Sections:GetInSection(deck, sectionId, nil, true)
+			for _, ent in pairs(entities) do
+				if ent:GetName() == "lcars_forcefield" then
+					local id = Star_Trek.Security:SetupForceField(ent)
+
+					table.insert(sectionData.ForceFields, id)
+				end
+			end
+		end
+	end
+
+	local forceFields = ents.FindByName("lcars_forcefield")
+	for _, ent in pairs(forceFields) do
+		if not ent.ForceFieldData then
+			Star_Trek.Security:SetupForceField(ent)
+		end
+	end
+	for _, ent in pairs(forceFields) do
+		Star_Trek.Security:SetUpPortalForceField(ent)
+	end
+	for _, ent in pairs(forceFields) do
+		ent.ForceFieldData.Entity = nil
+		SafeRemoveEntity(ent)
+	end
 end)

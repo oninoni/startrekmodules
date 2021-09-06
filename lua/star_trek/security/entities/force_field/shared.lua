@@ -15,3 +15,13 @@
 ---------------------------------------
 --    Force Field Entity | Shared    --
 ---------------------------------------
+
+ENT.Type = "anim"
+ENT.Base = "base_gmodentity"
+
+ENT.PrintName = "Force Field"
+ENT.Author = "Oninoni"
+
+ENT.Category = "Star Trek"
+
+ENT.Spawnable = false

@@ -235,9 +235,8 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 
 				return true
 			elseif buttonName == "Enable Forcefields" then
-				local forceFieldPositions, error = Star_Trek.Security:EnableForceFieldsInSections(deck, sectionIds)
-				if not forceFieldPositions then
-					Star_Trek:Message(error)
+				local success1, forceFieldPositions = Star_Trek.Security:EnableForceFieldsInSections(deck, sectionIds)
+				if not success1 then
 					return
 				end
 
@@ -263,9 +262,8 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 
 				return true
 			elseif buttonName == "Disable Forcefields" then
-				local forceFieldPositions, error = Star_Trek.Security:DisableForceFieldsInSections(deck, sectionIds)
-				if not forceFieldPositions then
-					Star_Trek:Message(error)
+				local success1, forceFieldPositions = Star_Trek.Security:DisableForceFieldsInSections(deck, sectionIds)
+				if not success1 then
 					return
 				end
 
@@ -299,9 +297,8 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 					return true
 				end, true)
 
-				local forceFieldPositions, error = Star_Trek.Security:DisableForceFieldsInSections(deck, sectionIds)
-				if not forceFieldPositions then
-					Star_Trek:Message(error)
+				local success1, forceFieldPositions = Star_Trek.Security:DisableForceFieldsInSections(deck, sectionIds)
+				if not success1 then
 					return
 				end
 
