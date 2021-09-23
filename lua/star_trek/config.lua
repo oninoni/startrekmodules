@@ -37,3 +37,5 @@ Star_Trek.Modules["padd"] = true
 
 -- Server Custom Modules
 Star_Trek.Modules["weapons"] = true
+Star_Trek.Modules["medical"] = true
+Star_Trek.Modules["magboots"] = true

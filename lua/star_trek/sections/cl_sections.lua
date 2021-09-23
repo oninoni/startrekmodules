@@ -13,20 +13,9 @@
 ---------------------------------------
 
 ---------------------------------------
---          Sections | Index         --
+--         Sections | Client         --
 ---------------------------------------
 
-Star_Trek:RequireModules("util")
-
-Star_Trek.Sections = Star_Trek.Sections or {}
-
-if CLIENT then
-	include("cl_sections.lua")
-end
-
-if SERVER then
-	include("sv_config.lua")
-	include("sv_sections.lua")
-
-	AddCSLuaFile("cl_sections.lua")
-end
+net.Receive("Star_Trek.Sections.Sync", function()
+	Star_Trek.Sections.Decks = net.ReadTable()
+end)

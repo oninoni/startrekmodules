@@ -16,6 +16,7 @@
 --               Loader              --
 ---------------------------------------
 
+--[[
 local skip = true
 
 local convar = CreateConVar("star_trek_enable", "0")
@@ -36,6 +37,7 @@ for _, mapString in pairs(detectMapStrings) do
 end
 
 if skip then return end
+]]
 
 -- TODO: Rework all "if not success", to display the Error properly. (Mostly Net, Hook and Clientside Errors)
 -- TODO: Check if all errors are caught.
