@@ -18,6 +18,10 @@
 
 -- Stop rendering the portal on a closed door.
 hook.Add("wp-shouldrender", "Star_Trek.HidePortalInDoors", function(portal, exitPortal )
+	if portal:IsDormant() then
+		return false
+	end
+
 	local ply = LocalPlayer()
 	local camOrigin = ply:EyePos()
 

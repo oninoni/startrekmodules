@@ -237,13 +237,16 @@ hook.Add("Star_Trek.Sections.Loaded", "Star_Trek.Security.DetectForceFields", fu
 	for deck, deckData in pairs(Star_Trek.Sections.Decks) do
 		for sectionId, sectionData in pairs(deckData.Sections) do
 			sectionData.ForceFields = {}
-			local entities = Star_Trek.Sections:GetInSection(deck, sectionId, nil, true)
-			for _, ent in pairs(entities) do
-				if ent:GetName() == "lcars_forcefield" then
-					local id = Star_Trek.Security:SetupForceField(ent)
-
-					table.insert(sectionData.ForceFields, id)
+			local entities = Star_Trek.Sections:GetInSection(deck, sectionId, function(objects, ent)
+				if ent:GetName() ~= "lcars_forcefield" then
+					return true
 				end
+			end, true)
+
+			for _, ent in pairs(entities) do
+				local id = Star_Trek.Security:SetupForceField(ent)
+
+				table.insert(sectionData.ForceFields, id)
 			end
 		end
 	end
