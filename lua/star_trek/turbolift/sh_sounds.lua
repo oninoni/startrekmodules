@@ -20,7 +20,7 @@ sound.Add({
 	name = "star_trek.turbolift_start",
 	channel = CHAN_AUTO,
 	volume = 1,
-	level = 100,
+	level = 70,
 	pitch = 100,
 	sound = "oninoni/startrek/turbolift/tng_turbolift_movestart_loop.wav",
 })
