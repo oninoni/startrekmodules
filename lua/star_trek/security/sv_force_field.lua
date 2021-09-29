@@ -26,8 +26,16 @@
 -- @param Table forceFieldData
 -- @return Boolean success
 -- @return Vector pos
-function Star_Trek.Security:EnableForceField(forceFieldData)
+function Star_Trek.Security:EnableForceField(forceFieldData, force)
 	if not istable(forceFieldData) then
+		return false
+	end
+
+	if not force and forceFieldData.AlwaysOn then
+		return false
+	end
+
+	if IsValid(forceFieldData.Entity) then
 		return false
 	end
 
@@ -91,6 +99,14 @@ end
 -- @return Boolean success
 -- @return Vector pos
 function Star_Trek.Security:DisableForceField(forceFieldData)
+	if not istable(forceFieldData) then
+		return false
+	end
+
+	if forceFieldData.AlwaysOn then
+		return false
+	end
+
 	local ent = forceFieldData.Entity
 	if not IsValid(ent) then
 		return false
@@ -148,7 +164,6 @@ end
 -------------
 --- Setup ---
 -------------
-
 
 function Star_Trek.Security:SetupForceField(ent)
 	local forceFieldData = {
@@ -263,5 +278,12 @@ hook.Add("Star_Trek.Sections.Loaded", "Star_Trek.Security.DetectForceFields", fu
 	for _, ent in pairs(forceFields) do
 		ent.ForceFieldData.Entity = nil
 		SafeRemoveEntity(ent)
+	end
+
+	-- Enable Always On Forcefields
+	for _, forceFieldData in pairs(Star_Trek.Security.ForceFields) do
+		if forceFieldData.AlwaysOn then
+			Star_Trek.Security:EnableForceField(forceFieldData, true)
+		end
 	end
 end)
