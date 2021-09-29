@@ -350,7 +350,9 @@ hook.Add("Think", "Star_Trek.Turbolift.Think", function()
 
 						Star_Trek.Turbolift:Teleport(podData.Entity, targetLiftData.Entity, podObjects)
 
-						Star_Trek.Turbolift:OpenDoors(targetLiftData.Entity)
+						timer.Simple(0.5, function()
+							Star_Trek.Turbolift:OpenDoors(targetLiftData.Entity)
+						end)
 						targetLiftData.LeaveTime = 5
 					end
 				end
