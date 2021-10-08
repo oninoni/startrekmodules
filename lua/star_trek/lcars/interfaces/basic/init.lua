@@ -72,7 +72,7 @@ hook.Add("Star_Trek.ChangedKeyValue", "Star_Trek.LCARS.BasicInterface", function
 	if string.StartWith(key, "lcars_name_") or string.StartWith(key, "lcars_disabled_") then
 
 		local keyValues = ent.LCARSKeyData
-		if istable(keyValues) and keyValues["lcars_keep_open"] then
+		if istable(keyValues) then
 			local interfaceData = Star_Trek.LCARS.ActiveInterfaces[ent]
 			if istable(interfaceData) then
 				interfaceData.Windows[1]:SetButtons(interfaceData:GenerateButtons(ent.LCARSKeyData))
