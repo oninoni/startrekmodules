@@ -28,8 +28,14 @@ function SELF:Open(ent)
 		return false, buttons
 	end
 
-	local name = ent:GetName()
-	local caseEntities = ents.FindByName(name .. "_case")
+	local caseName = ent:GetName() .. "_case"
+
+	local keyValues = ent.LCARSKeyData
+	if istable(keyValues) and isstring(keyValues["lcars_linked_case"]) then
+		caseName = keyValues["lcars_linked_case"]
+	end
+
+	local caseEntities = ents.FindByName(caseName)
 
 	local success3, window = Star_Trek.LCARS:CreateWindow(
 		"button_list",
@@ -39,10 +45,10 @@ function SELF:Open(ent)
 		width,
 		height,
 		function(windowData, interfaceData, buttonId)
-			if buttonId > 4 then
+			if table.Count(buttons) > 4 then
 				for _, caseEnt in pairs(caseEntities) do
 					if IsValid(caseEnt) then
-						caseEnt:Fire("InValue", buttonId - 4)
+						caseEnt:Fire("InValue", buttonId)
 					end
 				end
 			else

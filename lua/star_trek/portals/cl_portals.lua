@@ -34,6 +34,7 @@ hook.Add("wp-shouldrender", "Star_Trek.HidePortalInDoors", function(portal, exit
 
 	local distance = camOrigin:Distance( portal:GetPos() )
 	local disappearDist = portal:GetDisappearDist()
+
 	if not (disappearDist <= 0) and distance > disappearDist then return false end
 
 	if Star_Trek.Portals:IsBlocked(portal) then

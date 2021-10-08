@@ -183,6 +183,11 @@ hook.Add("Think", "Star_Trek.LCARS.ThinkClose", function()
 			continue
 		end
 
+		local keyValues = ent.LCARSKeyData
+		if istable(keyValues) and keyValues["lcars_never_close"] then
+			continue
+		end
+
 		local pos = ent:LocalToWorld(interfaceData.InterfacePos)
 		local entities = ents.FindInSphere(pos, 128)
 		local playersFound = false
