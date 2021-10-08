@@ -49,6 +49,8 @@ function Star_Trek.Security:EnableForceField(forceFieldData, force)
 
 	forceFieldData.Entity = ent
 
+	Star_Trek.Security:EnableForceField(forceFieldData.Partner)
+
 	return true, ent:GetPos()
 end
 
@@ -116,6 +118,8 @@ function Star_Trek.Security:DisableForceField(forceFieldData)
 
 	SafeRemoveEntity(ent)
 	forceFieldData.Entity = nil
+
+	Star_Trek.Security:DisableForceField(forceFieldData.Partner)
 
 	return true, pos
 end
@@ -205,41 +209,29 @@ function Star_Trek.Security:SetUpPortalForceField(forceField)
 		return
 	end
 
-	local sourceEntities = ents.FindInSphere(forceField:GetPos(), 1)
-	for _, door in pairs(sourceEntities) do
-		if door == forceField then
+	local sourceEntities = ents.FindInSphere(forceField:GetPos(), 8)
+	for _, portal in pairs(sourceEntities) do
+		if portal:GetClass() ~= "linked_portal_door" then
 			continue
 		end
 
-		if not door.LCARSKeyData then
+		local targetPortal = portal:GetExit()
+		if not IsValid(targetPortal) then
 			continue
 		end
 
-		local partnerDoorName = door.LCARSKeyData["lcars_partnerdoor"]
-		if not isstring(partnerDoorName) then
-			continue
-		end
-
-		local partnerDoors = ents.FindByName(partnerDoorName)
-		for _, partnerDoor in pairs(partnerDoors) do
-			if door == partnerDoor then
-				continue
-			end
-
-			local targetEntities = ents.FindInSphere(partnerDoor:GetPos(), 1)
-			for _, partnerForceField in pairs(targetEntities) do
-				if partnerForceField:GetName() == "lcars_forcefield" then
-					local partnerForceFieldData = partnerForceField.forceFieldData
-					if not istable(partnerForceFieldData) then
-						continue
-					end
-
-					partnerForceFieldData.Partner = partnerForceFieldData.Partner or {}
-					forceFieldData.Partner 		  = forceFieldData.Partner or {}
-
-					table.insert(forceFieldData.Partner, partnerForceFieldData.ForceFieldId)
-					table.insert(partnerForceFieldData.Partner, forceFieldData.ForceFieldId)
+		local targetEntities = ents.FindInSphere(targetPortal:GetPos(), 8)
+		for _, partnerForceField in pairs(targetEntities) do
+			if partnerForceField:GetName() == "lcars_forcefield" then
+				local partnerForceFieldData = partnerForceField.ForceFieldData
+				if not istable(partnerForceFieldData) then
+					continue
 				end
+
+				partnerForceFieldData.Partner = forceFieldData
+				forceFieldData.Partner = partnerForceFieldData
+
+				return
 			end
 		end
 	end
