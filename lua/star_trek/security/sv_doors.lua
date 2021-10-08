@@ -220,7 +220,7 @@ hook.Add("Think", "Star_Trek.Security.DoorThink", function()
 					if not allDoorsFree then continue end
 				end
 
-				ent:Fire("SetAnimation", "close")
+				--ent:Fire("SetAnimation", "close")
 			end
 
 			continue
