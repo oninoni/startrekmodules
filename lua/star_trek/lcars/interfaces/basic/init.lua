@@ -28,15 +28,6 @@ function SELF:Open(ent)
 		return false, buttons
 	end
 
-	local caseName = ent:GetName() .. "_case"
-
-	local keyValues = ent.LCARSKeyData
-	if istable(keyValues) and isstring(keyValues["lcars_linked_case"]) then
-		caseName = keyValues["lcars_linked_case"]
-	end
-
-	local caseEntities = ents.FindByName(caseName)
-
 	local success3, window = Star_Trek.LCARS:CreateWindow(
 		"button_list",
 		Vector(),
@@ -45,8 +36,9 @@ function SELF:Open(ent)
 		width,
 		height,
 		function(windowData, interfaceData, buttonId)
-			if table.Count(buttons) > 4 then
-				for _, caseEnt in pairs(caseEntities) do
+			local keyValues = ent.LCARSKeyData
+			if istable(keyValues) and isstring(keyValues["lcars_linked_case"]) then
+				for _, caseEnt in pairs(ents.FindByName(keyValues["lcars_linked_case"])) do
 					if IsValid(caseEnt) then
 						caseEnt:Fire("InValue", buttonId)
 					end
@@ -55,7 +47,6 @@ function SELF:Open(ent)
 				ent:Fire("FireUser" .. buttonId)
 			end
 
-			local keyValues = ent.LCARSKeyData
 			if istable(keyValues) and keyValues["lcars_keep_open"] then
 				ent:EmitSound("star_trek.lcars_beep")
 
