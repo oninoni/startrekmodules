@@ -80,3 +80,12 @@ sound.Add({
 	pitch = 100,
 	sound = "oninoni/startrek/force_field/force_field_touch2_boosted.wav",
 })
+
+sound.Add({
+	name = "star_trek.force_field_loop",
+	channel = CHAN_AUTO,
+	volume = 0.5,
+	level = 50,
+	pitch = 80,
+	sound = "ambient/energy/force_field_loop1.wav",
+})
