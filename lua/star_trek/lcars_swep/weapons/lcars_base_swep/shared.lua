@@ -31,11 +31,21 @@ SWEP.AdminOnly = false
 SWEP.Slot = 0
 SWEP.SlotPos = 0
 
-SWEP.ViewModelFOV = 70
 SWEP.ViewModel = "models/weapons/v_bugbait.mdl"
 SWEP.WorldModel = ""
 
-SWEP.CustomViewModel = ""
+SWEP.HoldType = "slam"
+
+SWEP.BoneManip = {
+	["ValveBiped.Bip01_R_Clavicle"] = {
+		Ang = Angle(-30, 0, 0),
+	},
+	["ValveBiped.cube3"] = {
+		Pos = Vector(-100, 0, 0),
+	},
+}
+
+SWEP.CustomViewModel = false
 SWEP.CustomViewModelBone = "ValveBiped.Bip01_R_Hand"
 SWEP.CustomViewModelOffset = Vector()
 SWEP.CustomViewModelAngle = Angle()

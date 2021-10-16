@@ -18,29 +18,28 @@
 
 hook.Add("Star_Trek.LCARS.OverridePosAng", "Star_Trek.LCARS_SWEP.OverrideSWEPViewmodel", function(ent, pos, ang)
 	if IsValid(ent) and ent:IsWeapon() and ent.IsLCARS then
-		if ent.DrawingViewModelActive then
-			return ent:GetPosAngle(false)
+		if ent.IsViewModelRendering then
+			return ent:GetPosAngle()
 		else
 			return ent:GetPosAngle(true)
 		end
 	end
 end)
 
-hook.Add("Star_Trek.LCARS.PreventRender", "Star_Trek.LCARS_SWEP.PreventRender", function(interface)
+hook.Add("Star_Trek.LCARS.PreventRender", "Star_Trek.LCARS_SWEP.PreventRender", function(interface, ignoreViewModel)
 	local ent = interface.Ent
-	if IsValid(ent) and ent:IsWeapon() and ent.IsLCARS and ent.DrawingViewModelActive then
-		return true
+	if IsValid(ent) and ent:IsWeapon() and ent.IsLCARS then
+		local owner = ent:GetOwner()
+		if IsValid(owner) then
+			if owner:GetActiveWeapon() ~= ent then
+				return true
+			end
+
+			if not ignoreViewModel and ent.IsViewModelRendering then
+				return true
+			end
+		end
 	end
-end)
-
-hook.Add("Star_Trek.LCARS.OpenMenu", "Star_Trek.LCARS_SWEP.OpenSWEPMenu", function(id, interfaceData, interface)
-	local ent = interfaceData.Ent
-	if not ent.IsLCARS then return end
-end)
-
-hook.Add("Star_Trek.LCARS.CloseInterface", "Star_Trek.LCARS_SWEP.CloseSWEPInterface", function(id, interfaceData, interface)
-	local ent = interfaceData.Ent
-	if not ent.IsLCARS then return end
 end)
 
 net.Receive("Star_Trek.LCARS_SWEP.EnableScreenClicker", function()

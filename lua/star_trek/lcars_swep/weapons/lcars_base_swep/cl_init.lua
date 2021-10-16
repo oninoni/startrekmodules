@@ -20,25 +20,24 @@ SWEP.Category = "Star Trek"
 
 SWEP.DrawAmmo = false
 
-function SWEP:GetPosAngle()
+function SWEP:GetPosAngle(world)
+	local pos, ang = self:GetPos(), self:GetAngles()
+
 	local owner = self:GetOwner()
-	if not IsValid(owner) then
-		return
-	end
-	if owner ~= LocalPlayer() then
-		return
+	if IsValid(owner) then
+		if world then
+			local m = owner:GetBoneMatrix(owner:LookupBone(self.CustomWorldModelBone))
+			pos, ang = LocalToWorld(self.CustomWorldModelOffset, self.CustomWorldModelAngle, m:GetTranslation(), m:GetAngles())
+		else
+			local vm = owner:GetViewModel()
+			if IsValid(vm) then
+				local m = vm:GetBoneMatrix(vm:LookupBone(self.CustomViewModelBone))
+				pos, ang = LocalToWorld(self.CustomViewModelOffset, self.CustomViewModelAngle, m:GetTranslation(), m:GetAngles())
+			end
+		end
 	end
 
-	local vm = owner:GetViewModel()
-	if not IsValid(vm) then
-		return
-	end
-
-	local m = vm:GetBoneMatrix(vm:LookupBone(self.CustomViewModelBone))
-	local oPos, oAng = LocalToWorld(self.CustomViewModelOffset, self.CustomViewModelAngle, m:GetTranslation(), m:GetAngles())
-	oPos, oAng = LocalToWorld(self.MenuOffset, self.MenuAngle, oPos, oAng)
-
-	return oPos, oAng
+	return LocalToWorld(self.MenuOffset, self.MenuAngle, pos, ang)
 end
 
 function SWEP:DrawWindow()

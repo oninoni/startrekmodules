@@ -28,27 +28,29 @@ SWEP.Instructions = "Select from installed functions using R"
 SWEP.Spawnable = true
 SWEP.AdminOnly = false
 
-SWEP.WorldModel = "models/nova_canterra/props_items/padd_large.mdl"
-
-SWEP.CustomViewModel = "models/nova_canterra/props_items/padd_large.mdl"
-SWEP.CustomViewModelOffset = Vector(2, -10, 0)
-SWEP.CustomViewModelAngle = Angle(55, 90, -90)
-
-SWEP.CustomDrawWorldModel = true
-SWEP.CustomWorldModelOffset = Vector(4, -5, -3)
-SWEP.CustomWorldModelAngle = Angle(0, 90, -90)
-
-SWEP.CustomScale = 1.6
-
-SWEP.Slot = 4
+SWEP.Slot = 3
 SWEP.SlotPos = 42
 
-SWEP.MenuOffset = Vector(-0.2, 0.8, -0.025)
-SWEP.MenuAngle = Angle(0, 0, 0)
+SWEP.WorldModel = "models/oninoni/star_trek/props/padd.mdl"
 
-SWEP.MenuScale = 43
-SWEP.MenuWidth = 325
-SWEP.MenuHeight = 540
+SWEP.CustomViewModel = "models/oninoni/star_trek/props/padd.mdl"
+SWEP.CustomViewModelBone = "ValveBiped.Bip01_R_Hand"
+SWEP.CustomViewModelOffset = Vector(4, -10.5, -1)
+SWEP.CustomViewModelAngle = Angle(-55, -85, 90)
+
+SWEP.CustomDrawWorldModel = true
+SWEP.CustomWorldModelBone = "ValveBiped.Bip01_R_Hand"
+SWEP.CustomWorldModelOffset = Vector(3, -6, -7)
+SWEP.CustomWorldModelAngle = Angle(0, -90, 90)
+
+SWEP.CustomScale = 1
+
+SWEP.MenuOffset = Vector(0, -1.8, 0.3)
+SWEP.MenuAngle = Angle(0, 180, 0)
+
+SWEP.MenuScale = 55
+SWEP.MenuWidth = 550
+SWEP.MenuHeight = 690
 SWEP.MenuName = "PADD"
 
 SWEP.Modes = {

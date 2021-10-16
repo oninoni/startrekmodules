@@ -162,6 +162,10 @@ hook.Add("Think", "Star_Trek.LCARS.Think", function()
 
 	local removeInterfaces = {}
 	for id, interface in pairs(Star_Trek.LCARS.ActiveInterfaces) do
+		if hook.Run("Star_Trek.LCARS.PreventRender", interface, true) then
+			continue
+		end
+
 		interface.IVis = false
 
 		local pos, ang = Star_Trek.LCARS:GetInterfacePosAngle(interface.Ent, interface.IPos, interface.IAng)
@@ -235,6 +239,10 @@ function Star_Trek.LCARS:PlayerButtonDown(ply, button)
 
 	for id, interface in pairs(Star_Trek.LCARS.ActiveInterfaces) do
 		if not interface.IVis then
+			continue
+		end
+
+		if hook.Run("Star_Trek.LCARS.PreventRender", interface, true) then
 			continue
 		end
 
