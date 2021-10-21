@@ -326,7 +326,7 @@ end
 
 hook.Add("PreDrawTranslucentRenderables", "Star_Trek.LCARS.PreDraw", function(isDrawingDepth, isDrawingSkybox)
 	if isDrawingSkybox then return end
-	if wp and not wp.drawing then return end
+	if wp and wp.drawing then return end
 
 	Star_Trek.LCARS.EyePos = LocalPlayer():EyePos()
 end)
@@ -334,7 +334,7 @@ end)
 -- Main Render Hook for all LCARS Screens
 hook.Add("PostDrawTranslucentRenderables", "Star_Trek.LCARS.Draw", function(isDrawingDepth, isDrawingSkybox)
 	if isDrawingSkybox then return end
-	if wp and not wp.drawing then return end
+	if wp and wp.drawing then return end
 
 	for _, interface in pairs(Star_Trek.LCARS.ActiveInterfaces) do
 		if not interface.IVis then
