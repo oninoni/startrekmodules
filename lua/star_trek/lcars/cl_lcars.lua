@@ -137,6 +137,13 @@ end)
 -- @return Vector2D mousePos
 function Star_Trek.LCARS:Get3D2DMousePos(window)
 	local x, y = input.GetCursorPos()
+
+	local xOffset, yOffset = hook.Run("Star_Trek.LCARS.GetMouseOffset", window)
+	if xOffset and yOffset then
+		x = x + xOffset
+		y = y + yOffset
+	end
+
 	local rayDir = gui.ScreenToVector(x, y)
 
 	local pos = util.IntersectRayWithPlane(self.EyePos, rayDir, window.WPosG, window.WAngG:Up())
@@ -311,15 +318,25 @@ function Star_Trek.LCARS:DrawWindow(window, animPos, drawCursor)
 	if pos[1] > -width * 0.6 and pos[1] < width * 0.6
 	and pos[2] > -height * 0.6 and pos[2] < height * 0.6 then
 		window.LastPos = pos
+		window.MouseActive = true
+	else
+		window.MouseActive = false
 	end
 
-	cam.Start3D2D(window.WPosG, window.WAngG, 1 / window.WScale)
-		window:OnDraw(window.LastPos or Vector(-width / 2, -height / 2), animPos)
+	local wPos, wAng, wScale = hook.Run("Star_Trek.LCARS.OverrideWindowPosAngScale", window)
+	if not (wPos and wAng and wScale) then
+		wPos, wAng, wScale = window.WPosG, window.WAngG, window.WScale
+	end
 
-		if drawCursor then
+	cam.Start3D2D(wPos, wAng, 1 / wScale)
+		local mousePos = window.LastPos
+
+		window:OnDraw(mousePos or Vector(-width / 2, -height / 2), animPos)
+
+		if drawCursor and window.MouseActive then
 			surface.SetDrawColor(255, 255, 255, 255)
 			surface.SetMaterial(Material("sprites/arrow"))
-			surface.DrawTexturedRect(pos[1] - 15, pos[2] - 15, 30, 30)
+			surface.DrawTexturedRect(mousePos[1] - 15, mousePos[2] - 15, 30, 30)
 		end
 	cam.End3D2D()
 end
