@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2020 Jan Ziegler   --
+--    Copyright © 2021 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -16,7 +16,7 @@
 --           Damage | Index          --
 ---------------------------------------
 
-Star_Trek:RequireModules("lcars", "lcars_swep", "sections")
+Star_Trek:RequireModules("sections")
 
 Star_Trek.Damage = Star_Trek.Damage or {}
 

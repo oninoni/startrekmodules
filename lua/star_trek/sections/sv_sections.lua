@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2020 Jan Ziegler   --
+--    Copyright © 2021 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -61,6 +61,21 @@ function Star_Trek.Sections:IsInSection(deck, sectionId, pos)
 	end
 
 	return false, "Not in area."
+end
+
+function Star_Trek.Sections:IsOnDeck(deck, pos)
+	local deckData = self.Decks[deck]
+	if istable(deckData) then
+		for sectionId, sectionData in pairs(deckData.Sections) do
+			if self:IsInSection(deck, sectionId, pos) then
+				return true
+			end
+		end
+	else
+		return false, "Invalid Deck!"
+	end
+
+	return false, "Not on deck."
 end
 
 function Star_Trek.Sections:GetInSection(deck, sectionId, filterCallback, allowMap, allowParent)
@@ -196,3 +211,10 @@ end
 
 hook.Add("InitPostEntity", "Star_Trek.Sections.Setup", setupSections)
 hook.Add("PostCleanupMap", "Star_Trek.Sections.Setup", setupSections)
+
+util.AddNetworkString("Star_Trek.Sections.Sync")
+hook.Add("PlayerInitialSpawn", "Star_Trek.Sections.Sync", function(ply)
+	net.Start("Star_Trek.Sections.Sync")
+		net.WriteTable(Star_Trek.Sections.Decks)
+	net.Send(ply)
+end)

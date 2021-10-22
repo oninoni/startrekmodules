@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2020 Jan Ziegler   --
+--    Copyright © 2021 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -137,6 +137,13 @@ end)
 -- @return Vector2D mousePos
 function Star_Trek.LCARS:Get3D2DMousePos(window)
 	local x, y = input.GetCursorPos()
+
+	local xOffset, yOffset = hook.Run("Star_Trek.LCARS.GetMouseOffset", window)
+	if xOffset and yOffset then
+		x = x + xOffset
+		y = y + yOffset
+	end
+
 	local rayDir = gui.ScreenToVector(x, y)
 
 	local pos = util.IntersectRayWithPlane(self.EyePos, rayDir, window.WPosG, window.WAngG:Up())
@@ -162,6 +169,10 @@ hook.Add("Think", "Star_Trek.LCARS.Think", function()
 
 	local removeInterfaces = {}
 	for id, interface in pairs(Star_Trek.LCARS.ActiveInterfaces) do
+		if hook.Run("Star_Trek.LCARS.PreventRender", interface, true) then
+			continue
+		end
+
 		interface.IVis = false
 
 		local pos, ang = Star_Trek.LCARS:GetInterfacePosAngle(interface.Ent, interface.IPos, interface.IAng)
@@ -238,6 +249,10 @@ function Star_Trek.LCARS:PlayerButtonDown(ply, button)
 			continue
 		end
 
+		if hook.Run("Star_Trek.LCARS.PreventRender", interface, true) then
+			continue
+		end
+
 		if interface.Closing and interface.AnimPos ~= 1 then
 			continue
 		end
@@ -303,23 +318,32 @@ function Star_Trek.LCARS:DrawWindow(window, animPos, drawCursor)
 	if pos[1] > -width * 0.6 and pos[1] < width * 0.6
 	and pos[2] > -height * 0.6 and pos[2] < height * 0.6 then
 		window.LastPos = pos
+		window.MouseActive = true
+	else
+		window.MouseActive = false
 	end
 
-	cam.Start3D2D(window.WPosG, window.WAngG, 1 / window.WScale)
-		window:OnDraw(window.LastPos or Vector(-width / 2, -height / 2), animPos)
+	local wPos, wAng, wScale = hook.Run("Star_Trek.LCARS.OverrideWindowPosAngScale", window)
+	if not (wPos and wAng and wScale) then
+		wPos, wAng, wScale = window.WPosG, window.WAngG, window.WScale
+	end
 
-		if drawCursor then
+	cam.Start3D2D(wPos, wAng, 1 / wScale)
+		local mousePos = window.LastPos
+
+		window:OnDraw(mousePos or Vector(-width / 2, -height / 2), animPos)
+
+		if drawCursor and window.MouseActive then
 			surface.SetDrawColor(255, 255, 255, 255)
 			surface.SetMaterial(Material("sprites/arrow"))
-			surface.DrawTexturedRect(pos[1] - 15, pos[2] - 15, 30, 30)
+			surface.DrawTexturedRect(mousePos[1] - 15, mousePos[2] - 15, 30, 30)
 		end
 	cam.End3D2D()
 end
 
 hook.Add("PreDrawTranslucentRenderables", "Star_Trek.LCARS.PreDraw", function(isDrawingDepth, isDrawingSkybox)
 	if isDrawingSkybox then return end
-	if not wp then return end
-	if (wp.drawing) then return end
+	if wp and wp.drawing then return end
 
 	Star_Trek.LCARS.EyePos = LocalPlayer():EyePos()
 end)
@@ -327,8 +351,7 @@ end)
 -- Main Render Hook for all LCARS Screens
 hook.Add("PostDrawTranslucentRenderables", "Star_Trek.LCARS.Draw", function(isDrawingDepth, isDrawingSkybox)
 	if isDrawingSkybox then return end
-	if not wp then return end
-	if (wp.drawing) then return end
+	if wp and wp.drawing then return end
 
 	for _, interface in pairs(Star_Trek.LCARS.ActiveInterfaces) do
 		if not interface.IVis then

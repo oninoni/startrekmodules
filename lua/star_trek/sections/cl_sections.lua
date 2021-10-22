@@ -8,10 +8,14 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2020 Jan Ziegler   --
+--    Copyright © 2021 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
 ---------------------------------------
---        PADD Entity | Server       --
+--         Sections | Client         --
 ---------------------------------------
+
+net.Receive("Star_Trek.Sections.Sync", function()
+	Star_Trek.Sections.Decks = net.ReadTable()
+end)

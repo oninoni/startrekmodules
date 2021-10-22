@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2020 Jan Ziegler   --
+--    Copyright © 2021 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -21,7 +21,7 @@ local SELF = INTERFACE
 -- Generate the buttons for a general purpose menu.
 function SELF:GenerateButtons(keyValues)
 	local buttons = {}
-	for i = 1, 20 do
+	for i = 1, 16 do
 		local name = keyValues["lcars_name_" .. i]
 		if isstring(name) then
 			local disabled = tobool(keyValues["lcars_disabled_" .. i])

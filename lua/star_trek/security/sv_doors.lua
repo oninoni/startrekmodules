@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2020 Jan Ziegler   --
+--    Copyright © 2021 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -18,20 +18,26 @@
 
 Star_Trek.Security.Doors = Star_Trek.Security.Doors or {}
 
--- Setting up Doors.
-local setupDoors = function()
-	Star_Trek.Security.Doors = {}
+function Star_Trek.Security:GetPortalDoor(door)
+	local sourceEntities = ents.FindInSphere(door:GetPos(), 8)
+	for _, portal in pairs(sourceEntities) do
+		if portal:GetClass() ~= "linked_portal_door" then
+			continue
+		end
 
-	for _, ent in pairs(ents.GetAll()) do
-		ent.DoorLastSequenceStart = CurTime()
+		local targetPortal = portal:GetExit()
+		if not IsValid(targetPortal) then
+			continue
+		end
 
-		if ent:GetClass() == "prop_dynamic" and Star_Trek.Security.DoorModelNames[ent:GetModel()] then
-			Star_Trek.Security.Doors[ent] = true
+		local targetEntities = ents.FindInSphere(targetPortal:GetPos(), 8)
+		for _, partnerDoor in pairs(targetEntities) do
+			if partnerDoor:GetClass() == "prop_dynamic" and self.DoorModelNames[partnerDoor:GetModel()] then
+				return partnerDoor
+			end
 		end
 	end
 end
-hook.Add("InitPostEntity", "Star_Trek.DoorInitPostEntity", setupDoors)
-hook.Add("PostCleanupMap", "Star_Trek.DoorPostCleanupMap", setupDoors)
 
 -- Block Doors aborting animations.
 hook.Add("AcceptInput", "Star_Trek.BlockDoorIfAlreadyDooring", function(ent, input, activator, caller, value)
@@ -81,16 +87,9 @@ hook.Add("AcceptInput", "Star_Trek.BlockDoorIfAlreadyDooring", function(ent, inp
 			ent:SetSolid(SOLID_VPHYSICS)
 		end
 
-		if ent.LCARSKeyData then
-			local partnerDoorName = ent.LCARSKeyData["lcars_partnerdoor"]
-			if isstring(partnerDoorName) then
-				local partnerDoors = ents.FindByName(partnerDoorName)
-				for _, partnerDoor in pairs(partnerDoors) do
-					if partnerDoor == ent then continue end
-
-					partnerDoor:Fire("SetAnimation", value)
-				end
-			end
+		local partnerDoor = Star_Trek.Security:GetPortalDoor(ent)
+		if IsValid(partnerDoor) then
+			partnerDoor:Fire("SetAnimation", value)
 		end
 
 		ent.DoorLastSequenceStart = CurTime()
@@ -104,14 +103,9 @@ hook.Add("Star_Trek.ChangedKeyValue", "Star_Trek.LockDoors", function(ent, key, 
 			ent:Fire("SetAnimation", "close")
 		end
 
-		local partnerDoorName = ent.LCARSKeyData["lcars_partnerdoor"]
-		if isstring(partnerDoorName) then
-			local partnerDoors = ents.FindByName(partnerDoorName)
-			for _, partnerDoor in pairs(partnerDoors) do
-				if partnerDoor == ent then continue end
-
-				partnerDoor.LCARSKeyData["lcars_locked"] = ent.LCARSKeyData["lcars_locked"]
-			end
+		local partnerDoor = Star_Trek.Security:GetPortalDoor(ent)
+		if IsValid(partnerDoor) then
+			partnerDoor.LCARSKeyData["lcars_locked"] = ent.LCARSKeyData["lcars_locked"]
 		end
 	end
 end)
@@ -162,21 +156,6 @@ local function checkPlayers(ent)
 	end
 end
 
-local function handleParterDoors(ent)
-	local allDoorsFree = true
-	local partnerDoorName = ent.LCARSKeyData["lcars_partnerdoor"]
-	if isstring(partnerDoorName) then
-		local partnerDoors = ents.FindByName(partnerDoorName)
-		for _, partnerDoor in pairs(partnerDoors) do
-			if checkPlayers(partnerDoor) then
-				allDoorsFree = false
-			end
-		end
-	end
-
-	return allDoorsFree
-end
-
 Star_Trek.Security.NextDoorThink = CurTime()
 
 -- Think hook for auto-closing the doors.
@@ -186,7 +165,8 @@ hook.Add("Think", "Star_Trek.Security.DoorThink", function()
 
 	for ent, _ in pairs(Star_Trek.Security.Doors or {}) do
 		if ent.Open then
-			if checkPlayers(ent) then
+			local partnerDoor = Star_Trek.Security:GetPortalDoor(ent)
+			if checkPlayers(ent) or (IsValid(partnerDoor) and checkPlayers(partnerDoor)) then
 				ent.CloseAt = nil
 			else
 				if not ent.CloseAt then
@@ -196,12 +176,6 @@ hook.Add("Think", "Star_Trek.Security.DoorThink", function()
 
 				if ent.CloseAt > CurTime() then
 					continue
-				end
-
-				if ent.LCARSKeyData then
-					local allDoorsFree = handleParterDoors(ent)
-
-					if not allDoorsFree then continue end
 				end
 
 				ent:Fire("SetAnimation", "close")
@@ -215,3 +189,22 @@ hook.Add("Think", "Star_Trek.Security.DoorThink", function()
 		end
 	end
 end)
+
+-------------
+--- Setup ---
+-------------
+
+-- Setting up Doors.
+local setupDoors = function()
+	Star_Trek.Security.Doors = {}
+
+	for _, ent in pairs(ents.GetAll()) do
+		if ent:GetClass() == "prop_dynamic" and Star_Trek.Security.DoorModelNames[ent:GetModel()] then
+			ent.DoorLastSequenceStart = CurTime()
+
+			Star_Trek.Security.Doors[ent] = true
+		end
+	end
+end
+hook.Add("InitPostEntity", "Star_Trek.DoorInitPostEntity", setupDoors)
+hook.Add("PostCleanupMap", "Star_Trek.DoorPostCleanupMap", setupDoors)

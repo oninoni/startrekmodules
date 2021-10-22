@@ -8,14 +8,15 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2020 Jan Ziegler   --
+--    Copyright © 2021 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
 ---------------------------------------
---               Loader              --
+--         Star Trek | Loader        --
 ---------------------------------------
 
+--[[
 local skip = true
 
 local convar = CreateConVar("star_trek_enable", "0")
@@ -36,6 +37,7 @@ for _, mapString in pairs(detectMapStrings) do
 end
 
 if skip then return end
+]]
 
 -- TODO: Rework all "if not success", to display the Error properly. (Mostly Net, Hook and Clientside Errors)
 -- TODO: Check if all errors are caught.
@@ -48,7 +50,7 @@ Star_Trek.LoadedModules = Star_Trek.LoadedModules or {}
 
 function Star_Trek:Message(msg)
 	if msg then
-		print("[Star Trek] " .. msg)
+		MsgC(Color(255, 255, 0), "[Star Trek] " .. msg .. "\n")
 	end
 end
 

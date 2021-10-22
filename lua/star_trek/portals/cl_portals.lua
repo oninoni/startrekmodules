@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2020 Jan Ziegler   --
+--    Copyright © 2021 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -18,34 +18,41 @@
 
 -- Stop rendering the portal on a closed door.
 hook.Add("wp-shouldrender", "Star_Trek.HidePortalInDoors", function(portal, exitPortal )
-	local camOrigin = LocalPlayer():EyePos()
+	if portal:IsDormant() then
+		return false
+	end
+
+	local ply = LocalPlayer()
+	local camOrigin = ply:EyePos()
+
+	-- EGM:RP Gamemode Thirdperson Support
+	local isThirdPerson = false
+	if istable(ThirdPerson) and ThirdPerson:IsActive() then
+		isThirdPerson = true
+		camOrigin = ply.ThirdPersonOrigin
+	end
+
 	local distance = camOrigin:Distance( portal:GetPos() )
 	local disappearDist = portal:GetDisappearDist()
 
-	if portal:GetClass() == "linked_portal_window" then return end
-
 	if not (disappearDist <= 0) and distance > disappearDist then return false end
 
-	local parent = portal:GetParent()
-	if IsValid(parent) then
-		local sequenceId = parent:GetSequence()
-		if parent.LastSequence ~= sequenceId then
-			if sequenceId == parent:LookupSequence("close") then
-				parent.DelayRenderDisable = CurTime() + parent:SequenceDuration("close") * 2
-			end
-
-			parent.LastSequence = sequenceId
-		end
-
-		if sequenceId == parent:LookupSequence("open") then
-			return
-		end
-
-		if isnumber(parent.DelayRenderDisable) and parent.DelayRenderDisable > CurTime() then
-			return true
-		end
-
+	if Star_Trek.Portals:IsBlocked(portal) then
 		return false, true
+	end
+
+	-- EGM:RP Gamemode Thirdperson Support
+	if isThirdPerson then
+		local camAngle = ply:EyeAngles()
+		local camFOV = LocalPlayer():GetFOV()
+
+		--don't render if the view is behind the portal
+		local behind = wp.IsBehind( camOrigin, portal:GetPos(), portal:GetForward() )
+		if behind then return false end
+		local lookingAt = wp.IsLookingAt( portal, camOrigin, camAngle, camFOV )
+		if not lookingAt then return false end
+
+		return true
 	end
 end)
 

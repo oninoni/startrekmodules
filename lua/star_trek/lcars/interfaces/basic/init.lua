@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2020 Jan Ziegler   --
+--    Copyright © 2021 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -28,9 +28,6 @@ function SELF:Open(ent)
 		return false, buttons
 	end
 
-	local name = ent:GetName()
-	local caseEntities = ents.FindByName(name .. "_case")
-
 	local success3, window = Star_Trek.LCARS:CreateWindow(
 		"button_list",
 		Vector(),
@@ -39,17 +36,17 @@ function SELF:Open(ent)
 		width,
 		height,
 		function(windowData, interfaceData, buttonId)
-			if buttonId > 4 then
-				for _, caseEnt in pairs(caseEntities) do
+			local keyValues = ent.LCARSKeyData
+			if istable(keyValues) and isstring(keyValues["lcars_linked_case"]) then
+				for _, caseEnt in pairs(ents.FindByName(keyValues["lcars_linked_case"])) do
 					if IsValid(caseEnt) then
-						caseEnt:Fire("InValue", buttonId - 4)
+						caseEnt:Fire("InValue", buttonId)
 					end
 				end
 			else
 				ent:Fire("FireUser" .. buttonId)
 			end
 
-			local keyValues = ent.LCARSKeyData
 			if istable(keyValues) and keyValues["lcars_keep_open"] then
 				ent:EmitSound("star_trek.lcars_beep")
 
@@ -75,7 +72,7 @@ hook.Add("Star_Trek.ChangedKeyValue", "Star_Trek.LCARS.BasicInterface", function
 	if string.StartWith(key, "lcars_name_") or string.StartWith(key, "lcars_disabled_") then
 
 		local keyValues = ent.LCARSKeyData
-		if istable(keyValues) and keyValues["lcars_keep_open"] then
+		if istable(keyValues) then
 			local interfaceData = Star_Trek.LCARS.ActiveInterfaces[ent]
 			if istable(interfaceData) then
 				interfaceData.Windows[1]:SetButtons(interfaceData:GenerateButtons(ent.LCARSKeyData))

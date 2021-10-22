@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2020 Jan Ziegler   --
+--    Copyright © 2021 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -18,16 +18,16 @@
 
 sound.Add({
 	name = "star_trek.turbolift_start",
-	channel = CHAN_USER_BASE + 1,
+	channel = CHAN_AUTO,
 	volume = 1,
-	level = 100,
+	level = 70,
 	pitch = 100,
 	sound = "oninoni/startrek/turbolift/tng_turbolift_movestart_loop.wav",
 })
 
 sound.Add({
 	name = "star_trek.turbolift_stop",
-	channel = CHAN_USER_BASE + 1,
+	channel = CHAN_AUTO,
 	volume = 1,
 	level = 70,
 	pitch = 100,

@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2020 Jan Ziegler   --
+--    Copyright © 2021 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -18,7 +18,7 @@
 
 sound.Add({
 	name = "star_trek.lcars_beep",
-	channel = CHAN_BODY,
+	channel = CHAN_AUTO,
 	volume = .8,
 	level = 70,
 	pitch = 100,
@@ -27,7 +27,7 @@ sound.Add({
 
 sound.Add({
 	name = "star_trek.lcars_beep2",
-	channel = CHAN_BODY,
+	channel = CHAN_AUTO,
 	volume = .8,
 	level = 70,
 	pitch = 100,
@@ -36,7 +36,7 @@ sound.Add({
 
 sound.Add({
 	name = "star_trek.lcars_transporter_lock",
-	channel = CHAN_BODY,
+	channel = CHAN_AUTO,
 	volume = .8,
 	level = 70,
 	pitch = 100,
@@ -45,7 +45,7 @@ sound.Add({
 
 sound.Add({
 	name = "star_trek.lcars_error",
-	channel = CHAN_BODY,
+	channel = CHAN_AUTO,
 	volume = .8,
 	level = 70,
 	pitch = 100,
@@ -54,7 +54,7 @@ sound.Add({
 
 sound.Add({
 	name = "star_trek.lcars_close",
-	channel = CHAN_BODY,
+	channel = CHAN_AUTO,
 	volume = .8,
 	level = 70,
 	pitch = 100,

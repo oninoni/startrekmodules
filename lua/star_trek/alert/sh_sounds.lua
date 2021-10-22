@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2020 Jan Ziegler   --
+--    Copyright © 2021 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -18,7 +18,7 @@
 
 sound.Add({
 	name = "star_trek.blue_alert",
-	channel = CHAN_BODY,
+	channel = CHAN_AUTO,
 	volume = .8,
 	level = 0,
 	pitch = 100,
@@ -27,7 +27,7 @@ sound.Add({
 
 sound.Add({
 	name = "star_trek.red_alert",
-	channel = CHAN_BODY,
+	channel = CHAN_AUTO,
 	volume = 1,
 	level = 0,
 	pitch = 100,

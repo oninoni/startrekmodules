@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2020 Jan Ziegler   --
+--    Copyright © 2021 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -35,15 +35,14 @@ function Star_Trek.Transporter:TriggerEffect(transportData, ent)
 		transportData.OldCollisionGroup = ent:GetCollisionGroup()
 		ent:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
 
-
-		local phys = ent:GetPhysicsObject()
-		if IsValid(phys) then
-			transportData.OldMotionEnabled = phys:IsMotionEnabled()
-			phys:EnableMotion(false)
-		end
-
 		if ent:IsPlayer() then
-			ent:Lock()
+			ent:Freeze(true)
+		else
+			local phys = ent:GetPhysicsObject()
+			if IsValid(phys) then
+				transportData.OldMotionEnabled = phys:IsMotionEnabled()
+				phys:EnableMotion(false)
+			end
 		end
 
 		local lowerBounds = ent:GetCollisionBounds()
@@ -103,17 +102,17 @@ function Star_Trek.Transporter:TriggerEffect(transportData, ent)
 		-- Looks strange but is needed. (Probably a bug with setting the Move Type back)
 		ent:SetPos(ent:GetPos())
 
-		local phys = ent:GetPhysicsObject()
-		if IsValid(phys) then
-			if transportData.OldMotionEnabled ~= nil then
-				phys:EnableMotion(transportData.OldMotionEnabled)
-			end
-
-			phys:Wake()
-		end
-
 		if ent:IsPlayer() then
-			ent:UnLock()
+			ent:Freeze(false)
+		else
+			local phys = ent:GetPhysicsObject()
+			if IsValid(phys) then
+				if transportData.OldMotionEnabled ~= nil then
+					phys:EnableMotion(transportData.OldMotionEnabled)
+				end
+
+				phys:Wake()
+			end
 		end
 
 		ent:DrawShadow(true)
