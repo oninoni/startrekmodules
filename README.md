@@ -4,6 +4,6 @@ You can freely use this content for your server. But please consider contributin
 This Addon was developed as an API for the Intrepid-Class Gmod Map, but can be used to create almost any Star Trek Experience.
 
 Additional Content: 
-- https://github.com/oninoni/intrepid_sweps/blob/master/README.md
+- https://github.com/oninoni/intrepid_sweps
 
 Currently NOT Released since it is higly Experimental.
