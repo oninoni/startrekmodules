@@ -16,6 +16,8 @@
 --         Star Trek | Loader        --
 ---------------------------------------
 
+game.AddParticles( "particles/intrepid_map.pcf" )
+
 --[[
 local skip = true
 
