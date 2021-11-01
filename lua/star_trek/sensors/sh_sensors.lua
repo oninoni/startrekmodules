@@ -19,19 +19,6 @@
 -- TODO Hook to detect Crew Members / Unknowns (Sensors Module)
 -- TODO: Hook to detect weapons on and off players / npcs
 
--- Sensor data Struct
--- Some Values can be Nil
-
---[[
-{
-	Name = "Human", -- Name of the Object (Trying to find the best name, REQUIRED)
-	Alive = true, -- If the object is alive (REQUIRED)
-	Replicated = false,
-	Holographic = false,
-	Species = "",
-}
-]]
-
 -- Returns the Scan Data Struct of a given entity.
 function Star_Trek.Sensors:ScanEntity(ent)
 	if not IsValid(ent) then
