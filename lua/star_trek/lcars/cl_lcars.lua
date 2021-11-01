@@ -132,8 +132,6 @@ end)
 -- Returns the position of the mouse in the 2d plane of the window.
 --
 -- @param Table window
--- @param Vector eyePos
--- @param Angle eyeAng
 -- @return Vector2D mousePos
 function Star_Trek.LCARS:Get3D2DMousePos(window)
 	local x, y = input.GetCursorPos()
