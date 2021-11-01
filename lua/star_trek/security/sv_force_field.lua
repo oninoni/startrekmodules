@@ -16,11 +16,6 @@
 --   Security Force Fields | Server  --
 ---------------------------------------
 
--- TODO Finish Entity
--- TODO Rework Interface
-
-------------------------------------------------------------------------------------------------------------------------------------------
-
 -- Enables the given force field.
 --
 -- @param Table forceFieldData

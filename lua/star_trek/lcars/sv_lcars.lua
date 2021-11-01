@@ -23,6 +23,45 @@
 util.AddNetworkString("Star_Trek.LCARS.Open")
 -- TODO: Sync on Join Active Interfaces
 
+-- Applies Offset and Values to a Window.
+--
+-- @param Table interfaceData
+-- @param Number windowId
+-- @param Table windowData
+function Star_Trek.LCARS:ApplyWindow(interfaceData, windowId, windowData)
+	local offsetPos = interfaceData.OffsetPos
+	local offsetAng = interfaceData.OffsetAng
+	local ent = interfaceData.Ent
+	if not isvector(offsetPos) or not isangle(offsetAng) or not IsValid(ent) then
+		return
+	end
+
+	if windowData.AppliedOffset then
+		return
+	end
+
+	windowData.Id = windowId
+	windowData.Interface = interfaceData
+
+	if isvector(offsetPos) and isangle(offsetAng) then
+		local newPosOrig, newAngOrig = LocalToWorld(offsetPos, offsetAng, ent:GetPos(), ent:GetAngles())
+		local newPosWorld, newAngWorld = LocalToWorld(windowData.WindowPos, windowData.WindowAngles, newPosOrig, newAngOrig)
+		windowData.WindowPos, windowData.WindowAngles = WorldToLocal(newPosWorld, newAngWorld, ent:GetPos(), ent:GetAngles())
+	end
+
+	windowData.AppliedOffset = true
+end
+
+-- Applies Offset and Values to all Windows.
+--
+-- @param Table interfaceData
+-- @param interfaceData
+function Star_Trek.LCARS:ApplyWindows(interfaceData)
+	for windowId, windowData in ipairs(interfaceData.Windows or {}) do
+		self:ApplyWindow(interfaceData, windowId, windowData)
+	end
+end
+
 -- Opens an interface of the given name.
 --
 -- @param Player ply
@@ -48,7 +87,6 @@ function Star_Trek.LCARS:OpenInterface(ply, triggerEntity, interfaceName, ...)
 
 	local interfaceData = {
 		Ent 			= ent,
-		InterfaceName	= interfaceName,
 		InterfacePos	= interfacePos,
 		InterfaceAngle	= interfaceAngle,
 	}
@@ -69,16 +107,9 @@ function Star_Trek.LCARS:OpenInterface(ply, triggerEntity, interfaceName, ...)
 	end
 
 	interfaceData.Windows = windows
-	for i, windowData in ipairs(interfaceData.Windows) do
-		windowData.Id = i
-		windowData.Interface = interfaceData
-
-		if isvector(offsetPos) and isangle(offsetAng) then
-			local newPosOrig, newAngOrig = LocalToWorld(offsetPos, offsetAng, ent:GetPos(), ent:GetAngles())
-			local newPosWorld, newAngWorld = LocalToWorld(windowData.WindowPos, windowData.WindowAngles, newPosOrig, newAngOrig)
-			windowData.WindowPos, windowData.WindowAngles = WorldToLocal(newPosWorld, newAngWorld, ent:GetPos(), ent:GetAngles())
-		end
-	end
+	interfaceData.OffsetPos = offsetPos
+	interfaceData.OffsetAng = offsetAng
+	Star_Trek.LCARS:ApplyWindows(interfaceData)
 
 	local clientInterfaceData = Star_Trek.LCARS:GetClientInterfaceData(interfaceData)
 
@@ -216,7 +247,10 @@ function Star_Trek.LCARS:UpdateWindow(ent, windowId, windowData)
 		interfaceData.Windows[windowId] = windowData
 	end
 
-	local clientWindowData = self:GetClientWindowData(interfaceData.Windows[windowId])
+	windowData = interfaceData.Windows[windowId]
+
+	Star_Trek.LCARS:ApplyWindow(interfaceData, windowId, windowData)
+	local clientWindowData = self:GetClientWindowData(windowData)
 
 	net.Start("Star_Trek.LCARS.Update")
 		net.WriteInt(ent:EntIndex(), 32)

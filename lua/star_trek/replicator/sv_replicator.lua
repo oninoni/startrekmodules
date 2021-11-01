@@ -148,3 +148,10 @@ function Star_Trek.Replicator:RecycleObject(ent)
 
 	table.insert(Star_Trek.Transporter.ActiveTransports, transportData)
 end
+
+-- Scan Replicated Matter
+hook.Add("Star_Trek.Sensors.PostScanEntity", "Sensors.CheckReplicated", function(ent, scanData)
+	if ent.Replicated then
+		scanData.Replicated = true
+	end
+end)

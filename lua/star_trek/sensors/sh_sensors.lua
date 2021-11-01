@@ -16,6 +16,9 @@
 --          Sensors | Shared         --
 ---------------------------------------
 
+-- TODO Hook to detect Crew Members / Unknowns (Sensors Module)
+-- TODO: Hook to detect weapons on and off players / npcs
+
 -- Sensor data Struct
 -- Some Values can be Nil
 

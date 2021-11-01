@@ -25,10 +25,12 @@ if SERVER then
 	AddCSLuaFile("sh_sounds.lua")
 	AddCSLuaFile("cl_fonts.lua")
 	AddCSLuaFile("cl_util.lua")
-	AddCSLuaFile("cl_elements_frame.lua")
-	AddCSLuaFile("cl_elements_button.lua")
 	AddCSLuaFile("sh_lcars.lua")
 	AddCSLuaFile("cl_lcars.lua")
+
+	AddCSLuaFile("elements/cl_button.lua")
+	AddCSLuaFile("elements/cl_frame.lua")
+	AddCSLuaFile("elements/cl_double_frame.lua")
 
 	include("sh_colors.lua")
 	include("sh_sounds.lua")
@@ -42,8 +44,10 @@ if CLIENT then
 	include("sh_sounds.lua")
 	include("cl_fonts.lua")
 	include("cl_util.lua")
-	include("cl_elements_frame.lua")
-	include("cl_elements_button.lua")
 	include("sh_lcars.lua")
 	include("cl_lcars.lua")
+
+	include("elements/cl_button.lua")
+	include("elements/cl_frame.lua")
+	include("elements/cl_double_frame.lua")
 end

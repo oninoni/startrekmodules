@@ -104,7 +104,10 @@ function Star_Trek.LCARS:GetClientWindowData(windowData)
 		end
 	end
 
+	-- Prevent Recursion
 	clientWindowData.Interface = nil
+
+	clientWindowData.AppliedOffset = nil
 
 	return clientWindowData
 end
@@ -120,8 +123,11 @@ function Star_Trek.LCARS:GetClientInterfaceData(interfaceData)
 			clientInterfaceData[id] = nil
 		end
 	end
-	clientInterfaceData.Windows = {}
 
+	clientInterfaceData.OffsetPos = nil
+	clientInterfaceData.OffsetAng = nil
+
+	clientInterfaceData.Windows = {}
 	for id, windowData in pairs(interfaceData.Windows) do
 		clientInterfaceData.Windows[id] = self:GetClientWindowData(windowData)
 	end

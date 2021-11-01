@@ -16,7 +16,7 @@
 --         Holodeck | Server         --
 ---------------------------------------
 
--- TODO: Own Module with disintegration code.
+-- TODO: Own Module with Holodeck Matter Functionality (Disintegrate + Scanner)
 
 -- Compresses players between 2 named brush areas.
 --

@@ -38,7 +38,7 @@ surface.CreateFont( "LCARSMed", {
 	font = "Arial",
 	extended = false,
 	size = 30,
-	weight = 200,
+	weight = 1000,
 	blursize = 0,
 	scanlines = 0,
 	antialias = true,
