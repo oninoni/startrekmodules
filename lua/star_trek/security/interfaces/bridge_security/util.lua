@@ -113,6 +113,8 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 
 			local deck = sectionWindow.Selected
 
+			-- TODO: Redo using Sensors Module!
+
 			-------- Scan --------
 			if buttonName == "Scan Lifeforms" then
 				local entities = Star_Trek.Sections:GetInSections(deck, sectionIds, function(objects, ent)
@@ -123,7 +125,6 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 				mapWindow:Update()
 
 				for _, ent in pairs(entities) do
-					-- TODO Hook to detect Crew Members / Unknowns (Sensors Module)
 					local sectionName = Star_Trek.Sections:GetSectionName(deck, ent.DetectedInSection)
 
 					textWindow:AddLine("Lifeform found in " .. sectionName .. " at " .. tostring(ent:GetPos()))
@@ -142,7 +143,6 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 				mapWindow:Update()
 
 				for _, ent in pairs(entities) do
-					-- TODO Hook to detect Type, Holodeck Matter, Replicated Matter, etc... (Sensors Module)
 					local sectionName = Star_Trek.Sections:GetSectionName(deck, ent.DetectedInSection)
 
 					textWindow:AddLine("Object found in " .. sectionName .. " at " .. tostring(ent:GetPos()))
@@ -153,7 +153,6 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 
 				return true
 			elseif buttonName == "Scan Weapons" then
-				-- TODO
 
 				return true
 			elseif buttonName == "Scan All" then
@@ -168,11 +167,9 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 					local sectionName = Star_Trek.Sections:GetSectionName(deck, ent.DetectedInSection)
 
 					if hook.Run("Star_Trek.Util.IsLifeForm", ent) then
-						-- TODO Hook to detect Crew Members / Unknowns (Sensors Module)
 						textWindow:AddLine("Lifeform found in " .. sectionName .. " at " .. tostring(ent:GetPos()))
 						lifeforms = lifeforms + 1
 					else
-						-- TODO Hook to detect Type, Holodeck Matter, Replicated Matter, etc... (Sensors Module)
 						textWindow:AddLine("Object found in " .. sectionName .. " at " .. tostring(ent:GetPos()))
 						objects = objects + 1
 					end

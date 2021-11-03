@@ -13,7 +13,7 @@
 ---------------------------------------
 
 ---------------------------------------
---   LCARS Frame Elements | Client   --
+--       LCARS Frame | Element       --
 ---------------------------------------
 
 local LCARS_CORNER_RADIUS = 25
@@ -197,9 +197,9 @@ end
 function Star_Trek.LCARS:DrawFrame(width, height, title, titleShort, color1, color2, color3, hFlip)
 	Star_Trek.LCARS:DrawFrameSpacer(0, width, color1, color2, hFlip)
 	if hFlip then
-		draw.SimpleText(title, "LCARSMed", width * 0.05, 3, nil, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+		draw.SimpleText(string.upper(title), "LCARSMed", width * 0.05, 3, nil, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
 	else
-		draw.SimpleText(title, "LCARSMed", width * 0.95, 3, nil, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
+		draw.SimpleText(string.upper(title), "LCARSMed", width * 0.95, 3, nil, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
 	end
 
 	local posOffset = 0

@@ -42,6 +42,15 @@ function Star_Trek.Alert:Enable(type)
 		self.ActiveAlertSound:Play()
 	end
 
+	local bridgeLights = ents.FindByName(Star_Trek.Alert.BridgeDimName)
+	for _, ent in pairs(bridgeLights) do
+		if alertType.BridgeDim then
+			ent:Fire("turnOff")
+		else
+			ent:Fire("turnOn")
+		end
+	end
+
 	net.Start("Star_Trek.Alert.Enable")
 		net.WriteString(type)
 	net.Broadcast()
@@ -72,6 +81,11 @@ function Star_Trek.Alert:Disable()
 
 	if self.ActiveAlertSound then
 		self.ActiveAlertSound:Stop()
+	end
+
+	local bridgeLights = ents.FindByName(Star_Trek.Alert.BridgeDimName)
+	for _, ent in pairs(bridgeLights) do
+		ent:Fire("turnOn")
 	end
 
 	net.Start("Star_Trek.Alert.Disable")

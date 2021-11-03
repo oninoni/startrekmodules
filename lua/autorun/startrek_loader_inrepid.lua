@@ -16,6 +16,8 @@
 --         Star Trek | Loader        --
 ---------------------------------------
 
+game.AddParticles( "particles/intrepid_map.pcf" )
+
 --[[
 local skip = true
 
@@ -41,8 +43,7 @@ if skip then return end
 
 -- TODO: Rework all "if not success", to display the Error properly. (Mostly Net, Hook and Clientside Errors)
 -- TODO: Check if all errors are caught.
--- TODO: "Sensors" Module.
--- TODO: "Alert" Module + LCARS Animations.
+-- TODO: LCARS Alert Animation Rework
 
 Star_Trek = Star_Trek or {}
 Star_Trek.Modules = Star_Trek.Modules or {}

@@ -99,7 +99,10 @@ function SELF:ProcessText(lines)
 end
 
 function SELF:OnPress(pos, animPos)
-	return 1 -- TODO: Check if Text Area was clicked.
+	if pos.x > self.TextStartX and pos.x < self.TextStartX + self.TextWidth
+	and pos.y > self.TextStartY and pos.y < self.TextStartY + self.TextHeight then
+		return 1
+	end
 end
 
 function SELF:OnDraw(pos, animPos)

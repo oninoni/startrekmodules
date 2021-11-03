@@ -16,81 +16,88 @@
 --          Sensors | Shared         --
 ---------------------------------------
 
--- Sensor data Struct
--- Some Values can be Nil
-
---[[
-{
-	Name = "Human", -- Name of the Object (Trying to find the best name, REQUIRED)
-	Alive = true, -- If the object is alive (REQUIRED)
-	Replicated = false,
-	Holographic = false,
-	Species = "",
-}
-]]
+-- TODO Hook to detect Crew Members / Unknowns (Sensors Module)
+-- TODO: Hook to detect weapons on and off players / npcs
 
 -- Returns the Scan Data Struct of a given entity.
-function Star_Trek.Scanners:ScanEntity(ent)
+function Star_Trek.Sensors:ScanEntity(ent)
 	if not IsValid(ent) then
 		return false, "Invalid Entity"
 	end
 
 	local scanData = {
-		Name = "Object",
+		Name = "Unknown Object",
 		Alive = false,
 	}
 
-	hook.Run("Star_Trek.Scanners.PreScanEntity", ent, scanData)
+	hook.Run("Star_Trek.Sensors.PreScanEntity", ent, scanData)
 
 	-- Check Players.
 	if ent:IsPlayer() then
-		scanData.Name = ent:GetName()
+		local name = ent:GetName()
+		if not isstring(name) or name == "" then
+			name = "Unknown Lifeform"
+		end
+
+		scanData.Name = name
 		scanData.Alive = true
 
-		local overrideName = hook.Run("Star_Trek.Scanners.GetPlayerName", ent)
-		if isstring(overrideName) then
-			scanData.Name = overrideName
-		end
-
-		local overrideAlive = hook.Run("Star_Trek.Scanners.GetPlayerAlive", ent)
-		if isbool(overrideAlive) then
-			scanData.Alive = overrideAlive
-		end
+		hook.Run("Star_Trek.Sensors.ScanPlayer", ent, scanData)
 	end
 
 	-- Check NPCs
 	if ent:IsNPC() then
-		scanData.Name = ent:GetName()
+		local name = ent:GetName()
+		if not isstring(name) or name == "" then
+			name = "Unknown Lifeform"
+		end
+
+		scanData.Name = name
 		scanData.Alive = true
 
-		local overrideName = hook.Run("Star_Trek.Scanners.GetNPCName", ent)
-		if isstring(overrideName) then
-			scanData.Name = overrideName
-		end
-
-		local overrideAlive = hook.Run("Star_Trek.Scanners.GetNPCAlive", ent)
-		if isbool(overrideAlive) then
-			scanData.Alive = overrideAlive
-		end
+		hook.Run("Star_Trek.Sensors.ScanNPC", ent, scanData)
 	end
 
 	-- Check Nextbots
 	if ent:IsNextBot() then
-		scanData.Name = ent:GetName()
+		local name = ent:GetName()
+		if not isstring(name) or name == "" then
+			name = "Unknown Lifeform"
+		end
+
+		scanData.Name = name
 		scanData.Alive = true
 
-		local overrideName = hook.Run("Star_Trek.Scanners.GetNextbotName", ent)
-		if isstring(overrideName) then
-			scanData.Name = overrideName
-		end
-
-		local overrideAlive = hook.Run("Star_Trek.Scanners.GetNextbotAlive", ent)
-		if isbool(overrideAlive) then
-			scanData.Alive = overrideAlive
-		end
+		hook.Run("Star_Trek.Sensors.ScanNextBot", ent, scanData)
 	end
 
-	hook.Run("Star_Trek.Scanners.PostScanEntity", ent, scanData)
+	-- Check Weapons
+	if ent:IsWeapon() then
+		local weaponTable = weapons.GetStored(ent:GetClass())
+		if istable(weaponTable) then
+			name = weaponTable.PrintName
+		else
+			name = "Unknown Handheld Object"
+		end
+
+		scanData.Name = name
+		scanData.Alive = false
+
+		hook.Run("Star_Trek.Sensors.ScanWeapon", ent, scanData)
+	end
+
+	hook.Run("Star_Trek.Sensors.PostScanEntity", ent, scanData)
 
 	return true, scanData
 end
+
+-- Scan Health
+hook.Add("Star_Trek.Sensors.PostScanEntity", "Sensors.CheckHealth", function(ent, scanData)
+	local maxHealth = ent:GetMaxHealth()
+	if maxHealth == 0 then
+		return
+	end
+
+	local percentage = ent:Health() / maxHealth
+	scanData.Integrity = math.Round(percentage * 100, 0)
+end)

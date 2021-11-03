@@ -32,3 +32,5 @@ Star_Trek.Modules["replicator"] = true
 Star_Trek.Modules["damage"] = true
 Star_Trek.Modules["security"] = true
 Star_Trek.Modules["alert"] = true
+
+Star_Trek.Modules["sensors"] = true

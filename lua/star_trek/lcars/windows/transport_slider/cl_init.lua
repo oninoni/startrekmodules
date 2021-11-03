@@ -44,8 +44,6 @@ function SELF:OnPress(pos, animPos)
 	end
 end
 
--- TODO: Redo graphics with prerender functionality.
--- TODO: Redo Graphics to have better quality.
 function SELF:OnDraw(pos, animPos)
 	local colorBlue = ColorAlpha(Star_Trek.LCARS.ColorBlue, animPos * 255)
 	local colorYellow = ColorAlpha(Star_Trek.LCARS.ColorOrange, animPos * 255)
