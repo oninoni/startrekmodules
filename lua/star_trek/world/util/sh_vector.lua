@@ -17,100 +17,137 @@
 ---------------------------------------
 
 -- Concept:
-
 -- 2 Floats per Coordiate
 -- Split at 1024*1024
 -- plenty precision for ,... !
--- INT RANGE: (1024*1024*1024*1024*64) * (1024*1024), (1024 * 1024 * 1024 * 64)
--- 
+-- RANGE: (1024*1024*1024*1024*64) * (1024*1024), (1024 * 1024 * 1024 * 64)
 
-Star_Trek.World.Vector = {}
+-- Split Value is set here:
+local MAX_SMALL_VALUE = 1024 * 1024
 
-local metaTable = {
-	__index = 
-}
+local vectorMeta = {}
+Star_Trek.World.Vector = vectorMeta
 
-local BX = 1
-local BY = 2
-local BZ = 3
-local SX = 4
-local SY = 5
-local SZ = 6
+local dgmt = debug.getmetatable
+function IsWorldVector(a)
+	if dgmt(a) == vectorMeta then
+		return true
+	end
 
-function WorldVector(bx, by, bz, sx, sy, sz)
-	local vector = {
-		[BX] = bx,
-		[BY] = by,
-		[BZ] = bz,
-		[SX] = sx,
-		[SY] = sy,
-		[SZ] = sz,
-	}
-
+	return false
 end
 
+-- Negates WorldVector and returns the result.
+--
+-- @param WorldVector a
+-- @return WorldVector result
+local function __unm(a)
+	return WorldVector(
+		-a[1],
+		-a[2],
+		-a[3],
+		-a[4],
+		-a[5],
+		-a[6]
+	)
+end
 
-
-
-
-
-
-
-
-
-
-
-
-
---[[
-
-
-
-
-
-
--- Add the given Vector or World Vector to the World Vector
+-- Adds the given Vector or WorldVector to the WorldVector and returns the result.
 --
 -- @param WorldVector a
 -- @param WorldVector/Vector b
 -- @return WorldVector result
 local function __add(a, b)
 	if isvector(b) then
-		return WorldVector(a[1], a[2] + b)
+		return WorldVector(
+			a[1], a[2], a[3],
+			a[4] + b.x,
+			a[5] + b.y,
+			a[6] + b.z
+		)
 	end
 
-	return WorldVector(a[1] + b[1], a[2] + b[2])
+	if IsWorldVector(b) then
+		return WorldVector(
+			a[1] + b[1],
+			a[2] + b[2],
+			a[3] + b[3],
+			a[4] + b[4],
+			a[5] + b[5],
+			a[6] + b[6]
+		)
+	end
+
+	error("Adding World Vectors: vector expected got " .. type(b))
 end
 
--- Substract the given Vector or World Vector from the World Vector
+-- Substracts the given Vector or WorldVector to the WorldVector and returns the result.
 --
 -- @param WorldVector a
 -- @param WorldVector/Vector b
 -- @return WorldVector result
 local function __sub(a, b)
 	if isvector(b) then
-		return WorldVector(a[1], a[2] - b)
+		return WorldVector(
+			a[1], a[2], a[3],
+			a[4] - b.x,
+			a[5] - b.y,
+			a[6] - b.z
+		)
 	end
 
-	return WorldVector(a[1] - b[1], a[2] - b[2])
+	if IsWorldVector(b) then
+		return WorldVector(
+			a[1] - b[1],
+			a[2] - b[2],
+			a[3] - b[3],
+			a[4] - b[4],
+			a[5] - b[5],
+			a[6] - b[6]
+		)
+	end
+
+	error("Substracting World Vectors: vector expected got " .. type(b))
 end
 
--- Mutliplies a given vector with a scalar.
+-- Mutliplies a given vector with a scalar and returns the result.
 --
 -- @param WorldVector a
 -- @param Number b
 -- @return WorldVector result
 local function __mul(a, b)
-	return WorldVector(a[1] * b, a[2] * b)
+	if isnumber(b) then
+		return WorldVector(
+			a[1] * b,
+			a[2] * b,
+			a[3] * b,
+			a[4] * b,
+			a[5] * b,
+			a[6] * b
+		)
+	end
+
+	error("Scaling World Vectors: number expected got" .. type(b))
 end
 
--- Divides a given vector by a scalar.
+-- Divides a given vector with a scalar and returns the result.
 --
 -- @param WorldVector a
 -- @param Number b
 -- @return WorldVector result
 local function __div(a, b)
-	return WorldVector(a[1] / b, a[2] / b)
+	if isnumber(b) then
+		return WorldVector(
+			a[1] / b,
+			a[2] / b,
+			a[3] / b,
+			a[4] / b,
+			a[5] / b,
+			a[6] / b
+		)
+	end
+
+	error("Division Scaling World Vectors: number expected got" .. type(b))
 end
 
 -- Compares two vectors with each other for being the same.
@@ -118,38 +155,63 @@ end
 -- @param WorldVector a
 -- @param WorldVector b
 -- @return Boolean equal
-local function  __eq(a, b)
-	return (a[1] == b[1]) and (a[2] == b[2])
+local function __eq(a, b)
+	if isnumber(b) then
+		if  a[1] == b[1]
+		and a[2] == b[2]
+		and a[3] == b[3]
+		and a[4] == b[4]
+		and a[5] == b[5]
+		and a[6] == b[6] then
+			return true
+		end
+
+		return false
+	end
+
+	error("Comparing World Vectors: world vector expected got" .. type(b))
 end
 
--- Converts the vector into a string, to be printed.
+-- Converts the vector into a string, to be output.
 --
 -- @param WorldVector a
 -- @return Strint string
 local function __tostring(a)
-	return tostring(a[1]) .. " | " .. tostring(a[2])
+	return "[B " .. a[1] .. " " .. a[2] .. " " .. a[3] .. " |S " .. a[4] .. " " .. a[5] .. " " .. a[6] .. " ]"
 end
 
 -- Define the Meta Table here. Optimisation!
 local metaTable = {
-	__index = Star_Trek.World.Vector,
-	__add = __add, -- +
-	__sub = __sub, -- -
-	__mul = __mul, -- *
-	__div = __div, -- /
-	__eq  =  __eq, -- ==
+	__index = vectorMeta,
+	__unm = __unm, -- -(a)
+	__add = __add, -- a + b
+	__sub = __sub, -- a - b
+	__mul = __mul, -- a * b
+	__div = __div, -- a / b
+	__eq  =  __eq, -- a == b
 	__tostring = __tostring,
 }
 
--- Initialize a Vector.
+-- Create a World Vector and return it.
 --
--- @param Vector big
--- @param Vector small
--- @return WorldVector vector
-function WorldVector(big, small)
-	local worldVector = {[1] = big or Vector(), [2] = small or Vector()}
-	setmetatable(worldVector, metaTable)
+-- @param number bx
+-- @param number by
+-- @param number bz
+-- @param number sx
+-- @param number sy
+-- @param number sz
+-- @return WorldVector worldVector
+function WorldVector(bx, by, bz, sx, sy, sz)
+	local worldVector = {
+		[1] = bx,
+		[2] = by,
+		[3] = bz,
+		[4] = sx,
+		[5] = sy,
+		[6] = sz,
+	}
 
+	setmetatable(worldVector, metaTable)
 	worldVector:FixValue()
 
 	return worldVector
@@ -157,48 +219,59 @@ end
 
 -- Reduces the Value to its minimum "Small" Vector Size.
 -- Should be called after any operation.
-function Star_Trek.World.Vector:FixValue()
-	local b = self[1]
-	local s = self[2]
-
-	local s2 = Vector(
-		s[1] % BIG_SCALE,
-		s[2] % BIG_SCALE,
-		s[3] % BIG_SCALE
-	)
-
-	local temp = (s - s2) / BIG_SCALE
-	self[1] = Vector(
-		b[1] + math.floor(temp[1]),
-		b[2] + math.floor(temp[2]),
-		b[3] + math.floor(temp[3])
-	)
-	self[2] = s2
-
-	if SERVER and false then
-		print("...")
-		print("B", b)
-		print("S", s)
-		print("S2", s2)
-		print("S-S2", s - s2)
-		print("T", temp)
-		print(self[1], self[2])
+function vectorMeta:FixValue()
+	if 	self[4] <= MAX_SMALL_VALUE and self[4] > 0
+	and self[5] <= MAX_SMALL_VALUE and self[5] > 0
+	and self[6] <= MAX_SMALL_VALUE and self[6] > 0 then
+		return
 	end
+
+	local x = self[4] % MAX_SMALL_VALUE
+	self[1] = math.floor(self[1] + (self[4] - x) / MAX_SMALL_VALUE)
+	self[4] = x
+
+	local y = self[5] % MAX_SMALL_VALUE
+	self[2] = math.floor(self[2] + (self[5] - y) / MAX_SMALL_VALUE)
+	self[5] = y
+
+	local z = self[6] % MAX_SMALL_VALUE
+	self[3] = math.floor(self[3] + (self[6] - z) / MAX_SMALL_VALUE)
+	self[6] = z
 end
 
-function Star_Trek.World.Vector:ToVector()
-	return self[1] * BIG_SCALE + self[2]
+-- Returns a normal Vector from the worldVector.
+-- WARNING: This can cause a loss of precision!
+--
+-- @return Vector result
+function vectorMeta:ToVector()
+	return Vector(
+		self[1] * MAX_SMALL_VALUE + self[4],
+		self[2] * MAX_SMALL_VALUE + self[5],
+		self[3] * MAX_SMALL_VALUE + self[6]
+	)
 end
 
-function Star_Trek.World.Vector:LengthSqr()
-	local temp = self[1] * BIG_SCALE + self[2]
+-- Returns the squared length of the world vector.
+-- WARNING: This can cause a loss of precision!
+--
+-- @return Number lengthSqr
+function vectorMeta:LengthSqr()
+	local temp = self:ToVector()
 	return temp:LengthSqr()
 end
 
-function Star_Trek.World.Vector:Length()
-	local temp = self[1] * BIG_SCALE + self[2]
+-- Returns the length of the world vector.
+-- WARNING: This can cause a loss of precision!
+--
+-- @return Number length
+function vectorMeta:Length()
+	local temp = self:ToVector()
 	return temp:Length()
 end
+
+
+
+
 
 function WorldToLocalBig(pos, ang, newSystemOrigin, newSystemAngles)
 	local offsetPos = pos - newSystemOrigin
@@ -207,15 +280,21 @@ function WorldToLocalBig(pos, ang, newSystemOrigin, newSystemAngles)
 end
 
 function net.ReadWorldVector()
-	local big   = net.ReadVector()
-	local small = net.ReadVector()
+	local bx = net.ReadFloat()
+	local by = net.ReadFloat()
+	local bz = net.ReadFloat()
+	local sx = net.ReadFloat()
+	local sy = net.ReadFloat()
+	local sz = net.ReadFloat()
 
-	return WorldVector(big, small)
+	return WorldVector(bx, by, bz, sx, sy, sz)
 end
 
-function net.WriteWorldVector(vec)
-	net.WriteVector(vec[1])
-	net.WriteVector(vec[2])
+function net.WriteWorldVector(worldVector)
+	net.WriteFloat(worldVector[1])
+	net.WriteFloat(worldVector[2])
+	net.WriteFloat(worldVector[3])
+	net.WriteFloat(worldVector[4])
+	net.WriteFloat(worldVector[5])
+	net.WriteFloat(worldVector[6])
 end
-
-]]
