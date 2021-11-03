@@ -27,12 +27,19 @@ function Star_Trek.Alert:Enable(type)
 		return false, "Invalid Alert"
 	end
 
-	local material = Material(Star_Trek.Alert.AlertMaterial)
-	material:SetVector("$alarmcolor", Vector(
+	local alertMaterial = Material(Star_Trek.Alert.AlertMaterial)
+	alertMaterial:SetVector("$alarmcolor", Vector(
 		alertType.Color.r / 256,
 		alertType.Color.g / 256,
 		alertType.Color.b / 256
 	))
+
+	local bridgeLightMaterial = Material(Star_Trek.Alert.BridgeLightMaterial)
+	if alertType.BridgeDim then
+		bridgeLightMaterial:SetFloat("$brightness", Star_Trek.Alert.BridgeDimAmmount)
+	else
+		bridgeLightMaterial:SetFloat("$brightness", 1)
+	end
 
 	return true
 end
@@ -48,6 +55,9 @@ end)
 function Star_Trek.Alert:Disable()
 	local material = Material(Star_Trek.Alert.AlertMaterial)
 	material:SetVector("$alarmcolor", Vector(0, 0, 0))
+
+	local bridgeLightMaterial = Material(Star_Trek.Alert.BridgeLightMaterial)
+	bridgeLightMaterial:SetFloat("$brightness", 1)
 
 	return true
 end

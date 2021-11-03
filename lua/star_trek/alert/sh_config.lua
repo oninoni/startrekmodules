@@ -22,19 +22,29 @@ Star_Trek.Alert.AlertTypes = {
 	red = {
 		Sound = "star_trek.red_alert",
 		Color = Color(255, 0, 0),
+		BridgeDim = true,
 	},
 	yellow = {
 		Sound = nil,
 		Color = Color(255, 191, 0),
+		BridgeDim = false,
 	},
 	intruder = {
 		Sound = "star_trek.blue_alert",
 		Color = Color(255, 0, 0),
+		BridgeDim = false,
 	},
 	blue = {
 		Sound = "star_trek.blue_alert",
 		Color = Color(0, 0, 255),
+		BridgeDim = true,
 	},
 }
 
 Star_Trek.Alert.OffFrame = 1
+
+Star_Trek.Alert.BridgeLightMaterial = "models/kingpommes/startrek/intrepid/light_bridge_ceiling"
+
+Star_Trek.Alert.BridgeDimName = "bridgeLights"
+
+Star_Trek.Alert.BridgeDimAmmount = 0.8
