@@ -29,12 +29,13 @@ util.AddNetworkString("Star_Trek.LCARS.Open")
 -- @param Number windowId
 -- @param Table windowData
 function Star_Trek.LCARS:ApplyWindow(interfaceData, windowId, windowData)
-	local offsetPos = interfaceData.OffsetPos
-	local offsetAng = interfaceData.OffsetAng
 	local ent = interfaceData.Ent
-	if not isvector(offsetPos) or not isangle(offsetAng) or not IsValid(ent) then
+	if not IsValid(ent) then
 		return
 	end
+
+	local offsetPos = interfaceData.OffsetPos or Vector()
+	local offsetAng = interfaceData.OffsetAng or Angle()
 
 	if windowData.AppliedOffset then
 		return
