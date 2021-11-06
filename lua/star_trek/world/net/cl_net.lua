@@ -18,8 +18,9 @@
 
 local function fixBigVectors(data)
 	for k, v in pairs(data) do
-		if istable(v) and table.Count(v) == 2 and v[1] and v[2] then
-			data[k] = WorldVector(v[1], v[2])
+		print(k, v)
+		if istable(v) then
+			PrintTable(v)
 		end
 	end
 end

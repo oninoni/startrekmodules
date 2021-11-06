@@ -39,7 +39,7 @@ end
 
 function AddTestingShip(id, pos, ang, scale, vel, angVel)
 	print(Star_Trek.World:LoadEntity(id, "ship", {
-		Pos = WorldVector(Vector(), pos),
+		Pos = WorldVector(0, 0, 0, pos.x, pos.y, pos.z),
 		Ang = ang,
 		Vel = vel,
 		AngVel = angVel,
