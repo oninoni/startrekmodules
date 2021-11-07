@@ -95,7 +95,7 @@ function Star_Trek.LCARS:CreateMaterial(id, width, height, renderFunction)
 	tWidth = Star_Trek.LCARS:FilterMaterialSize(width)
 	tHeight = Star_Trek.LCARS:FilterMaterialSize(height)
 
-	local textureName = "LCARS_" .. id .. "_" .. tWidth .. "x" .. tHeight
+	local textureName = "LCARS_" .. id .. "_" .. tWidth .. "X" .. tHeight
 	local texture = GetRenderTarget(textureName, tWidth, tHeight)
 
 	local oldW, oldH = ScrW(), ScrH()

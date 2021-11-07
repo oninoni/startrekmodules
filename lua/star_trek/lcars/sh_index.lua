@@ -30,7 +30,6 @@ if SERVER then
 
 	AddCSLuaFile("elements/cl_button.lua")
 	AddCSLuaFile("elements/cl_frame.lua")
-	AddCSLuaFile("elements/cl_double_frame.lua")
 
 	include("sh_colors.lua")
 	include("sh_sounds.lua")
@@ -49,5 +48,4 @@ if CLIENT then
 
 	include("elements/cl_button.lua")
 	include("elements/cl_frame.lua")
-	include("elements/cl_double_frame.lua")
 end

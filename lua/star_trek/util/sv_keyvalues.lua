@@ -29,7 +29,7 @@ end)
 
 -- Capture Live Changes to lcars convars.
 hook.Add("AcceptInput", "Star_Trek.CaptureKeyValuesLive", function(ent, input, activator, caller, value)
-	if input ~= "AddOutput" then return end
+	if string.lower(input) ~= "addoutput" then return end
 
 	local valueSplit = string.Split(value, " ")
 	local key = valueSplit[1]
