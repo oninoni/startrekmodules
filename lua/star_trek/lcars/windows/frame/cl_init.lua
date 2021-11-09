@@ -30,6 +30,7 @@ function SELF:OnCreate(windowData)
 		windowData.Color2,
 		windowData.Color3,
 		self.HFlip,
+		windowData.Inverted,
 		windowData.Height2,
 		windowData.Color4
 	)

@@ -129,3 +129,15 @@ function Star_Trek.LCARS:CreateMaterial(id, width, height, renderFunction)
 
 	return materialData
 end
+
+net.Receive("Star_Trek.LCARS.DisableEButton", function()
+	local ply = LocalPlayer()
+
+	ply.DisableEButton = true
+end)
+
+net.Receive("Star_Trek.LCARS.EnableEButton", function()
+	local ply = LocalPlayer()
+
+	ply.DisableEButton = nil
+end)

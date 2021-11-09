@@ -22,15 +22,17 @@ local LCARS_FRAME_OFFSET = 4
 local LCARS_BORDER_WIDTH = 2
 local LCARS_STRIP_HEIGHT = 20
 
--- Draw a part of the framed spacer.
+-- Draw the shape of a LCARS frame border.
 --
 -- @param Number y
 -- @param Number width
 -- @param Number border
--- @param Boolean vFlip
--- @param Boolean hFlip
 -- @param Color color
-function Star_Trek.LCARS:DrawFrameSpacePart(y, width, border, vFlip, hFlip, color)
+-- @param? Boolean vFlip
+-- @param? Boolean hFlip
+function Star_Trek.LCARS:DrawFrameBorderShape(y, width, border, color, vFlip, hFlip, holeSize)
+	holeSize = holeSize or 0
+
 	-- Outer Circle
 	if hFlip then
 		Star_Trek.LCARS:DrawCircle(
@@ -46,7 +48,7 @@ function Star_Trek.LCARS:DrawFrameSpacePart(y, width, border, vFlip, hFlip, colo
 		color)
 	end
 
-	-- Flat Piece
+	-- Flat Piece (Below Rounded Part)
 	if hFlip then
 		if vFlip then
 			draw.RoundedBox(0,
@@ -77,35 +79,62 @@ function Star_Trek.LCARS:DrawFrameSpacePart(y, width, border, vFlip, hFlip, colo
 		end
 	end
 
+	local xLS, yLS, wLS, hLS = 0, 0, 0, 0
+
 	-- Long Strip
 	if hFlip then
-		if vFlip then
-			draw.RoundedBox(0,
-				0,
-				y + border,
-				width - (LCARS_CORNER_RADIUS - border), LCARS_STRIP_HEIGHT - border * 2,
-			color)
-		else
-			draw.RoundedBox(0,
-				0,
-				y + (LCARS_CORNER_RADIUS - border) * 2 - (LCARS_STRIP_HEIGHT - border) + border * 2,
-				width - (LCARS_CORNER_RADIUS - border), LCARS_STRIP_HEIGHT - border * 2,
-			color)
-		end
+		xLS = border
+		wLS = width - border - LCARS_CORNER_RADIUS
 	else
-		if vFlip then
-			draw.RoundedBox(0,
-				LCARS_CORNER_RADIUS - border,
-				y + border,
-				width - (LCARS_CORNER_RADIUS - border), LCARS_STRIP_HEIGHT - border * 2,
-			color)
+		xLS = LCARS_CORNER_RADIUS - border
+		wLS = width - (LCARS_CORNER_RADIUS - border)
+	end
+
+	if vFlip then
+		yLS = y + border
+		hLS = LCARS_STRIP_HEIGHT - border * 2
+	else
+		yLS = y + (LCARS_CORNER_RADIUS - border) * 2 - (LCARS_STRIP_HEIGHT - border) + border * 2
+		hLS = LCARS_STRIP_HEIGHT - border * 2
+	end
+
+	if holeSize > 0 then
+		local xLS1, xLS2, wLS1, wLS2 = 0, 0, 0, 0
+		if hFlip then
+			xLS1 = xLS
+			xLS2 = xLS + wLS * 0.05 + holeSize
+
+			wLS1 = wLS * 0.05 - border * 2
+			wLS2 = wLS * 0.95 - holeSize
 		else
-			draw.RoundedBox(0,
-				LCARS_CORNER_RADIUS - border,
-				y + (LCARS_CORNER_RADIUS - border) * 2 - (LCARS_STRIP_HEIGHT - border) + border * 2,
-				width - (LCARS_CORNER_RADIUS - border), LCARS_STRIP_HEIGHT - border * 2,
-			color)
+			xLS1 = xLS
+
+			wLS1 = wLS * 0.95 - holeSize
+			wLS2 = wLS * 0.05 - border * 2
+
+			xLS2 = xLS1 + wLS - wLS2 - border
 		end
+
+		draw.RoundedBox(0,
+			xLS1,
+			yLS,
+			wLS1,
+			hLS,
+		color)
+
+		draw.RoundedBox(0,
+			xLS2,
+			yLS,
+			wLS2,
+			hLS,
+		color)
+	else
+		draw.RoundedBox(0,
+			xLS,
+			yLS,
+			wLS,
+			hLS,
+		color)
 	end
 
 	render.ClearStencil()
@@ -179,6 +208,17 @@ function Star_Trek.LCARS:DrawFrameSpacePart(y, width, border, vFlip, hFlip, colo
 	render.SetStencilEnable(false)
 end
 
+-- Draw a colored LCARS frame border with a outline.
+--
+-- @param Number y
+-- @param Number width
+-- @param Color color
+-- @param Boolean hFlip
+function Star_Trek.LCARS:DrawFrameBorder(y, width, color, vFlip, hFlip, holeSize)
+	Star_Trek.LCARS:DrawFrameBorderShape(y, width, 0, Star_Trek.LCARS.ColorBlack, vFlip, hFlip, holeSize)
+	Star_Trek.LCARS:DrawFrameBorderShape(y, width, LCARS_BORDER_WIDTH,     color, vFlip, hFlip, holeSize)
+end
+
 -- Draws a frame spacer.
 --
 -- @param Number y
@@ -187,15 +227,25 @@ end
 -- @param Color bottom_color
 -- @param Boolean hFlip
 function Star_Trek.LCARS:DrawFrameSpacer(y, width, top_color, bottom_color, hFlip)
-	Star_Trek.LCARS:DrawFrameSpacePart(y, width, 0, false, hFlip, Star_Trek.LCARS.ColorBlack)
-	Star_Trek.LCARS:DrawFrameSpacePart(y, width, LCARS_BORDER_WIDTH, false, hFlip, top_color)
-
-	Star_Trek.LCARS:DrawFrameSpacePart(y + LCARS_CORNER_RADIUS * 2 + LCARS_FRAME_OFFSET, width, 0, true, hFlip, Star_Trek.LCARS.ColorBlack)
-	Star_Trek.LCARS:DrawFrameSpacePart(y + LCARS_CORNER_RADIUS * 2 + LCARS_FRAME_OFFSET, width, LCARS_BORDER_WIDTH, true, hFlip, bottom_color)
+	Star_Trek.LCARS:DrawFrameBorder(y, width, top_color, false, hFlip)
+	Star_Trek.LCARS:DrawFrameBorder(y + LCARS_CORNER_RADIUS * 2 + LCARS_FRAME_OFFSET, width, bottom_color, true, hFlip)
 end
+
+
+
+
+
+
+
+
+
+
+
+
 
 function Star_Trek.LCARS:DrawFrame(width, height, title, titleShort, color1, color2, color3, hFlip)
 	Star_Trek.LCARS:DrawFrameSpacer(0, width, color1, color2, hFlip)
+
 	if hFlip then
 		draw.SimpleText(string.upper(title), "LCARSMed", width * 0.05, 3, nil, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
 	else
@@ -227,6 +277,50 @@ function Star_Trek.LCARS:DrawFrame(width, height, title, titleShort, color1, col
 		frameStartOffset + LCARS_BORDER_WIDTH + remainingHeight / 2,
 		LCARS_CORNER_RADIUS * 2 - LCARS_BORDER_WIDTH * 2, remainingHeight / 2 - LCARS_BORDER_WIDTH,
 	color3)
+
+	draw.SimpleText(titleShort, "LCARSSmall", posOffset + LCARS_CORNER_RADIUS, frameStartOffset, Star_Trek.LCARS.ColorBlack, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+end
+
+function Star_Trek.LCARS:DrawInvertedFrame(width, height, title, titleShort, color1, color2, hFlip)
+	local titleUpper = string.upper(title)
+
+	surface.SetFont("LCARSMed")
+	local textWidth = surface.GetTextSize(titleUpper)
+
+	Star_Trek.LCARS:DrawFrameBorder(0, width, color1, true, hFlip, textWidth + 1)
+	Star_Trek.LCARS:DrawFrameBorder(height - LCARS_CORNER_RADIUS * 2, width, color2, false, hFlip)
+
+	if hFlip then
+		draw.SimpleText(titleUpper, "LCARSMed", width * 0.05 - LCARS_BORDER_WIDTH, -5, nil, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+	else
+		draw.SimpleText(titleUpper, "LCARSMed", width * 0.95 + 1, -5, nil, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
+	end
+
+	local posOffset = 0
+	if hFlip then
+		posOffset = width - LCARS_CORNER_RADIUS * 2
+	end
+
+	local frameStartOffset = LCARS_CORNER_RADIUS * 2
+	local remainingHeight = height - frameStartOffset - LCARS_CORNER_RADIUS * 2
+
+	draw.RoundedBox(0,
+		posOffset,
+		frameStartOffset,
+		LCARS_CORNER_RADIUS * 2, remainingHeight,
+	Star_Trek.LCARS.ColorBlack)
+
+	draw.RoundedBox(0,
+		posOffset + LCARS_BORDER_WIDTH,
+		frameStartOffset + LCARS_BORDER_WIDTH,
+		LCARS_CORNER_RADIUS * 2 - LCARS_BORDER_WIDTH * 2, remainingHeight / 2 - LCARS_BORDER_WIDTH,
+	color1)
+
+	draw.RoundedBox(0,
+		posOffset + LCARS_BORDER_WIDTH,
+		frameStartOffset + LCARS_BORDER_WIDTH + remainingHeight / 2,
+		LCARS_CORNER_RADIUS * 2 - LCARS_BORDER_WIDTH * 2, remainingHeight / 2 - LCARS_BORDER_WIDTH,
+	color2)
 
 	draw.SimpleText(titleShort, "LCARSSmall", posOffset + LCARS_CORNER_RADIUS, frameStartOffset, Star_Trek.LCARS.ColorBlack, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
 end
@@ -284,17 +378,26 @@ function Star_Trek.LCARS:DrawDoubleFrame(width, height, title, titleShort, color
 	draw.SimpleText(titleShort, "LCARSSmall", posOffset + LCARS_CORNER_RADIUS, topFrameStartOffset, Star_Trek.LCARS.ColorBlack, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
 end
 
-function Star_Trek.LCARS:CreateFrame(id, width, height, title, titleShort, color1, color2, color3, hFlip, height2, color4)
+function Star_Trek.LCARS:CreateFrame(id, width, height, title, titleShort, color1, color2, color3, hFlip, inverted, height2, color4)
 	return Star_Trek.LCARS:CreateMaterial("Frame_" .. id, width, height, function()
 		color1 = color1 or table.Random(Star_Trek.LCARS.Colors)
 		color2 = color2 or table.Random(Star_Trek.LCARS.Colors)
 		color3 = color3 or table.Random(Star_Trek.LCARS.Colors)
 		color4 = color4 or table.Random(Star_Trek.LCARS.Colors)
 
-		if isnumber(height2) then
-			Star_Trek.LCARS:DrawDoubleFrame(width, height, title, titleShort, color1, color2, color3, height2, color4, hFlip)
+		if inverted then
+			if isnumber(height2) then
+				--Star_Trek.LCARS:DrawDoubleFrame(width, height, title, titleShort, color1, color2, color3, height2, color4, hFlip)
+				return
+			else
+				Star_Trek.LCARS:DrawInvertedFrame(width, height, title, titleShort, color1, color2, hFlip)
+			end
 		else
-			Star_Trek.LCARS:DrawFrame(width, height, title, titleShort, color1, color2, color3, hFlip)
+			if isnumber(height2) then
+				Star_Trek.LCARS:DrawDoubleFrame(width, height, title, titleShort, color1, color2, color3, height2, color4, hFlip)
+			else
+				Star_Trek.LCARS:DrawFrame(width, height, title, titleShort, color1, color2, color3, hFlip)
+			end
 		end
 	end)
 end

@@ -73,7 +73,7 @@ function SELF:OpenInternal(menuPos, menuAng, menuWidth, actionPos, actionAng, ac
 		Color(255, 255, 255),
 		"Log File",
 		"LOG",
-		false
+		true
 	)
 	if not success5 then
 		return false, textWindow

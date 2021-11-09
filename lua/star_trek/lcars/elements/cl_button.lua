@@ -133,9 +133,11 @@ local BAR_WIDTH = 8
 function Star_Trek.LCARS:DrawButton(yOffset, width, height, color, borderColor, text, flatLeft, flatRight, longTextNumber, smallTextNumber)
 	Star_Trek.LCARS:DrawButtonGraphic(yOffset, width, height, color, borderColor, flatLeft, flatRight)
 
+	local textAreaSize = width - height - 56
+
 	surface.SetFont("LCARSText")
-	--local textW, _ = surface.GetTextSize(text)
-	if width < 200 then
+	local textW, _ = surface.GetTextSize(text)
+	if textW > textAreaSize then
 		draw.Text({
 			text = text,
 			font = "LCARSText",
@@ -189,25 +191,27 @@ function Star_Trek.LCARS:DrawButton(yOffset, width, height, color, borderColor, 
 			height - 2,
 		Star_Trek.LCARS.ColorBlack)
 
-		-- Big Bar
-		draw.RoundedBoxEx(0,
-			width - 64 - 40,
-			yOffset + 1,
-			40,
-			height - 2,
-		Star_Trek.LCARS.ColorBlack)
+		if textW < textAreaSize - 64 then
+			-- Big Bar
+			draw.RoundedBoxEx(0,
+				width - 64 - 40,
+				yOffset + 1,
+				40,
+				height - 2,
+			Star_Trek.LCARS.ColorBlack)
 
-		draw.Text({
-			text = smallTextNumber,
-			font = "LCARSBig",
-			pos = {
-				width - 64 - 40 + 1,
-				yOffset + height + 5,
-			},
-			xalign = TEXT_ALIGN_LEFT,
-			yalign = TEXT_ALIGN_BOTTOM,
-			color = color
-		})
+			draw.Text({
+				text = smallTextNumber,
+				font = "LCARSBig",
+				pos = {
+					width - 64 - 40 + 1,
+					yOffset + height + 5,
+				},
+				xalign = TEXT_ALIGN_LEFT,
+				yalign = TEXT_ALIGN_BOTTOM,
+				color = color
+			})
+		end
 	end
 end
 
