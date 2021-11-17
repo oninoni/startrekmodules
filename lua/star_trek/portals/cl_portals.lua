@@ -118,3 +118,15 @@ hook.Add( "RenderScene", "Star_Trek.RenderWindow", function( plyOrigin, plyAngle
 
 	LocalPlayer():SetWeaponColor( oldWepColor )
 end )
+
+hook.Add("PreDrawSkyBox", "Testing", function()
+	render.PopCustomClipPlane()
+end)
+
+hook.Add("PostDrawSkyBox", "Testing", function()
+	if wp.drawing then
+		local ent = wp.drawingent
+		local exitPortal = ent:GetExit()
+		render.PushCustomClipPlane( exitPortal:GetForward(), exitPortal:GetForward():Dot( exitPortal:GetPos() - exitPortal:GetForward() * 0.5 ) )
+	end
+end)
