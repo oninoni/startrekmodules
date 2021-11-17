@@ -23,7 +23,7 @@ local VECTOR_MAX = 131071
 
 -- Sky Cam is not Readable Clientside, which is absurd...
 -- TODO: Maybe I can network it? Config for now.
-local SKY_CAM_POS = Vector(-4032, 0, 12800)
+local SKY_CAM_POS = Vector(0, 0, 15360)
 local SKY_CAM_SCALE = Star_Trek.World.Skybox_Scale
 
 -- Optimisation we pre-create the border Vectors.
@@ -126,7 +126,6 @@ function Star_Trek.World:Draw()
 
 		for i, ent in pairs(self.Entities) do
 			if i == 1 then continue end
-			-- TODO: Dont Render Self sometimes?
 
 			local pos, ang = WorldToLocalBig(ent.Pos, ent.Ang, shipPos, shipAng)
 
@@ -136,5 +135,5 @@ function Star_Trek.World:Draw()
 end
 
 hook.Add("PostDraw2DSkyBox", "Star_Trek.World.Draw", function()
-	--Star_Trek.World:Draw()
+	Star_Trek.World:Draw()
 end)

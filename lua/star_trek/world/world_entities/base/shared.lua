@@ -19,32 +19,5 @@
 
 ENT.BaseClass = nil
 
-function ENT:SetDynData(data)
-end
-
-function ENT:GetDynData()
-	return {}
-end
-
-function ENT:SetData(data)
-	self:SetDynData(data)
-
-	self.Pos = data.Pos
-	self.Ang = data.Ang
-
-	self.Models = data.Models
-end
-
-function ENT:GetData()
-	local data = self:GetData()
-
-	data.Pos = self.Pos
-	data.Ang = self.Ang
-
-	data.Models = data.Models
-
-	return data
-end
-
 function ENT:Think(deltaT)
 end

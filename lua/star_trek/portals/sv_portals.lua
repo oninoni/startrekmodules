@@ -25,3 +25,18 @@ hook.Add("SetupPlayerVisibility", "WorldWindows_AddPVS", function(ply, ent)
 		end
 	end
 end)
+
+local viewScreen = ents.FindByName("viewScreen")[1]
+local target = viewScreen:GetExit()
+
+timer.Create("Test", 0, 0, function()
+	print("---")
+
+	local pos = target:GetPos() + Vector(0, 0, 0)
+	target:SetPos(Vector(0, 0, 0))
+	print(pos)
+
+	local ang = target:GetAngles() + Angle(0, 0, 0)
+	target:SetAngles(ang)
+	print(ang)
+end)

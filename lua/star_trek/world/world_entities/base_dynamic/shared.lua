@@ -19,40 +19,6 @@
 
 ENT.BaseClass = "base"
 
-function ENT:SetDynData(data)
-	self.Pos = data.Pos
-	self.Ang = data.Ang
-end
-
-function ENT:GetDynData()
-	local data = {}
-
-	data.Pos = self.Pos
-	data.Ang = self.Ang
-
-	return data
-end
-
-function ENT:SetData(data)
-	self:SetDynData(data)
-
-	self.Vel 	= data.Vel
-	self.AngVel = data.AngVel
-
-	self.Models = data.Models
-end
-
-function ENT:GetData()
-	local data = self:GetDynData()
-
-	data.Vel 	= self.Vel
-	data.AngVel = self.AngVel
-
-	data.Models = self.Models
-
-	return data
-end
-
 function ENT:Think(deltaT)
 	self.Pos = self.Pos + (self.Vel * deltaT)
 	self.Ang = self.Ang + (self.AngVel * deltaT)

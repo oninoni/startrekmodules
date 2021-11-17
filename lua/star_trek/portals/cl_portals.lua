@@ -82,6 +82,7 @@ hook.Add( "RenderScene", "Star_Trek.RenderWindow", function( plyOrigin, plyAngle
 		render.PushRenderTarget( window:GetTexture() )
 			render.Clear( 0, 0, 0, 255, true, true )
 
+
 			local oldClip = render.EnableClipping( true )
 			render.PushCustomClipPlane( exitPortal:GetForward(), exitPortal:GetForward():Dot( exitPortal:GetPos() - exitPortal:GetForward() * 0.5 ) )
 
@@ -109,6 +110,7 @@ hook.Add( "RenderScene", "Star_Trek.RenderWindow", function( plyOrigin, plyAngle
 
 			render.PopCustomClipPlane()
 			render.EnableClipping( oldClip )
+
 		render.PopRenderTarget()
 
 		hook.Call( "wp-postrender", GAMEMODE, window, exitPortal, plyOrigin )

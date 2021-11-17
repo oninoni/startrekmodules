@@ -17,73 +17,51 @@
 ---------------------------------------
 
 util.AddNetworkString("Star_Trek.World.Load")
+util.AddNetworkString("Star_Trek.World.UnLoad")
+util.AddNetworkString("Star_Trek.World.Sync")
+
+-- Network a newly loaded world entity to the clients.
 function Star_Trek.World:NetworkLoad(id, ent)
-	local data = ent:GetData()
-	if not istable(data) then
-		return false, "Invalid Data"
-	end
-
-	data.Class = ent.Class
-
 	net.Start("Star_Trek.World.Load")
 		net.WriteInt(id, 32)
-		net.WriteTable(data) -- TODO: Optimise
+		net.WriteString(ent.Class)
+		ent:WriteData()
 	net.Broadcast()
 
 	return true
 end
 
-util.AddNetworkString("Star_Trek.World.LoadAll")
+-- Network all loaded world entities to a client.
 function Star_Trek.World:NetworkLoaded(ply)
-	local allData = {}
-
-	for id, ent in pairs(self.Entities) do
-		local data = ent:GetData()
-		if not istable(data) then
-			return false, "Invalid Data on " .. id
-		end
-
-		data.Class = ent.Class
-
-		allData[id] = data
+	for id, ent in pairs(self.Entities) do -- TODO: Optimise with comression and combined messages
+		net.Start("Star_Trek.World.Load")
+			net.WriteInt(id, 32)
+			net.WriteString(ent.Class)
+			ent:WriteData()
+		net.Broadcast()
 	end
 
-	net.Start("Star_Trek.World.LoadAll")
-		net.WriteTable(allData) -- TODO: Optimise
-	net.Broadcast()
-
 	return true
 end
 
-util.AddNetworkString("Star_Trek.World.UnLoad")
+-- Network the unloading of a world entity to all clients.
 function Star_Trek.World:NetworkUnLoad(id)
 	net.Start("Star_Trek.World.UnLoad")
 		net.WriteInt(id, 32)
 	net.Broadcast()
-
+	
 	return true
 end
 
-util.AddNetworkString("Star_Trek.World.Sync")
+-- Synchronize the dynamic data of all loaded world entities to all players.
 function Star_Trek.World:NetworkSync()
-	local data = {}
-
-	for id, ent in pairs(self.Entities) do
-		data[id] = ent:GetDynData()
-
-		--print(data[id].Pos)
+	for id, ent in pairs(self.Entities) do -- TODO: Optimise with comression and combined messages
+		-- TODO: Don't Sync non-Dynamic Entities
+		net.Start("Star_Trek.World.Sync")
+			net.WriteInt(id, 32)
+			ent:WriteDynData()
+		net.Broadcast()
 	end
-	--net.WriteTable(data) -- TODO: Optimise
-
-	--print(util.TableToJSON(data))
-	local dataString = util.Compress(util.TableToJSON(data))
-	--print(#dataString / #util.TableToJSON(data) * 100)
-	--print(#dataString)
-
-	net.Start("Star_Trek.World.Sync")
-		net.WriteInt(#dataString, 32)
-		net.WriteData(dataString, #dataString)
-	net.Broadcast()
+	
+	return true
 end
-
--- TODO: Test between spacing out Sync to multiple users and space our Objects vs the "All at once" implementation above.

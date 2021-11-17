@@ -17,8 +17,23 @@
 --           Base | Server           --
 ---------------------------------------
 
-function ENT:Init(data)
-	self:SetData(data)
+function ENT:WriteDynData()
+end
+
+function ENT:WriteData()
+	net.WriteWorldVector(self.Pos)
+	net.WriteAngle(self.Ang)
+
+	net.WriteTable(self.Models)
+
+	self:WriteDynData()
+end
+
+function ENT:Init(pos, ang, models)
+	self.Pos = pos
+	self.Ang = ang
+
+	self.Models = models
 end
 
 function ENT:Terminate()

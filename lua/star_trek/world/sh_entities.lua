@@ -18,7 +18,7 @@
 
 Star_Trek.World.Entities = Star_Trek.World.Entities or {}
 
-function Star_Trek.World:InitEntity(id, class, data)
+function Star_Trek.World:InitEntity(id, class, ...)
 	local ent = {}
 	ent.Id = id
 
@@ -29,7 +29,7 @@ function Star_Trek.World:InitEntity(id, class, data)
 	setmetatable(ent, {__index = entClass})
 	ent.Class = class
 
-	ent:Init(data)
+	ent:Init(...)
 	self.Entities[id] = ent
 
 	return true, ent

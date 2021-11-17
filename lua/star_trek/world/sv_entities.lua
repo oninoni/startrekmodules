@@ -20,11 +20,11 @@
 --
 -- @param Number id
 -- @param String class
--- @param Table data
+-- @param vararg ...
 -- @return Boolean success
 -- @return String error
-function Star_Trek.World:LoadEntity(id, class, data)
-	local successInit, ent = self:InitEntity(id, class, data)
+function Star_Trek.World:LoadEntity(id, class, ...)
+	local successInit, ent = self:InitEntity(id, class, ...)
 	if not successInit then
 		return false, ent
 	end
@@ -38,23 +38,31 @@ function Star_Trek.World:LoadEntity(id, class, data)
 end
 
 function AddTestingShip(id, pos, ang, scale, vel, angVel)
-	print(Star_Trek.World:LoadEntity(id, "ship", {
-		Pos = WorldVector(0, 0, 0, pos.x, pos.y, pos.z),
-		Ang = ang,
-		Vel = vel,
-		AngVel = angVel,
-		Models = {
+	print(Star_Trek.World:LoadEntity(id, "ship",
+		WorldVector(0, 0, 0, pos.x, pos.y, pos.z),
+		ang,
+		{
 			[1] = {
 				Model = "models/apwninthedarks_starship_pack/uss_defiant.mdl",
 				Scale = (1 / 1024) * scale,
 			},
-		}
-	}))
+		},
+		vel,
+		angVel
+	))
 end
 
 timer.Simple(2, function()
-	AddTestingShip(1, Vector(), Angle(), 0, Vector(), Angle())
+	AddTestingShip(1, Vector(), Angle(), 0, Vector(0, 0, 0), Angle())
 end)
+
+timer.Simple(3, function()
+	AddTestingShip(2, Vector(100, 0, 0), Angle(90, 0, 0), 20, Vector(0, 0, 0), Angle(0, 0, 0))
+	AddTestingShip(3, Vector(-500, 0, 0), Angle(90, 0, 0), 20, Vector(0, 0, 0), Angle(0, 0, 0))
+end)
+
+local viewScreen = ents.FindByName("viewscreen")[1]
+SafeRemoveEntity(viewScreen)
 
 timer.Create("TestingSync", 1, 0, function()
 	Star_Trek.World:NetworkSync()

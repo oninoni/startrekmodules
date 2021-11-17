@@ -26,11 +26,11 @@
 local MAX_SMALL_VALUE = 1024 * 1024
 
 local vectorMeta = {}
+vectorMeta.IsWorldVector = true
 Star_Trek.World.Vector = vectorMeta
 
-local dgmt = debug.getmetatable
 function IsWorldVector(a)
-	if dgmt(a) == vectorMeta then
+	if a.IsWorldVector then
 		return true
 	end
 

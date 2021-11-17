@@ -20,11 +20,10 @@
 --
 -- @param Number id
 -- @param String class
--- @param Table data
 -- @return Boolean success
 -- @return String error
-function Star_Trek.World:LoadEntity(id, class, data)
-	local successInit, ent = self:InitEntity(id, class, data)
+function Star_Trek.World:LoadEntity(id, class)
+	local successInit, ent = self:InitEntity(id, class)
 	if not successInit then
 		return false, ent
 	end

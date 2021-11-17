@@ -16,3 +16,17 @@
 --            World Entity           --
 --       Base Dynamic | Client       --
 ---------------------------------------
+
+function ENT:ReadDynData()
+	self.Pos = net.ReadWorldVector()
+	self.Ang = net.ReadAngle()
+end
+
+function ENT:ReadData()
+	self.Models = net.ReadTable()
+
+	self.Vel 	= net.ReadVector() -- TODO: Maybe need World Vector?
+	self.AngVel = net.ReadAngle()
+
+	self:ReadDynData()
+end
