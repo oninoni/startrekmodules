@@ -31,6 +31,7 @@ function SELF:OnCreate(fallbackColor, title, titleShort, hFlip, lines)
 
 	self.Active = false
 	self.FallbackColor = fallbackColor
+	self.Inverted = true
 
 	return true
 end

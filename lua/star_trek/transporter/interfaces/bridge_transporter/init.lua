@@ -33,7 +33,7 @@ function SELF:Open(ent)
 		Vector(0, -0.5, -2),
 		Angle(0, 0, 0),
 		550,
-		720,
+		710,
 		nil
 	)
 	if not success then

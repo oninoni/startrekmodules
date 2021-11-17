@@ -127,7 +127,7 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 				for _, ent in pairs(entities) do
 					local sectionName = Star_Trek.Sections:GetSectionName(deck, ent.DetectedInSection)
 
-					textWindow:AddLine("Lifeform found in " .. sectionName .. " at " .. tostring(ent:GetPos()))
+					textWindow:AddLine("Lifeform found in " .. sectionName)
 				end
 				textWindow:AddLine("Total: " .. table.Count(entities) .. " Lifeforms found.", Star_Trek.LCARS.ColorRed)
 				textWindow:AddLine("")
@@ -145,7 +145,7 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 				for _, ent in pairs(entities) do
 					local sectionName = Star_Trek.Sections:GetSectionName(deck, ent.DetectedInSection)
 
-					textWindow:AddLine("Object found in " .. sectionName .. " at " .. tostring(ent:GetPos()))
+					textWindow:AddLine("Object found in " .. sectionName)
 				end
 				textWindow:AddLine("Total: " .. table.Count(entities) .. " Non-Lifeforms found.", Star_Trek.LCARS.ColorRed)
 				textWindow:AddLine("")
@@ -167,10 +167,10 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 					local sectionName = Star_Trek.Sections:GetSectionName(deck, ent.DetectedInSection)
 
 					if hook.Run("Star_Trek.Util.IsLifeForm", ent) then
-						textWindow:AddLine("Lifeform found in " .. sectionName .. " at " .. tostring(ent:GetPos()))
+						textWindow:AddLine("Lifeform found in " .. sectionName)
 						lifeforms = lifeforms + 1
 					else
-						textWindow:AddLine("Object found in " .. sectionName .. " at " .. tostring(ent:GetPos()))
+						textWindow:AddLine("Object found in " .. sectionName)
 						objects = objects + 1
 					end
 				end
@@ -373,7 +373,7 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 			end
 		end,
 		buttons,
-		"Stuff",
+		"Actions",
 		nil,
 		flip
 	)

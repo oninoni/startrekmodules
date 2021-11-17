@@ -26,13 +26,13 @@ function SELF:OnCreate(windowData)
 	self.XOffset = (self.HFlip and -24 or 24)
 
 	self.TextWidth = self.WWidth - 85
-	self.TextStartX = self.WD2 - self.XOffset - self.TextWidth
+	self.TextStartX = self.XOffset - self.WD2 + 30
 
-	self.TextHeight = self.WHeight - 80
-	self.TextStartY = self.HD2 - self.TextHeight
+	self.TextHeight = self.WHeight - 60
+	self.TextStartY = self.HD2 - self.TextHeight - 30
 
-	self.TextTopAlpha = self.TextStartY + 10
-	self.TextBotAlpha = self.HD2 - 10
+	self.TextTopAlpha = self.TextStartY + 20
+	self.TextBotAlpha = self.TextStartY + self.TextHeight - 10
 
 	self.Offset = self.Offset or self.TextStartY
 	self.OffsetDirection = false
@@ -95,7 +95,7 @@ function SELF:ProcessText(lines)
 	end
 
 	self.MaxN = table.maxn(self.Lines)
-	self.MaxOffset = -(self.MaxN * 16) + self.HD2
+	self.MaxOffset = -((self.MaxN + 1) * 16) + self.HD2
 end
 
 function SELF:OnPress(pos, animPos)
@@ -106,14 +106,15 @@ function SELF:OnPress(pos, animPos)
 end
 
 function SELF:OnDraw(pos, animPos)
-	if self.Active
-	and pos[1] > -self.WD2 and pos[1] < self.WD2
-	and pos[2] > -self.HD2 and pos[2] < self.HD2 then
+	if self.Active then
 		local offsetTarget = Star_Trek.LCARS:GetButtonOffset(self.TextStartY, self.TextHeight, 16, self.MaxN, pos[2])
 		self.Offset = Lerp(0.005, self.Offset, offsetTarget)
 	else
-		self.Offset = math.max(self.Offset - 10 * FrameTime(), self.MaxOffset)
+		local offsetTarget = Star_Trek.LCARS:GetButtonOffset(self.TextStartY, self.TextHeight, 16, self.MaxN, self.HD2)
+		self.Offset = Lerp(0.005, self.Offset, offsetTarget)
 	end
+
+	--draw.RoundedBox(0, 0, self.TextStartY, 10, self.TextHeight, Color(255, 0, 0))
 
 	for i, line in pairs(self.Lines) do
 		local y = self.Offset + i * 16

@@ -121,7 +121,7 @@ function SELF:Open(ent)
 		Vector(22, 24.5, 126.5),
 		Angle(192, 0, 0),
 		670,
-		650,
+		640,
 		padNumber
 	)
 	if not success then

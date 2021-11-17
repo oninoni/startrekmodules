@@ -240,7 +240,7 @@ net.Receive("Star_Trek.LCARS.Update", function()
 end)
 
 function Star_Trek.LCARS:PlayerButtonDown(ply, button)
-	if button ~= KEY_E and button ~= MOUSE_LEFT and button ~= MOUSE_RIGHT then return end
+	if not ((button == KEY_E and not ply.DisableEButton) or button == MOUSE_LEFT or button == MOUSE_RIGHT) then return end
 
 	for id, interface in pairs(Star_Trek.LCARS.ActiveInterfaces) do
 		if not interface.IVis then
@@ -248,6 +248,10 @@ function Star_Trek.LCARS:PlayerButtonDown(ply, button)
 		end
 
 		if hook.Run("Star_Trek.LCARS.PreventRender", interface, true) then
+			continue
+		end
+
+		if hook.Run("Star_Trek.LCARS.PreventButton", interface) then
 			continue
 		end
 
@@ -360,13 +364,13 @@ hook.Add("PostDrawTranslucentRenderables", "Star_Trek.LCARS.Draw", function(isDr
 			continue
 		end
 
-		render.SuppressEngineLighting(true)
+		--render.SuppressEngineLighting(true)
 
 		for _, window in pairs(interface.Windows) do
 			Star_Trek.LCARS:DrawWindow(window, interface.AnimPos)
 		end
 
 		surface.SetAlphaMultiplier(1)
-		render.SuppressEngineLighting(false)
+		--render.SuppressEngineLighting(false)
 	end
 end)

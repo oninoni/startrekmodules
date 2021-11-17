@@ -113,6 +113,21 @@ function Star_Trek.LCARS:CreateMaterial(id, width, height, renderFunction)
 
 	local material = CreateMaterial(textureName, "UnlitGeneric", {
 		["$basetexture"] = texture:GetName(),
+
+--		["$bumpmap"] = "kingpommes/startrek/intrepid/wall_default_normal",
+--		["$bumpmap"] = "models/kingpommes/startrek/intrepid/lcars/lcars_normal_specular",
+
+--		["$selfillum"] = 1,
+--		["$normalmapmalphaenvmapmask"] = 1,
+
+--		["$envmap"] = "env_cubemap",
+--		["$envmaptint"] =  "[ .4 .4 .4 ]",
+
+--		["$phong"] = 1,
+--		["$phongexponent"] = 10,
+--		["$phongboost"] = 20,
+--		["$phongfresnelranges"] = "[0 0.5 1]",
+
 		["$translucent"] = 1,
 		["$vertexalpha"] = 1,
 	})
@@ -129,3 +144,15 @@ function Star_Trek.LCARS:CreateMaterial(id, width, height, renderFunction)
 
 	return materialData
 end
+
+net.Receive("Star_Trek.LCARS.DisableEButton", function()
+	local ply = LocalPlayer()
+
+	ply.DisableEButton = true
+end)
+
+net.Receive("Star_Trek.LCARS.EnableEButton", function()
+	local ply = LocalPlayer()
+
+	ply.DisableEButton = nil
+end)

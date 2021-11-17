@@ -44,7 +44,7 @@ function SELF:Open(ent, engineering)
 		Vector(12, -2, -14.25),
 		Angle(0, 0, 0),
 		570,
-		580
+		570
 	)
 	if not success then
 		return false, windows

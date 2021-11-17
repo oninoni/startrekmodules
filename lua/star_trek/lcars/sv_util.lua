@@ -208,3 +208,15 @@ function Star_Trek.LCARS:GetSectionCategories(needsLocations)
 
 	return categories
 end
+
+util.AddNetworkString("Star_Trek.LCARS.DisableEButton")
+hook.Add("PlayerEnteredVehicle", "", function(ply, veh, seat)
+	net.Start("Star_Trek.LCARS.DisableEButton")
+	net.Send(ply)
+end)
+
+util.AddNetworkString("Star_Trek.LCARS.EnableEButton")
+hook.Add("PlayerLeaveVehicle", "", function(ply, veh)
+	net.Start("Star_Trek.LCARS.EnableEButton")
+	net.Send(ply)
+end)
