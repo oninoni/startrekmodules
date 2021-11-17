@@ -113,6 +113,21 @@ function Star_Trek.LCARS:CreateMaterial(id, width, height, renderFunction)
 
 	local material = CreateMaterial(textureName, "UnlitGeneric", {
 		["$basetexture"] = texture:GetName(),
+
+--		["$bumpmap"] = "kingpommes/startrek/intrepid/wall_default_normal",
+--		["$bumpmap"] = "models/kingpommes/startrek/intrepid/lcars/lcars_normal_specular",
+
+--		["$selfillum"] = 1,
+--		["$normalmapmalphaenvmapmask"] = 1,
+
+--		["$envmap"] = "env_cubemap",
+--		["$envmaptint"] =  "[ .4 .4 .4 ]",
+
+--		["$phong"] = 1,
+--		["$phongexponent"] = 10,
+--		["$phongboost"] = 20,
+--		["$phongfresnelranges"] = "[0 0.5 1]",
+
 		["$translucent"] = 1,
 		["$vertexalpha"] = 1,
 	})

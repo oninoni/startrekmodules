@@ -251,6 +251,10 @@ function Star_Trek.LCARS:PlayerButtonDown(ply, button)
 			continue
 		end
 
+		if hook.Run("Star_Trek.LCARS.PreventButton", interface) then
+			continue
+		end
+
 		if interface.Closing and interface.AnimPos ~= 1 then
 			continue
 		end
@@ -360,13 +364,13 @@ hook.Add("PostDrawTranslucentRenderables", "Star_Trek.LCARS.Draw", function(isDr
 			continue
 		end
 
-		render.SuppressEngineLighting(true)
+		--render.SuppressEngineLighting(true)
 
 		for _, window in pairs(interface.Windows) do
 			Star_Trek.LCARS:DrawWindow(window, interface.AnimPos)
 		end
 
 		surface.SetAlphaMultiplier(1)
-		render.SuppressEngineLighting(false)
+		--render.SuppressEngineLighting(false)
 	end
 end)
