@@ -118,11 +118,13 @@ hook.Add( "RenderScene", "Star_Trek.RenderWindow", function( plyOrigin, plyAngle
 end )
 
 hook.Add("PreDrawSkyBox", "Testing", function()
-	render.PopCustomClipPlane()
+	if wp and wp.drawing and IsValid(wp.drawingent) then
+		render.PopCustomClipPlane()
+	end
 end)
 
 hook.Add("PostDrawSkyBox", "Testing", function()
-	if wp.drawing then
+	if wp and wp.drawing and IsValid(wp.drawingent) then
 		local ent = wp.drawingent
 		local exitPortal = ent:GetExit()
 		render.PushCustomClipPlane( exitPortal:GetForward(), exitPortal:GetForward():Dot( exitPortal:GetPos() - exitPortal:GetForward() * 0.5 ) )
