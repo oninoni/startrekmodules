@@ -32,12 +32,8 @@ end
 function ENT:Init()
 	self:ReadData()
 
-	print("Initializing")
-
 	self.ClientEntities = {}
 	for i, modelData in pairs(self.Models) do
-		print("MD", modelData)
-
 		local ent = ClientsideModel(modelData.Model, RENDERGROUP_BOTH)
 
 		ent:SetModelScale(modelData.Scale)

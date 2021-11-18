@@ -53,16 +53,13 @@ function AddTestingShip(id, pos, ang, scale, vel, angVel)
 end
 
 timer.Simple(2, function()
-	AddTestingShip(1, Vector(), Angle(), 0, Vector(0, 0, 0), Angle())
+	AddTestingShip(1, Vector(), Angle(), 0, Vector(0, 0, 0), Angle(0, 0, 0))
 end)
 
 timer.Simple(3, function()
-	AddTestingShip(2, Vector(100, 0, 0), Angle(90, 0, 0), 20, Vector(0, 0, 0), Angle(0, 0, 0))
-	AddTestingShip(3, Vector(-500, 0, 0), Angle(90, 0, 0), 20, Vector(0, 0, 0), Angle(0, 0, 0))
+	AddTestingShip(2, Vector(-10, 2, -1), Angle(0, 0, 0), 2, Vector(0, 0, 0), Angle(0, 0, 0))
+	AddTestingShip(3, Vector(-8, -2, -2), Angle(0, 0, 0), 2, Vector(0, 0, 0), Angle(0, 0, 0))
 end)
-
-local viewScreen = ents.FindByName("viewscreen")[1]
-SafeRemoveEntity(viewScreen)
 
 timer.Create("TestingSync", 1, 0, function()
 	Star_Trek.World:NetworkSync()
