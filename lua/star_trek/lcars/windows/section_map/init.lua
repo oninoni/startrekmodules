@@ -56,6 +56,8 @@ function SELF:SetDeck(deck)
 
 		table.insert(self.Sections, sectionButtonData)
 	end
+
+	self:SetObjects({})
 end
 
 function SELF:SetObjects(objects)
