@@ -364,13 +364,14 @@ hook.Add("PostDrawTranslucentRenderables", "Star_Trek.LCARS.Draw", function(isDr
 			continue
 		end
 
-		--render.SuppressEngineLighting(true)
+		render.OverrideBlend(true, BLEND_SRC_ALPHA, BLEND_ONE, BLENDFUNC_ADD, BLEND_SRC_ALPHA, BLEND_ONE, BLENDFUNC_ADD)
 
 		for _, window in pairs(interface.Windows) do
 			Star_Trek.LCARS:DrawWindow(window, interface.AnimPos)
 		end
 
+		render.OverrideBlend(false)
+
 		surface.SetAlphaMultiplier(1)
-		--render.SuppressEngineLighting(false)
 	end
 end)
