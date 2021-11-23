@@ -20,7 +20,7 @@ local SELF = WINDOW
 function SELF:OnCreate(title, titleShort, hFlip)
 	self.Height2 	= false
 	self.Title 		= title or ""
-	self.TitleShort = titleShort or self.Title
+	self.TitleShort = titleShort or ""
 	self.HFlip 		= hFlip or false
 
 	self.Color1 = Star_Trek.LCARS.ColorOrange
