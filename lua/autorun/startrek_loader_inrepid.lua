@@ -19,6 +19,21 @@
 game.AddParticles( "particles/intrepid_map.pcf" )
 
 --[[
+-- Some Code to quickly close and re-open lcars if changes to their keyvalues are made
+hook.Add("Star_Trek.ChangedKeyValue", "Testing", function(ent, key, value)
+
+	if not IsValid(ent) then return end
+	
+    ent:Fire("CloseLcars")
+
+    timer.Simple(1, function()
+		if not IsValid(ent) then return end
+        ent:Fire("Press")
+    end)
+end)
+]]
+
+--[[
 local skip = true
 
 local convar = CreateConVar("star_trek_enable", "0")
