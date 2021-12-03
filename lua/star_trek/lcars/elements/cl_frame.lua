@@ -379,6 +379,8 @@ function Star_Trek.LCARS:DrawDoubleFrame(width, height, title, titleShort, color
 end
 
 function Star_Trek.LCARS:CreateFrame(id, width, height, title, titleShort, color1, color2, color3, hFlip, inverted, height2, color4)
+	--[[
+	
 	return Star_Trek.LCARS:CreateMaterial("Frame_" .. id, width, height, function()
 		color1 = color1 or table.Random(Star_Trek.LCARS.Colors)
 		color2 = color2 or table.Random(Star_Trek.LCARS.Colors)
@@ -409,14 +411,15 @@ function Star_Trek.LCARS:CreateFrame(id, width, height, title, titleShort, color
 
 			draw.SimpleText(i * 20, "LCARSSmall", 100, i * 20, Color(255, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
 		end
-	end)
+	end)]]
 end
 
 -- Renders the given Frame.
 --
 -- @param Table materialData
 function Star_Trek.LCARS:RenderFrame(materialData)
+	--[[
 	surface.SetMaterial(materialData.Material)
 
-	surface.DrawTexturedRectUV(-materialData.Width / 2, -materialData.Height / 2, materialData.Width, materialData.Height, 0, 0, materialData.U, materialData.V)
+	surface.DrawTexturedRectUV(-materialData.Width / 2, -materialData.Height / 2, materialData.Width, materialData.Height, 0, 0, materialData.U, materialData.V)]]
 end

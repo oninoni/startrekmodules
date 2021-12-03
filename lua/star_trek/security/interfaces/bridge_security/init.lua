@@ -50,7 +50,7 @@ function SELF:OpenInternal(menuPos, menuAng, menuWidth, actionPos, actionAng, ac
 				mapWindow:Update()
 			end
 		end,
-		Star_Trek.LCARS:GetSectionCategories(),
+		Star_Trek.Sections:GetSectionCategories(),
 		"SECTIONS",
 		"SECTNS",
 		false,

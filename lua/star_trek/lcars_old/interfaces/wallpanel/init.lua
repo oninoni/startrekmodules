@@ -33,7 +33,7 @@ local buttons = {
 	},
 	[13] = {
 		Name = "Close",
-		Color = Star_Trek.LCARS.ColorRed,
+		Color = Star_Trek.LCARS.ColorLightRed,
 	},
 }
 

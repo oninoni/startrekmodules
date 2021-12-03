@@ -16,7 +16,9 @@
 --    LCARS Single Frame | Client    --
 ---------------------------------------
 
+if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
 local SELF = WINDOW
+
 function SELF:OnCreate(windowData)
 	self.HFlip = windowData.HFlip
 

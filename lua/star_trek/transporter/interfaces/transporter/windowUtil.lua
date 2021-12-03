@@ -78,7 +78,7 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip, padNumber)
 	local actionButtonData = {}
 	if menuTable.Target then
 		actionButtonData.Name = "Disable Console"
-		actionButtonData.Color = Star_Trek.LCARS.ColorRed
+		actionButtonData.Color = Star_Trek.LCARS.ColorLightRed
 	else
 		actionButtonData.Name = "Swap Sides"
 		actionButtonData.Color = Star_Trek.LCARS.ColorOrange
@@ -102,7 +102,7 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip, padNumber)
 				if button.Name == "Wide Beam" or button.Name == "Narrow Beam" then
 					button.SelectedCustom = not (button.SelectedCustom or false)
 					if button.SelectedCustom then
-						button.Color = Star_Trek.LCARS.ColorRed
+						button.Color = Star_Trek.LCARS.ColorLightRed
 					else
 						button.Color = Star_Trek.LCARS.ColorOrange
 					end
@@ -119,7 +119,7 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip, padNumber)
 				if button.Name == "Instant Dematerialisation" or button.Name == "Delayed Dematerialisation" then
 					button.SelectedCustom = not (button.SelectedCustom or false)
 					if button.SelectedCustom then
-						button.Color = Star_Trek.LCARS.ColorRed
+						button.Color = Star_Trek.LCARS.ColorLightRed
 					else
 						button.Color = Star_Trek.LCARS.ColorOrange
 					end
@@ -243,7 +243,7 @@ function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip, padN
 			width,
 			height,
 			nil,
-			Star_Trek.LCARS:GetSectionCategories(menuTable.Target),
+			Star_Trek.Sections:GetSectionCategories(menuTable.Target),
 			"Sections",
 			"SECTNS",
 			hFlip,

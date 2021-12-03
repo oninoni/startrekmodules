@@ -204,6 +204,41 @@ function Star_Trek.Sections:SetupSections()
 	hook.Run("Star_Trek.Sections.Loaded")
 end
 
+-- Returns categoriy data for a category_list containing all ship sections.
+-- 
+-- @param bool? needsLocations
+-- @return Table categories
+function Star_Trek.Sections:GetSectionCategories(needsLocations)
+	local categories = {}
+	for deck, deckData in SortedPairs(self.Decks) do
+		local category = {
+			Name = "DECK " .. deck,
+			Buttons = {},
+		}
+
+		if table.Count(deckData.Sections) == 0 then
+			category.Disabled = true
+		else
+			for sectionId, sectionData in SortedPairs(deckData.Sections) do
+				local button = {
+					Name = self:GetSectionName(deck, sectionId),
+					Data = sectionData.Id,
+				}
+
+				if needsLocations and table.Count(sectionData.BeamLocations) == 0 then
+					button.Disabled = true
+				end
+
+				table.insert(category.Buttons, button)
+			end
+		end
+
+		table.insert(categories, category)
+	end
+
+	return categories
+end
+
 local function setupSections()
 	Star_Trek.Sections:SetupSections()
 end

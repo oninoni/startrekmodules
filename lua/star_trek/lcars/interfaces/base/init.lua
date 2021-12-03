@@ -16,7 +16,9 @@
 --   LCARS Base Interface | Server   --
 ---------------------------------------
 
+if not istable(INTERFACE) then Star_Trek:LoadAllModules() return end
 local SELF = INTERFACE
+
 SELF.BaseInterface = nil
 
 -- Opens the Interface. Must return the windows in a table.

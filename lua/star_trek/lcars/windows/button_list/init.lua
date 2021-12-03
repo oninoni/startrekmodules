@@ -16,7 +16,9 @@
 --     LCARS Button List | Server    --
 ---------------------------------------
 
+if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
 local SELF = WINDOW
+
 function SELF:OnCreate(buttons, title, titleShort, hFlip, toggle, buttonHeight)
 	local success = SELF.Base.OnCreate(self, title, titleShort, hFlip)
 	if not success then
