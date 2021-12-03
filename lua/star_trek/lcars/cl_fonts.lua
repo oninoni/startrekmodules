@@ -37,7 +37,7 @@ surface.CreateFont( "LCARSBig", {
 surface.CreateFont( "LCARSMed", {
 	font = "Swiss911 UCm BT",
 	extended = false,
-	size = 30,
+	size = 29,
 	weight = 0,
 	blursize = 0,
 	scanlines = 0,
@@ -55,7 +55,7 @@ surface.CreateFont( "LCARSMed", {
 surface.CreateFont( "LCARSText", {
 	font = "Swiss911 UCm BT",
 	extended = false,
-	size = 26,
+	size = 28,
 	weight = 0,
 	blursize = 0,
 	scanlines = 0,

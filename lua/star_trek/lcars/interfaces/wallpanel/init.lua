@@ -45,7 +45,7 @@ function SELF:Open(ent)
 	local size = keyValues["lcars_panelsize"]
 
 	local w = 31
-	local h = 36
+	local h = 35
 	local x = -size / 2 + 16
 	local success, window = Star_Trek.LCARS:CreateWindow(
 		"button_list",
@@ -71,17 +71,17 @@ function SELF:Open(ent)
 		return false, window
 	end
 
-	local w2 = size - w - 2
+	local w2 = size - w - 1
 	local success2, mainWindow = Star_Trek.LCARS:CreateWindow(
 		"text_entry",
-		Vector((size - w2) / 2 - 1, 0, 0),
+		Vector((size - w2) / 2, 0, 0),
 		Angle(),
 		scale,
-		w2 * scale,
-		(h - 2) * scale,
+		(w2 - 1) * scale,
+		h * scale,
 		function(windowData, interfaceData, buttonId)
 		end,
-		buttons,
+		nil,
 		"Logs",
 		"LOGS"
 	)
@@ -89,7 +89,7 @@ function SELF:Open(ent)
 		return false, mainWindow
 	end
 
-	return true, {window, mainWindow}, Vector(0, 0.3, -0.8)
+	return true, {window, mainWindow}, Vector(0, 0.5, 0.6)
 end
 
 -- Read out any Data, that can be retrieved externally.

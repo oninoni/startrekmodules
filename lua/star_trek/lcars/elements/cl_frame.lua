@@ -287,13 +287,13 @@ function Star_Trek.LCARS:DrawInvertedFrame(width, height, title, titleShort, col
 	surface.SetFont("LCARSMed")
 	local textWidth = surface.GetTextSize(titleUpper)
 
-	Star_Trek.LCARS:DrawFrameBorder(0, width, color1, true, hFlip, textWidth + 1)
+	Star_Trek.LCARS:DrawFrameBorder(0, width, color1, true, hFlip, textWidth + 2)
 	Star_Trek.LCARS:DrawFrameBorder(height - LCARS_CORNER_RADIUS * 2, width, color2, false, hFlip)
 
 	if hFlip then
-		draw.SimpleText(titleUpper, "LCARSMed", width * 0.05 - LCARS_BORDER_WIDTH, -5, nil, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+		draw.SimpleText(titleUpper, "LCARSMed", width * 0.05 - LCARS_BORDER_WIDTH, -4, nil, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
 	else
-		draw.SimpleText(titleUpper, "LCARSMed", width * 0.95 + 1, -5, nil, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
+		draw.SimpleText(titleUpper, "LCARSMed", width * 0.95 - 1, -4, nil, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
 	end
 
 	local posOffset = 0
@@ -385,6 +385,8 @@ function Star_Trek.LCARS:CreateFrame(id, width, height, title, titleShort, color
 		color3 = color3 or table.Random(Star_Trek.LCARS.Colors)
 		color4 = color4 or table.Random(Star_Trek.LCARS.Colors)
 
+		draw.RoundedBox(0, 0, 0, width, height, Color(128, 0, 0))
+
 		if inverted then
 			if isnumber(height2) then
 				--Star_Trek.LCARS:DrawDoubleFrame(width, height, title, titleShort, color1, color2, color3, height2, color4, hFlip)
@@ -398,6 +400,14 @@ function Star_Trek.LCARS:CreateFrame(id, width, height, title, titleShort, color
 			else
 				Star_Trek.LCARS:DrawFrame(width, height, title, titleShort, color1, color2, color3, hFlip)
 			end
+		end
+
+		for i = 0, 20 do
+			draw.RoundedBox(0, 0, i * 20, 1, 20, Color(255, 255, 255))
+			draw.RoundedBox(0, 0, i * 20 + 10, 50, 1, Color(255, 255, 255))
+			draw.RoundedBox(0, 0, i * 20, 100, 1, Color(255, 255, 255))
+
+			draw.SimpleText(i * 20, "LCARSSmall", 100, i * 20, Color(255, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
 		end
 	end)
 end
