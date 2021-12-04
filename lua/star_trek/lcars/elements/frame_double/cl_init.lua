@@ -26,8 +26,10 @@ SELF.BaseElement = "frame"
 
 SELF.Variants = 1
 
-function SELF:Initialize(title, titleShort, color1, color2, hFlip)
+function SELF:Initialize(title, titleShort, color1, color2, color3, hFlip)
 	SELF.Base.Initialize(self, title, titleShort, color1, color2, hFlip)
+
+	self.Color3 = color3
 
 	-- LCARS Design Parameters
 	self.FrameOffset = 4
@@ -39,4 +41,5 @@ end
 -- @param Number y
 -- @param Number i
 function SELF:DrawElement(i, x, y)
+	self:DrawDoubleFrame(x, y, self.ElementWidth, self.ElementHeight, self.Color1, self.Color2, self.Color3, self.Title, self.TitleShort, self.HFlip)
 end

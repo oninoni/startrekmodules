@@ -36,7 +36,7 @@ function SELF:Initialize(title, titleShort, color1, color2, hFlip)
 	self.Color2 = color2 or table.Random(Star_Trek.LCARS.Colors)
 
 	-- LCARS Design Parameters
-	self.CornerRadius = 40
+	self.CornerRadius = 30
 	self.InnerRadius = 20
 	self.BorderWidth = 2
 	self.StripHeight = 20

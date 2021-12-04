@@ -21,6 +21,7 @@ local SELF = WINDOW
 
 function SELF:OnCreate(windowData)
 	self.Padding = 1
+	self.FrameType = "frame_double"
 
 	local success = SELF.Base.OnCreate(self, windowData)
 	if not success then

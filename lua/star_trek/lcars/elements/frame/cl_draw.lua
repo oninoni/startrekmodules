@@ -34,8 +34,11 @@ function SELF:DrawFrame(x, y, width, height, color1, color2, title, titleShort, 
 
 	surface.SetFont("LCARSMed")
 	local textWidth = surface.GetTextSize(titleUpper)
+	if textWidth > 0 then
+		textWidth = textWidth + 2
+	end
 
-	self:DrawSwept(x, y                                 , width, color1, hFlip,  true, textWidth + 2)
+	self:DrawSwept(x, y                                 , width, color1, hFlip,  true, textWidth)
 	self:DrawSwept(x, y + height - self.CornerRadius * 2, width, color2, hFlip, false)
 
 	if hFlip then
