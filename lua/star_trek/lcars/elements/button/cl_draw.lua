@@ -16,6 +16,7 @@
 --    LCARS Button Element | Draw    --
 ---------------------------------------
 
+if not istable(ELEMENT) then Star_Trek:LoadAllModules() return end
 local SELF = ELEMENT
 
 -- Draws a buttons graphic.

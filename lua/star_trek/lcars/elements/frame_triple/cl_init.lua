@@ -19,7 +19,9 @@
 if not istable(ELEMENT) then Star_Trek:LoadAllModules() return end
 local SELF = ELEMENT
 
-SELF.BaseElement = "frame"
+include("cl_draw.lua")
+
+SELF.BaseElement = "frame_double"
 
 SELF.Variants = 1
 

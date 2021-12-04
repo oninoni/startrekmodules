@@ -62,7 +62,7 @@ function SELF:DrawElement(i, x, y)
 	color = self.Color
 	if i > 3 then
 		color = self.SelectedColor
-	elseif i == 0 then
+	elseif i == 1 then
 		color = Star_Trek.LCARS.ColorGrey
 	end
 

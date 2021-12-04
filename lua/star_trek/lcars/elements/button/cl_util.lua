@@ -16,6 +16,7 @@
 --    LCARS Button Element | Util    --
 ---------------------------------------
 
+if not istable(ELEMENT) then Star_Trek:LoadAllModules() return end
 local SELF = ELEMENT
 
 -- Returns the 2digit LCARS Number as a string.

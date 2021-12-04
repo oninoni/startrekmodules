@@ -19,6 +19,7 @@
 if not istable(ELEMENT) then Star_Trek:LoadAllModules() return end
 local SELF = ELEMENT
 
+include("cl_util.lua")
 include("cl_draw.lua")
 
 SELF.BaseElement = "base"
@@ -33,6 +34,12 @@ function SELF:Initialize(title, titleShort, color1, color2, hFlip)
 
 	self.Color1 = color1 or table.Random(Star_Trek.LCARS.Colors)
 	self.Color2 = color2 or table.Random(Star_Trek.LCARS.Colors)
+
+	-- LCARS Design Parameters
+	self.CornerRadius = 40
+	self.InnerRadius = 20
+	self.BorderWidth = 2
+	self.StripHeight = 20
 
 	self.HFlip = hFlip or false
 end

@@ -17,8 +17,8 @@
 ---------------------------------------
 
 if not istable(ELEMENT) then Star_Trek:LoadAllModules() return end
-
 local SELF = ELEMENT
+
 SELF.BaseElement = nil
 
 SELF.Variants = 1
