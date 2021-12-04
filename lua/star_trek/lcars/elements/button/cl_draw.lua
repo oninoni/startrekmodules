@@ -111,18 +111,20 @@ function SELF:DrawButton(x, y, color, borderColor, text, flatLeft, flatRight, lo
 		})
 	else
 		-- Left Bar
-		draw.RoundedBoxEx(0,
-			x + height - barWidth - 4,
-			y + 1,
-			barWidth,
-			height - 2,
-		Star_Trek.LCARS.ColorBlack)
+		if not flatLeft then
+			draw.RoundedBoxEx(0,
+				x + height,
+				y + 1,
+				barWidth,
+				height - 2,
+			borderColor)
+		end
 
 		draw.Text({
 			text = text,
 			font = "LCARSText",
 			pos = {
-				x + height - 2,
+				x + height + barWidth + 2,
 				y + height,
 			},
 			xalign = TEXT_ALIGN_LEFT,
@@ -130,6 +132,7 @@ function SELF:DrawButton(x, y, color, borderColor, text, flatLeft, flatRight, lo
 			color = Star_Trek.LCARS.ColorBlack
 		})
 
+		--[[
 		-- Right Small Text
 		draw.Text({
 			text = longTextNumber,
@@ -142,21 +145,28 @@ function SELF:DrawButton(x, y, color, borderColor, text, flatLeft, flatRight, lo
 			yalign = TEXT_ALIGN_BOTTOM,
 			color = Star_Trek.LCARS.ColorBlack
 		})
+		]]
 
 		-- Right Bar
-		draw.RoundedBoxEx(0,
-			x + width - 56,
-			y + 1,
-			barWidth,
-			height - 2,
-		Star_Trek.LCARS.ColorBlack)
+		if not flatRight then
+			draw.RoundedBoxEx(0,
+				x + width - height - barWidth,
+				y + 1,
+				barWidth,
+				height - 2,
+			borderColor)
+		end
 
+		--[[
 		if textW < textAreaSize - 64 then
+			surface.SetFont("LCARSBig")
+			local textWidth = surface.GetTextSize(smallTextNumber)
+
 			-- Big Bar
 			draw.RoundedBoxEx(0,
-				x + width - 64 - 40,
+				x + width - 64 - 30,
 				y + 1,
-				40,
+				textWidth + 3,
 				height - 2,
 			Star_Trek.LCARS.ColorBlack)
 
@@ -164,7 +174,7 @@ function SELF:DrawButton(x, y, color, borderColor, text, flatLeft, flatRight, lo
 				text = smallTextNumber,
 				font = "LCARSBig",
 				pos = {
-					x + width - 64 - 40 + 1,
+					x + width - 64 - 30 + 2,
 					y + height + 5,
 				},
 				xalign = TEXT_ALIGN_LEFT,
@@ -172,5 +182,6 @@ function SELF:DrawButton(x, y, color, borderColor, text, flatLeft, flatRight, lo
 				color = color
 			})
 		end
+		]]
 	end
 end

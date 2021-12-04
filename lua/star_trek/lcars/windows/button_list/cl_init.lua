@@ -36,22 +36,20 @@ function SELF:OnCreate(windowData)
 	self.ButtonsBotAlpha = self.HD2 - 25
 
 	self.ButtonWidth = self.WWidth - 64
-	self.XOffset = self.HFlip and -24 or 24
-
+	self.XOffset = -self.ButtonWidth / 2 + (self.HFlip and -24 or 24)
 
 	self.Buttons = {}
 	for i, buttonData in pairs(windowData.Buttons) do
 		-- TODO: Add negative ID Conversion here.
 		local id = i
 
-		local success, button = Star_Trek.LCARS:GenerateElement("button", self.Id .. "_" .. id, self.ButtonWidth, self.ButtonHeight, 
+		local successButton, button = Star_Trek.LCARS:GenerateElement("button", self.Id .. "_" .. id, self.ButtonWidth, self.ButtonHeight,
 			buttonData.Name or "[ERROR]",
 			buttonData.RandomL, buttonData.RandomS,
 			buttonData.Color, buttonData.ActiveColor,
-			false, false,
+			false, true,
 			buttonData.Disabled, buttonData.Selected, false)
-
-		if not success then return false end
+		if not successButton then return false end
 
 		self.Buttons[id] = button
 	end
@@ -60,7 +58,7 @@ function SELF:OnCreate(windowData)
 end
 
 function SELF:IsButtonHovered(x, y, width, height, pos)
-	return pos[1] >= (x - width / 2) and pos[1] <= (x + width / 2) and pos[2] >= (y -1) and pos[2] <= (y + height)
+	return pos[1] >= x - 1 and pos[1] <= x + width and pos[2] >= y - 1 and pos[2] <= y + height
 end
 
 function SELF:OnPress(pos, animPos)

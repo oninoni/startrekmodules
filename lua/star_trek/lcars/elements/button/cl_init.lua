@@ -71,7 +71,7 @@ function SELF:DrawElement(i, x, y)
 		borderColor = Star_Trek.LCARS.ColorWhite
 	end
 
-	self:DrawButton(x, y, color, borderColor, self.Text, self.FlatLeft, self.FlatRight, self.LargeNumber, self.SmallNumber, 8)
+	self:DrawButton(x, y, color, borderColor, self.Text, self.FlatLeft, self.FlatRight, self.LargeNumber, self.SmallNumber, 2)
 end
 
 -- Returns the current variant of the button.
