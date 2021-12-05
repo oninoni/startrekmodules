@@ -33,7 +33,7 @@ function SELF:GenerateButtons(ent, keyValues)
 		else
 			controlButton.Name = "Stop Lift"
 		end
-		controlButton.Color = Star_Trek.LCARS.ColorRed
+		controlButton.Color = Star_Trek.LCARS.ColorLightRed
 
 		buttons[1] = controlButton
 	end

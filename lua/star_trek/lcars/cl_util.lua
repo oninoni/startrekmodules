@@ -16,6 +16,41 @@
 --        LCARS Util | Client        --
 ---------------------------------------
 
+-- Returns the position of the mouse in the 2d plane of the window.
+--
+-- @param Table window
+-- @return Vector2D mousePos
+function Star_Trek.LCARS:Get3D2DMousePos(window)
+	local x, y = input.GetCursorPos()
+
+	local xOffset, yOffset = hook.Run("Star_Trek.LCARS.GetMouseOffset", window)
+	if xOffset and yOffset then
+		x = x + xOffset
+		y = y + yOffset
+	end
+
+	local rayDir = gui.ScreenToVector(x, y)
+
+	local pos = util.IntersectRayWithPlane(self.EyePos, rayDir, window.WPosG, window.WAngG:Up())
+	pos = WorldToLocal(pos or Vector(), Angle(), window.WPosG, window.WAngG)
+	pos = Vector(pos[1] * window.WScale, pos[2] * -window.WScale, 0)
+
+	local overriddenPos = hook.Run("Star_Trek.LCARS.Get3D2DMousePos", window, pos)
+	if isvector(overriddenPos) then
+		return overriddenPos
+	end
+
+	return pos
+end
+
+-- Determines the current Interface PosAngle of the entity.
+-- Performs LocalToWorld Transform when possible and allows overriding with hook.
+--
+-- @param? Entity ent
+-- @param Vector pos
+-- @param Angle ang
+-- @return Vector pos
+-- @return Angle ang
 function Star_Trek.LCARS:GetInterfacePosAngle(ent, pos, ang)
 	if IsValid(ent) then
 		local oPos, oAng = hook.Run("Star_Trek.LCARS.OverridePosAng", ent, pos, ang)
@@ -37,7 +72,7 @@ end
 -- @param Number mouseYPos
 -- @return Number offset
 function Star_Trek.LCARS:GetButtonOffset(listOffset, listHeight, buttonHeight, buttonCount, mouseYPos)
-	local maxCount = math.floor(listHeight / buttonHeight) - 1
+	local maxCount = math.floor(listHeight / buttonHeight)
 
 	local offset = listOffset
 	if buttonCount > maxCount then
@@ -65,6 +100,10 @@ function Star_Trek.LCARS:GetButtonYPos(listHeight, buttonHeight, i, buttonCount,
 	return y
 end
 
+------------------------
+--     Render Util    --
+------------------------
+
 -- Drawing a circle using the given ammount of segments.
 --
 -- @param Number x
@@ -87,76 +126,15 @@ function Star_Trek.LCARS:DrawCircle(x, y, radius, seg, color)
 	surface.DrawPoly(cir)
 end
 
-function Star_Trek.LCARS:FilterMaterialSize(value)
-	return 2 ^ math.ceil(math.log(value) / math.log(2))
-end
-
-function Star_Trek.LCARS:CreateMaterial(id, width, height, renderFunction)
-	tWidth = Star_Trek.LCARS:FilterMaterialSize(width)
-	tHeight = Star_Trek.LCARS:FilterMaterialSize(height)
-
-	local textureName = "LCARS_" .. id .. "_" .. tWidth .. "X" .. tHeight
-	local texture = GetRenderTarget(textureName, tWidth, tHeight)
-
-	local oldW, oldH = ScrW(), ScrH()
-	render.SetViewPort(0, 0, tWidth, tHeight)
-
-	render.PushRenderTarget(texture)
-	cam.Start2D()
-		render.Clear(0, 0, 0, 0, true, true)
-
-		renderFunction()
-	cam.End2D()
-	render.PopRenderTarget()
-
-	render.SetViewPort(0, 0, oldW, oldH)
-
-	local material = CreateMaterial(textureName, "UnlitGeneric", {
-		["$basetexture"] = texture:GetName(),
-		["$translucent"] = 1,
-		["$vertexalpha"] = 1,
-
---[[ WIP for Effect Layer of Screens. Probably needs rewrite using mesh Rendering Library.
-	local material = CreateMaterial(textureName, "VertexLitGeneric", {
-		["$basetexture"] = "models/kingpommes/startrek/intrepid/lcars/lcars_placeholder",
-		["$detail"] = texture:GetName(),
-		["$detailblendmode"] = 5,
-		["$detailscale"] = 1,
-
---		["$bumpmap"] = "kingpommes/startrek/intrepid/wall_default_normal",
-		["$bumpmap"] = "models/kingpommes/startrek/intrepid/lcars/lcars_normal_specular",
-
---		["$selfillum"] = 1,
-		["$normalmapmalphaenvmapmask"] = 1,
-
-		["$envmap"] = "env_cubemap",
-		["$envmaptint"] =  "[ .4 .4 .4 ]",
-
-		["$phong"] = 1,
-		["$phongexponent"] = 10,
-		["$phongboost"] = 20,
-		["$phongfresnelranges"] = "[0 0.5 1]",]]
-	})
-	customMaterial = material
-
-	local materialData = {
-		Texture = texture,
-		Material = material,
-		Width = width,
-		Height = height,
-		U = width / tWidth,
-		V = height / tHeight,
-	}
-
-	return materialData
-end
+------------------------
+--  Vehicle E Button  --
+------------------------
 
 net.Receive("Star_Trek.LCARS.DisableEButton", function()
 	local ply = LocalPlayer()
 
 	ply.DisableEButton = true
 end)
-
 net.Receive("Star_Trek.LCARS.EnableEButton", function()
 	local ply = LocalPlayer()
 

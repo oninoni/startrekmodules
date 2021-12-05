@@ -18,7 +18,9 @@
 
 include("util.lua")
 
+if not istable(INTERFACE) then Star_Trek:LoadAllModules() return end
 local SELF = INTERFACE
+
 SELF.BaseInterface = "base"
 
 -- Opening general purpose menus.
@@ -58,7 +60,7 @@ function SELF:Open(ent)
 		end,
 		buttons,
 		title,
-		titleShort
+		titleShort, true
 	)
 	if not success3 then
 		return false, window

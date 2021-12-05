@@ -34,7 +34,6 @@ function SELF:OnCreate(categories, title, titleShort, hFlip, toggle, buttonHeigh
 end
 
 function SELF:SetCategories(categories, default)
-	self.Height2 = math.max(2, math.ceil(table.Count(categories) / 4)) * 35 + 50
 	self.Categories = {}
 	for i, category in pairs(categories) do
 		if not istable(category) or not istable(category.Buttons) then continue end

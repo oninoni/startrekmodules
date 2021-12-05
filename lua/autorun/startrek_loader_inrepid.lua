@@ -142,7 +142,7 @@ function Star_Trek:LoadModule(name)
 		Star_Trek:Message("Loaded Weapon \"" .. weaponName .. "\"")
 	end
 
-	hook.Run("Star_Trek.LoadModule", name, moduleDirectory)
+	hook.Run("Star_Trek.ModuleLoaded", name, moduleDirectory)
 
 	Star_Trek.LoadedModules[name] = true
 
@@ -159,18 +159,39 @@ function Star_Trek:RequireModules(...)
 	end
 end
 
-hook.Add("PostGamemodeLoaded", "Star_Trek.Load", function()
+function Star_Trek:LoadAllModules()
+	if self.LoadingActive then
+		self:Message("Loading all Modules in Recursion! Please Report Immediatly!")
+		debug.Trace()
+	end
+
 	if SERVER then
 		AddCSLuaFile("star_trek/config.lua")
 	end
-
-	Star_Trek.LoadedModules = {}
-
 	include("star_trek/config.lua")
 
-	for moduleName, enabled in pairs(Star_Trek.Modules) do
+	if SERVER then
+		print("\n")
+		self:Message("Loading Serverside...")
+	end
+
+	if CLIENT then
+		print("\n")
+		self:Message("Loading Clientside...")
+	end
+
+	self.LoadedModules = {}
+	self.LoadingActive = true
+
+	for moduleName, enabled in pairs(self.Modules) do
 		if enabled then
-			Star_Trek:LoadModule(moduleName)
+			self:LoadModule(moduleName)
 		end
 	end
+
+	self.LoadingActive = nil
+end
+
+hook.Add("PostGamemodeLoaded", "Star_Trek.Load", function()
+	Star_Trek:LoadAllModules()
 end)

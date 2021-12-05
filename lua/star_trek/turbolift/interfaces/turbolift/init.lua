@@ -33,8 +33,8 @@ function SELF:Open(ent)
 		Vector(),
 		Angle(),
 		30,
-		600,
-		325,
+		500,
+		400,
 		function(windowData, interfaceData, buttonId)
 			if ent.IsTurbolift then
 				local canStart = Star_Trek.Turbolift:StartLift(ent, buttonId)
@@ -63,7 +63,7 @@ function SELF:Open(ent)
 		end,
 		self:GenerateButtons(ent, keyValues),
 		"TURBOLIFT",
-		"TRBLFT"
+		"LIFT"
 	)
 	if not success then
 		return false, window
