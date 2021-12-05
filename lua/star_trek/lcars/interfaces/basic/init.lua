@@ -60,7 +60,7 @@ function SELF:Open(ent)
 		end,
 		buttons,
 		title,
-		titleShort
+		titleShort, true
 	)
 	if not success3 then
 		return false, window

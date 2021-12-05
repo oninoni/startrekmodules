@@ -32,7 +32,11 @@ function SELF:Initialize(title, titleShort, color1, color2, color3, hFlip)
 	self.Color3 = color3
 
 	-- LCARS Design Parameters
-	self.FrameOffset = 4
+	self.CornerRadius = 25
+	self.InnerRadius = 20
+	self.BorderWidth = 2
+	self.StripHeight = 10
+	self.FrameOffset = 2
 end
 
 -- Draw a given Variant of the element.

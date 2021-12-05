@@ -18,10 +18,16 @@
 
 local SELF = WINDOW
 function SELF:OnCreate(windowData)
+	self.Padding = self.Padding or 1
+	self.FrameType = self.FrameType or "frame_triple"
+	self.SubMenuHeight = self.SubMenuHeight or 100
+
 	local success = SELF.Base.OnCreate(self, windowData)
 	if not success then
 		return false
 	end
+
+	--[[
 
 	self.CategoryButtonHeight = windowData.CategoryButtonHeight
 
@@ -70,6 +76,7 @@ function SELF:OnCreate(windowData)
 			)
 		end
 	end
+	]]
 
 	return self
 end
@@ -132,6 +139,7 @@ function SELF:OnPress(pos, animPos)
 end
 
 function SELF:OnDraw(pos, animPos)
+	--[[
 	surface.SetDrawColor(255, 255, 255, 255 * animPos)
 
 	for rowId, rowData in pairs(self.CategoryRows) do
@@ -143,7 +151,7 @@ function SELF:OnDraw(pos, animPos)
 
 			Star_Trek.LCARS:RenderButton(xRow, y, categoryData.MaterialData, state)
 		end
-	end
+	end]]
 
 	SELF.Base.OnDraw(self, pos, animPos)
 end

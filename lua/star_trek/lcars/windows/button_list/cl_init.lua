@@ -20,8 +20,8 @@ if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
 local SELF = WINDOW
 
 function SELF:OnCreate(windowData)
-	self.Padding = 1
-	self.FrameType = "frame_double"
+	self.Padding = self.Padding or 1
+	self.FrameType = self.FrameType or "frame_double"
 
 	local success = SELF.Base.OnCreate(self, windowData)
 	if not success then
@@ -42,7 +42,7 @@ function SELF:OnCreate(windowData)
 			buttonData.Name or "[ERROR]",
 			buttonData.RandomL, buttonData.RandomS,
 			buttonData.Color, buttonData.ActiveColor,
-			false, true,
+			self.HFlip, not self.HFlip,
 			buttonData.Disabled, buttonData.Selected, false)
 		if not successButton then return false end
 
@@ -57,7 +57,7 @@ function SELF:IsButtonHovered(x, y, xEnd, yEnd, pos)
 end
 
 function SELF:OnPress(pos, animPos)
-	local offset = Star_Trek.LCARS:GetButtonOffset(self.Area1Y, self.Area1Height, self.ButtonHeight + 3, self.MaxN, pos[2])
+	local offset = Star_Trek.LCARS:GetButtonOffset(self.Area1Y, self.Area1Height, self.ButtonHeight + 2, self.MaxN, pos[2])
 
 	for i, button in pairs(self.Buttons) do
 		if button.Disabled then continue end
@@ -70,7 +70,7 @@ function SELF:OnPress(pos, animPos)
 end
 
 function SELF:OnDraw(pos, animPos)
-	local offset = Star_Trek.LCARS:GetButtonOffset(self.Area1Y, self.Area1Height, self.ButtonHeight + 3, self.MaxN, pos[2])
+	local offset = Star_Trek.LCARS:GetButtonOffset(self.Area1Y, self.Area1Height, self.ButtonHeight + 2, self.MaxN, pos[2])
 
 	for i, button in pairs(self.Buttons) do
 		local y = Star_Trek.LCARS:GetButtonYPos(self.Area1Height, self.ButtonHeight, i, self.MaxN, offset)

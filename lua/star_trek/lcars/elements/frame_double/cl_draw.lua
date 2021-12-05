@@ -19,13 +19,25 @@
 if not istable(ELEMENT) then Star_Trek:LoadAllModules() return end
 local SELF = ELEMENT
 
+-- Draw a double frame for an LCARS interface.
+--
+-- @param Number x
+-- @param Number y
+-- @param Number width
+-- @param Number height
+-- @param Color color1
+-- @param Color color2
+-- @param Color color3
+-- @param String title
+-- @param String titleShort
+-- @param? Boolean hFlip
 function SELF:DrawDoubleFrame(x, y, width, height, color1, color2, color3, title, titleShort, hFlip)
-	self:DrawSweptBreak(x, y, width, color1, color2, hFlip, 100) -- TODO
+	self:DrawSweptBreak(x, y, width, color1, color2, hFlip)
 
 	if hFlip then
-		draw.SimpleText(string.upper(title), "LCARSMed", width * 0.05, 3, nil, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+		draw.SimpleText(string.upper(title), "LCARSMed", width - 2, 2, nil, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
 	else
-		draw.SimpleText(string.upper(title), "LCARSMed", width * 0.95, 3, nil, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
+		draw.SimpleText(string.upper(title), "LCARSMed", width - 2, 2, nil, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
 	end
 
 	local posOffset = 0
