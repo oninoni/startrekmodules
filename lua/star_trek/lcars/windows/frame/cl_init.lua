@@ -36,7 +36,7 @@ function SELF:OnCreate(windowData)
 		self.Area1X = -self.WD2 + 2 * (self.HFlip and 0 or self.Frame.CornerRadius + self.Padding)
 		self.Area1Width = self.WWidth - 2 * self.Frame.CornerRadius - self.Padding
 		self.Area1XEnd = self.Area1X + self.Area1Width
-	
+
 		self.Area1Y = -self.HD2 + self.Frame.StripHeight + self.Padding
 		self.Area1YEnd = -self.Area1Y
 		self.Area1Height = self.Area1YEnd - self.Area1Y
@@ -53,7 +53,7 @@ function SELF:OnCreate(windowData)
 		self.Area1X = -self.WD2 + 2 * (self.HFlip and 0 or self.Frame.CornerRadius + self.Padding)
 		self.Area1Width = self.WWidth - 2 * self.Frame.CornerRadius - self.Padding
 		self.Area1XEnd = self.Area1X + self.Area1Width
-	
+
 		self.Area1Y = -self.HD2 + self.Frame.StripHeight + 2 * self.Frame.CornerRadius + self.Padding + self.Frame.FrameOffset
 		self.Area1YEnd = self.HD2
 		self.Area1Height = self.Area1YEnd - self.Area1Y
@@ -75,7 +75,7 @@ function SELF:OnCreate(windowData)
 		self.Area1X = -self.WD2 + 2 * (self.HFlip and 0 or self.Frame.CornerRadius + self.Padding)
 		self.Area1Width = self.WWidth - 2 * self.Frame.CornerRadius - self.Padding
 		self.Area1XEnd = self.Area1X + self.Area1Width
-	
+
 		self.Area2Y = -self.HD2 + self.Frame.StripHeight + 2 * self.Frame.CornerRadius + self.Padding + self.Frame.FrameOffset
 		self.Area2Height = self.SubMenuHeight - 2 * self.Padding
 		self.Area2YEnd = self.Area2Y + self.Area2Height

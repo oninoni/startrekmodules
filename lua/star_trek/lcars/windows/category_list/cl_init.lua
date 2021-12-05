@@ -20,28 +20,20 @@ local SELF = WINDOW
 function SELF:OnCreate(windowData)
 	self.Padding = self.Padding or 1
 	self.FrameType = self.FrameType or "frame_triple"
-	self.SubMenuHeight = self.SubMenuHeight or 100
+
+	self.CategoryButtonHeight = windowData.CategoryButtonHeight
+
+	local nRows = math.ceil(table.Count(windowData.Categories) / 4)
+	self.SubMenuHeight = nRows * (self.CategoryButtonHeight + self.Padding) + self.Padding
 
 	local success = SELF.Base.OnCreate(self, windowData)
 	if not success then
 		return false
 	end
 
-	--[[
-
-	self.CategoryButtonHeight = windowData.CategoryButtonHeight
 
 	self.Selected = windowData.Selected
 	self.Categories = windowData.Categories
-
-	self.CategoryStart = -self.HD2 + 79
-	self.CategoryHeight = windowData.Height2
-
-	self.ButtonsStart = self.CategoryStart + self.CategoryHeight
-	self.ButtonsHeight = self.HD2 - self.ButtonsStart
-
-	self.ButtonsTopAlpha = self.ButtonsStart
-	self.ButtonsBotAlpha = self.HD2 - 20
 
 	self.CategoryRows = {}
 	local categories = table.Copy(self.Categories)
@@ -63,20 +55,24 @@ function SELF:OnCreate(windowData)
 	end
 
 	for rowId, rowData in pairs(self.CategoryRows) do
+		rowData.Y = self.Area2Y + (rowId - 1) * (self.CategoryButtonHeight + self.Padding)
+		rowData.YEnd = rowData.Y + self.CategoryButtonHeight
+
 		for butId, categoryData in pairs(rowData.Categories) do
-			categoryData.MaterialData = Star_Trek.LCARS:CreateButton(
-				self.Id .. "_Cat_" .. rowId .. "_" .. butId,
-				rowData.Width,
-				self.CategoryButtonHeight,
-				categoryData.Color,
-				Star_Trek.LCARS.ColorYellow,
+			local successButton, button = Star_Trek.LCARS:GenerateElement("button", self.Id .. "_" .. rowId .. "_" .. butId, rowData.Width, self.CategoryButtonHeight,
 				categoryData.Name or "[ERROR]",
-				butId > 1,
-				butId < rowData.N
-			)
+				nil, nil,
+				categoryData.Color, Star_Trek.LCARS.ColorYellow,
+				butId > 1, butId < rowData.N,
+				categoryData.Disabled, self.Selected == categoryData.Id, false)
+			if not successButton then return false end
+
+			categoryData.Button = button
+
+			categoryData.X = self.Area1X + (butId - 1) * (rowData.Width + self.Padding)
+			categoryData.XEnd = categoryData.X + rowData.Width
 		end
 	end
-	]]
 
 	return self
 end
@@ -87,18 +83,18 @@ function SELF:SetupCategoryRow(categories)
 	}
 
 	if #categories == 1 then
-		rowData.Width = self.WWidth -58
+		rowData.Width = self.Area1Width
 		rowData.N = 1
 
 		table.insert(rowData.Categories, categories[1])
 	elseif #categories == 2 then
-		rowData.Width = (self.WWidth -58) / 2
+		rowData.Width = (self.Area1Width - self.Padding) / 2
 		rowData.N = 2
 
 		table.insert(rowData.Categories, categories[1])
 		table.insert(rowData.Categories, categories[2])
 	elseif #categories == 3 or #categories == 4 then
-		rowData.Width = (self.WWidth -58) / 4
+		rowData.Width = (self.Area1Width - 3 * self.Padding) / 4
 		rowData.N = 4
 
 		table.insert(rowData.Categories, categories[1])
@@ -123,10 +119,7 @@ function SELF:OnPress(pos, animPos)
 		for butId, categoryData in pairs(rowData.Categories) do
 			if categoryData.Disabled then continue end
 
-			local xRow = self.XOffset + ((butId - 0.5) - rowData.N / 2) * rowData.Width
-			local y = self.CategoryStart + (rowId - 1) * (self.CategoryButtonHeight + 3)
-
-			if self:IsButtonHovered(xRow, y, rowData.Width - 3, self.CategoryButtonHeight, pos) then
+			if self:IsButtonHovered(categoryData.X, rowData.Y, categoryData.XEnd, rowData.YEnd, pos) then
 				return categoryData.Id
 			end
 		end
@@ -139,19 +132,14 @@ function SELF:OnPress(pos, animPos)
 end
 
 function SELF:OnDraw(pos, animPos)
-	--[[
 	surface.SetDrawColor(255, 255, 255, 255 * animPos)
 
 	for rowId, rowData in pairs(self.CategoryRows) do
 		for butId, categoryData in pairs(rowData.Categories) do
-			local xRow = self.XOffset + ((butId - 0.5) - rowData.N / 2) * rowData.Width
-			local y = self.CategoryStart + (rowId - 1) * (self.CategoryButtonHeight + 3)
-
-			local state = Star_Trek.LCARS:GetButtonState(categoryData.Disabled, self:IsButtonHovered(xRow, y, rowData.Width - 3, self.CategoryButtonHeight, pos), self.Selected == categoryData.Id)
-
-			Star_Trek.LCARS:RenderButton(xRow, y, categoryData.MaterialData, state)
+			categoryData.Button.Hovered = self:IsButtonHovered(categoryData.X, rowData.Y, categoryData.XEnd, rowData.YEnd, pos)
+			categoryData.Button:Render(categoryData.X, rowData.Y)
 		end
-	end]]
+	end
 
 	SELF.Base.OnDraw(self, pos, animPos)
 end
