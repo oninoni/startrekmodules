@@ -57,7 +57,7 @@ function SELF:SetButtons(buttons)
 			end
 		end
 
-		buttonData.ActiveColor = button.ActiveColor or Star_Trek.LCARS.ColorYellow
+		buttonData.ActiveColor = button.ActiveColor or Star_Trek.LCARS.ColorOrange
 
 		buttonData.RandomS = button.RandomS or math.random(0, 99)
 		buttonData.RandomL = button.RandomL or math.random(0, 999999)

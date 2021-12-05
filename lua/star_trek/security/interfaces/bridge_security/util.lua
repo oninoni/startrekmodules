@@ -341,7 +341,7 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 			elseif buttonName == "Yellow Alert" then
 				Star_Trek.Alert:Enable("yellow")
 
-				textWindow:AddLine("YELLOW ALERT!", Star_Trek.LCARS.ColorYellow)
+				textWindow:AddLine("YELLOW ALERT!", Star_Trek.LCARS.ColorOrange)
 				textWindow:AddLine("")
 				textWindow:Update()
 
@@ -349,7 +349,7 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 			elseif buttonName == "Intruder Alert" then
 				Star_Trek.Alert:Enable("intruder")
 
-				textWindow:AddLine("INTRUDER ALERT!", Star_Trek.LCARS.ColorYellow)
+				textWindow:AddLine("INTRUDER ALERT!", Star_Trek.LCARS.ColorOrange)
 				textWindow:AddLine("")
 				textWindow:Update()
 

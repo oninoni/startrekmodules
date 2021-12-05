@@ -44,7 +44,7 @@ function SELF:Draw()
 	render.Clear(0, 0, 0, 0, true, true)
 
 	for i = 1, self.Variants do
-		local y = self.ElementHeight * (i - 1)
+		local y = (self.ElementHeight + 1) * (i - 1)
 		self:DrawElement(i, 0, y)
 	end
 end
@@ -52,7 +52,7 @@ end
 -- Generate the element and prepare material / texture.
 function SELF:Initialize()
 	local width = self.ElementWidth
-	local height = self.ElementHeight
+	local height = self.ElementHeight + 1
 
 	self.Width = self:FilterSize(width)
 	self.Height = self:FilterSize(height * self.Variants)
@@ -66,9 +66,11 @@ function SELF:Initialize()
 	})
 
 	self.U = width / self.Width
-	self.V = height / self.Height
+	self.V1 = height / self.Height
+	self.V2 = (height - 1) / self.Height
 end
 
+-- Return the current variant of the object.
 function SELF:GetVariant()
 	return 1
 end
@@ -82,14 +84,15 @@ function SELF:Render(x, y)
 
 	surface.SetMaterial(self.Material)
 
+	local v = self.V1 * (i - 1)
 	surface.DrawTexturedRectUV(
 		x,
 		y,
 		self.ElementWidth,
 		self.ElementHeight,
 		0,
-		self.V * (i - 1),
+		v,
 		self.U,
-		self.V * i
+		v + self.V2
 	)
 end

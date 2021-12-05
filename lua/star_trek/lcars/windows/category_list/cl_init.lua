@@ -62,7 +62,7 @@ function SELF:OnCreate(windowData)
 			local successButton, button = Star_Trek.LCARS:GenerateElement("button", self.Id .. "_" .. rowId .. "_" .. butId, rowData.Width, self.CategoryButtonHeight,
 				categoryData.Name or "[ERROR]",
 				nil, nil,
-				categoryData.Color, Star_Trek.LCARS.ColorYellow,
+				categoryData.Color, Star_Trek.LCARS.ColorOrange,
 				butId > 1, butId < rowData.N,
 				categoryData.Disabled, self.Selected == categoryData.Id, false)
 			if not successButton then return false end

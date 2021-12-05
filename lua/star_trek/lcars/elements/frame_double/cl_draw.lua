@@ -35,7 +35,7 @@ function SELF:DrawDoubleFrame(x, y, width, height, color1, color2, color3, title
 	self:DrawSweptBreak(x, y, width, color1, color2, hFlip)
 
 	if hFlip then
-		draw.SimpleText(string.upper(title), "LCARSMed", width - 2, 2, nil, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+		draw.SimpleText(string.upper(title), "LCARSMed",         2, 2, nil, TEXT_ALIGN_LEFT,  TEXT_ALIGN_TOP)
 	else
 		draw.SimpleText(string.upper(title), "LCARSMed", width - 2, 2, nil, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
 	end

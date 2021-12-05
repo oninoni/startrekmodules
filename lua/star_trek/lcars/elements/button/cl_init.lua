@@ -46,7 +46,7 @@ function SELF:Initialize(text, largeNumber, smallNumber, color, selectedColor, f
 	self.FlatLeft = flatLeft or false
 	self.FlatRight = flatRight or false
 	self.Color = color or table.Random(Star_Trek.LCARS.Colors)
-	self.SelectedColor = selectedColor or Star_Trek.LCARS.ColorYellow
+	self.SelectedColor = selectedColor or Star_Trek.LCARS.ColorOrange
 
 	self.Disabled = disabled or false
 	self.Selected = selected or false
