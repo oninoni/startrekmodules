@@ -24,6 +24,9 @@ local MARK_TIME = 4
 
 local SELF = WINDOW
 function SELF:OnCreate(windowData)
+	self.Padding = self.Padding or 1
+	self.FrameType = self.FrameType or "frame_double"
+
 	local success = SELF.Base.OnCreate(self, windowData)
 	if not success then
 		return false

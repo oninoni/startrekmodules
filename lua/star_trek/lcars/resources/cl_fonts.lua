@@ -17,10 +17,10 @@
 ---------------------------------------
 
 surface.CreateFont( "LCARSBig", {
-	font = "Arial",
+	font = "Swiss911 UCm BT",
 	extended = false,
 	size = 40,
-	weight = 200,
+	weight = 0,
 	blursize = 0,
 	scanlines = 0,
 	antialias = true,
@@ -35,10 +35,10 @@ surface.CreateFont( "LCARSBig", {
 } )
 
 surface.CreateFont( "LCARSMed", {
-	font = "Arial",
+	font = "Swiss911 UCm BT",
 	extended = false,
-	size = 30,
-	weight = 1000,
+	size = 25,
+	weight = 0,
 	blursize = 0,
 	scanlines = 0,
 	antialias = true,
@@ -53,10 +53,10 @@ surface.CreateFont( "LCARSMed", {
 } )
 
 surface.CreateFont( "LCARSText", {
-	font = "Arial",
+	font = "Swiss911 UCm BT",
 	extended = false,
-	size = 18,
-	weight = 1500,
+	size = 28,
+	weight = 0,
 	blursize = 0,
 	scanlines = 0,
 	antialias = true,
@@ -71,10 +71,10 @@ surface.CreateFont( "LCARSText", {
 } )
 
 surface.CreateFont( "LCARSSmall", {
-	font = "Arial",
+	font = "Swiss911 UCm BT",
 	extended = false,
-	size = 14,
-	weight = 2000,
+	size = 18,
+	weight = 0,
 	blursize = 0,
 	scanlines = 0,
 	antialias = true,

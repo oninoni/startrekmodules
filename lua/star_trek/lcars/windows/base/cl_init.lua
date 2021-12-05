@@ -16,7 +16,9 @@
 --     LCARS Base Window | Client    --
 ---------------------------------------
 
+if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
 local SELF = WINDOW
+
 function SELF:OnCreate(windowData)
 	return true
 end

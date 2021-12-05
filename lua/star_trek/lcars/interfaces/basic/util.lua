@@ -44,7 +44,7 @@ function SELF:GetKeyValues(keyValues, buttons)
 	local height = tonumber(keyValues["lcars_height"])
 	local title = keyValues["lcars_title"]
 	local titleShort = keyValues["lcars_title_short"]
-	if titleShort == false then
+	if not titleShort then
 		titleShort = ""
 	end
 

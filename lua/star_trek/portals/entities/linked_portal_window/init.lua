@@ -16,7 +16,7 @@ function ENT:KeyValue( key, value )
 	elseif ( key == "height" ) then
 		self:SetHeight( tonumber(value) * 2 )
 
-	elseif ( key == "DisappearDist" ) then
+	elseif ( key == "DisappearDist" or key == "fademaxdist" ) then
 		self:SetDisappearDist( tonumber(value) )
 
 	elseif ( key == "angles" ) then

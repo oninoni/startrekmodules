@@ -13,45 +13,14 @@
 ---------------------------------------
 
 ---------------------------------------
---           LCARS | Server          --
+--     LCARS Interfaces | Server     --
 ---------------------------------------
 
----------------------------------------
---              Opening              --
----------------------------------------
+------------------------
+--       Opening      --
+------------------------
 
 util.AddNetworkString("Star_Trek.LCARS.Open")
--- TODO: Sync on Join Active Interfaces
-
--- Applies Offset and Values to a Window.
---
--- @param Table interfaceData
--- @param Number windowId
--- @param Table windowData
-function Star_Trek.LCARS:ApplyWindow(interfaceData, windowId, windowData)
-	local ent = interfaceData.Ent
-	if not IsValid(ent) then
-		return
-	end
-
-	local offsetPos = interfaceData.OffsetPos or Vector()
-	local offsetAng = interfaceData.OffsetAng or Angle()
-
-	if windowData.AppliedOffset then
-		return
-	end
-
-	windowData.Id = windowId
-	windowData.Interface = interfaceData
-
-	if isvector(offsetPos) and isangle(offsetAng) then
-		local newPosOrig, newAngOrig = LocalToWorld(offsetPos, offsetAng, ent:GetPos(), ent:GetAngles())
-		local newPosWorld, newAngWorld = LocalToWorld(windowData.WindowPos, windowData.WindowAngles, newPosOrig, newAngOrig)
-		windowData.WindowPos, windowData.WindowAngles = WorldToLocal(newPosWorld, newAngWorld, ent:GetPos(), ent:GetAngles())
-	end
-
-	windowData.AppliedOffset = true
-end
 
 -- Applies Offset and Values to all Windows.
 --
@@ -127,9 +96,9 @@ function Star_Trek.LCARS:OpenInterface(ply, triggerEntity, interfaceName, ...)
 	return true
 end
 
----------------------------------------
---              Closing              --
----------------------------------------
+------------------------
+--      Closing       --
+------------------------
 
 util.AddNetworkString("Star_Trek.LCARS.Close")
 
@@ -226,39 +195,11 @@ hook.Add("Think", "Star_Trek.LCARS.ThinkClose", function()
 	end
 end)
 
----------------------------------------
---              Updating             --
----------------------------------------
+------------------------
+--      Updating      --
+------------------------
 
-util.AddNetworkString("Star_Trek.LCARS.Update")
 util.AddNetworkString("Star_Trek.LCARS.Pressed")
-
--- Updates the window of the given id.
---
--- @param Entity ent
--- @param Number windowId
--- @param? Table windowData
-function Star_Trek.LCARS:UpdateWindow(ent, windowId, windowData)
-	local interfaceData = self.ActiveInterfaces[ent]
-	if not istable(interfaceData) then
-		return
-	end
-
-	if istable(windowData) then
-		interfaceData.Windows[windowId] = windowData
-	end
-
-	windowData = interfaceData.Windows[windowId]
-
-	Star_Trek.LCARS:ApplyWindow(interfaceData, windowId, windowData)
-	local clientWindowData = self:GetClientWindowData(windowData)
-
-	net.Start("Star_Trek.LCARS.Update")
-		net.WriteInt(ent:EntIndex(), 32)
-		net.WriteInt(windowId, 32)
-		net.WriteTable(clientWindowData)
-	net.Broadcast()
-end
 
 -- Receive the pressed event from the client when a user presses his panel.
 net.Receive("Star_Trek.LCARS.Pressed", function(len, ply)
@@ -297,59 +238,3 @@ if game.SinglePlayer() and SERVER then
 		net.Send(ply)
 	end)
 end
-
-
----------------------------------------
---              Loading              --
----------------------------------------
-
--- Load a given interface.
---
--- @param String moduleName
--- @param String interfaceDirectory
--- @param String interfaceName
--- @return Boolean success
--- @return String error
-function Star_Trek.LCARS:LoadInterface(moduleName, interfaceDirectory, interfaceName)
-	INTERFACE = {}
-
-	local success = pcall(function()
-		include(interfaceDirectory .. "/" .. interfaceName .. "/init.lua")
-	end)
-	if not success then
-		return false, "Cannot load LCARS Interface Type \"" .. interfaceName .. "\" from module " .. moduleName
-	end
-
-	local baseInterface = INTERFACE.BaseInterface
-	if isstring(baseInterface) then
-		timer.Simple(0, function()
-			local baseInterfaceData = self.Interfaces[baseInterface]
-			if istable(baseInterfaceData) then
-				self.Interfaces[interfaceName].Base = baseInterfaceData
-				setmetatable(self.Interfaces[interfaceName], {__index = baseInterfaceData})
-			else
-				Star_Trek:Message("Failed, to load Base Interface \"" .. baseInterface .. "\"")
-			end
-		end)
-	end
-
-	self.Interfaces[interfaceName] = INTERFACE
-	INTERFACE = nil
-
-	return true
-end
-
-hook.Add("Star_Trek.LoadModule", "Star_Trek.LCARS.LoadInterfaces", function(moduleName, moduleDirectory)
-	Star_Trek.LCARS.Interfaces = Star_Trek.LCARS.Interfaces or {}
-
-	local interfaceDirectory = moduleDirectory .. "interfaces/"
-	local _, interfaceDirectories = file.Find(interfaceDirectory .. "*", "LUA")
-	for _, interfaceName in pairs(interfaceDirectories) do
-		local success, error = Star_Trek.LCARS:LoadInterface(moduleName, interfaceDirectory, interfaceName)
-		if success then
-			Star_Trek:Message("Loaded LCARS Interface Type \"" .. interfaceName .. "\" from module " .. moduleName)
-		else
-			Star_Trek:Message(error)
-		end
-	end
-end)

@@ -80,7 +80,7 @@ local function drawPad(self, x, y, r, pos, round, selected, alpha)
 
 	local color = Star_Trek.LCARS.ColorBlue
 	if selected then
-		color = Star_Trek.LCARS.ColorYellow
+		color = Star_Trek.LCARS.ColorOrange
 	end
 
 	if round then

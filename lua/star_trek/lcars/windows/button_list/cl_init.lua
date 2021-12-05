@@ -16,83 +16,80 @@
 --     LCARS Button List | Client    --
 ---------------------------------------
 
+if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
 local SELF = WINDOW
+
 function SELF:OnCreate(windowData)
+	self.Padding = self.Padding or 1
+	self.FrameType = self.FrameType or "frame_double"
+
 	local success = SELF.Base.OnCreate(self, windowData)
 	if not success then
 		return false
 	end
 
 	self.ButtonHeight = windowData.ButtonHeight
-	self.Buttons = windowData.Buttons
-	self.MaxN = table.maxn(self.Buttons)
+	self.MaxN = table.maxn(windowData.Buttons)
 
-	self.ButtonsHeight = self.WHeight - 80
-	self.ButtonsStart = self.HD2 - self.ButtonsHeight
+	self.Area1YEndAlpha = self.Area1YEnd - self.ButtonHeight
 
-	self.ButtonsTopAlpha = self.ButtonsStart
-	self.ButtonsBotAlpha = self.HD2 - 25
+	self.Buttons = {}
+	for i, buttonData in pairs(windowData.Buttons) do
+		-- TODO: Add negative ID Conversion here.
+		local id = i
 
-	self.ButtonWidth = self.WWidth - 64
-	self.XOffset = self.HFlip and -24 or 24
+		local successButton, button = Star_Trek.LCARS:GenerateElement("button", self.Id .. "_" .. id, self.Area1Width, self.ButtonHeight,
+			buttonData.Name or "[ERROR]",
+			buttonData.RandomL, buttonData.RandomS,
+			buttonData.Color, buttonData.ActiveColor,
+			self.HFlip, not self.HFlip,
+			buttonData.Disabled, buttonData.Selected, false)
+		if not successButton then return false end
 
-	for id, button in pairs(self.Buttons) do
-		button.MaterialData = Star_Trek.LCARS:CreateButton(
-			self.Id .. "_" .. id,
-			self.ButtonWidth,
-			self.ButtonHeight,
-			button.Color,
-			button.ActiveColor,
-			button.Name or "[ERROR]",
-			false,
-			false,
-			button.RandomL,
-			button.RandomS
-		)
+		self.Buttons[id] = button
 	end
 
 	return true
 end
 
-function SELF:IsButtonHovered(x, y, width, height, pos)
-	return pos[1] >= (x - width / 2) and pos[1] <= (x + width / 2) and pos[2] >= (y -1) and pos[2] <= (y + height)
+function SELF:IsButtonHovered(x, y, xEnd, yEnd, pos)
+	return pos[1] >= x and pos[1] <= xEnd and pos[2] >= y and pos[2] <= yEnd
 end
 
 function SELF:OnPress(pos, animPos)
-	local offset = Star_Trek.LCARS:GetButtonOffset(self.ButtonsStart, self.ButtonsHeight, self.ButtonHeight + 3, self.MaxN, pos[2])
+	local offset = Star_Trek.LCARS:GetButtonOffset(self.Area1Y, self.Area1Height, self.ButtonHeight + 2, self.MaxN, pos[2])
 
 	for i, button in pairs(self.Buttons) do
 		if button.Disabled then continue end
 
-		local y = Star_Trek.LCARS:GetButtonYPos(self.ButtonsHeight, self.ButtonHeight, i, self.MaxN, offset)
-		if self:IsButtonHovered(self.XOffset, y, self.ButtonWidth, self.ButtonHeight, pos) then
+		local y = Star_Trek.LCARS:GetButtonYPos(self.Area1Height, self.ButtonHeight, i, self.MaxN, offset)
+		if self:IsButtonHovered(self.Area1X, y, self.Area1XEnd, y + self.ButtonHeight, pos) then
 			return i
 		end
 	end
 end
 
 function SELF:OnDraw(pos, animPos)
-	local offset = Star_Trek.LCARS:GetButtonOffset(self.ButtonsStart, self.ButtonsHeight, self.ButtonHeight + 3, self.MaxN, pos[2])
+	local offset = Star_Trek.LCARS:GetButtonOffset(self.Area1Y, self.Area1Height, self.ButtonHeight + 2, self.MaxN, pos[2])
 
 	for i, button in pairs(self.Buttons) do
-		local y = Star_Trek.LCARS:GetButtonYPos(self.ButtonsHeight, self.ButtonHeight, i, self.MaxN, offset)
-
-		local state = Star_Trek.LCARS:GetButtonState(button.Disabled, self:IsButtonHovered(self.XOffset, y, self.ButtonWidth, self.ButtonHeight, pos), button.Selected)
+		local y = Star_Trek.LCARS:GetButtonYPos(self.Area1Height, self.ButtonHeight, i, self.MaxN, offset)
+		button.Hovered = self:IsButtonHovered(self.Area1X, y, self.Area1XEnd, y + self.ButtonHeight, pos)
 
 		local buttonAlpha = 255
-		if y < self.ButtonsTopAlpha or y > self.ButtonsBotAlpha then
-			if y < self.ButtonsTopAlpha then
-				buttonAlpha = -y + self.ButtonsTopAlpha
+		if y < self.Area1Y or y > self.Area1YEndAlpha then
+			if y < self.Area1Y then
+				buttonAlpha = -y + self.Area1Y
 			else
-				buttonAlpha = y - self.ButtonsBotAlpha
+				buttonAlpha = y - self.Area1YEndAlpha
 			end
 
-			buttonAlpha = math.min(math.max(0, 255 - buttonAlpha * 10), 255)
+			buttonAlpha = math.min(math.max(0, 255 - buttonAlpha * 20), 255)
 		end
 		buttonAlpha = math.min(buttonAlpha, 255 * animPos)
 		surface.SetDrawColor(255, 255, 255, buttonAlpha)
 
-		Star_Trek.LCARS:RenderButton(self.XOffset, y, button.MaterialData, state)
+		button:Render(self.Area1X, y)
 	end
 
 	SELF.Base.OnDraw(self, pos, animPos)
