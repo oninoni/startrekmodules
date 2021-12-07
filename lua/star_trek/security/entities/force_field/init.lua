@@ -35,7 +35,7 @@ function ENT:Initialize()
 		phys:EnableMotion(false)
 	end
 
-	ent:EmitSound("star_trek.force_field_on")
+	self:EmitSound("star_trek.force_field_on")
 end
 
 function ENT:OnRemove()
