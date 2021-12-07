@@ -48,7 +48,7 @@ timer.Create("Star_Trek.Security.ForceFieldSound", 2, 0, function()
 		end
 	end
 
-	for _, forceFieldData in SortedPairsByValue(nearByFields, "Distance") do
+	for _, forceFieldData in SortedPairsByMemberValue(nearByFields, "Distance") do
 		local ent = forceFieldData.Ent
 
 		print("New Field", ent)
