@@ -71,7 +71,7 @@ function SELF:SetToggle(toggle)
 end
 
 function SELF:SetButtonHeight(buttonHeight)
-	self.ButtonHeight = buttonHeight or 32
+	self.ButtonHeight = buttonHeight or 35
 end
 
 function SELF:GetSelected()

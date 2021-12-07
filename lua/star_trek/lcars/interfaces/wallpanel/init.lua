@@ -31,7 +31,7 @@ local buttons = {
 		Name = "Communicator",
 		Disabled = true,
 	},
-	[13] = {
+	[12] = {
 		Name = "Close",
 		Color = Star_Trek.LCARS.ColorLightRed,
 	},
@@ -44,9 +44,9 @@ function SELF:Open(ent)
 	local width = keyValues["lcars_width"]
 	local height = keyValues["lcars_height"] or 35
 
-	local w = 31
+	local w = 16
 	local h = height
-	local x = -width / 2 + 16
+	local x = -width / 2 + w / 2 + 0.5
 	local success, window = Star_Trek.LCARS:CreateWindow(
 		"button_list",
 		Vector(x, 0, 0),
