@@ -40,8 +40,6 @@ timer.Create("Star_Trek.Security.ForceFieldSound", 2, 0, function()
 			})
 		else
 			if ent.LoopId ~= nil then
-				print("Old Field", ent)
-
 				ent:StopLoopingSound(ent.LoopId)
 				ent.LoopId = nil
 			end
@@ -51,7 +49,6 @@ timer.Create("Star_Trek.Security.ForceFieldSound", 2, 0, function()
 	for _, forceFieldData in SortedPairsByMemberValue(nearByFields, "Distance") do
 		local ent = forceFieldData.Ent
 
-		print("New Field", ent)
 		ent.LoopId = ent:StartLoopingSound("star_trek.force_field_loop")
 	end
 end)

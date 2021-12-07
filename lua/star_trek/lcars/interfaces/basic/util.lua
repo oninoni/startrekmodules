@@ -18,6 +18,10 @@
 
 local SELF = INTERFACE
 
+local colorTable = {
+	red = 
+}
+
 -- Generate the buttons for a general purpose menu.
 function SELF:GenerateButtons(keyValues)
 	local buttons = {}
@@ -25,10 +29,12 @@ function SELF:GenerateButtons(keyValues)
 		local name = keyValues["lcars_name_" .. i]
 		if isstring(name) then
 			local disabled = tobool(keyValues["lcars_disabled_" .. i])
+			local colorName = keyValues["lcars_color_" .. i] or ""
 
 			buttons[i] = {
 				Name = name,
 				Disabled = disabled,
+				Color = Star_Trek.LCARS.Colors[colorName]
 			}
 		else
 			break
