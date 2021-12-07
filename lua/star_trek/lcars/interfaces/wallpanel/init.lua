@@ -40,13 +40,13 @@ local buttons = {
 function SELF:Open(ent)
 	local keyValues = ent.LCARSKeyData
 
-	local scale = 15
-
-	local size = keyValues["lcars_panelsize"]
+	local scale = keyValues["lcars_scale"] or 15
+	local width = keyValues["lcars_width"]
+	local height = keyValues["lcars_height"] or 35
 
 	local w = 31
-	local h = 35
-	local x = -size / 2 + 16
+	local h = height
+	local x = -width / 2 + 16
 	local success, window = Star_Trek.LCARS:CreateWindow(
 		"button_list",
 		Vector(x, 0, 0),
@@ -71,10 +71,10 @@ function SELF:Open(ent)
 		return false, window
 	end
 
-	local w2 = size - w - 1
+	local w2 = width - w - 1
 	local success2, mainWindow = Star_Trek.LCARS:CreateWindow(
 		"text_entry",
-		Vector((size - w2) / 2, 0, 0),
+		Vector((width - w2) / 2, 0, 0),
 		Angle(),
 		scale,
 		(w2 - 1) * scale,

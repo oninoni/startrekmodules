@@ -39,8 +39,8 @@ function SELF:GenerateButtons(keyValues)
 end
 
 function SELF:GetKeyValues(keyValues, buttons)
-	local scale = tonumber(keyValues["lcars_scale"])
-	local width = tonumber(keyValues["lcars_width"])
+	local scale = tonumber(keyValues["lcars_scale"]) or 20
+	local width = tonumber(keyValues["lcars_width"]) or 300
 	local height = tonumber(keyValues["lcars_height"])
 	local title = keyValues["lcars_title"]
 	local titleShort = keyValues["lcars_title_short"]
@@ -48,8 +48,12 @@ function SELF:GetKeyValues(keyValues, buttons)
 		titleShort = ""
 	end
 
+	width = width * scale
+
 	if not height then
 		height = math.max(2, math.min(6, table.maxn(buttons))) * 35 + 80
+	else
+		height = height * scale
 	end
 
 	return scale, width, height, title, titleShort

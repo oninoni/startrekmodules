@@ -29,7 +29,13 @@ function SELF:OnCreate(windowData)
 	end
 
 	self.ButtonHeight = windowData.ButtonHeight
+
+	--self.ButtonSpaceWithoutScrolling = math.floor(self.Area1Height / (self.ButtonHeight + 2))
 	self.MaxN = table.maxn(windowData.Buttons)
+
+	--if self.MaxN > self.ButtonSpaceWithoutScrolling then
+	--	print("Too much Buttons")
+	--end
 
 	self.Area1YEndAlpha = self.Area1YEnd - self.ButtonHeight
 

@@ -35,13 +35,11 @@ function ENT:Initialize()
 		phys:EnableMotion(false)
 	end
 
-	self:EmitSound("star_trek.force_field_on")
-	self.LoopId = self:StartLoopingSound("star_trek.force_field_loop")
+	ent:EmitSound("star_trek.force_field_on")
 end
 
 function ENT:OnRemove()
 	self:EmitSound("star_trek.force_field_off")
-	self:StopLoopingSound(self.LoopId)
 end
 
 function ENT:TouchSound()
