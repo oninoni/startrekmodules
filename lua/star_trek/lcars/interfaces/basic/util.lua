@@ -18,10 +18,6 @@
 
 local SELF = INTERFACE
 
-local colorTable = {
-	red = 
-}
-
 -- Generate the buttons for a general purpose menu.
 function SELF:GenerateButtons(keyValues)
 	local buttons = {}
