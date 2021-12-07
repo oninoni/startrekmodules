@@ -40,7 +40,7 @@ end
 
 function SELF:GetKeyValues(keyValues, buttons)
 	local scale = tonumber(keyValues["lcars_scale"]) or 20
-	local width = tonumber(keyValues["lcars_width"]) or 300
+	local width = tonumber(keyValues["lcars_width"]) or 16
 	local height = tonumber(keyValues["lcars_height"])
 	local title = keyValues["lcars_title"]
 	local titleShort = keyValues["lcars_title_short"]
