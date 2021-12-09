@@ -33,9 +33,6 @@ if SERVER then
 	AddCSLuaFile("cl_lcars_windows.lua")
 	AddCSLuaFile("cl_lcars_interfaces.lua")
 
-	-- TODO: Remove!
-	AddCSLuaFile("elements/cl_frame.lua")
-
 	include("resources/sh_colors.lua")
 	include("resources/sh_sounds.lua")
 
@@ -57,7 +54,4 @@ if CLIENT then
 	include("cl_lcars_elements.lua")
 	include("cl_lcars_windows.lua")
 	include("cl_lcars_interfaces.lua")
-
-	-- TODO: Remove!
-	include("elements/cl_frame.lua")
 end

@@ -30,12 +30,7 @@ function SELF:OnCreate(windowData)
 
 	self.ButtonHeight = windowData.ButtonHeight
 
-	--self.ButtonSpaceWithoutScrolling = math.floor(self.Area1Height / (self.ButtonHeight + 2))
 	self.MaxN = table.maxn(windowData.Buttons)
-
-	--if self.MaxN > self.ButtonSpaceWithoutScrolling then
-	--	print("Too much Buttons")
-	--end
 
 	self.Area1YEndAlpha = self.Area1YEnd - self.ButtonHeight
 
@@ -45,8 +40,7 @@ function SELF:OnCreate(windowData)
 		local id = i
 
 		local successButton, button = Star_Trek.LCARS:GenerateElement("button", self.Id .. "_" .. id, self.Area1Width, self.ButtonHeight,
-			buttonData.Name or "[ERROR]",
-			buttonData.RandomL, buttonData.RandomS,
+			buttonData.Name or "[ERROR]", buttonData.RandomNumber,
 			buttonData.Color, buttonData.ActiveColor,
 			self.HFlip, not self.HFlip,
 			buttonData.Disabled, buttonData.Selected, false)

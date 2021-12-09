@@ -38,6 +38,8 @@ end
 
 function SELF:SetButtons(buttons)
 	self.Buttons = {}
+
+	local containsRandomNumber = false
 	for i, button in pairs(buttons) do
 		if not istable(button) then continue end
 
@@ -59,10 +61,20 @@ function SELF:SetButtons(buttons)
 
 		buttonData.ActiveColor = button.ActiveColor or Star_Trek.LCARS.ColorOrange
 
-		buttonData.RandomS = button.RandomS or math.random(0, 99)
-		buttonData.RandomL = button.RandomL or math.random(0, 999999)
+		buttonData.RandomNumber = button.RandomNumber
+		if isnumber(buttonData.RandomNumber) then
+			containsRandomNumber = true
+		end
 
 		self.Buttons[i] = buttonData
+	end
+
+	if not containsRandomNumber then
+		for _, buttonData in pairs(self.Buttons) do
+			if math.random(0, 1) > 0 then
+				buttonData.RandomNumber = math.random(0, 99)
+			end
+		end
 	end
 end
 

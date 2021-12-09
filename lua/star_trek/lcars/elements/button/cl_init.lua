@@ -36,12 +36,11 @@ Variants are:
 5 Selected
 ]]
 
-function SELF:Initialize(text, largeNumber, smallNumber, color, selectedColor, flatLeft, flatRight, disabled, selected, hovered)
+function SELF:Initialize(text, number, color, selectedColor, flatLeft, flatRight, disabled, selected, hovered)
 	SELF.Base.Initialize(self)
 
 	self.Text = text or ""
-	self.LargeNumber = self:ConvertLargeNumber(largeNumber or math.random(0, 999999))
-	self.SmallNumber = self:ConvertSmallNumber(smallNumber or math.random(0, 99))
+	self.Number = self:ConvertNumber(number)
 
 	self.FlatLeft = flatLeft or false
 	self.FlatRight = flatRight or false
@@ -71,7 +70,7 @@ function SELF:DrawElement(i, x, y)
 		borderColor = Star_Trek.LCARS.ColorWhite
 	end
 
-	self:DrawButton(x, y, color, borderColor, self.Text, self.FlatLeft, self.FlatRight, self.LargeNumber, self.SmallNumber, 2)
+	self:DrawButton(x, y, color, borderColor, self.Text, self.FlatLeft, self.FlatRight, self.Number, 2)
 end
 
 -- Returns the current variant of the button.
