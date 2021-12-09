@@ -55,7 +55,7 @@ function SELF:Open(ent)
 		w * scale,
 		h * scale,
 		function(windowData, interfaceData, buttonId)
-			if buttonId == 13 then
+			if buttonId == 12 then
 				ent:EmitSound("star_trek.lcars_close")
 				interfaceData:Close()
 

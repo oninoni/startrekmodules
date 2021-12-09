@@ -21,6 +21,12 @@ include("shared.lua")
 local SOUND_CUTOFF = 500
 local cutOffSquared = SOUND_CUTOFF * SOUND_CUTOFF
 
+function ENT:OnRemove()
+	if self.LoopId ~= nil then
+		self:StopLoopingSound(self.LoopId)
+	end
+end
+
 timer.Create("Star_Trek.Security.ForceFieldSound", 2, 0, function()
 	local forceFields = ents.FindByClass("force_field")
 
