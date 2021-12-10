@@ -122,7 +122,7 @@ function Star_Trek.Holodeck:CompressPlayers(programmId)
 	end
 end
 
--- Compresses players between 2 named brush areas.
+-- Compresses players between 2 named brush areas. (Map Interface Function)
 --
 -- @param String outerName
 -- @param String innerName
@@ -132,5 +132,7 @@ function Star_Trek.Util:CompressPlayers(outerName, innerName)
 
 	if programmId1 == programmId2 then
 		Star_Trek.Holodeck:CompressPlayers(programmId1)
+	else
+		Star_Trek:Message("Unmatching Holodeck Compression Names:", outerName, innerName)
 	end
 end

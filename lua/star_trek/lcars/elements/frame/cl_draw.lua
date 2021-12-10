@@ -43,9 +43,9 @@ function SELF:DrawFrame(x, y, width, height, color1, color2, title, titleShort, 
 	self:DrawSwept(x, y + height - self.CornerRadius * 2, width, color2, hFlip, false)
 
 	if hFlip then
-		draw.SimpleText(titleUpper, "LCARSMed", x + math.ceil(width * 0.05) - self.BorderWidth, y + self.StripHeight / 2, nil,  TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+		draw.SimpleText(titleUpper, "LCARSMed", x + math.ceil(width * 0.05) - self.BorderWidth + 1, y + self.StripHeight / 2, nil,  TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
 	else
-		draw.SimpleText(titleUpper, "LCARSMed", x + math.floor(width * 0.95)                  , y + self.StripHeight / 2, nil, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+		draw.SimpleText(titleUpper, "LCARSMed", x + math.floor(width * 0.95)                      , y + self.StripHeight / 2, nil, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
 	end
 
 	local posOffset = 0
