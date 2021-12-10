@@ -13,23 +13,21 @@
 ---------------------------------------
 
 ---------------------------------------
---           Main | Config           --
+--           Doors | Index           --
 ---------------------------------------
 
-Star_Trek.Modules["util"] = true
-Star_Trek.Modules["chairs"] = true
-Star_Trek.Modules["doors"] = true
-Star_Trek.Modules["portals"] = true
+Star_Trek:RequireModules()
 
-Star_Trek.Modules["lcars"] = true
+Star_Trek.Doors = Star_Trek.Doors or {}
 
-Star_Trek.Modules["sections"] = true
-Star_Trek.Modules["turbolift"] = true
-Star_Trek.Modules["transporter"] = true
-Star_Trek.Modules["replicator"] = true
-Star_Trek.Modules["damage"] = true
-Star_Trek.Modules["security"] = true
-Star_Trek.Modules["alert"] = true
+if SERVER then
+	AddCSLuaFile("sh_sounds.lua")
+	include("sh_sounds.lua")
 
-Star_Trek.Modules["holodeck"] = true
-Star_Trek.Modules["sensors"] = true
+	include("sv_config.lua")
+	include("sv_doors.lua")
+end
+
+if CLIENT then
+	include("sh_sounds.lua")
+end

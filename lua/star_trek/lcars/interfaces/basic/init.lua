@@ -55,6 +55,8 @@ function SELF:Open(ent)
 				return
 			end
 
+			hook.Run("Star_Trek.LCARS.BasicPressed", interfaceData, buttonId)
+
 			ent:EmitSound("star_trek.lcars_close")
 			interfaceData:Close()
 		end,
