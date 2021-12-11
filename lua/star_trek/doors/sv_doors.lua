@@ -76,12 +76,16 @@ hook.Add("AcceptInput", "Star_Trek.BlockDoorIfAlreadyDooring", function(ent, inp
 		if value == "open" then
 			ent.Open = true
 
+			ent:Fire("FireUser1")
+
 			timer.Simple(ent:SequenceDuration(value) / 2, function()
 				ent:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
 				ent:SetSolid(SOLID_NONE)
 			end)
 		elseif value == "close" then
 			ent.Open = false
+
+			ent:Fire("FireUser2")
 
 			ent:SetCollisionGroup(COLLISION_GROUP_NONE)
 			ent:SetSolid(SOLID_VPHYSICS)
