@@ -20,6 +20,7 @@
 Star_Trek.Doors.ModelNames = {
 	["models/kingpommes/startrek/intrepid/door_128a.mdl"]			= "Wide ?x128 A",
 	["models/kingpommes/startrek/intrepid/door_128b.mdl"]			= "Wide ?x128 B",
+	["models/kingpommes/startrek/intrepid/door_128c.mdl"]			= "Wide ?x128 C",
 	["models/kingpommes/startrek/intrepid/door_104.mdl"]			= "Door ?x104",
 	["models/kingpommes/startrek/intrepid/door_80.mdl"]				= "Door ?x80",
 	["models/kingpommes/startrek/intrepid/door_48.mdl"]				= "Door Normal",
