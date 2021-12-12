@@ -185,7 +185,11 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 			-------- Lockdown --------
 			elseif buttonName == "Lock Doors" then
 				local doors = Star_Trek.Sections:GetInSections(deck, sectionIds, function(objects, ent)
-					if Star_Trek.Security.Doors[ent] then
+					if ent.LCARSKeyData and ent.LCARSKeyData["lcars_ignore_security"] then
+						return true
+					end
+
+					if Star_Trek.Doors.Doors[ent] then
 						return
 					end
 
@@ -209,7 +213,11 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 				return true
 			elseif buttonName == "Unlock Doors" then
 				local doors = Star_Trek.Sections:GetInSections(deck, sectionIds, function(objects, ent)
-					if Star_Trek.Security.Doors[ent] then
+					if ent.LCARSKeyData and ent.LCARSKeyData["lcars_ignore_security"] then
+						return true
+					end
+
+					if Star_Trek.Doors.Doors[ent] then
 						return
 					end
 
@@ -287,7 +295,11 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 				return true
 			elseif buttonName == "Unlock All" then
 				local doors = Star_Trek.Sections:GetInSections(deck, sectionIds, function(objects, ent)
-					if Star_Trek.Security.Doors[ent] then
+					if ent.LCARSKeyData and ent.LCARSKeyData["lcars_ignore_security"] then
+						return true
+					end
+
+					if Star_Trek.Doors.Doors[ent] then
 						return
 					end
 
