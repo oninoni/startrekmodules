@@ -109,7 +109,7 @@ function Star_Trek.Holodeck:CompressPlayers(programmId)
 			local yPos = math.random(innerBoundsLow[2], innerBoundsHigh[2])
 
 			local pos = Vector(xPos, yPos, innerBoundsLow[3])
-			local emptyPos = self:FindEmptyPosWithin(pos, innerBoundsLow, innerBoundsHigh)
+			local emptyPos = Star_Trek.Util:FindEmptyPosWithin(pos, innerBoundsLow, innerBoundsHigh)
 
 			if emptyPos then
 				ent:SetPos(emptyPos)
