@@ -41,7 +41,9 @@ end
 
 -- Block Doors aborting animations.
 hook.Add("AcceptInput", "Star_Trek.BlockDoorIfAlreadyDooring", function(ent, input, activator, caller, value)
-	if Star_Trek.Doors.Doors[ent] and input == "SetAnimation" then
+	if Star_Trek.Doors.Doors[ent] and string.lower(input) == "setanimation" then
+		value = string.lower(value)
+
 		-- Prevent the same animation again.
 		local currentSequence = ent:GetSequence()
 		local sequence = ent:LookupSequence(value)
