@@ -39,15 +39,17 @@ function SELF:Open(ent)
 		height,
 		function(windowData, interfaceData, buttonId)
 			local keyValues = ent.LCARSKeyData
-			
-			if buttonId > 4 and istable(keyValues) and isstring(keyValues["lcars_linked_case"]) then
+
+			if buttonId < 4 then
+				ent:Fire("FireUser" .. buttonId)
+			end
+
+			if istable(keyValues) and isstring(keyValues["lcars_linked_case"]) then
 				for _, caseEnt in pairs(ents.FindByName(keyValues["lcars_linked_case"])) do
 					if IsValid(caseEnt) then
 						caseEnt:Fire("InValue", buttonId)
 					end
 				end
-			else
-				ent:Fire("FireUser" .. buttonId)
 			end
 
 			if istable(keyValues) and keyValues["lcars_keep_open"] then
