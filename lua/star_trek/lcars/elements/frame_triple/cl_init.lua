@@ -42,6 +42,19 @@ function SELF:Initialize(subMenuHeight, title, titleShort, color1, color2, color
 	self.SubMenuHeight = self.SubMenuHeight + 2 * self.StripHeight + self.FrameOffset
 end
 
+-- Style Changing function to be overridden.
+--
+-- @param String style
+function SELF:ChangeStyle(style)
+	SELF.Base.ChangeStyle(self, style)
+
+	if style == "LCARS_RED" then
+		self.StyleBackup.Color4 = self.Color4
+
+		self.Color4 = Star_Trek.LCARS.ColorWhite
+	end
+end
+
 -- Draw a given Variant of the element.
 --
 -- @param Number x

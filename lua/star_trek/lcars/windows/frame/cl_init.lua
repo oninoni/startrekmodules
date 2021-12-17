@@ -20,13 +20,18 @@ if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
 local SELF = WINDOW
 
 function SELF:OnCreate(windowData)
+	local successBase = SELF.Base.OnCreate(self, windowData)
+	if not successBase then
+		return false
+	end
+
 	self.Padding = self.Padding or 0
 	self.FrameType = self.FrameType or windowData.FrameType or "frame"
 
 	self.HFlip = windowData.HFlip
 
 	if self.FrameType == "frame" then
-		local success, frame = Star_Trek.LCARS:GenerateElement(self.FrameType, self.Id .. "_Frame", self.WWidth, self.WHeight,
+		local success, frame = self:GenerateElement(self.FrameType, self.Id .. "_Frame", self.WWidth, self.WHeight,
 			windowData.Title, windowData.TitleShort,
 			windowData.Color1, windowData.Color2,
 			self.HFlip)
@@ -43,7 +48,7 @@ function SELF:OnCreate(windowData)
 
 		return true
 	elseif self.FrameType == "frame_double" then
-		local success, frame = Star_Trek.LCARS:GenerateElement(self.FrameType, self.Id .. "_DoubleFrame", self.WWidth, self.WHeight,
+		local success, frame = self:GenerateElement(self.FrameType, self.Id .. "_DoubleFrame", self.WWidth, self.WHeight,
 			windowData.Title, windowData.TitleShort,
 			windowData.Color1, windowData.Color2, windowData.Color3,
 			self.HFlip)
@@ -64,7 +69,7 @@ function SELF:OnCreate(windowData)
 			return false
 		end
 
-		local success, frame = Star_Trek.LCARS:GenerateElement(self.FrameType, self.Id .. "_DoubleFrame", self.WWidth, self.WHeight,
+		local success, frame = self:GenerateElement(self.FrameType, self.Id .. "_DoubleFrame", self.WWidth, self.WHeight,
 		self.SubMenuHeight,
 		windowData.Title, windowData.TitleShort,
 		windowData.Color1, windowData.Color2, windowData.Color3, windowData.Color4,

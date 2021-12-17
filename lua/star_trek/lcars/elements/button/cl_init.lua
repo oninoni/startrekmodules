@@ -52,6 +52,19 @@ function SELF:Initialize(text, number, color, selectedColor, flatLeft, flatRight
 	self.Hovered = hovered or false
 end
 
+-- Style Changing function to be overridden.
+--
+-- @param String style
+function SELF:ChangeStyle(style)
+	if style == "LCARS_RED" then
+		self.StyleBackup.Color = self.Color
+		self.StyleBackup.SelectedColor = self.SelectedColor
+
+		self.Color = Star_Trek.LCARS.ColorWhite
+		self.SelectedColor = Star_Trek.LCARS.ColorLightRed
+	end
+end
+
 -- Draw a given Variant of the element.
 --
 -- @param Number x

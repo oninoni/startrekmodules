@@ -20,6 +20,10 @@ if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
 local SELF = WINDOW
 
 function SELF:OnCreate(windowData)
+	self.Elements = {}
+
+	self.CurrentStyle = "LCARS"
+
 	return true
 end
 
@@ -27,4 +31,27 @@ function SELF:OnPress(pos, animPos)
 end
 
 function SELF:OnDraw(pos, animPos)
+end
+
+function SELF:GenerateElement(elementType, id, width, height, ...)
+	local success, element = Star_Trek.LCARS:GenerateElement(elementType, id, self.CurrentStyle, width, height, ...)
+	if not success then
+		return false, element
+	end
+
+	self.Elements[id] = element
+
+	return true, element
+end
+
+function SELF:SetStyle(style)
+	if self.CurrentStyle == style then
+		return
+	end
+
+	self.CurrentStyle = style
+
+	for _, element in pairs(self.Elements) do
+		element:SetStyle(style)
+	end
 end

@@ -49,6 +49,20 @@ function SELF:Draw()
 	end
 end
 
+-- Generate the texture.
+function SELF:GenerateTexture()
+	local oldW, oldH = ScrW(), ScrH()
+	render.SetViewPort(0, 0, self.Width, self.Height)
+
+	render.PushRenderTarget(self.Texture)
+	cam.Start2D()
+		self:Draw()
+	cam.End2D()
+	render.PopRenderTarget()
+
+	render.SetViewPort(0, 0, oldW, oldH)
+end
+
 -- Generate the element and prepare material / texture.
 function SELF:Initialize()
 	local width = self.ElementWidth
@@ -65,9 +79,39 @@ function SELF:Initialize()
 		["$vertexalpha"] = 1
 	})
 
+	self.CurrentStyle = "LCARS"
+	self.StyleBackup = {}
+
 	self.U = width / self.Width
 	self.V1 = height / self.Height
 	self.V2 = (height - 1) / self.Height
+end
+
+-- Style Changing function to be overridden.
+--
+-- @param String style
+function SELF:ChangeStyle(style)
+end
+
+-- Function, that allows you to set the current style of the menu.
+-- 
+-- @param String style
+function SELF:SetStyle(style)
+	if self.CurrentStyle == style then
+		return
+	end
+
+	self.CurrentStyle = style
+
+	if style == "LCARS" and istable(self.StyleBackup) then
+		for key, value in pairs(self.StyleBackup) do
+			self[key] = value
+		end
+	else
+		self:ChangeStyle(style)
+	end
+
+	self:GenerateTexture()
 end
 
 -- Return the current variant of the object.

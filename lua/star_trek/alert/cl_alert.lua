@@ -41,6 +41,15 @@ function Star_Trek.Alert:Enable(type)
 		bridgeLightMaterial:SetFloat("$brightness", 1)
 	end
 
+	local style = alertType.LCARSStyle
+	if Star_Trek.Modules["lcars"] and isstring(style) then
+		for _, interface in pairs(Star_Trek.LCARS.ActiveInterfaces) do
+			for _, window in pairs(interface.Windows) do
+				window:SetStyle(style)
+			end
+		end
+	end
+
 	return true
 end
 
@@ -58,6 +67,14 @@ function Star_Trek.Alert:Disable()
 
 	local bridgeLightMaterial = Material(Star_Trek.Alert.BridgeLightMaterial)
 	bridgeLightMaterial:SetFloat("$brightness", 1)
+
+	if Star_Trek.Modules["lcars"] and isstring(style) then
+		for _, interface in pairs(Star_Trek.LCARS.ActiveInterfaces) do
+			for _, window in pairs(interface.Windows) do
+				window:SetStyle("LCARS")
+			end
+		end
+	end
 
 	return true
 end

@@ -39,7 +39,7 @@ function SELF:OnCreate(windowData)
 		-- TODO: Add negative ID Conversion here.
 		local id = i
 
-		local successButton, button = Star_Trek.LCARS:GenerateElement("button", self.Id .. "_" .. id, self.Area1Width, self.ButtonHeight,
+		local successButton, button = self:GenerateElement("button", self.Id .. "_" .. id, self.Area1Width, self.ButtonHeight,
 			buttonData.Name or "[ERROR]", buttonData.RandomNumber,
 			buttonData.Color, buttonData.ActiveColor,
 			self.HFlip, not self.HFlip,

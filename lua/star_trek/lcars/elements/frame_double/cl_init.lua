@@ -39,6 +39,19 @@ function SELF:Initialize(title, titleShort, color1, color2, color3, hFlip)
 	self.FrameOffset = 2
 end
 
+-- Style Changing function to be overridden.
+--
+-- @param String style
+function SELF:ChangeStyle(style)
+	SELF.Base.ChangeStyle(self, style)
+
+	if style == "LCARS_RED" then
+		self.StyleBackup.Color3 = self.Color3
+
+		self.Color3 = Star_Trek.LCARS.ColorWhite
+	end
+end
+
 -- Draw a given Variant of the element.
 --
 -- @param Number x

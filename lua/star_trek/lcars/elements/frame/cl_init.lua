@@ -44,6 +44,19 @@ function SELF:Initialize(title, titleShort, color1, color2, hFlip)
 	self.HFlip = hFlip or false
 end
 
+-- Style Changing function to be overridden.
+--
+-- @param String style
+function SELF:ChangeStyle(style)
+	if style == "LCARS_RED" then
+		self.StyleBackup.Color1 = self.Color1
+		self.StyleBackup.Color2 = self.Color2
+
+		self.Color1 = Star_Trek.LCARS.ColorLightRed
+		self.Color2 = Star_Trek.LCARS.ColorWhite
+	end
+end
+
 -- Draw a given Variant of the element.
 --
 -- @param Number x

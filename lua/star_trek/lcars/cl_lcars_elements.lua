@@ -16,11 +16,13 @@
 --      LCARS Elements | Client      --
 ---------------------------------------
 
-function Star_Trek.LCARS:GenerateElement(elementType, id, width, height, ...)
+function Star_Trek.LCARS:GenerateElement(elementType, id, style, width, height, ...)
 	local elementFunctions = self.Elements[elementType]
 	if not istable(elementFunctions) then
 		return false, "Invalid Element Type!"
 	end
+
+	print("Generating", id, style)
 
 	local element = {
 		Id = id,
@@ -31,16 +33,11 @@ function Star_Trek.LCARS:GenerateElement(elementType, id, width, height, ...)
 
 	element:Initialize(...)
 
-	local oldW, oldH = ScrW(), ScrH()
-	render.SetViewPort(0, 0, element.Width, element.Height)
-
-	render.PushRenderTarget(element.Texture)
-	cam.Start2D()
-		element:Draw()
-	cam.End2D()
-	render.PopRenderTarget()
-
-	render.SetViewPort(0, 0, oldW, oldH)
+	if style == "LCARS" then
+		element:GenerateTexture()
+	else
+		element:SetStyle(style)
+	end
 
 	return true, element
 end
