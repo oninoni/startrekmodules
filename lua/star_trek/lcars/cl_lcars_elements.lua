@@ -22,9 +22,8 @@ function Star_Trek.LCARS:GenerateElement(elementType, id, style, width, height, 
 		return false, "Invalid Element Type!"
 	end
 
-	print("Generating", id, style)
-
 	local element = {
+		ElementType = elementType,
 		Id = id,
 		ElementWidth = width,
 		ElementHeight = height,

@@ -22,7 +22,8 @@ local SELF = WINDOW
 function SELF:OnCreate(windowData)
 	self.Elements = {}
 
-	self.CurrentStyle = "LCARS"
+	self.CurrentStyle = windowData.InitialStyle or "LCARS"
+	print("Creating with Style: " .. self.CurrentStyle)
 
 	return true
 end

@@ -53,6 +53,8 @@ function Star_Trek.LCARS:LoadWindowData(id, windowData, pos, ang)
 	end
 	setmetatable(window, {__index = windowFunctions})
 
+	hook.Run("Star_Trek.LCARS.PreWindowCreate", window, windowData)
+
 	local success = window:OnCreate(windowData)
 	if not success then
 		return false, "Window Creation Failed"
