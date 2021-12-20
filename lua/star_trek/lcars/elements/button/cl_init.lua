@@ -55,14 +55,7 @@ end
 -- Style Changing function to be overridden.
 --
 -- @param String style
-function SELF:ChangeStyle(style)
-	if style == "LCARS_RED" then
-		self.StyleBackup.Color = self.Color
-		self.StyleBackup.SelectedColor = self.SelectedColor
-
-		self.Color = Star_Trek.LCARS.ColorWhite
-		self.SelectedColor = Star_Trek.LCARS.ColorLightRed
-	end
+function SELF:ApplyStyle()
 end
 
 -- Draw a given Variant of the element.
@@ -72,8 +65,17 @@ end
 -- @param Number i
 function SELF:DrawElement(i, x, y)
 	color = self.Color
+	
+	if self.CurrentStyle == "LCARS_RED" then
+		color = Star_Trek.LCARS.ColorWhite
+	end
+
 	if i > 3 then
-		color = self.SelectedColor
+		if self.CurrentStyle == "LCARS_RED" then
+			color = Star_Trek.LCARS.ColorRed
+		else
+			color = self.SelectedColor
+		end
 	elseif i == 1 then
 		color = Star_Trek.LCARS.ColorGrey
 	end
@@ -86,6 +88,8 @@ function SELF:DrawElement(i, x, y)
 	self:DrawButton(x, y, color, borderColor, self.Text, self.FlatLeft, self.FlatRight, self.Number, 2)
 end
 
+local SPEED = 4
+
 -- Returns the current variant of the button.
 --
 -- @return Number variant
@@ -96,8 +100,30 @@ function SELF:GetVariant()
 
 	local variant = 2
 	if self.Selected then
-		variant = variant + 2
+		variant = 4
+	elseif self.CurrentStyle == "LCARS_RED" then
+		if self.Color == Star_Trek.LCARS.ColorOrange then
+			variant = 4
+		elseif self.Color == Star_Trek.LCARS.ColorRed then
+			local delta = ((self.LifeTime * SPEED) % 2)
+			if delta > 1 then
+				variant = 4
+			end
+		elseif self.Color == Star_Trek.LCARS.ColorLightBlue then
+			local delta = ((self.LifeTime * SPEED) % 6)
+			if delta > 1 and delta < 2 then
+				variant = 4
+			end
+		elseif self.Color == Star_Trek.LCARS.ColorBlue then
+			local delta = ((self.LifeTime * SPEED) % 6)
+			if delta > 2 and delta < 3 then
+				variant = 4
+			end
+		end
 	end
+
+	
+
 	if not self.Hovered then
 		variant = variant + 1
 	end

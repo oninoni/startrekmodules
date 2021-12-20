@@ -45,6 +45,8 @@ function SELF:Draw()
 
 	for i = 1, self.Variants do
 		local y = (self.ElementHeight + 1) * (i - 1)
+		print(i, y)
+
 		self:DrawElement(i, 0, y)
 	end
 end
@@ -53,6 +55,11 @@ end
 function SELF:GenerateTexture()
 	local oldW, oldH = ScrW(), ScrH()
 	render.SetViewPort(0, 0, self.Width, self.Height)
+
+	print(self.ElementType, self.Id, "V:" .. self.Variants)
+	print(self.ElementWidth, self.ElementHeight)
+	print(self.Width, self.Height)
+	print(self.Texture)
 
 	render.PushRenderTarget(self.Texture)
 	cam.Start2D()
@@ -65,6 +72,8 @@ end
 
 -- Generate the element and prepare material / texture.
 function SELF:Initialize()
+	self:ApplyStyle()
+
 	local width = self.ElementWidth
 	local height = self.ElementHeight + 1
 
@@ -79,8 +88,7 @@ function SELF:Initialize()
 		["$vertexalpha"] = 1
 	})
 
-	self.CurrentStyle = "LCARS"
-	self.StyleBackup = {}
+	self.LifeTime = 0
 
 	self.U = width / self.Width
 	self.V1 = height / self.Height
@@ -90,7 +98,7 @@ end
 -- Style Changing function to be overridden.
 --
 -- @param String style
-function SELF:ChangeStyle(style)
+function SELF:ApplyStyle()
 end
 
 -- Function, that allows you to set the current style of the menu.
@@ -103,15 +111,13 @@ function SELF:SetStyle(style)
 
 	self.CurrentStyle = style
 
-	if style == "LCARS" and istable(self.StyleBackup) then
-		for key, value in pairs(self.StyleBackup) do
-			self[key] = value
-		end
-	else
-		self:ChangeStyle(style)
-	end
-
+	self:ApplyStyle()
 	self:GenerateTexture()
+end
+
+-- Think hook.
+function SELF:OnThink()
+	self.LifeTime = self.LifeTime + FrameTime()
 end
 
 -- Return the current variant of the object.

@@ -23,7 +23,6 @@ function SELF:OnCreate(windowData)
 	self.Elements = {}
 
 	self.CurrentStyle = windowData.InitialStyle or "LCARS"
-	print("Creating with Style: " .. self.CurrentStyle)
 
 	return true
 end
@@ -32,6 +31,12 @@ function SELF:OnPress(pos, animPos)
 end
 
 function SELF:OnDraw(pos, animPos)
+end
+
+function SELF:OnThink()
+	for _, element in pairs(self.Elements) do
+		element:OnThink()
+	end
 end
 
 function SELF:GenerateElement(elementType, id, width, height, ...)

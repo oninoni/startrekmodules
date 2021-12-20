@@ -27,16 +27,13 @@ function Star_Trek.LCARS:GenerateElement(elementType, id, style, width, height, 
 		Id = id,
 		ElementWidth = width,
 		ElementHeight = height,
+		CurrentStyle = style,
 	}
 	setmetatable(element, {__index = elementFunctions})
 
 	element:Initialize(...)
+	element:GenerateTexture()
 
-	if style == "LCARS" then
-		element:GenerateTexture()
-	else
-		element:SetStyle(style)
-	end
 
 	return true, element
 end
