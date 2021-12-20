@@ -35,6 +35,7 @@ function Star_Trek.LCARS:OpenInterface(id, interfaceData)
 		IAng = interfaceData.InterfaceAngle,
 
 		IVis = false,
+		Solid = interfaceData.Solid,
 
 		AnimPos = 0,
 		Closing = false,
@@ -285,7 +286,9 @@ hook.Add("PostDrawTranslucentRenderables", "Star_Trek.LCARS.Draw", function(isDr
 			continue
 		end
 
-		render.OverrideBlend(true, BLEND_SRC_ALPHA, BLEND_ONE, BLENDFUNC_ADD, BLEND_SRC_ALPHA, BLEND_ONE, BLENDFUNC_ADD)
+		if not interface.Solid then
+			render.OverrideBlend(true, BLEND_SRC_ALPHA, BLEND_ONE, BLENDFUNC_ADD, BLEND_SRC_ALPHA, BLEND_ONE, BLENDFUNC_ADD)
+		end
 
 		for _, window in pairs(interface.Windows) do
 			Star_Trek.LCARS:DrawWindow(window, interface.AnimPos)

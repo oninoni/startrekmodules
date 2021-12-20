@@ -128,6 +128,8 @@ function Star_Trek.LCARS:GetClientInterfaceData(interfaceData)
 		end
 	end
 
+	clientInterfaceData.Solid = interfaceData.Solid
+
 	clientInterfaceData.OffsetPos = nil
 	clientInterfaceData.OffsetAng = nil
 

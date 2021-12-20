@@ -21,6 +21,8 @@ include("util.lua")
 local SELF = INTERFACE
 SELF.BaseInterface = "base"
 
+SELF.Solid = true
+
 -- Opening a turbolift control menu.
 function SELF:Open(ent)
 	local keyValues = ent.LCARSKeyData
