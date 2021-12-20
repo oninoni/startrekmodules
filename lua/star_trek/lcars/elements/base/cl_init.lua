@@ -45,7 +45,6 @@ function SELF:Draw()
 
 	for i = 1, self.Variants do
 		local y = (self.ElementHeight + 1) * (i - 1)
-		print(i, y)
 
 		self:DrawElement(i, 0, y)
 	end
@@ -53,13 +52,26 @@ end
 
 -- Generate the texture.
 function SELF:GenerateTexture()
+	local width = self.ElementWidth
+	local height = self.ElementHeight + 1
+
+	self.Width = self:FilterSize(width)
+	self.Height = self:FilterSize(height * self.Variants)
+
+	self.Name = "LCARS_" .. self.Id .. "_" .. self.Width .. "_" .. self.Height
+	self.Texture = GetRenderTarget(self.Name, self.Width, self.Height)
+	self.Material = CreateMaterial(self.Name, "UnlitGeneric", {
+		["$basetexture"] = self.Texture:GetName(),
+		["$translucent"] = 1,
+		["$vertexalpha"] = 1
+	})
+	
+	self.U = width / self.Width
+	self.V1 = height / self.Height
+	self.V2 = (height - 1) / self.Height
+
 	local oldW, oldH = ScrW(), ScrH()
 	render.SetViewPort(0, 0, self.Width, self.Height)
-
-	print(self.ElementType, self.Id, "V:" .. self.Variants)
-	print(self.ElementWidth, self.ElementHeight)
-	print(self.Width, self.Height)
-	print(self.Texture)
 
 	render.PushRenderTarget(self.Texture)
 	cam.Start2D()
@@ -74,25 +86,7 @@ end
 function SELF:Initialize()
 	self:ApplyStyle()
 
-	local width = self.ElementWidth
-	local height = self.ElementHeight + 1
-
-	self.Width = self:FilterSize(width)
-	self.Height = self:FilterSize(height * self.Variants)
-
-	self.Name = "LCARS_" .. self.Id .. "_" .. self.Width .. "_" .. self.Height
-	self.Texture = GetRenderTarget(self.Name, self.Width, self.Height)
-	self.Material = CreateMaterial(self.Name, "UnlitGeneric", {
-		["$basetexture"] = self.Texture:GetName(),
-		["$translucent"] = 1,
-		["$vertexalpha"] = 1
-	})
-
 	self.LifeTime = 0
-
-	self.U = width / self.Width
-	self.V1 = height / self.Height
-	self.V2 = (height - 1) / self.Height
 end
 
 -- Style Changing function to be overridden.

@@ -109,16 +109,6 @@ function SELF:GetVariant()
 			if delta > 1 then
 				variant = 4
 			end
-		elseif self.Color == Star_Trek.LCARS.ColorLightBlue then
-			local delta = ((self.LifeTime * SPEED) % 6)
-			if delta > 1 and delta < 2 then
-				variant = 4
-			end
-		elseif self.Color == Star_Trek.LCARS.ColorBlue then
-			local delta = ((self.LifeTime * SPEED) % 6)
-			if delta > 2 and delta < 3 then
-				variant = 4
-			end
 		end
 	end
 

@@ -34,6 +34,5 @@ function Star_Trek.LCARS:GenerateElement(elementType, id, style, width, height, 
 	element:Initialize(...)
 	element:GenerateTexture()
 
-
 	return true, element
 end
