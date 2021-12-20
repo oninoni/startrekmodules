@@ -17,7 +17,7 @@
 ---------------------------------------
 
 util.AddNetworkString("Star_Trek.Util.SetWarpCore")
-function Star_Trek.Util:SetWarpCore(speed, brightness, flashSpeed, flashMin, flashMax)
+function Star_Trek.Util:SetWarpCoreVars(speed, brightness, flashSpeed, flashMin, flashMax)
 	self.WarpCoreSpeed = speed or 0.05
 	self.WarpCoreBrightness = brightness or 0.7
 	self.WarpCoreFlashSpeed = flashSpeed or 4
@@ -31,6 +31,16 @@ function Star_Trek.Util:SetWarpCore(speed, brightness, flashSpeed, flashMin, fla
 		net.WriteFloat(self.WarpCoreFlashMin)
 		net.WriteFloat(self.WarpCoreFlashMax)
 	net.Broadcast()
+end
+
+function Star_Trek.Util:SetWarp(value)
+	if value == 0 then
+		self:SetWarpCoreVars()
+	elseif value == 1 then
+		self:SetWarpCoreVars(0.5, 1.5, 2)
+	elseif value == -1 then
+		self:SetWarpCoreVars(0.01, 0.3)
+	end
 end
 
 hook.Add("PlayerInitialSpawn", "WarpCoreSync", function(ply)
