@@ -25,7 +25,7 @@ SELF.BaseInterface = "base"
 
 -- Opening general purpose menus.
 function SELF:Open(ent)
-	local success2, buttons, scale, width, height, title, titleShort = self:GetButtonData(ent)
+	local success2, buttons, scale, width, height, title, titleShort, flip = self:GetButtonData(ent)
 	if not success2 then
 		return false, buttons
 	end
@@ -65,7 +65,7 @@ function SELF:Open(ent)
 		end,
 		buttons,
 		title,
-		titleShort, true
+		titleShort, not flip
 	)
 	if not success3 then
 		return false, window

@@ -44,6 +44,7 @@ function SELF:GetKeyValues(keyValues, buttons)
 	local scale = tonumber(keyValues["lcars_scale"]) or 20
 	local width = tonumber(keyValues["lcars_width"]) or 16
 	local height = tonumber(keyValues["lcars_height"])
+	local flip = tobool(keyVAlues["lcars_flip"]) or false
 	local title = keyValues["lcars_title"]
 	local titleShort = keyValues["lcars_title_short"]
 	if not titleShort then
@@ -58,7 +59,7 @@ function SELF:GetKeyValues(keyValues, buttons)
 		height = height * scale
 	end
 
-	return scale, width, height, title, titleShort
+	return scale, width, height, title, titleShort, flip
 end
 
 function SELF:GetButtonData(ent)
@@ -68,7 +69,7 @@ function SELF:GetButtonData(ent)
 	end
 
 	local buttons = self:GenerateButtons(keyValues)
-	local scale, width, height, title, titleShort = self:GetKeyValues(keyValues, buttons)
+	local scale, width, height, title, titleShort, flip = self:GetKeyValues(keyValues, buttons)
 
-	return true, buttons, scale, width, height, title, titleShort
+	return true, buttons, scale, width, height, title, titleShort, flip
 end
