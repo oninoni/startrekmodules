@@ -36,7 +36,6 @@ function SELF:OnCreate(windowData)
 
 	self.Buttons = {}
 	for i, buttonData in pairs(windowData.Buttons) do
-		-- TODO: Add negative ID Conversion here.
 		local id = i
 
 		local successButton, button = self:GenerateElement("button", self.Id .. "_" .. id, self.Area1Width, self.ButtonHeight,

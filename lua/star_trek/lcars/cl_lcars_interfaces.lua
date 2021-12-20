@@ -208,7 +208,6 @@ net.Receive("Star_Trek.LCARS.PlayerButtonDown", function()
 end)
 
 -- Save EyePos on Regular Intervals.
--- TODO: Do you need it?
 hook.Add("PreDrawTranslucentRenderables", "Star_Trek.LCARS.PreDraw", function(isDrawingDepth, isDrawingSkybox)
 	if isDrawingSkybox then return end
 	if wp and wp.drawing then return end

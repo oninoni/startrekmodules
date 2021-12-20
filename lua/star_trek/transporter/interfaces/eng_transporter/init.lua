@@ -19,6 +19,8 @@
 local SELF = INTERFACE
 SELF.BaseInterface = "transporter"
 
+SELF.Solid = false
+
 function SELF:Open(ent)
 	local success, windows = self:OpenInternal(
 		Vector(-12, 4, -14.25),

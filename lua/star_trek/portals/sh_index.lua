@@ -20,8 +20,6 @@ Star_Trek:RequireModules()
 
 Star_Trek.Portals = Star_Trek.Portals or {}
 
--- TODO: "Doors Addon not installed" Compatibility
-
 if SERVER then
 	AddCSLuaFile("sh_portals.lua")
 	AddCSLuaFile("cl_portals.lua")

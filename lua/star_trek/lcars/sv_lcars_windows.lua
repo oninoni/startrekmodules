@@ -16,8 +16,6 @@
 --       LCARS Windows | Server      --
 ---------------------------------------
 
--- TODO: Sync on Join Active Interfaces
-
 ------------------------
 --       Opening      --
 ------------------------

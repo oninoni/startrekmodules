@@ -22,6 +22,8 @@ include("windowUtil.lua")
 local SELF = INTERFACE
 SELF.BaseInterface = "base"
 
+SELF.Solid = true
+
 function SELF:OpenInternal(menuPos, menuAngle, menuWidth, mainPos, mainAngle, mainWidth, mainHeight, sliderPos, sliderAngle, textPos, textAngle, textWidth, textHeight, padNumber)
 	local menuPosSource = menuPos + Vector()
 	local menuPosTarget = menuPos + Vector()

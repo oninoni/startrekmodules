@@ -166,7 +166,7 @@ if SERVER then
 	-- @param String interfaceDirectory
 	-- @param String interfaceName
 	-- @return Boolean success
-	-- @return? Table interface <- TODO
+	-- @return? String error
 	function Star_Trek.LCARS:LoadInterface(interfaceDirectory, interfaceName)
 		INTERFACE = {}
 		INTERFACE.Class = interfaceName

@@ -17,7 +17,6 @@
 ---------------------------------------
 
 -- TODO: Check if transport in Progress at target location (No 2 Beams at the same pos at the same time.)
--- TODO: Buffer Decay
 
 local setupBuffer = function()
 	for _, ent in pairs(ents.GetAll()) do
