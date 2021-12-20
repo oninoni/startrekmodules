@@ -21,13 +21,6 @@ Star_Trek:RequireModules()
 Star_Trek.Doors = Star_Trek.Doors or {}
 
 if SERVER then
-	AddCSLuaFile("sh_sounds.lua")
-	include("sh_sounds.lua")
-
 	include("sv_config.lua")
 	include("sv_doors.lua")
-end
-
-if CLIENT then
-	include("sh_sounds.lua")
 end

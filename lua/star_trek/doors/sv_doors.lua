@@ -118,8 +118,10 @@ end)
 
 -- Open door when pressing use on them.
 hook.Add("KeyPress", "Star_Trek.OpenDoors", function(ply, key)
+	local traceLine = util.RealTraceLine or util.TraceLine
+	
 	if key == IN_USE then
-		local trace = util.RealTraceLine({
+		local trace = traceLine({
 			start = ply:EyePos(),
 			endpos = ply:EyePos() + ply:EyeAngles():Forward() * 128,
 			filter = ply,
@@ -136,7 +138,9 @@ hook.Add("KeyPress", "Star_Trek.OpenDoors", function(ply, key)
 	end
 end)
 
-local function checkPlayers(ent)
+local function checkPlayers(ent)	
+	local traceLine = util.RealTraceLine or util.TraceLine
+
 	local entities = ents.FindInSphere(ent:GetPos(), 64)
 	for _, nearbyEnt in pairs(entities) do
 		if nearbyEnt:IsPlayer() then
@@ -148,8 +152,9 @@ local function checkPlayers(ent)
 			if distance <= 32 or ent.Open then
 				return true
 			end
+		
 
-			local trace = util.RealTraceLine({
+			local trace = traceLine({
 				start = nearbyEnt:EyePos(),
 				endpos = nearbyEnt:EyePos() + nearbyEnt:EyeAngles():Forward() * 128,
 				filter = nearbyEnt,
