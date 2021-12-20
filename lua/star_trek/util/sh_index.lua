@@ -21,7 +21,10 @@ Star_Trek:RequireModules()
 Star_Trek.Util = Star_Trek.Util or {}
 
 if SERVER then
+	AddCSLuaFile("cl_warp.lua")
 	--AddCSLuaFile("cl_rendermap.lua")
+	
+	include("sv_warp.lua")
 
 	include("sv_positions.lua")
 	include("sv_keyvalues.lua")
@@ -32,5 +35,7 @@ if SERVER then
 end
 
 if CLIENT then
+	include("cl_warp.lua")
+
 	--include("cl_rendermap.lua")
 end
