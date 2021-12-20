@@ -13,12 +13,12 @@
 ---------------------------------------
 
 ---------------------------------------
---      Security Doors | Server      --
+--           Doors | Server          --
 ---------------------------------------
 
-Star_Trek.Security.Doors = Star_Trek.Security.Doors or {}
+Star_Trek.Doors.Doors = Star_Trek.Doors.Doors or {}
 
-function Star_Trek.Security:GetPortalDoor(door)
+function Star_Trek.Doors:GetPortalDoor(door)
 	local sourceEntities = ents.FindInSphere(door:GetPos(), 8)
 	for _, portal in pairs(sourceEntities) do
 		if portal:GetClass() ~= "linked_portal_door" then
@@ -32,7 +32,7 @@ function Star_Trek.Security:GetPortalDoor(door)
 
 		local targetEntities = ents.FindInSphere(targetPortal:GetPos(), 8)
 		for _, partnerDoor in pairs(targetEntities) do
-			if partnerDoor:GetClass() == "prop_dynamic" and self.DoorModelNames[partnerDoor:GetModel()] then
+			if partnerDoor:GetClass() == "prop_dynamic" and self.ModelNames[partnerDoor:GetModel()] then
 				return partnerDoor
 			end
 		end
@@ -41,7 +41,9 @@ end
 
 -- Block Doors aborting animations.
 hook.Add("AcceptInput", "Star_Trek.BlockDoorIfAlreadyDooring", function(ent, input, activator, caller, value)
-	if Star_Trek.Security.Doors[ent] and input == "SetAnimation" then
+	if Star_Trek.Doors.Doors[ent] and string.lower(input) == "setanimation" then
+		value = string.lower(value)
+
 		-- Prevent the same animation again.
 		local currentSequence = ent:GetSequence()
 		local sequence = ent:LookupSequence(value)
@@ -76,6 +78,8 @@ hook.Add("AcceptInput", "Star_Trek.BlockDoorIfAlreadyDooring", function(ent, inp
 		if value == "open" then
 			ent.Open = true
 
+			ent:Fire("FireUser1")
+
 			timer.Simple(ent:SequenceDuration(value) / 2, function()
 				ent:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
 				ent:SetSolid(SOLID_NONE)
@@ -83,11 +87,13 @@ hook.Add("AcceptInput", "Star_Trek.BlockDoorIfAlreadyDooring", function(ent, inp
 		elseif value == "close" then
 			ent.Open = false
 
+			ent:Fire("FireUser2")
+
 			ent:SetCollisionGroup(COLLISION_GROUP_NONE)
 			ent:SetSolid(SOLID_VPHYSICS)
 		end
 
-		local partnerDoor = Star_Trek.Security:GetPortalDoor(ent)
+		local partnerDoor = Star_Trek.Doors:GetPortalDoor(ent)
 		if IsValid(partnerDoor) then
 			partnerDoor:Fire("SetAnimation", value)
 		end
@@ -98,12 +104,12 @@ end)
 
 -- Handle being locked. (Autoclose)
 hook.Add("Star_Trek.ChangedKeyValue", "Star_Trek.LockDoors", function(ent, key, value)
-	if key == "lcars_locked" and isstring(value) and Star_Trek.Security.Doors[ent] then
+	if key == "lcars_locked" and isstring(value) and Star_Trek.Doors.Doors[ent] then
 		if value == "1" and ent.Open then
 			ent:Fire("SetAnimation", "close")
 		end
 
-		local partnerDoor = Star_Trek.Security:GetPortalDoor(ent)
+		local partnerDoor = Star_Trek.Doors:GetPortalDoor(ent)
 		if IsValid(partnerDoor) then
 			partnerDoor.LCARSKeyData["lcars_locked"] = ent.LCARSKeyData["lcars_locked"]
 		end
@@ -112,15 +118,17 @@ end)
 
 -- Open door when pressing use on them.
 hook.Add("KeyPress", "Star_Trek.OpenDoors", function(ply, key)
+	local traceLine = util.RealTraceLine or util.TraceLine
+	
 	if key == IN_USE then
-		local trace = util.RealTraceLine({
+		local trace = traceLine({
 			start = ply:EyePos(),
 			endpos = ply:EyePos() + ply:EyeAngles():Forward() * 128,
 			filter = ply,
 		})
 
 		local ent = trace.Entity
-		if IsValid(ent) and Star_Trek.Security.Doors[ent] then
+		if IsValid(ent) and Star_Trek.Doors.Doors[ent] then
 			local distance = ent:GetPos():Distance(ply:EyePos())
 			if distance < 64 then
 				ent:Fire("SetAnimation", "open")
@@ -130,7 +138,9 @@ hook.Add("KeyPress", "Star_Trek.OpenDoors", function(ply, key)
 	end
 end)
 
-local function checkPlayers(ent)
+local function checkPlayers(ent)	
+	local traceLine = util.RealTraceLine or util.TraceLine
+
 	local entities = ents.FindInSphere(ent:GetPos(), 64)
 	for _, nearbyEnt in pairs(entities) do
 		if nearbyEnt:IsPlayer() then
@@ -142,8 +152,9 @@ local function checkPlayers(ent)
 			if distance <= 32 or ent.Open then
 				return true
 			end
+		
 
-			local trace = util.RealTraceLine({
+			local trace = traceLine({
 				start = nearbyEnt:EyePos(),
 				endpos = nearbyEnt:EyePos() + nearbyEnt:EyeAngles():Forward() * 128,
 				filter = nearbyEnt,
@@ -156,21 +167,21 @@ local function checkPlayers(ent)
 	end
 end
 
-Star_Trek.Security.NextDoorThink = CurTime()
+Star_Trek.Doors.NextDoorThink = CurTime()
 
 -- Think hook for auto-closing the doors.
-hook.Add("Think", "Star_Trek.Security.DoorThink", function()
-	if Star_Trek.Security.NextDoorThink > CurTime() then return end
-	Star_Trek.Security.NextDoorThink = CurTime() + Star_Trek.Security.DoorThinkDelay
+hook.Add("Think", "Star_Trek.Doors.DoorThink", function()
+	if Star_Trek.Doors.NextDoorThink > CurTime() then return end
+	Star_Trek.Doors.NextDoorThink = CurTime() + Star_Trek.Doors.ThinkDelay
 
-	for ent, _ in pairs(Star_Trek.Security.Doors or {}) do
+	for ent, _ in pairs(Star_Trek.Doors.Doors or {}) do
 		if ent.Open then
-			local partnerDoor = Star_Trek.Security:GetPortalDoor(ent)
+			local partnerDoor = Star_Trek.Doors:GetPortalDoor(ent)
 			if checkPlayers(ent) or (IsValid(partnerDoor) and checkPlayers(partnerDoor)) then
 				ent.CloseAt = nil
 			else
 				if not ent.CloseAt then
-					ent.CloseAt = CurTime() + Star_Trek.Security.DoorCloseDelay
+					ent.CloseAt = CurTime() + Star_Trek.Doors.CloseDelay
 					continue
 				end
 
@@ -196,13 +207,13 @@ end)
 
 -- Setting up Doors.
 local setupDoors = function()
-	Star_Trek.Security.Doors = {}
+	Star_Trek.Doors.Doors = {}
 
 	for _, ent in pairs(ents.GetAll()) do
-		if ent:GetClass() == "prop_dynamic" and Star_Trek.Security.DoorModelNames[ent:GetModel()] then
+		if ent:GetClass() == "prop_dynamic" and Star_Trek.Doors.ModelNames[ent:GetModel()] then
 			ent.DoorLastSequenceStart = CurTime()
 
-			Star_Trek.Security.Doors[ent] = true
+			Star_Trek.Doors.Doors[ent] = true
 		end
 	end
 end

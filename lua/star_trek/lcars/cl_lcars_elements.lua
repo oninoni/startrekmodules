@@ -16,31 +16,23 @@
 --      LCARS Elements | Client      --
 ---------------------------------------
 
-function Star_Trek.LCARS:GenerateElement(elementType, id, width, height, ...)
+function Star_Trek.LCARS:GenerateElement(elementType, id, style, width, height, ...)
 	local elementFunctions = self.Elements[elementType]
 	if not istable(elementFunctions) then
 		return false, "Invalid Element Type!"
 	end
 
 	local element = {
+		ElementType = elementType,
 		Id = id,
 		ElementWidth = width,
 		ElementHeight = height,
+		CurrentStyle = style,
 	}
 	setmetatable(element, {__index = elementFunctions})
 
 	element:Initialize(...)
-
-	local oldW, oldH = ScrW(), ScrH()
-	render.SetViewPort(0, 0, element.Width, element.Height)
-
-	render.PushRenderTarget(element.Texture)
-	cam.Start2D()
-		element:Draw()
-	cam.End2D()
-	render.PopRenderTarget()
-
-	render.SetViewPort(0, 0, oldW, oldH)
+	element:GenerateTexture()
 
 	return true, element
 end

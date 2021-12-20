@@ -31,7 +31,7 @@ function SELF:GenerateCategories(ent)
 
 	table.insert(categories, {
 		Name = "CLOSE",
-		Color = Star_Trek.LCARS.ColorLightRed,
+		Color = Star_Trek.LCARS.ColorRed,
 		Buttons = {},
 	})
 

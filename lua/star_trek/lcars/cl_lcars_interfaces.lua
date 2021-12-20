@@ -35,6 +35,7 @@ function Star_Trek.LCARS:OpenInterface(id, interfaceData)
 		IAng = interfaceData.InterfaceAngle,
 
 		IVis = false,
+		Solid = interfaceData.Solid,
 
 		AnimPos = 0,
 		Closing = false,
@@ -123,6 +124,9 @@ net.Receive("Star_Trek.LCARS.Update", function()
 			window.Interface = interface
 		end
 	else
+		-- TODO: Change this to maybe only update instead of calling OnCreate again?
+		hook.Run("Star_Trek.LCARS.PreWindowCreate", currentWindow, windowData)
+
 		local success = currentWindow:OnCreate(windowData)
 		if not success then
 			print("Update Error")
@@ -232,6 +236,8 @@ hook.Add("Think", "Star_Trek.LCARS.Think", function()
 		local pos, ang = Star_Trek.LCARS:GetInterfacePosAngle(interface.Ent, interface.IPos, interface.IAng)
 
 		for _, window in pairs(interface.Windows) do
+			window:OnThink()
+
 			window.WPosG, window.WAngG = LocalToWorld(window.WPos, window.WAng, pos, ang)
 
 			local cross = (window.WPosG - eyePos):Dot(window.WAngG:Up())
@@ -280,7 +286,9 @@ hook.Add("PostDrawTranslucentRenderables", "Star_Trek.LCARS.Draw", function(isDr
 			continue
 		end
 
-		render.OverrideBlend(true, BLEND_SRC_ALPHA, BLEND_ONE, BLENDFUNC_ADD, BLEND_SRC_ALPHA, BLEND_ONE, BLENDFUNC_ADD)
+		if not interface.Solid then
+			render.OverrideBlend(true, BLEND_SRC_ALPHA, BLEND_ONE, BLENDFUNC_ADD, BLEND_SRC_ALPHA, BLEND_ONE, BLENDFUNC_ADD)
+		end
 
 		for _, window in pairs(interface.Windows) do
 			Star_Trek.LCARS:DrawWindow(window, interface.AnimPos)

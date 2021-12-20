@@ -16,19 +16,19 @@
 --          Security | Index         --
 ---------------------------------------
 
-Star_Trek:RequireModules("sections", "lcars")
+Star_Trek:RequireModules("sections", "lcars", "doors")
 
 Star_Trek.Security = Star_Trek.Security or {}
 
 if SERVER then
 	AddCSLuaFile("sh_sounds.lua")
+	AddCSLuaFile("cl_force_field.lua")
 
 	include("sh_sounds.lua")
-	include("sv_config.lua")
-	include("sv_doors.lua")
 	include("sv_force_field.lua")
 end
 
 if CLIENT then
 	include("sh_sounds.lua")
+	include("cl_force_field.lua")
 end

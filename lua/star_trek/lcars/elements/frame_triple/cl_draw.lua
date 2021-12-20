@@ -37,9 +37,9 @@ function SELF:DrawTripleFrame(x, y, width, height, height2, color1, color2, colo
 	self:DrawSweptBreak(x,       y, width, color1, color2, hFlip)
 
 	if hFlip then
-		draw.SimpleText(string.upper(title), "LCARSMed",         2, 2, nil, TEXT_ALIGN_LEFT,  TEXT_ALIGN_TOP)
+		draw.SimpleText(string.upper(title), "LCARSMed", x +         8, y + 2, nil, TEXT_ALIGN_LEFT,  TEXT_ALIGN_TOP)
 	else
-		draw.SimpleText(string.upper(title), "LCARSMed", width - 2, 2, nil, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
+		draw.SimpleText(string.upper(title), "LCARSMed", x + width - 8, y + 2, nil, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
 	end
 
 	local posOffset = 0
@@ -50,39 +50,39 @@ function SELF:DrawTripleFrame(x, y, width, height, height2, color1, color2, colo
 	local topFrameStartOffset = self.CornerRadius * 4 + self.FrameOffset
 
 	draw.RoundedBox(0,
-		posOffset,
-		topFrameStartOffset,
+		x + posOffset,
+		y + topFrameStartOffset,
 		self.CornerRadius * 2, height2 - topFrameStartOffset,
 	Star_Trek.LCARS.ColorBlack)
 
 	draw.RoundedBox(0,
-		posOffset + self.BorderWidth,
-		topFrameStartOffset + self.BorderWidth,
+		x + posOffset + self.BorderWidth,
+		y + topFrameStartOffset + self.BorderWidth,
 		self.CornerRadius * 2 - self.BorderWidth * 2, height2 - topFrameStartOffset - self.BorderWidth,
 	color2)
 
-	self:DrawSweptBreak(x, height2, width, color2, color3, hFlip)
+	self:DrawSweptBreak(x, y + height2, width, color2, color3, hFlip)
 
 	local bottomFrameStarOffset = height2 + topFrameStartOffset
 	local remainingHeight = height - bottomFrameStarOffset
 
 	draw.RoundedBox(0,
-		posOffset,
-		bottomFrameStarOffset,
+		x + posOffset,
+		y + bottomFrameStarOffset,
 		self.CornerRadius * 2, remainingHeight,
 	Star_Trek.LCARS.ColorBlack)
 
 	draw.RoundedBox(0,
-		posOffset + self.BorderWidth,
-		bottomFrameStarOffset + self.BorderWidth,
+		x + posOffset + self.BorderWidth,
+		y + bottomFrameStarOffset + self.BorderWidth,
 		self.CornerRadius * 2 - self.BorderWidth * 2, remainingHeight / 2 - self.BorderWidth,
 	color3)
 
 	draw.RoundedBox(0,
-		posOffset + self.BorderWidth,
-		bottomFrameStarOffset + self.BorderWidth + remainingHeight / 2,
+		x + posOffset + self.BorderWidth,
+		y + bottomFrameStarOffset + self.BorderWidth + remainingHeight / 2,
 		self.CornerRadius * 2 - self.BorderWidth * 2, remainingHeight / 2 - self.BorderWidth,
 	color4)
 
-	draw.SimpleText(titleShort, "LCARSSmall", posOffset + self.CornerRadius, topFrameStartOffset, Star_Trek.LCARS.ColorBlack, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+	draw.SimpleText(titleShort, "LCARSSmall", x + posOffset + self.CornerRadius, y + topFrameStartOffset, Star_Trek.LCARS.ColorBlack, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
 end

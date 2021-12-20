@@ -17,3 +17,10 @@
 ---------------------------------------
 
 include("shared.lua")
+
+function ENT:OnRemove()
+	if self.LoopSound then
+		self.LoopSound:Stop()
+		self.LoopSound = nil
+	end
+end

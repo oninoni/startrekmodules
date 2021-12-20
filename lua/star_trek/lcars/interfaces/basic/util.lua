@@ -25,10 +25,12 @@ function SELF:GenerateButtons(keyValues)
 		local name = keyValues["lcars_name_" .. i]
 		if isstring(name) then
 			local disabled = tobool(keyValues["lcars_disabled_" .. i])
+			local colorName = keyValues["lcars_color_" .. i] or ""
 
 			buttons[i] = {
 				Name = name,
 				Disabled = disabled,
+				Color = Star_Trek.LCARS.Colors[colorName]
 			}
 		else
 			break
@@ -39,20 +41,25 @@ function SELF:GenerateButtons(keyValues)
 end
 
 function SELF:GetKeyValues(keyValues, buttons)
-	local scale = tonumber(keyValues["lcars_scale"])
-	local width = tonumber(keyValues["lcars_width"])
+	local scale = tonumber(keyValues["lcars_scale"]) or 20
+	local width = tonumber(keyValues["lcars_width"]) or 16
 	local height = tonumber(keyValues["lcars_height"])
+	local flip = tobool(keyValues["lcars_flip"]) or false
 	local title = keyValues["lcars_title"]
 	local titleShort = keyValues["lcars_title_short"]
 	if not titleShort then
 		titleShort = ""
 	end
 
+	width = width * scale
+
 	if not height then
 		height = math.max(2, math.min(6, table.maxn(buttons))) * 35 + 80
+	else
+		height = height * scale
 	end
 
-	return scale, width, height, title, titleShort
+	return scale, width, height, title, titleShort, flip
 end
 
 function SELF:GetButtonData(ent)
@@ -62,7 +69,7 @@ function SELF:GetButtonData(ent)
 	end
 
 	local buttons = self:GenerateButtons(keyValues)
-	local scale, width, height, title, titleShort = self:GetKeyValues(keyValues, buttons)
+	local scale, width, height, title, titleShort, flip = self:GetKeyValues(keyValues, buttons)
 
-	return true, buttons, scale, width, height, title, titleShort
+	return true, buttons, scale, width, height, title, titleShort, flip
 end

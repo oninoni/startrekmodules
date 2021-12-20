@@ -29,6 +29,7 @@ function SELF:OnCreate(windowData)
 	end
 
 	self.ButtonHeight = windowData.ButtonHeight
+
 	self.MaxN = table.maxn(windowData.Buttons)
 
 	self.Area1YEndAlpha = self.Area1YEnd - self.ButtonHeight
@@ -38,9 +39,8 @@ function SELF:OnCreate(windowData)
 		-- TODO: Add negative ID Conversion here.
 		local id = i
 
-		local successButton, button = Star_Trek.LCARS:GenerateElement("button", self.Id .. "_" .. id, self.Area1Width, self.ButtonHeight,
-			buttonData.Name or "[ERROR]",
-			buttonData.RandomL, buttonData.RandomS,
+		local successButton, button = self:GenerateElement("button", self.Id .. "_" .. id, self.Area1Width, self.ButtonHeight,
+			buttonData.Name or "[ERROR]", buttonData.RandomNumber,
 			buttonData.Color, buttonData.ActiveColor,
 			self.HFlip, not self.HFlip,
 			buttonData.Disabled, buttonData.Selected, false)

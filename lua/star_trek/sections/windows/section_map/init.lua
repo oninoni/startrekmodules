@@ -79,7 +79,7 @@ function SELF:SetObjects(objects)
 			objectTable.Pos[2] = -objectTable.Pos[2]
 
 			if object:IsPlayer() then
-				objectTable.Color = Star_Trek.LCARS.ColorLightRed
+				objectTable.Color = Star_Trek.LCARS.ColorRed
 			else
 				objectTable.Color = Star_Trek.LCARS.ColorBlue
 			end

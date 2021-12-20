@@ -16,7 +16,7 @@
 --          Sections | Index         --
 ---------------------------------------
 
-Star_Trek:RequireModules("util")
+Star_Trek:RequireModules("util", "lcars")
 
 Star_Trek.Sections = Star_Trek.Sections or {}
 

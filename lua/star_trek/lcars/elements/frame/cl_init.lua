@@ -44,11 +44,62 @@ function SELF:Initialize(title, titleShort, color1, color2, hFlip)
 	self.HFlip = hFlip or false
 end
 
+-- Style Changing function to be overridden.
+--
+-- @param String style
+function SELF:ApplyStyle()
+	if self.CurrentStyle == "LCARS_RED" then
+		self.Variants = 3
+
+		return
+	end
+
+	self.Variants = nil
+end
+
 -- Draw a given Variant of the element.
 --
 -- @param Number x
 -- @param Number y
 -- @param Number i
 function SELF:DrawElement(i, x, y)
-	self:DrawFrame(x, y, self.ElementWidth, self.ElementHeight, self.Color1, self.Color2, self.Title, self.TitleShort, self.HFlip)
+	if self.CurrentStyle == "LCARS_RED" then
+		if i == 1 then
+			self:DrawFrame(x, y, self.ElementWidth, self.ElementHeight,
+			Star_Trek.LCARS.ColorRed, Star_Trek.LCARS.ColorWhite,
+			self.Title, self.TitleShort, self.HFlip)
+		elseif i == 2 then
+			self:DrawFrame(x, y, self.ElementWidth, self.ElementHeight,
+			Star_Trek.LCARS.ColorWhite, Star_Trek.LCARS.ColorRed,
+			self.Title, self.TitleShort, self.HFlip)
+		else
+			self:DrawFrame(x, y, self.ElementWidth, self.ElementHeight,
+			Star_Trek.LCARS.ColorWhite, Star_Trek.LCARS.ColorWhite,
+			self.Title, self.TitleShort, self.HFlip)
+		end
+
+		return
+	end
+
+	self:DrawFrame(x, y, self.ElementWidth, self.ElementHeight,
+	self.Color1, self.Color2,
+	self.Title, self.TitleShort, self.HFlip)
+end
+
+local SPEED = 4
+
+function SELF:GetVariant()
+	if self.CurrentStyle == "LCARS_RED" then
+		local delta = ((self.LifeTime * SPEED) % 6)
+
+		if delta < 1 then
+			return 1
+		elseif delta < 2 then
+			return 2
+		else
+			return 3
+		end
+	end
+
+	return 1
 end

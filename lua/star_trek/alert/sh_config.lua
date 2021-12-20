@@ -23,6 +23,7 @@ Star_Trek.Alert.AlertTypes = {
 		Sound = "star_trek.red_alert",
 		Color = Color(255, 0, 0),
 		BridgeDim = true,
+		LCARSStyle = "LCARS_RED",
 	},
 	yellow = {
 		Sound = nil,

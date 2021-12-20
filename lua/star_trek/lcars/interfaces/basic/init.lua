@@ -25,7 +25,7 @@ SELF.BaseInterface = "base"
 
 -- Opening general purpose menus.
 function SELF:Open(ent)
-	local success2, buttons, scale, width, height, title, titleShort = self:GetButtonData(ent)
+	local success2, buttons, scale, width, height, title, titleShort, flip = self:GetButtonData(ent)
 	if not success2 then
 		return false, buttons
 	end
@@ -39,14 +39,17 @@ function SELF:Open(ent)
 		height,
 		function(windowData, interfaceData, buttonId)
 			local keyValues = ent.LCARSKeyData
+
+			if buttonId <= 4 then
+				ent:Fire("FireUser" .. buttonId)
+			end
+
 			if istable(keyValues) and isstring(keyValues["lcars_linked_case"]) then
 				for _, caseEnt in pairs(ents.FindByName(keyValues["lcars_linked_case"])) do
 					if IsValid(caseEnt) then
 						caseEnt:Fire("InValue", buttonId)
 					end
 				end
-			else
-				ent:Fire("FireUser" .. buttonId)
 			end
 
 			if istable(keyValues) and keyValues["lcars_keep_open"] then
@@ -55,12 +58,14 @@ function SELF:Open(ent)
 				return
 			end
 
+			hook.Run("Star_Trek.LCARS.BasicPressed", interfaceData, buttonId)
+
 			ent:EmitSound("star_trek.lcars_close")
 			interfaceData:Close()
 		end,
 		buttons,
 		title,
-		titleShort, true
+		titleShort, not flip
 	)
 	if not success3 then
 		return false, window

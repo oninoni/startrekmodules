@@ -20,14 +20,14 @@
 Star_Trek.LCARS.ColorOrange =     Color(202, 151, 50)
 Star_Trek.LCARS.ColorLightBlue =  Color(53, 164, 192)
 Star_Trek.LCARS.ColorBlue =       Color(50, 112, 179)
-Star_Trek.LCARS.ColorLightRed =   Color(197, 52, 54)
+Star_Trek.LCARS.ColorRed =   Color(197, 52, 54)
 
 -- "Free to use Colors"
 Star_Trek.LCARS.Colors = {
-	Star_Trek.LCARS.ColorOrange,
-	Star_Trek.LCARS.ColorLightBlue,
-	Star_Trek.LCARS.ColorBlue,
-	Star_Trek.LCARS.ColorLightRed
+	["orange"] = Star_Trek.LCARS.ColorOrange,
+	["light_blue"] = Star_Trek.LCARS.ColorLightBlue,
+	["blue"] = Star_Trek.LCARS.ColorBlue,
+	["red"] = Star_Trek.LCARS.ColorRed
 }
 
 -- "Background" or "Border" - Color

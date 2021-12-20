@@ -36,12 +36,11 @@ Variants are:
 5 Selected
 ]]
 
-function SELF:Initialize(text, largeNumber, smallNumber, color, selectedColor, flatLeft, flatRight, disabled, selected, hovered)
+function SELF:Initialize(text, number, color, selectedColor, flatLeft, flatRight, disabled, selected, hovered)
 	SELF.Base.Initialize(self)
 
 	self.Text = text or ""
-	self.LargeNumber = self:ConvertLargeNumber(largeNumber or math.random(0, 999999))
-	self.SmallNumber = self:ConvertSmallNumber(smallNumber or math.random(0, 99))
+	self.Number = self:ConvertNumber(number)
 
 	self.FlatLeft = flatLeft or false
 	self.FlatRight = flatRight or false
@@ -53,6 +52,12 @@ function SELF:Initialize(text, largeNumber, smallNumber, color, selectedColor, f
 	self.Hovered = hovered or false
 end
 
+-- Style Changing function to be overridden.
+--
+-- @param String style
+function SELF:ApplyStyle()
+end
+
 -- Draw a given Variant of the element.
 --
 -- @param Number x
@@ -60,8 +65,17 @@ end
 -- @param Number i
 function SELF:DrawElement(i, x, y)
 	color = self.Color
+	
+	if self.CurrentStyle == "LCARS_RED" then
+		color = Star_Trek.LCARS.ColorWhite
+	end
+
 	if i > 3 then
-		color = self.SelectedColor
+		if self.CurrentStyle == "LCARS_RED" then
+			color = Star_Trek.LCARS.ColorRed
+		else
+			color = self.SelectedColor
+		end
 	elseif i == 1 then
 		color = Star_Trek.LCARS.ColorGrey
 	end
@@ -71,8 +85,10 @@ function SELF:DrawElement(i, x, y)
 		borderColor = Star_Trek.LCARS.ColorWhite
 	end
 
-	self:DrawButton(x, y, color, borderColor, self.Text, self.FlatLeft, self.FlatRight, self.LargeNumber, self.SmallNumber, 2)
+	self:DrawButton(x, y, color, borderColor, self.Text, self.FlatLeft, self.FlatRight, self.Number, 2)
 end
+
+local SPEED = 4
 
 -- Returns the current variant of the button.
 --
@@ -84,8 +100,20 @@ function SELF:GetVariant()
 
 	local variant = 2
 	if self.Selected then
-		variant = variant + 2
+		variant = 4
+	elseif self.CurrentStyle == "LCARS_RED" then
+		if self.Color == Star_Trek.LCARS.ColorOrange then
+			variant = 4
+		elseif self.Color == Star_Trek.LCARS.ColorRed then
+			local delta = ((self.LifeTime * SPEED) % 2)
+			if delta > 1 then
+				variant = 4
+			end
+		end
 	end
+
+	
+
 	if not self.Hovered then
 		variant = variant + 1
 	end

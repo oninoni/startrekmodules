@@ -33,32 +33,8 @@ hook.Add("Star_Trek.ChangedKeyValue", "Testing", function(ent, key, value)
 end)
 ]]
 
---[[
-local skip = true
-
-local convar = CreateConVar("star_trek_enable", "0")
-if convar:GetBool() then
-	skip = false
-end
-
-local detectMapStrings = {
-	"rp_voyager",
-	"rp_intrepid_v",
-	"rp_intrepid_dev_v",
-}
-for _, mapString in pairs(detectMapStrings) do
-	if string.StartWith(game.GetMap(), mapString) then
-		skip = false
-		continue
-	end
-end
-
-if skip then return end
-]]
-
 -- TODO: Rework all "if not success", to display the Error properly. (Mostly Net, Hook and Clientside Errors)
 -- TODO: Check if all errors are caught.
--- TODO: LCARS Alert Animation Rework
 
 Star_Trek = Star_Trek or {}
 Star_Trek.Modules = Star_Trek.Modules or {}
