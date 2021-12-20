@@ -45,12 +45,13 @@ function SELF:Draw()
 
 	for i = 1, self.Variants do
 		local y = (self.ElementHeight + 1) * (i - 1)
+
 		self:DrawElement(i, 0, y)
 	end
 end
 
--- Generate the element and prepare material / texture.
-function SELF:Initialize()
+-- Generate the texture.
+function SELF:GenerateTexture()
 	local width = self.ElementWidth
 	local height = self.ElementHeight + 1
 
@@ -64,10 +65,53 @@ function SELF:Initialize()
 		["$translucent"] = 1,
 		["$vertexalpha"] = 1
 	})
-
+	
 	self.U = width / self.Width
 	self.V1 = height / self.Height
 	self.V2 = (height - 1) / self.Height
+
+	local oldW, oldH = ScrW(), ScrH()
+	render.SetViewPort(0, 0, self.Width, self.Height)
+
+	render.PushRenderTarget(self.Texture)
+	cam.Start2D()
+		self:Draw()
+	cam.End2D()
+	render.PopRenderTarget()
+
+	render.SetViewPort(0, 0, oldW, oldH)
+end
+
+-- Generate the element and prepare material / texture.
+function SELF:Initialize()
+	self:ApplyStyle()
+
+	self.LifeTime = 0
+end
+
+-- Style Changing function to be overridden.
+--
+-- @param String style
+function SELF:ApplyStyle()
+end
+
+-- Function, that allows you to set the current style of the menu.
+-- 
+-- @param String style
+function SELF:SetStyle(style)
+	if self.CurrentStyle == style then
+		return
+	end
+
+	self.CurrentStyle = style
+
+	self:ApplyStyle()
+	self:GenerateTexture()
+end
+
+-- Think hook.
+function SELF:OnThink()
+	self.LifeTime = self.LifeTime + FrameTime()
 end
 
 -- Return the current variant of the object.

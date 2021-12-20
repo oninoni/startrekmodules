@@ -57,7 +57,7 @@ function SELF:GetModeButtons(mode)
 			[6] = "Disable Alert",
 		}
 		actionColors = {
-			[1] = Star_Trek.LCARS.ColorLightRed,
+			[1] = Star_Trek.LCARS.ColorRed,
 			[2] = Star_Trek.LCARS.ColorOrange,
 			[6] = Star_Trek.LCARS.ColorOrange,
 		}
@@ -129,7 +129,7 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 
 					textWindow:AddLine("Lifeform found in " .. sectionName)
 				end
-				textWindow:AddLine("Total: " .. table.Count(entities) .. " Lifeforms found.", Star_Trek.LCARS.ColorLightRed)
+				textWindow:AddLine("Total: " .. table.Count(entities) .. " Lifeforms found.", Star_Trek.LCARS.ColorRed)
 				textWindow:AddLine("")
 				textWindow:Update()
 
@@ -147,7 +147,7 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 
 					textWindow:AddLine("Object found in " .. sectionName)
 				end
-				textWindow:AddLine("Total: " .. table.Count(entities) .. " Non-Lifeforms found.", Star_Trek.LCARS.ColorLightRed)
+				textWindow:AddLine("Total: " .. table.Count(entities) .. " Non-Lifeforms found.", Star_Trek.LCARS.ColorRed)
 				textWindow:AddLine("")
 				textWindow:Update()
 
@@ -176,7 +176,7 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 				end
 				textWindow:AddLine("Total: " .. lifeforms .. " Lifeforms found.", Star_Trek.LCARS.ColorOrange)
 				textWindow:AddLine("Total: " .. objects .. " Non-Lifeforms found.", Star_Trek.LCARS.ColorOrange)
-				textWindow:AddLine("Total: " .. lifeforms + objects .. " Objects found.", Star_Trek.LCARS.ColorLightRed)
+				textWindow:AddLine("Total: " .. lifeforms + objects .. " Objects found.", Star_Trek.LCARS.ColorRed)
 				textWindow:AddLine("")
 				textWindow:Update()
 
@@ -206,7 +206,7 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 				mapWindow:SetObjects(doors)
 				mapWindow:Update()
 
-				textWindow:AddLine("Total: " .. table.Count(doors) .. " Doors locked.", Star_Trek.LCARS.ColorLightRed)
+				textWindow:AddLine("Total: " .. table.Count(doors) .. " Doors locked.", Star_Trek.LCARS.ColorRed)
 				textWindow:AddLine("")
 				textWindow:Update()
 
@@ -234,7 +234,7 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 				mapWindow:SetObjects(doors)
 				mapWindow:Update()
 
-				textWindow:AddLine("Total: " .. table.Count(doors) .. " Doors unlocked.", Star_Trek.LCARS.ColorLightRed)
+				textWindow:AddLine("Total: " .. table.Count(doors) .. " Doors unlocked.", Star_Trek.LCARS.ColorRed)
 				textWindow:AddLine("")
 				textWindow:Update()
 
@@ -261,7 +261,7 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 				mapWindow:SetObjects(objects)
 				mapWindow:Update()
 
-				textWindow:AddLine("Total: " .. table.Count(forceFieldPositions) .. " Forcefields enabled.", Star_Trek.LCARS.ColorLightRed)
+				textWindow:AddLine("Total: " .. table.Count(forceFieldPositions) .. " Forcefields enabled.", Star_Trek.LCARS.ColorRed)
 				textWindow:AddLine("")
 				textWindow:Update()
 
@@ -288,7 +288,7 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 				mapWindow:SetObjects(objects)
 				mapWindow:Update()
 
-				textWindow:AddLine("Total: " .. table.Count(forceFieldPositions) .. " Forcefields disabled.", Star_Trek.LCARS.ColorLightRed)
+				textWindow:AddLine("Total: " .. table.Count(forceFieldPositions) .. " Forcefields disabled.", Star_Trek.LCARS.ColorRed)
 				textWindow:AddLine("")
 				textWindow:Update()
 
@@ -335,7 +335,7 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 
 				textWindow:AddLine("Total: " .. table.Count(doors) .. " Doors unlocked.", Star_Trek.LCARS.ColorOrange)
 				textWindow:AddLine("Total: " .. table.Count(forceFieldPositions) .. " Forcefields disabled.", Star_Trek.LCARS.ColorOrange)
-				textWindow:AddLine("Total: " .. table.Count(forceFieldPositions) + table.Count(doors) .. " Security Measures disabled.", Star_Trek.LCARS.ColorLightRed)
+				textWindow:AddLine("Total: " .. table.Count(forceFieldPositions) + table.Count(doors) .. " Security Measures disabled.", Star_Trek.LCARS.ColorRed)
 				textWindow:AddLine("")
 				textWindow:Update()
 
@@ -345,7 +345,7 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 			elseif buttonName == "Red Alert" then
 				Star_Trek.Alert:Enable("red")
 
-				textWindow:AddLine("RED ALERT!", Star_Trek.LCARS.ColorLightRed)
+				textWindow:AddLine("RED ALERT!", Star_Trek.LCARS.ColorRed)
 				textWindow:AddLine("")
 				textWindow:Update()
 
@@ -425,7 +425,7 @@ function SELF:CreateMenuWindow(pos, ang, width, actionPos, actionAng, actionWidt
 	local modeCount = #modes
 	local utilButtonData = {
 		Name = "Disable Console",
-		Color = Star_Trek.LCARS.ColorLightRed,
+		Color = Star_Trek.LCARS.ColorRed,
 	}
 	buttons[modeCount + 3] = utilButtonData
 

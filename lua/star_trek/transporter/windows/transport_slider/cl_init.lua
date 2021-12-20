@@ -18,6 +18,11 @@
 
 local SELF = WINDOW
 function SELF:OnCreate(windowData)
+	local successBase = SELF.Base.OnCreate(self, windowData)
+	if not successBase then
+		return false
+	end
+
 	local height = self.WHeight
 
 	self.State = -height / 2

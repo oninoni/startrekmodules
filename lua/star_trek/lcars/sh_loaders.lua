@@ -28,6 +28,7 @@
 -- @return? String error
 function Star_Trek.LCARS:LoadElement(elementDirectory, elementName)
 	ELEMENT = {}
+	ELEMENT.Class = elementName
 
 	local success = pcall(function()
 		AddCSLuaFile(elementDirectory .. "/" .. elementName .. "/cl_init.lua")
@@ -94,6 +95,7 @@ end
 -- @return? String error
 function Star_Trek.LCARS:LoadWindow(windowDirectory, windowName)
 	WINDOW = {}
+	WINDOW.Class = windowName
 
 	local success = pcall(function()
 		AddCSLuaFile(windowDirectory .. "/" .. windowName .. "/shared.lua")
@@ -167,6 +169,7 @@ if SERVER then
 	-- @return? Table interface <- TODO
 	function Star_Trek.LCARS:LoadInterface(interfaceDirectory, interfaceName)
 		INTERFACE = {}
+		INTERFACE.Class = interfaceName
 
 		local success = pcall(function()
 			include(interfaceDirectory .. "/" .. interfaceName .. "/init.lua")

@@ -31,7 +31,6 @@ function SELF:OnCreate(windowData)
 		return false
 	end
 
-
 	self.Selected = windowData.Selected
 	self.Categories = windowData.Categories
 
@@ -59,7 +58,7 @@ function SELF:OnCreate(windowData)
 		rowData.YEnd = rowData.Y + self.CategoryButtonHeight
 
 		for butId, categoryData in pairs(rowData.Categories) do
-			local successButton, button = Star_Trek.LCARS:GenerateElement("button", self.Id .. "_" .. rowId .. "_" .. butId, rowData.Width, self.CategoryButtonHeight,
+			local successButton, button = self:GenerateElement("button", self.Id .. "_" .. rowId .. "_" .. butId, rowData.Width, self.CategoryButtonHeight,
 				categoryData.Name or "[ERROR]", nil,
 				categoryData.Color, Star_Trek.LCARS.ColorOrange,
 				butId > 1, butId < rowData.N,

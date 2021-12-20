@@ -143,7 +143,7 @@ function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPattern
 			table.insert(Star_Trek.Transporter.Buffer.Entities, ent)
 			self:BeamObject(ent, Vector(), ent.Pad, nil, true)
 			textWindow:AddLine("Dematerialising Object...") -- TODO: Sensor Detection of ent Type (Sensors Module)
-			textWindow:AddLine("Warning: No Target Pattern Available! Storing in Buffer!", Star_Trek.LCARS.ColorLightRed)
+			textWindow:AddLine("Warning: No Target Pattern Available! Storing in Buffer!", Star_Trek.LCARS.ColorRed)
 		end
 	end
 

@@ -26,7 +26,7 @@ function SELF:OnCreate(title, titleShort, hFlip)
 
 	self.Color1 = Star_Trek.LCARS.ColorOrange
 	self.Color2 = Star_Trek.LCARS.ColorBlue
-	self.Color3 = Star_Trek.LCARS.ColorLightRed
+	self.Color3 = Star_Trek.LCARS.ColorRed
 	self.Color4 = Star_Trek.LCARS.ColorBlue
 
 	return true
