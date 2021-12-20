@@ -40,7 +40,7 @@ function SELF:Open(ent)
 		function(windowData, interfaceData, buttonId)
 			local keyValues = ent.LCARSKeyData
 
-			if buttonId < 4 then
+			if buttonId <= 4 then
 				ent:Fire("FireUser" .. buttonId)
 			end
 
