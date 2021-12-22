@@ -83,7 +83,6 @@ local rt = GetRenderTarget("TransporterFadeRT", ScrW(), ScrH())
 local tex = GetRenderTarget("TransporterFadeTexture", ScrW(), ScrH())
 local mat = CreateMaterial("TransporterFade", "UnlitGeneric", {
     ["$basetexture"] = tex:GetName(),
-    --["$translucent"] = "1",
     ["$vertexalpha"] = "1",
     ["$vertexcolor"] = "1",
 });
