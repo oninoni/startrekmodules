@@ -19,7 +19,6 @@
 Star_Trek.Transporter.ActiveTransports = Star_Trek.Transporter.ActiveTransports or {}
 
 util.AddNetworkString("Star_Trek.Transporter.TriggerEffect")
-util.AddNetworkString("Star_Trek.Transporter.TriggerPlayerEffect")
 
 -- Applies the serverside effects to the entity depending on the current state of the transport cycle.
 --
@@ -58,11 +57,6 @@ function Star_Trek.Transporter:TriggerEffect(transportData, ent)
 			child:SetColor(Color(255, 255, 255, 0))
 		end
 
-		if ent:IsPlayer() then
-			net.Start("Star_Trek.Transporter.TriggerPlayerEffect")
-				net.WriteBool(true)
-			net.Send(ent)
-		end
 	elseif mode == 2 then
 		ent:SetRenderMode(RENDERMODE_NONE)
 
@@ -75,12 +69,6 @@ function Star_Trek.Transporter:TriggerEffect(transportData, ent)
 		ent:SetRenderMode(RENDERMODE_TRANSTEXTURE)
 
 		ent:SetPos((transportData.TargetPos or ent:GetPos()) + Vector(0, 0, transportData.ZOffset))
-
-		if ent:IsPlayer() then
-			net.Start("Star_Trek.Transporter.TriggerPlayerEffect")
-				net.WriteBool(false)
-			net.Send(ent)
-		end
 	else
 		if transportData.OldColor ~= nil then
 			ent:SetColor(transportData.OldColor)
@@ -137,7 +125,7 @@ end
 -- @param Entity ent
 -- @param Boolean remat
 -- @param? Boolean replicator
-function Star_Trek.Transporter:BroadcastEffect(ent, remat, replicator)
+function Star_Trek.Transporter:BroadcastEffect(ent, remat, replicator, targetPos)
 	if not IsValid(ent) then return end
 
 	local oldCollisionGroup = ent:GetCollisionGroup()
@@ -163,6 +151,7 @@ function Star_Trek.Transporter:BroadcastEffect(ent, remat, replicator)
 			net.WriteEntity(ent)
 			net.WriteBool(remat)
 			net.WriteBool(replicator)
+			net.WriteVector(targetPos)
 		net.Broadcast()
 	end)
 end
@@ -203,7 +192,7 @@ function Star_Trek.Transporter:BeamObject(ent, targetPos, sourcePad, targetPad, 
 		transportData.ToBuffer = false
 	else
 		self:TriggerEffect(transportData, ent)
-		self:BroadcastEffect(ent, false, replicator)
+		self:BroadcastEffect(ent, false, replicator, Star_Trek.Transporter.Buffer.Pos)
 	end
 
 	table.insert(self.ActiveTransports, transportData)
@@ -248,7 +237,7 @@ hook.Add("Think", "Star_Trek.Tranporter.Think", function()
 				-- Object will now be removed from the buffer.
 				Star_Trek.Transporter:TriggerEffect(transportData, ent)
 
-				Star_Trek.Transporter:BroadcastEffect(ent, true, transportData.Replicator)
+				Star_Trek.Transporter:BroadcastEffect(ent, true, transportData.Replicator, Star_Trek.Transporter.Buffer.Pos)
 
 				transportData.StateTime = curTime
 
