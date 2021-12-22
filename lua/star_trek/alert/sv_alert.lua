@@ -95,3 +95,7 @@ function Star_Trek.Alert:Disable()
 
 	return true
 end
+
+hook.Add("PostCleanupMap", "Star_Trek.Alert.Cleanup", function()
+	Star_Trek.Alert:Disable()
+end)
