@@ -187,7 +187,6 @@ timer.Create("Star_Trek.Transporter.BufferThink", 1, 0, function()
 			end
 		end
 
-		print(ent, ent.BufferQuality)
 		ent.BufferQuality = ent.BufferQuality - 1
 
 		if ent.BufferQuality < 100 then
