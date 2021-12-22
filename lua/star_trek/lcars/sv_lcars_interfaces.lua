@@ -96,6 +96,17 @@ function Star_Trek.LCARS:OpenInterface(ply, triggerEntity, interfaceName, ...)
 	return true
 end
 
+hook.Add("PlayerInitialSpawn", "Star_Trek.LCARS.Sync", function(ply)
+	for ent, interfaceData in pairs(Star_Trek.LCARS.ActiveInterfaces) do
+		local clientInterfaceData = Star_Trek.LCARS:GetClientInterfaceData(interfaceData)
+
+		net.Start("Star_Trek.LCARS.Open")
+			net.WriteInt(ent:EntIndex(), 32)
+			net.WriteTable(clientInterfaceData)
+		net.Send(ply)
+	end
+end)
+
 ------------------------
 --      Closing       --
 ------------------------
