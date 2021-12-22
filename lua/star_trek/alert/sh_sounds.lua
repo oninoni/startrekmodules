@@ -28,7 +28,7 @@ sound.Add({
 sound.Add({
 	name = "star_trek.red_alert",
 	channel = CHAN_AUTO,
-	volume = 1,
+	volume = .5,
 	level = 0,
 	pitch = 100,
 	sound = "oninoni/startrek/alert/voy_redalert.wav",
