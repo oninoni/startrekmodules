@@ -16,9 +16,6 @@
 --     LCARS Section Map | Client    --
 ---------------------------------------
 
-local MAP_SCALE = 5
-local MAP_OFFSET_X = 0
-local MAP_OFFSET_Y = 0
 local MAP_TIME = 20
 local MARK_TIME = 4
 
@@ -32,7 +29,16 @@ function SELF:OnCreate(windowData)
 		return false
 	end
 
-	self.Sections = windowData.Sections
+	self.Scale = 0.2
+
+	local successMap, mapElement = self:GenerateElement("map", self.Id .. "_", self.Area1Width, self.Area1Height,
+		windowData.Sections, self.Scale
+	)
+	if not successMap then
+		return false, mapElement
+	end
+	self.MapElement = mapElement
+
 	self.Objects = windowData.Objects
 	self.LastObjectTime = CurTime()
 
@@ -40,65 +46,32 @@ function SELF:OnCreate(windowData)
 end
 
 function SELF:OnDraw(pos, animPos)
-	cam.End3D2D()
-	cam.Start3D2D(self.WPosG, self.WAngG, 1 / (self.WScale * MAP_SCALE))
-
 	local alpha = 255 * animPos
-	local lcars_border = ColorAlpha(Star_Trek.LCARS.ColorLightBlue, alpha)
-	local lcars_selected = ColorAlpha(Star_Trek.LCARS.ColorOrange, alpha)
-	local lcars_inactive = ColorAlpha(Star_Trek.LCARS.ColorBlue, alpha)
-
-	for _, sectionData in pairs(self.Sections) do
-		for _, areaData in pairs(sectionData.Areas) do
-			local x = areaData.Pos[1] + MAP_OFFSET_X
-			local y = areaData.Pos[2] + MAP_OFFSET_Y
-			local width = areaData.Width
-			local height = areaData.Height
-
-			draw.RoundedBox(0, x - 1 * MAP_SCALE, y - 1 * MAP_SCALE, width + 2 * MAP_SCALE, height + 2 * MAP_SCALE, lcars_border)
-		end
-	end
-
-	for _, sectionData in pairs(self.Sections) do
-		for _, areaData in pairs(sectionData.Areas) do
-			local x = areaData.Pos[1] + MAP_OFFSET_X
-			local y = areaData.Pos[2] + MAP_OFFSET_Y
-			local width = areaData.Width
-			local height = areaData.Height
-
-			draw.RoundedBox(0, x, y, width, height, sectionData.Selected and lcars_selected or lcars_inactive)
-		end
-	end
-
 	local diff = CurTime() - self.LastObjectTime
 	for i, object in pairs(self.Objects) do
 		local timeOffset = diff - (i - 1) * 0.2
 		if timeOffset > 0 then
-			local x = object.Pos[1] + MAP_OFFSET_X
-			local y = object.Pos[2] + MAP_OFFSET_Y
-
-			local markTime = MARK_TIME - timeOffset
-			if timeOffset < MARK_TIME then
-				if not object.SoundPlayed then
-					EmitSound("star_trek.lcars_beep2", Vector(), self.Interface.Ent:EntIndex())
-					object.SoundPlayed = true
-				end
-
-				local markAlpha = math.min(1, markTime) * alpha
-				draw.RoundedBox(0, -self.WD2 * MAP_SCALE, y - 2, self.WWidth * MAP_SCALE, 4, ColorAlpha(lcars_border, markAlpha))
-				draw.RoundedBox(0, x - 2, -self.HD2 * MAP_SCALE, 4, self.WHeight * MAP_SCALE, ColorAlpha(lcars_border, markAlpha))
+			if not object.SoundPlayed then
+				EmitSound("star_trek.lcars_beep2", Vector(), self.Interface.Ent:EntIndex())
+				object.SoundPlayed = true
 			end
 
-			local mapTime = MAP_TIME - timeOffset
-			local objectAlpha = math.min(1, mapTime) * alpha
+			local x = math.floor(object.Pos[1] * self.Scale + self.Area1X + self.Area1Width  / 2)
+			local y = math.floor(object.Pos[2] * self.Scale + self.Area1Y + self.Area1Height / 2)
+			
+			if timeOffset < MARK_TIME then
+				local markAlpha = math.min(1, MARK_TIME - timeOffset) * alpha
 
-			draw.RoundedBox(16, x - 16, y - 16, 32, 32, ColorAlpha(Star_Trek.LCARS.ColorBlack, objectAlpha))
-			draw.RoundedBox(15, x - 15, y - 15, 30, 30, ColorAlpha(object.Color, objectAlpha))
+				draw.RoundedBox(0, self.Area1X, y - 1, self.Area1Width, 2, ColorAlpha(Star_Trek.LCARS.ColorLightBlue, markAlpha))
+				draw.RoundedBox(0, x - 1, self.Area1Y, 2, self.Area1Height, ColorAlpha(Star_Trek.LCARS.ColorLightBlue, markAlpha))
+			end
+
+			local objectAlpha = math.min(1, MAP_TIME - timeOffset) * alpha
+			draw.RoundedBox(3, x - 3, y - 3, 6, 6, ColorAlpha(object.Color, objectAlpha))
 		end
 	end
 
-	cam.End3D2D()
-	cam.Start3D2D(self.WPosG, self.WAngG, 1 / self.WScale)
+	self.MapElement:Render(self.Area1X, self.Area1Y)
 
 	SELF.Base.OnDraw(self, pos, animPos)
 end
