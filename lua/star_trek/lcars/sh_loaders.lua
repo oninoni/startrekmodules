@@ -103,7 +103,6 @@ function Star_Trek.LCARS:LoadWindow(windowDirectory, windowName)
 	WINDOW.Class = windowName
 
 	local success = pcall(function()
-
 		if SERVER then
 			AddCSLuaFile(windowDirectory .. windowName .. "/shared.lua")
 			AddCSLuaFile(windowDirectory .. windowName .. "/cl_init.lua")
@@ -113,6 +112,7 @@ function Star_Trek.LCARS:LoadWindow(windowDirectory, windowName)
 		end
 
 		if CLIENT then
+			include(windowDirectory .. windowName .. "/shared.lua")
 			include(windowDirectory .. windowName .. "/cl_init.lua")
 		end
 	end)
@@ -128,6 +128,7 @@ function Star_Trek.LCARS:LoadWindow(windowDirectory, windowName)
 		timer.Simple(0, function()
 			local baseWindow = self.Windows[baseWindowClass]
 			if istable(baseWindow) then
+				print("Setting Base", windowName, baseWindowClass)
 				self.Windows[windowName].Base = baseWindow
 				setmetatable(self.Windows[windowName], {__index = baseWindow})
 			else
