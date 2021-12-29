@@ -44,6 +44,7 @@ function SELF:Open(ent)
 	local width = keyValues["lcars_width"]
 	local height = keyValues["lcars_height"] or 35
 	local title = keyValues["lcars_title"] or "Select Mode"
+	title = string.Replace(title, "@", " ")
 
 	local w = 16
 	local h = height

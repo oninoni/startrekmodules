@@ -46,6 +46,8 @@ function SELF:GetKeyValues(keyValues, buttons)
 	local height = tonumber(keyValues["lcars_height"])
 	local flip = tobool(keyValues["lcars_flip"]) or false
 	local title = keyValues["lcars_title"]
+	title = string.Replace(title, "@", " ")
+	
 	local titleShort = keyValues["lcars_title_short"]
 	if not titleShort then
 		titleShort = ""
