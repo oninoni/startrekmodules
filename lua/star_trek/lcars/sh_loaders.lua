@@ -31,10 +31,15 @@ function Star_Trek.LCARS:LoadElement(elementDirectory, elementName)
 	ELEMENT.Class = elementName
 
 	local success = pcall(function()
-		AddCSLuaFile(elementDirectory .. "/" .. elementName .. "/cl_init.lua")
+		if SERVER then
+			local elementFiles, _ = file.Find(elementDirectory .. elementName .. "/*", "LUA")
+			for _, elementFile in pairs(elementFiles) do
+				AddCSLuaFile(elementDirectory .. elementName .. "/" .. elementFile)
+			end
+		end
 
 		if CLIENT then
-			include(elementDirectory .. "/" .. elementName .. "/cl_init.lua")
+			include(elementDirectory .. elementName .. "/cl_init.lua")
 		end
 	end)
 	if not success then
@@ -98,16 +103,17 @@ function Star_Trek.LCARS:LoadWindow(windowDirectory, windowName)
 	WINDOW.Class = windowName
 
 	local success = pcall(function()
-		AddCSLuaFile(windowDirectory .. "/" .. windowName .. "/shared.lua")
-		include(windowDirectory .. "/" .. windowName .. "/shared.lua")
 
 		if SERVER then
-			AddCSLuaFile(windowDirectory .. "/" .. windowName .. "/cl_init.lua")
-			include(windowDirectory .. "/" .. windowName .. "/init.lua")
+			AddCSLuaFile(windowDirectory .. windowName .. "/shared.lua")
+			AddCSLuaFile(windowDirectory .. windowName .. "/cl_init.lua")
+
+			include(windowDirectory .. windowName .. "/shared.lua")
+			include(windowDirectory .. windowName .. "/init.lua")
 		end
 
 		if CLIENT then
-			include(windowDirectory .. "/" .. windowName .. "/cl_init.lua")
+			include(windowDirectory .. windowName .. "/cl_init.lua")
 		end
 	end)
 	if not success then
@@ -172,7 +178,7 @@ if SERVER then
 		INTERFACE.Class = interfaceName
 
 		local success = pcall(function()
-			include(interfaceDirectory .. "/" .. interfaceName .. "/init.lua")
+			include(interfaceDirectory .. interfaceName .. "/init.lua")
 		end)
 		if not success then
 			return false, "Cannot load LCARS Interface Class \"" .. interfaceName .. "\""
