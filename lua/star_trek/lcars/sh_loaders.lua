@@ -128,7 +128,6 @@ function Star_Trek.LCARS:LoadWindow(windowDirectory, windowName)
 		timer.Simple(0, function()
 			local baseWindow = self.Windows[baseWindowClass]
 			if istable(baseWindow) then
-				print("Setting Base", windowName, baseWindowClass)
 				self.Windows[windowName].Base = baseWindow
 				setmetatable(self.Windows[windowName], {__index = baseWindow})
 			else
