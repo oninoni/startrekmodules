@@ -118,6 +118,8 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 			-------- Scan --------
 			if buttonName == "Scan Lifeforms" then
 				local entities = Star_Trek.Sections:GetInSections(deck, sectionIds, function(objects, ent)
+					if ent:GetClass() == "force_field" then return true end
+
 					if not hook.Run("Star_Trek.Util.IsLifeForm", ent) then return true end
 				end)
 
@@ -136,6 +138,8 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 				return true
 			elseif buttonName == "Scan Objects" then
 				local entities = Star_Trek.Sections:GetInSections(deck, sectionIds, function(objects, ent)
+					if ent:GetClass() == "force_field" then return true end
+
 					if hook.Run("Star_Trek.Util.IsLifeForm", ent) then return true end
 				end)
 
@@ -156,7 +160,9 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 
 				return true
 			elseif buttonName == "Scan All" then
-				local entities = Star_Trek.Sections:GetInSections(deck, sectionIds)
+				local entities = Star_Trek.Sections:GetInSections(deck, sectionIds, function(objects, ent)
+					if ent:GetClass() == "force_field" then return true end
+				end)
 
 				mapWindow:SetObjects(entities)
 				mapWindow:Update()
