@@ -71,6 +71,7 @@ function SELF:OnDraw(pos, animPos)
 		end
 	end
 
+	surface.SetDrawColor(255, 255, 255, alpha)
 	self.MapElement:Render(self.Area1X, self.Area1Y)
 
 	SELF.Base.OnDraw(self, pos, animPos)
