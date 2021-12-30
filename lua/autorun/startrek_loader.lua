@@ -164,6 +164,8 @@ function Star_Trek:LoadAllModules()
 			self:LoadModule(moduleName)
 		end
 	end
+	
+	hook.Run("Star_Trek.ModulesLoaded")
 
 	self.LoadingActive = nil
 end
