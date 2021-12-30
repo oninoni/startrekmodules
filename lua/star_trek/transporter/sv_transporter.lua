@@ -17,14 +17,17 @@
 ---------------------------------------
 
 -- TODO: Check if transport in Progress at target location (No 2 Beams at the same pos at the same time.)
+-- TODO: Remove map based Transporter buffer and replace with simulated one (For upport with more maps.)
 
 local setupBuffer = function()
+	Star_Trek.Transporter.Buffer = {
+		Entities = {},
+		Pos = Vector(),
+	}
+
 	for _, ent in pairs(ents.GetAll()) do
 		if string.StartWith(ent:GetName(), "beamBuffer") then
-			Star_Trek.Transporter.Buffer = {
-				Entities = {},
-				Pos = ent:GetPos(),
-			}
+			Star_Trek.Transporter.Buffer.Pos = ent:GetPos()
 
 			return
 		end
