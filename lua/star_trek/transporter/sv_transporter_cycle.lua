@@ -59,6 +59,8 @@ function Star_Trek.Transporter:TriggerEffect(transportData, ent)
 
 	elseif mode == 2 then
 		ent:SetRenderMode(RENDERMODE_NONE)
+		
+		ent:SetCollisionGroup(transportData.OldCollisionGroup)
 
 		transportData.OldMoveType = ent:GetMoveType()
 		ent:SetMoveType(MOVETYPE_NONE)
@@ -67,6 +69,8 @@ function Star_Trek.Transporter:TriggerEffect(transportData, ent)
 		ent:SetColor(ColorAlpha(transportData.OldColor, 0))
 	elseif mode == 3 then
 		ent:SetRenderMode(RENDERMODE_TRANSTEXTURE)
+		
+		ent:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
 
 		ent:SetPos((transportData.TargetPos or ent:GetPos()) + Vector(0, 0, transportData.ZOffset))
 	else
@@ -127,6 +131,8 @@ end
 -- @param? Boolean replicator
 function Star_Trek.Transporter:BroadcastEffect(ent, remat, replicator, targetPos)
 	if not IsValid(ent) then return end
+
+	targetPos = targetPos or Vector()
 
 	local oldCollisionGroup = ent:GetCollisionGroup()
 	ent:SetCollisionGroup(COLLISION_GROUP_NONE)

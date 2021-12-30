@@ -107,8 +107,7 @@ hook.Add("RenderScreenspaceEffects", "Star_Trek.Transporter.Effect", function()
 		surface.SetMaterial(mat)
 		surface.DrawTexturedRect(-1, -1, ScrW()+1, ScrH()+1)
 		
-		DrawMaterialOverlay("effects/water_warp01", Star_Trek.Transporter.SelfRefrac)
-		draw.RoundedBox(0, 0, 0, ScrW(), ScrH(), Color(31, 127, 255, Star_Trek.Transporter.SelfRefrac * 64) )
+		DrawMaterialOverlay("effects/water_warp01", Star_Trek.Transporter.SelfRefrac * 0.1)
 	end
 end)
 
@@ -194,18 +193,6 @@ hook.Add("PostDrawTranslucentRenderables", "Voyager.Transporter.MainRender", fun
 			drawFlare(pos + upHeight * maxEffectProgress, vec, size)
 			drawFlare(pos - (upHeight * maxEffectProgress + Vector(0, 0, 0.3)), vec, smallSize)
 			drawFlare(pos + (upHeight * maxEffectProgress + Vector(0, 0, 0.3)), vec, smallSize)
-
-			local dLight = DynamicLight(ent:EntIndex(), false)
-			if ( dLight ) then
-				dLight.pos = ent:GetPos()
-				dLight.r = 31
-				dLight.g = 127
-				dLight.b = 255
-				dLight.brightness = 1
-				dLight.Decay = 1000
-				dLight.Size = 512 * (maxAlpha + midAlpha)
-				dLight.DieTime = CurTime() + 1
-			end
 		end
 
 		if transportData.AnimPos > 1.3 then
