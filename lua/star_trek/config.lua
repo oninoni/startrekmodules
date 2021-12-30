@@ -33,3 +33,26 @@ Star_Trek.Modules["alert"] = true
 
 Star_Trek.Modules["holodeck"] = true
 Star_Trek.Modules["sensors"] = true
+
+--[[
+Name Pun Ideas:
+
+ONI
+Oni's Neverending Inventions
+
+STOP
+Star Trek - Oni's Pack
+
+Oni's Trek Technology Operation
+OTTO
+
+STG
+Star Trek GMod 
+
+STT
+Star Trek Technologies
+
+STM
+Star Trek Modules
+
+]]
