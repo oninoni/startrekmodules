@@ -13,7 +13,7 @@
 ---------------------------------------
 
 ---------------------------------------
---          Sensors | Shared         --
+--          Sensors | Server         --
 ---------------------------------------
 
 -- TODO Hook to detect Crew Members / Unknowns (Sensors Module)

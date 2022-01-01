@@ -13,14 +13,6 @@
 ---------------------------------------
 
 ---------------------------------------
---          Sensors | Index          --
+--     Internal Sensors | Server     --
 ---------------------------------------
 
-Star_Trek:RequireModules()
-
-Star_Trek.Sensors = Star_Trek.Sensors or {}
-
-if SERVER then
-	include("sv_sensors.lua")
-	include("sv_internal.lua")
-end
