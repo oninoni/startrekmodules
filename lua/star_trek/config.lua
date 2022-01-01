@@ -27,7 +27,6 @@ Star_Trek.Modules["sections"] = true
 Star_Trek.Modules["turbolift"] = true
 Star_Trek.Modules["transporter"] = true
 Star_Trek.Modules["replicator"] = true
-Star_Trek.Modules["damage"] = true
 Star_Trek.Modules["security"] = true
 Star_Trek.Modules["alert"] = true
 
