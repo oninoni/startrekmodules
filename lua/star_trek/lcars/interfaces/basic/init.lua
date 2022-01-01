@@ -76,8 +76,7 @@ end
 
 -- Detect updates in "lcars_name_i", "lcars_disabled_i".
 hook.Add("Star_Trek.ChangedKeyValue", "Star_Trek.LCARS.BasicInterface", function(ent, key, value)
-	if string.StartWith(key, "lcars_name_") or string.StartWith(key, "lcars_disabled_") then
-
+	if string.StartWith(key, "lcars_name_") or string.StartWith(key, "lcars_disabled_") or string.StartWith(key, "lcars_color_") then
 		local keyValues = ent.LCARSKeyData
 		if istable(keyValues) then
 			local interfaceData = Star_Trek.LCARS.ActiveInterfaces[ent]

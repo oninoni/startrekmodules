@@ -21,20 +21,28 @@ local SELF = INTERFACE
 -- Generate the buttons for a general purpose menu.
 function SELF:GenerateButtons(keyValues)
 	local buttons = {}
-	for i = 1, 16 do
-		local name = keyValues["lcars_name_" .. i]
-		if isstring(name) then
-			local disabled = tobool(keyValues["lcars_disabled_" .. i])
-			local colorName = keyValues["lcars_color_" .. i] or ""
 
-			buttons[i] = {
-				Name = name,
-				Disabled = disabled,
-				Color = Star_Trek.LCARS.Colors[colorName]
-			}
-		else
-			break
+	for key, value in pairs(keyValues) do
+		if not string.StartWith(key, "lcars_name_") then
+			continue
 		end
+		if not isstring(value) then
+			continue
+		end
+
+		local i = tonumber(string.sub(key, 12))
+		if not isnumber(i) then
+			continue
+		end
+
+		local disabled = tobool(keyValues["lcars_disabled_" .. i])
+		local colorName = keyValues["lcars_color_" .. i] or ""
+
+		buttons[i] = {
+			Name = value,
+			Disabled = disabled,
+			Color = Star_Trek.LCARS.Colors[colorName]
+		}
 	end
 
 	return buttons
