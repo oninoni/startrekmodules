@@ -16,7 +16,9 @@
 --     LCARS Section Map | Server    --
 ---------------------------------------
 
+if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
 local SELF = WINDOW
+
 function SELF:OnCreate(deck, hFlip, objects)
 	local success = SELF.Base.OnCreate(self, "", "DECK " .. deck, hFlip)
 	if not success then
@@ -26,7 +28,6 @@ function SELF:OnCreate(deck, hFlip, objects)
 	self:SetDeck(deck)
 	self:SetObjects(objects)
 
-	self.MapOffset = Star_Trek.Sections.GlobalOffset
 	self.MapScale = 0.2
 
 	return self
@@ -49,9 +50,11 @@ function SELF:SetDeck(deck)
 
 			areaButtonData.Width = math.abs(areaData.Min[1]) + math.abs(areaData.Max[1])
 			areaButtonData.Height = math.abs(areaData.Min[2]) + math.abs(areaData.Max[2])
+			
 			areaButtonData.Pos = areaData.Pos - Vector(areaData.Min[1] + areaData.Max[1], areaData.Min[2] + areaData.Max[2], 0)
-			areaButtonData.Pos[2] = -areaButtonData.Pos[2]
-
+			areaButtonData.Pos = areaButtonData.Pos - Star_Trek.Sections.GlobalOffset
+			areaButtonData.Pos.y = -areaButtonData.Pos.y
+			
 			areaButtonData.Pos = areaButtonData.Pos - Vector(areaButtonData.Width / 2, areaButtonData.Height / 2, 0)
 
 			table.insert(sectionButtonData.Areas, areaButtonData)
@@ -69,6 +72,7 @@ function SELF:SetObjects(objects)
 	for _, object in pairs(objects or {}) do
 		if istable(object) then
 			local objectTable = table.Copy(object)
+			objectTable.Pos = objectTable.Pos - Star_Trek.Sections.GlobalOffset
 			objectTable.Pos[2] = -objectTable.Pos[2]
 
 			table.insert(self.Objects, objectTable)
@@ -79,6 +83,7 @@ function SELF:SetObjects(objects)
 			local objectTable = {
 				Pos = object:GetPos(),
 			}
+			objectTable.Pos = objectTable.Pos - Star_Trek.Sections.GlobalOffset
 			objectTable.Pos[2] = -objectTable.Pos[2]
 
 			if object:IsPlayer() then

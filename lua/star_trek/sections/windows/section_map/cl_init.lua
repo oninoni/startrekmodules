@@ -16,10 +16,12 @@
 --     LCARS Section Map | Client    --
 ---------------------------------------
 
+if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
+local SELF = WINDOW
+
 local MAP_TIME = 20
 local MARK_TIME = 4
 
-local SELF = WINDOW
 function SELF:OnCreate(windowData)
 	self.Padding = self.Padding or 1
 	self.FrameType = self.FrameType or "frame_double"
@@ -29,11 +31,10 @@ function SELF:OnCreate(windowData)
 		return false
 	end
 
-	self.MapOffset = windowData.MapOffset or Vector()
 	self.MapScale = windowData.MapScale or 0.2
 
 	local successMap, mapElement = self:GenerateElement("map", self.Id .. "_", self.Area1Width, self.Area1Height,
-		windowData.Sections, self.MapOffset, self.MapScale
+		windowData.Sections, Vector(), self.MapScale
 	)
 	if not successMap then
 		return false, mapElement
@@ -57,7 +58,7 @@ function SELF:OnDraw(pos, animPos)
 				object.SoundPlayed = true
 			end
 
-			local pos = object.Pos + self.MapOffset
+			local pos = object.Pos
 			local x = math.floor(pos[1] * self.MapScale + self.Area1X + self.Area1Width  / 2)
 			local y = math.floor(pos[2] * self.MapScale + self.Area1Y + self.Area1Height / 2)
 			
