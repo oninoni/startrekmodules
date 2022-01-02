@@ -73,6 +73,11 @@ net.Receive("Star_Trek.LCARS.Open", function()
 	Star_Trek.LCARS:OpenInterface(id, interfaceData)
 end)
 
+hook.Add("InitPostEntity", "Star_Trek.LCARS.RequestSync", function()
+	net.Start("Star_Trek.LCARS.Sync")
+	net.SendToServer()
+end)
+
 ------------------------
 --      Closing       --
 ------------------------
@@ -284,11 +289,11 @@ hook.Add("PostDrawTranslucentRenderables", "Star_Trek.LCARS.Draw", function(isDr
 		if hook.Run("Star_Trek.LCARS.PreventRender", interface) then
 			continue
 		end
-
+		
 		if not interface.Solid then
 			render.OverrideBlend(true, BLEND_SRC_ALPHA, BLEND_ONE, BLENDFUNC_ADD, BLEND_SRC_ALPHA, BLEND_ONE, BLENDFUNC_ADD)
 		end
-
+		
 		for _, window in pairs(interface.Windows) do
 			Star_Trek.LCARS:DrawWindow(window, interface.AnimPos)
 		end
