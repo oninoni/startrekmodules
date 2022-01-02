@@ -27,8 +27,10 @@ function SELF:DrawMap(x, y, color, colorSelected, border)
 
 	for _, sectionData in pairs(self.Sections) do
 		for _, areaData in pairs(sectionData.Areas) do
-			local areaX = (x + areaData.Pos[1]) * scale - border
-			local areaY = (y + areaData.Pos[2]) * scale - border
+			local pos = areaData.Pos + self.Offset
+
+			local areaX = (x + pos[1]) * scale - border
+			local areaY = (y + pos[2]) * scale - border
 			local areaWidth  = math.ceil(areaData.Width * scale + 2 * border )
 			local areaHeight = math.ceil(areaData.Height * scale + 2 * border)
 

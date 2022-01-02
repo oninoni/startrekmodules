@@ -25,11 +25,12 @@ SELF.BaseElement = "base"
 
 SELF.Variants = 1
 
-function SELF:Initialize(sections, scale)
+function SELF:Initialize(sections, offset, scale)
 	SELF.Base.Initialize(self)
 
 	self.Sections = sections
-	self.Scale = scale
+	self.Offset = offset or Vector()
+	self.Scale = scale or 1
 end
 
 function SELF:DrawElement(i, x, y)

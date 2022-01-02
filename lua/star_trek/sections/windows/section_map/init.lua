@@ -26,6 +26,9 @@ function SELF:OnCreate(deck, hFlip, objects)
 	self:SetDeck(deck)
 	self:SetObjects(objects)
 
+	self.MapOffset = Star_Trek.Sections.GlobalOffset
+	self.MapScale = 0.2
+
 	return self
 end
 

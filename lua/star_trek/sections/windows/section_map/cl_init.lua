@@ -29,10 +29,11 @@ function SELF:OnCreate(windowData)
 		return false
 	end
 
-	self.Scale = 0.2
+	self.MapOffset = windowData.MapOffset or Vector()
+	self.MapScale = windowData.MapScale or 0.2
 
 	local successMap, mapElement = self:GenerateElement("map", self.Id .. "_", self.Area1Width, self.Area1Height,
-		windowData.Sections, self.Scale
+		windowData.Sections, self.MapOffset, self.MapScale
 	)
 	if not successMap then
 		return false, mapElement
@@ -56,8 +57,9 @@ function SELF:OnDraw(pos, animPos)
 				object.SoundPlayed = true
 			end
 
-			local x = math.floor(object.Pos[1] * self.Scale + self.Area1X + self.Area1Width  / 2)
-			local y = math.floor(object.Pos[2] * self.Scale + self.Area1Y + self.Area1Height / 2)
+			local pos = object.Pos + self.MapOffset
+			local x = math.floor(pos[1] * self.MapScale + self.Area1X + self.Area1Width  / 2)
+			local y = math.floor(pos[2] * self.MapScale + self.Area1Y + self.Area1Height / 2)
 			
 			if timeOffset < MARK_TIME then
 				local markAlpha = math.min(1, MARK_TIME - timeOffset) * alpha
