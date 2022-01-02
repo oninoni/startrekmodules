@@ -16,8 +16,6 @@
 --         Star Trek | Loader        --
 ---------------------------------------
 
-game.AddParticles( "particles/intrepid_map.pcf" )
-
 --[[
 -- Some Code to quickly close and re-open lcars if changes to their keyvalues are made
 hook.Add("Star_Trek.ChangedKeyValue", "Testing", function(ent, key, value)
