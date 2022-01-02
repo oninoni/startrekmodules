@@ -216,7 +216,7 @@ function Star_Trek.Sections:SetupSections()
 		ent:Remove()
 	end
 
-	self.GlobalOffset = globalMin + (globalMax - globalMin) * 0.5
+	self.GlobalOffset = (globalMax - globalMin) * 0.5
 
 	hook.Run("Star_Trek.Sections.Loaded")
 end
