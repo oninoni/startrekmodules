@@ -82,17 +82,17 @@ function SELF:GenerateTexture()
 	render.SetViewPort(0, 0, oldW, oldH)
 end
 
+-- Style Changing function to be overridden.
+--
+-- @param String style
+function SELF:ApplyStyle()
+end
+
 -- Generate the element and prepare material / texture.
 function SELF:Initialize()
 	self:ApplyStyle()
 
 	self.LifeTime = 0
-end
-
--- Style Changing function to be overridden.
---
--- @param String style
-function SELF:ApplyStyle()
 end
 
 -- Function, that allows you to set the current style of the menu.

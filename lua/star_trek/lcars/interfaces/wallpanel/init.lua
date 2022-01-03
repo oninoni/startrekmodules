@@ -16,7 +16,9 @@
 --     LCARS Wall Panel | Server     --
 ---------------------------------------
 
+if not istable(INTERFACE) then Star_Trek:LoadAllModules() return end
 local SELF = INTERFACE
+
 SELF.BaseInterface = "base"
 
 local buttons = {

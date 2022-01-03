@@ -16,7 +16,9 @@
 --    LCARS Engi Security | Server   --
 ---------------------------------------
 
+if not istable(INTERFACE) then Star_Trek:LoadAllModules() return end
 local SELF = INTERFACE
+
 SELF.BaseInterface = "bridge_security"
 
 -- Open a security Console

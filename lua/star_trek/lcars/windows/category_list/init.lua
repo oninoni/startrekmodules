@@ -16,7 +16,9 @@
 --    LCARS Category List | Server   --
 ---------------------------------------
 
+if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
 local SELF = WINDOW
+
 function SELF:OnCreate(categories, title, titleShort, hFlip, toggle, buttonHeight, categoryButtonHeight)
 	local success = SELF.Base.OnCreate(self, {}, title, titleShort, hFlip, toggle, buttonHeight)
 	if not success then

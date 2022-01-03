@@ -18,7 +18,9 @@
 
 include("util.lua")
 
+if not istable(INTERFACE) then Star_Trek:LoadAllModules() return end
 local SELF = INTERFACE
+
 SELF.BaseInterface = "base"
 
 function SELF:OpenInternal(menuPos, menuAng, menuWidth, actionPos, actionAng, actionWidth, actionFlip, mapPos, mapAng, mapWidth, mapHeight, sectionPos, sectionAng, sectionWidth, sectionHeight, textPos, textAng, textWidth, textHeight)

@@ -16,7 +16,9 @@
 --  LCARS Transport Slider | Client  --
 ---------------------------------------
 
+if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
 local SELF = WINDOW
+
 function SELF:OnCreate(windowData)
 	local successBase = SELF.Base.OnCreate(self, windowData)
 	if not successBase then

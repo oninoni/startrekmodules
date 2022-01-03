@@ -16,6 +16,7 @@
 --       LCARS Turbolift | Util      --
 ---------------------------------------
 
+if not istable(INTERFACE) then Star_Trek:LoadAllModules() return end
 local SELF = INTERFACE
 
 function SELF:GenerateButtons(ent, keyValues)

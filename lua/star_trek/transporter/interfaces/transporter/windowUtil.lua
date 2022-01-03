@@ -16,6 +16,7 @@
 --  LCARS Transporter | Window Util  --
 ---------------------------------------
 
+if not istable(INTERFACE) then Star_Trek:LoadAllModules() return end
 local SELF = INTERFACE
 
 -- Create the menu window for a transporter screen.

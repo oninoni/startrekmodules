@@ -52,12 +52,6 @@ function SELF:Initialize(text, number, color, selectedColor, flatLeft, flatRight
 	self.Hovered = hovered or false
 end
 
--- Style Changing function to be overridden.
---
--- @param String style
-function SELF:ApplyStyle()
-end
-
 -- Draw a given Variant of the element.
 --
 -- @param Number x

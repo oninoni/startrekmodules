@@ -16,7 +16,9 @@
 --     LCARS Text Entry | Client     --
 ---------------------------------------
 
+if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
 local SELF = WINDOW
+
 function SELF:OnCreate(windowData)
 	self.Padding = self.Padding or 1
 	self.FrameType = self.FrameType or "frame"

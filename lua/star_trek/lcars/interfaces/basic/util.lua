@@ -16,6 +16,7 @@
 --    LCARS Basic Interface | Util   --
 ---------------------------------------
 
+if not istable(INTERFACE) then Star_Trek:LoadAllModules() return end
 local SELF = INTERFACE
 
 -- Generate the buttons for a general purpose menu.
