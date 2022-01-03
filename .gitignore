@@ -1,4 +1,4 @@
-.bsp.bak
-.log
-.prt
-.vmx
+*.bsp.bak
+*.log
+*.prt
+*.vmx
