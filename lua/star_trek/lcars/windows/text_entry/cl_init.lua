@@ -128,7 +128,7 @@ function SELF:OnDraw(pos, animPos)
 		end
 		textAlpha = math.min(textAlpha, 255 * animPos)
 
-		draw.SimpleText(line.Text, "LCARSSmall", self.Area1X, y, ColorAlpha(line.Color, textAlpha), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+		draw.SimpleText(line.Text, "LCARSSmall", self.Area1X, y, ColorAlpha(line.Color or Star_Trek.LCARS.ColorLightBlue, textAlpha), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
 	end
 
 	SELF.Base.OnDraw(self, pos, animPos)

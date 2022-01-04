@@ -110,7 +110,7 @@ function SELF:GetData()
 end
 
 function SELF:SetData(logType, lines)
-	local window = self.Windows[1]
+	local window = self.Windows[2]
 	window.Title = logType
 	window.Lines = lines
 
