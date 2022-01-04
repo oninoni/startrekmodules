@@ -262,10 +262,3 @@ end
 
 hook.Add("InitPostEntity", "Star_Trek.Sections.Setup", setupSections)
 hook.Add("PostCleanupMap", "Star_Trek.Sections.Setup", setupSections)
-
-util.AddNetworkString("Star_Trek.Sections.Sync")
-hook.Add("PlayerInitialSpawn", "Star_Trek.Sections.Sync", function(ply)
-	net.Start("Star_Trek.Sections.Sync")
-		net.WriteTable(Star_Trek.Sections.Decks)
-	net.Send(ply)
-end)

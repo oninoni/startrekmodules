@@ -20,13 +20,7 @@ Star_Trek:RequireModules("util", "lcars")
 
 Star_Trek.Sections = Star_Trek.Sections or {}
 
-if CLIENT then
-	include("cl_sections.lua")
-end
-
 if SERVER then
 	include("sv_config.lua")
 	include("sv_sections.lua")
-
-	AddCSLuaFile("cl_sections.lua")
 end
