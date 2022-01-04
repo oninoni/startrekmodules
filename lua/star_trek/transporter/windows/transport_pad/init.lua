@@ -79,7 +79,7 @@ function SELF:OnCreate(padNumber, title, titleShort, hFlip)
 
 			-- Pad Offset (Frame)
 			if hFlip then
-				pad.X = pad.X + 40
+				pad.X = pad.X - 90
 			else
 				pad.X = pad.X - 40
 			end
