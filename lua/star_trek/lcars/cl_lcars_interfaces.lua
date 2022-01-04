@@ -74,6 +74,8 @@ net.Receive("Star_Trek.LCARS.Open", function()
 end)
 
 hook.Add("InitPostEntity", "Star_Trek.LCARS.RequestSync", function()
+	if game.SinglePlayer() then return end
+
 	net.Start("Star_Trek.LCARS.Sync")
 	net.SendToServer()
 end)
