@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2021 Jan Ziegler   --
+--    Copyright © 2022 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 

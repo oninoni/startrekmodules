@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2021 Jan Ziegler   --
+--    Copyright © 2022 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -41,6 +41,10 @@ end
 
 -- Block Doors aborting animations.
 hook.Add("AcceptInput", "Star_Trek.BlockDoorIfAlreadyDooring", function(ent, input, activator, caller, value)
+	if Star_Trek.Doors.Doors[ent] then
+		print(ent, input, activator, caller, value)
+	end
+	
 	if Star_Trek.Doors.Doors[ent] and string.lower(input) == "setanimation" then
 		value = string.lower(value)
 
@@ -143,6 +147,10 @@ local function checkPlayers(ent)
 
 	local entities = ents.FindInSphere(ent:GetPos(), 64)
 	for _, nearbyEnt in pairs(entities) do
+		if nearbyEnt:IsNPC() then 
+			return true
+		end
+
 		if nearbyEnt:IsPlayer() then
 			local eyePos = nearbyEnt:EyePos()
 			local entPos = ent:GetPos()
