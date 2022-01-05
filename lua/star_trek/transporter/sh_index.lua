@@ -21,19 +21,29 @@ Star_Trek:RequireModules("util", "sections", "lcars")
 Star_Trek.Transporter = Star_Trek.Transporter or {}
 
 if SERVER then
-	AddCSLuaFile("sh_sounds.lua")
-	AddCSLuaFile("sh_particles.lua")
+	AddCSLuaFile("resources/sh_sounds.lua")
+	AddCSLuaFile("resources/sh_particles.lua")
+
+	AddCSLuaFile("sh_loader.lua")
+
+	AddCSLuaFile("sh_transporter.lua")
 	AddCSLuaFile("cl_transporter.lua")
 
-	include("sh_sounds.lua")
-	include("sh_particles.lua")
-	include("sv_transporter_cycle.lua")
-	include("sv_transporter_pattern.lua")
+	include("resources/sh_sounds.lua")
+	include("resources/sh_particles.lua")
+
+	include("sh_loader.lua")
+
+	include("sh_transporter.lua")
 	include("sv_transporter.lua")
 end
 
 if CLIENT then
-	include("sh_sounds.lua")
-	include("sh_particles.lua")
+	include("resources/sh_sounds.lua")
+	include("resources/sh_particles.lua")
+	
+	include("sh_loader.lua")
+
+	include("sh_transporter.lua")
 	include("cl_transporter.lua")
 end

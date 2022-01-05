@@ -13,5 +13,11 @@
 ---------------------------------------
 
 ---------------------------------------
---        Transporter | Client       --
+--     Federation Cycle | Shared     --
 ---------------------------------------
+
+if not istable(CYCLE) then Star_Trek:LoadAllModules() return end
+local SELF = CYCLE
+
+-- Determines the parent transport cycles name for this one. (Like Deriving Classes)
+CYCLE.BaseCycle = "base"
