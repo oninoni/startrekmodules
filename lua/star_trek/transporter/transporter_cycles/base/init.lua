@@ -19,11 +19,12 @@
 if not istable(CYCLE) then Star_Trek:LoadAllModules() return end
 local SELF = CYCLE
 
--- Initialises the transporter cycle.
+-- Initializes the transporter cycle.
 --
 -- @param Entity ent
-function SELF:Initialise()
+function SELF:Initialize()
 	self.State = 1
+
 	if self.SkipDemat then
 		self.State = self.SkipDematState
 	end
@@ -56,24 +57,29 @@ function SELF:ResetMoveType()
 
 	local defaultMoveType = ent.TransporterDefaultMoveType
 	if defaultMoveType == nil then
-		defaultMoveType = MOVETYPE_WALK
+		defaultMoveType = MOVETYPE_VPHYSICS
 	end
 
 	ent:SetMoveType(defaultMoveType)
 end
 
 function SELF:End()
+	local ent = self.Entity
+	
 	self:ResetCollisionGroup()
 	self:ResetRenderMode()
 	self:ResetMoveType()
 
-	self:DrawShadow(true)
+	ent:DrawShadow(true)
+	--ent:Activate()
 end
 
 -- Aborts the transporter cycle and brings the entity back to its normal state.
 -- This will dump the player into the transporter buffer!
 function SELF:Abort()
 	self:End()
+	
+	local ent = self.Entity
 
 	local bufferPos = Star_Trek.Transporter:GetBufferPos()
 	ent:SetPos(bufferPos)
@@ -86,7 +92,7 @@ function SELF:ApplyState(state)
 	self.State = state
 	self.StateTime = CurTime()
 
-	if state == self.SkipRematState then return false end
+	if self.SkipRemat and state == self.SkipRematState then return false end
 
 	local stateData = self:GetStateData()
 	if not istable(stateData) then return false end
@@ -99,12 +105,12 @@ function SELF:ApplyState(state)
 			self:ResetCollisionGroup()
 			ent.TransporterDefaultCollisionGroup = nil
 		else
-			ent.TransporterDefaultCollisionGroup = ent.TransporterDefaultRenderMode or ent:GetCollisionGroup()
+			ent.TransporterDefaultCollisionGroup = ent.TransporterDefaultCollisionGroup or ent:GetCollisionGroup()
 			ent:SetCollisionGroup(collisionGroup)
 		end
 	end
 	
-	local renderMode = stateData.RenderGroup
+	local renderMode = stateData.RenderMode
 	if renderMode ~= nil then
 		if renderMode == false then
 			self:ResetRenderMode()
@@ -115,7 +121,7 @@ function SELF:ApplyState(state)
 		end
 	end
 
-	local moveType = stateData.RenderGroup
+	local moveType = stateData.MoveType
 	if moveType ~= nil then
 		if moveType == false then
 			self:ResetMoveType()

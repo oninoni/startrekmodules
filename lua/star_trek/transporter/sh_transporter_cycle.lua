@@ -43,10 +43,9 @@ function Star_Trek.Transporter:CreateCycle(cycleType, ent, targetPos, skipDemat,
 	setmetatable(transporterCycle, {__index = cycleFunctions})
 
 	transporterCycle:Initialize()
-	transporterCycle:ApplyState(self.State)
+	transporterCycle:ApplyState(transporterCycle.State)
 
 	self.ActiveCycles[ent] = transporterCycle
-	ent.TransporterCycle = transporterCycle
 
 	return true, transporterCycle
 end

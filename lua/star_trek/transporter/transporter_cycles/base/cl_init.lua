@@ -19,10 +19,10 @@
 if not istable(CYCLE) then Star_Trek:LoadAllModules() return end
 local SELF = CYCLE
 
--- Initialises the transporter cycle.
+-- Initializes the transporter cycle.
 --
 -- @param Entity ent
-function SELF:Initialise()
+function SELF:Initialize()
 	self.State = 1
 	if self.SkipDemat then
 		self.State = self.SkipDematState
@@ -59,13 +59,13 @@ function SELF:Initialise()
 		up = Vector(0, 0, 1)
 	end
 
-	self.FlareUpHeight = up * objectHeight * 0.5
-	self.FlareSize = objectSize * 6
+	self.FlareUpHeight = up * self.ObjectHeight * 0.5
+	self.FlareSize = self.ObjectSize * 6
 	self.FlareSizeSmall = self.FlareSize * 0.3
 end
 
-function self:ResetColor()
-	local ent = Entity
+function SELF:ResetColor()
+	local ent = self.Entity
 
 	local defaultColor = ent.TransporterDefaultColor
 	if defaultColor == nil then
@@ -99,7 +99,7 @@ function SELF:ApplyState(state)
 	local ent = self.Entity
 
 	local colorFade = stateData.ColorFade
-	if iscolor(colorFade) then
+	if isnumber(colorFade) then
 		if colorFade == 0 then
 			self:ResetColor()
 			ent.TransporterDefaultColor = nil
@@ -121,16 +121,18 @@ function SELF:Render()
 	local stateData = self:GetStateData()
 	if not istable(stateData) then return end
 
+	local ent = self.Entity
+
 	local colorFade = stateData.ColorFade
-	if iscolor(colorFade) then
+	if isnumber(colorFade) then
 		local diff = CurTime() - self.StateTime
 	
-		local fade = math.max(0, math.min(diff - 0.3, 1)) -- TODO Rebalance values
+		local fade = math.max(0, math.min(diff / 2, 1)) -- TODO Rebalance values
 		
 		if colorFade > 0 then
-			ent:SetColor(ColorAlpha(transportData.OldColor, 255 * (1 - fade)))
+			ent:SetColor(ColorAlpha(ent.TransporterDefaultColor, 255 * (1 - fade)))
 		else
-			ent:SetColor(ColorAlpha(transportData.OldColor, 255 * fade))
+			ent:SetColor(ColorAlpha(ent.TransporterDefaultColor, 255 * fade))
 		end
 	end
 end

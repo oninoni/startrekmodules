@@ -28,7 +28,7 @@ net.Receive("Star_Trek.Transporter.TransportObject", function()
 	end
 end)
 
-net.Receive("Star_Trek.Transporter.UpdateState", function()
+net.Receive("Star_Trek.Transporter.ApplyState", function()
 	local ent = net.ReadEntity()
 	local newState = net.ReadInt(8)
 
@@ -49,16 +49,20 @@ net.Receive("Star_Trek.Transporter.End", function()
 	end
 	
 	transporterCycle:End()
+	
+	Star_Trek.Transporter.ActiveCycles[ent] = nil
 end)
 
 hook.Add("PostDrawTranslucentRenderables", "Star_Trek.Transporter.RenderCycle", function()
 	local toBeRemoved = {}
-	for _, transportData in pairs(Star_Trek.Transporter.ActiveCycles) do
+	for _, transporterCycle in pairs(Star_Trek.Transporter.ActiveCycles) do
 		local ent = transporterCycle.Entity
 		if not IsValid(ent) then
 			table.insert(toBeRemoved, transporterCycle)
 			continue
 		end
+
+		transporterCycle:Render()
 	end
 
 	for _, transporterCycle in pairs(toBeRemoved) do

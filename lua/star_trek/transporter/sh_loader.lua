@@ -80,7 +80,7 @@ hook.Add("Star_Trek.ModuleLoaded", "Star_Trek.Transporter.ReloadOnModuleLoaded",
 end)
 
 -- Link all the Transporter Cycles to their Base Classes. 
-function Star_Trek.LCARS:LinkDependencies()
+function Star_Trek.Transporter:LinkDependencies()
 	for cycleName, cycle in pairs(self.Cycles) do
 		local baseCycleClass = cycle.BaseCycle
 		if isstring(baseCycleClass) then

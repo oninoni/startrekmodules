@@ -39,6 +39,11 @@ function Star_Trek.Transporter:TransportObject(cycleType, ent, targetPos, skipDe
 	return true, transporterCycle
 end
 
+function TestTransporter()
+	local ent = player.GetHumans()[1]:GetEyeTrace().Entity
+	print(Star_Trek.Transporter:TransportObject("federation", ent, ent:GetPos() + Vector(16, 0, 0)))
+end
+
 util.AddNetworkString("Star_Trek.Transporter.ApplyState")
 util.AddNetworkString("Star_Trek.Transporter.End")
 
@@ -52,12 +57,15 @@ hook.Add("Think", "Star_Trek.Transporter.Think", function()
 		end
 
 		local stateData = transporterCycle:GetStateData()
+		if not stateData then continue end
 
-		if CurTime() + stateData.Duration > transporterCycle.StateTime then
+		if CurTime() > transporterCycle.StateTime + stateData.Duration then
 			local newState = transporterCycle.State + 1
+
 			local success = transporterCycle:ApplyState(newState)
 			if not success then
 				transporterCycle:End()
+				
 				net.Start("Star_Trek.Transporter.End")
 					net.WriteEntity(ent)
 				net.Broadcast()
@@ -73,11 +81,9 @@ hook.Add("Think", "Star_Trek.Transporter.Think", function()
 			
 			net.Start("Star_Trek.Transporter.ApplyState")
 				net.WriteEntity(ent)
-				net.WriteInt(self.State, 8)
+				net.WriteInt(newState, 8)
 			net.Broadcast()
 		end
-
-		transporterCycle:Think(transporterCycle)
 	end
 
 	for _, transporterCycle in pairs(toBeRemoved) do
@@ -86,6 +92,6 @@ hook.Add("Think", "Star_Trek.Transporter.Think", function()
 end)
 
 -- TODO
-function Star_Trek.Transporter:GetBufferPos() then
+function Star_Trek.Transporter:GetBufferPos()
 	return Vector()
 end

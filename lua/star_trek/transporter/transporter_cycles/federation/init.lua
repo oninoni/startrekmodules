@@ -19,10 +19,10 @@
 if not istable(CYCLE) then Star_Trek:LoadAllModules() return end
 local SELF = CYCLE
 
--- Initialises the transporter cycle.
+-- Initializes the transporter cycle.
 --
 -- @param Entity ent
-function SELF:Initialise()
+function SELF:Initialize()
 	SELF.Base.Initialize(self)
 end
 
@@ -36,5 +36,8 @@ end
 --
 -- @param Number state
 function SELF:ApplyState(state)
-	SELF.Base.ApplyState(self, state)
+	local success = SELF.Base.ApplyState(self, state)
+	if not success then return false end
+
+	return true
 end
