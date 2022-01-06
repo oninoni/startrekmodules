@@ -233,6 +233,10 @@ hook.Add("Think", "Star_Trek.LCARS.Think", function()
 
 	local removeInterfaces = {}
 	for id, interface in pairs(Star_Trek.LCARS.ActiveInterfaces) do
+		if not IsValid(interface.Ent) then
+			interface.Ent = ents.GetByIndex(id)
+		end
+
 		if hook.Run("Star_Trek.LCARS.PreventRender", interface, true) then
 			continue
 		end
