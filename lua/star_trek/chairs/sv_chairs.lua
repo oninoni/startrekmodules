@@ -62,14 +62,12 @@ end)
 
 -- Set Position and View Angle after leaving a chair.
 hook.Add("PlayerLeaveVehicle", "Star_Trek.LeaveChair", function(ply, chair)
-	if isStarTrekChair(chair) then
-		timer.Simple(0, function()
-			if not IsValid(ply) or not IsValid(chair) then return end
-
-			ply:SetPos(chair:GetPos())
-			ply:SetEyeAngles(ply.STPrevViewAngle)
-		end)
+	if not isStarTrekChair(chair) then
+		return 
 	end
+
+	ply:SetPos(chair:GetPos())
+	ply:SetEyeAngles(ply.STPrevViewAngle)
 end)
 
 -- Enable crosshair in chair.
