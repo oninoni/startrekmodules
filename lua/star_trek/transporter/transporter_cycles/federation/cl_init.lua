@@ -33,7 +33,65 @@ function SELF:ApplyState(state)
 	SELF.Base.ApplyState(self, state)
 end
 
+function SELF:DrawFlare(pos, vec, size)
+
+end
+
 -- Renders the effects of the transporter cycle.
 function SELF:Render()
 	SELF.Base.Render(self)
+
+	local stateData = self:GetStateData()
+	if not istable(stateData) then return end
+
+	if not (stateData.Remat or stateData.Demat) then return end
+	
+	local diff = CurTime() - self.StateTime
+
+	local pos = ent:GetPos()
+
+	local effectProgress1 = math.max(0, math.min(diff - 0.3, 1)) -- TODO Rebalance values
+	local effectProgress2 = math.max(0, math.min(diff      , 1)) -- TODO Rebalance values
+
+	local alpha1 = (0.5 - math.abs(effectProgress1 - 0.5))
+	alpha1 = math.min(alpha1, 0.2) * 1.5
+	local alpha2 = (0.5 - math.abs(effectProgress2 - 0.5))
+	alpha2 = math.min(alpha2, 0.2) * 1.5
+
+	local effectProgress1Slope = (math.cos(effectProgress1 * math.pi) + 1) / 2
+	local effectProgress2Slope = (math.cos(effectProgress2 * math.pi) + 1) / 2
+
+	if stateData.Demat then
+		ent:SetColor(ColorAlpha(transportData.OldColor, 255 * (1 - effectProgress1)))
+	else
+		ent:SetColor(ColorAlpha(transportData.OldColor, 255 * effectProgress1))
+
+		effectProgress1Slope = 1 - effectProgress1Slope
+		effectProgress2Slope = 1 - effectProgress2Slope
+	end
+
+	local vec = EyeVector()
+	vec[3] = 0
+
+	local mat = Material("oninoni/startrek/flare_blue")
+	render.SetMaterial(mat)
+
+	local upHeight = self.FlareUpHeight
+	local size = self.FlazeSize
+	local smallSize = self.FlareSizeSmall
+
+	local offset = Vector(0, 0, 0.3)
+	local c = Color(0, 0, 0, 0)
+
+	mat:SetVector( "$alpha", Vector(alpha1, 0, 0))
+	render.DrawQuadEasy((pos -  upHeight * effectProgress1Slope,           vec, size     , c)
+	render.DrawQuadEasy((pos +  upHeight * effectProgress1Slope,           vec, size     , c)
+	render.DrawQuadEasy((pos - (upHeight * effectProgress1Slope + offset), vec, smallSize, c)
+	render.DrawQuadEasy((pos + (upHeight * effectProgress1Slope + offset), vec, smallSize, c)
+
+	mat:SetVector( "$alpha", Vector(alpha2, 0, 0))
+	render.DrawQuadEasy((pos -  upHeight * effectProgress2Slope,           vec, size     , c)
+	render.DrawQuadEasy((pos +  upHeight * effectProgress2Slope,           vec, size     , c)
+	render.DrawQuadEasy((pos - (upHeight * effectProgress2Slope + offset), vec, smallSize, c)
+	render.DrawQuadEasy((pos + (upHeight * effectProgress2Slope + offset), vec, smallSize, c)
 end

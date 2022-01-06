@@ -16,26 +16,37 @@
 --        Transporter | Shared       --
 ---------------------------------------
 
-Star_Trek.Transporter.ActiveTransporterCycles = Star_Trek.Transporter.ActiveTransporterCycles or {}
+Star_Trek.Transporter.ActiveCycles = Star_Trek.Transporter.ActiveCycles or {}
 
-function Star_Trek.Transporter:CreateTransporterCycle(type, ent, startState, ...)
+function Star_Trek.Transporter:CreateCycle(cycleType, ent, targetPos, skipDemat, skipRemat)
+	if not IsValid(ent) then
+		return false, "Invalid Entity for Transport"
+	end
+
+	if self.ActiveCycles[ent] then
+		return false, "Object already in Transport"
+	end
+	
 	local transporterCycle = {
-		Type = type,
-		
+		CycleType = cycleType,
 		Entity = ent,
-		State = startState or 1,
+		TargetPos = targetPos,
+
+		SkipDemat = skipDemat,
+		SkipRemat = skipRemat,
 	}
 
-	local cycleFunctions = self.Cycles[type]
+	local cycleFunctions = self.Cycles[cycleType]
 	if not istable(cycleFunctions) then
 		return false, "Invalid Transporter Cycle Type"
 	end
 	setmetatable(transporterCycle, {__index = cycleFunctions})
 
-	transporterCycle:Initialize(...)
+	transporterCycle:Initialize()
+	transporterCycle:ApplyState(self.State)
 
-	self.ActiveTransporterCycles[ent] = transporterCycle
+	self.ActiveCycles[ent] = transporterCycle
 	ent.TransporterCycle = transporterCycle
 
-	return true
+	return true, transporterCycle
 end
