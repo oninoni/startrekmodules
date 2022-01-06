@@ -5,5 +5,3 @@ This Addon was developed as an API for the Intrepid-Class Gmod Map, but can be u
 
 Additional Modules:
 - https://github.com/oninoni/intrepid_sweps
-
-Currently NOT Released since it is higly Experimental.
