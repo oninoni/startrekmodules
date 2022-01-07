@@ -8,13 +8,16 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2021 Jan Ziegler   --
+--    Copyright © 2022 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
 ---------------------------------------
 --     LCARS Section Map | Shared    --
 ---------------------------------------
+
+if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
+local SELF = WINDOW
 
 -- Determines the parent windows name for this one. (Like Deriving Classes)
 WINDOW.BaseWindow = "frame"

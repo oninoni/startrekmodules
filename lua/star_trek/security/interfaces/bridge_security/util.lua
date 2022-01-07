@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2021 Jan Ziegler   --
+--    Copyright © 2022 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -16,6 +16,7 @@
 --    LCARS Bridge Security | Util   --
 ---------------------------------------
 
+if not istable(INTERFACE) then Star_Trek:LoadAllModules() return end
 local SELF = INTERFACE
 
 local MODE_SCAN = 1
@@ -89,6 +90,12 @@ hook.Add("Star_Trek.Util.IsLifeForm", "CheckDefault", function(ent)
 	end
 end)
 
+local classBlacklist = {
+	"spotlight_end",
+	"beam",
+	"force_field"
+}
+
 function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 	local buttons = self:GetModeButtons(mode)
 	local height = table.maxn(buttons) * 35 + 80
@@ -118,6 +125,8 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 			-------- Scan --------
 			if buttonName == "Scan Lifeforms" then
 				local entities = Star_Trek.Sections:GetInSections(deck, sectionIds, function(objects, ent)
+					if table.HasValue(classBlacklist, ent:GetClass()) then return true end
+
 					if not hook.Run("Star_Trek.Util.IsLifeForm", ent) then return true end
 				end)
 
@@ -136,6 +145,8 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 				return true
 			elseif buttonName == "Scan Objects" then
 				local entities = Star_Trek.Sections:GetInSections(deck, sectionIds, function(objects, ent)
+					if table.HasValue(classBlacklist, ent:GetClass()) then return true end
+
 					if hook.Run("Star_Trek.Util.IsLifeForm", ent) then return true end
 				end)
 
@@ -156,7 +167,9 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 
 				return true
 			elseif buttonName == "Scan All" then
-				local entities = Star_Trek.Sections:GetInSections(deck, sectionIds)
+				local entities = Star_Trek.Sections:GetInSections(deck, sectionIds, function(objects, ent)
+					if table.HasValue(classBlacklist, ent:GetClass()) then return true end
+				end)
 
 				mapWindow:SetObjects(entities)
 				mapWindow:Update()

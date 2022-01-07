@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2021 Jan Ziegler   --
+--    Copyright © 2022 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -36,7 +36,6 @@ function SELF:OnCreate(windowData)
 
 	self.Buttons = {}
 	for i, buttonData in pairs(windowData.Buttons) do
-		-- TODO: Add negative ID Conversion here.
 		local id = i
 
 		local successButton, button = self:GenerateElement("button", self.Id .. "_" .. id, self.Area1Width, self.ButtonHeight,

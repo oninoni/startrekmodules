@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2021 Jan Ziegler   --
+--    Copyright © 2022 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -62,12 +62,12 @@ end)
 
 -- Set Position and View Angle after leaving a chair.
 hook.Add("PlayerLeaveVehicle", "Star_Trek.LeaveChair", function(ply, chair)
-	if isStarTrekChair(chair) then
-		timer.Simple(0, function()
-			ply:SetPos(chair:GetPos())
-			ply:SetEyeAngles(ply.STPrevViewAngle)
-		end)
+	if not isStarTrekChair(chair) then
+		return 
 	end
+
+	ply:SetPos(chair:GetPos())
+	ply:SetEyeAngles(ply.STPrevViewAngle)
 end)
 
 -- Enable crosshair in chair.

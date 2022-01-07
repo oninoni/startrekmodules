@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2021 Jan Ziegler   --
+--    Copyright © 2022 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -88,6 +88,17 @@ function SELF:DrawButtonGraphic(x, y, width, height, color, borderColor, flatLef
 	color)
 end
 
+-- Draws a full button.
+--
+-- @param Number x
+-- @param Number y
+-- @param Color color
+-- @param Color borderColor
+-- @param String text
+-- @param Boolean flatLeft
+-- @param Boolean flatRight
+-- @param Number number
+-- @param Number barWidth
 function SELF:DrawButton(x, y, color, borderColor, text, flatLeft, flatRight, number, barWidth)
 	local width = self.ElementWidth
 	local height = self.ElementHeight

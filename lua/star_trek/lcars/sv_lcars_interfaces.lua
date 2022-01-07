@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2021 Jan Ziegler   --
+--    Copyright © 2022 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -95,6 +95,18 @@ function Star_Trek.LCARS:OpenInterface(ply, triggerEntity, interfaceName, ...)
 
 	return true
 end
+
+util.AddNetworkString("Star_Trek.LCARS.Sync")
+net.Receive("Star_Trek.LCARS.Sync", function(len, ply)
+	for ent, interfaceData in pairs(Star_Trek.LCARS.ActiveInterfaces) do
+		local clientInterfaceData = Star_Trek.LCARS:GetClientInterfaceData(interfaceData)
+
+		net.Start("Star_Trek.LCARS.Open")
+			net.WriteInt(ent:EntIndex(), 32)
+			net.WriteTable(clientInterfaceData)
+		net.Send(ply)
+	end
+end)
 
 ------------------------
 --      Closing       --

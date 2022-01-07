@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2021 Jan Ziegler   --
+--    Copyright © 2022 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -16,7 +16,9 @@
 --     LCARS Wall Panel | Server     --
 ---------------------------------------
 
+if not istable(INTERFACE) then Star_Trek:LoadAllModules() return end
 local SELF = INTERFACE
+
 SELF.BaseInterface = "base"
 
 local buttons = {
@@ -43,6 +45,8 @@ function SELF:Open(ent)
 	local scale = keyValues["lcars_scale"] or 15
 	local width = keyValues["lcars_width"]
 	local height = keyValues["lcars_height"] or 35
+	local title = keyValues["lcars_title"] or "Select Mode"
+	title = string.Replace(title, "@", " ")
 
 	local w = 16
 	local h = height
@@ -63,7 +67,7 @@ function SELF:Open(ent)
 			end
 		end,
 		buttons,
-		"Select Mode",
+		title,
 		"MODE",
 		true
 	)
@@ -106,7 +110,7 @@ function SELF:GetData()
 end
 
 function SELF:SetData(logType, lines)
-	local window = self.Windows[1]
+	local window = self.Windows[2]
 	window.Title = logType
 	window.Lines = lines
 

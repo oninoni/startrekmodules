@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2021 Jan Ziegler   --
+--    Copyright © 2022 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -16,7 +16,9 @@
 --     LCARS Text Entry | Server     --
 ---------------------------------------
 
+if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
 local SELF = WINDOW
+
 function SELF:OnCreate(fallbackColor, title, titleShort, hFlip, lines)
 	local success = SELF.Base.OnCreate(self, title, titleShort, hFlip)
 	if not success then

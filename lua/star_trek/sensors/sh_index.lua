@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2021 Jan Ziegler   --
+--    Copyright © 2022 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -21,11 +21,6 @@ Star_Trek:RequireModules()
 Star_Trek.Sensors = Star_Trek.Sensors or {}
 
 if SERVER then
-	AddCSLuaFile("sh_sensors.lua")
-
-	include("sh_sensors.lua")
-end
-
-if CLIENT then
-	include("sh_sensors.lua")
+	include("sv_sensors.lua")
+	include("sv_internal.lua")
 end

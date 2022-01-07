@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2021 Jan Ziegler   --
+--    Copyright © 2022 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -29,9 +29,31 @@ Star_Trek.Modules["sections"] = true
 Star_Trek.Modules["turbolift"] = true
 Star_Trek.Modules["transporter"] = true
 Star_Trek.Modules["replicator"] = true
-Star_Trek.Modules["damage"] = true
 Star_Trek.Modules["security"] = true
 Star_Trek.Modules["alert"] = true
 
 Star_Trek.Modules["holodeck"] = true
 Star_Trek.Modules["sensors"] = true
+
+--[[
+Name Pun Ideas:
+
+ONI
+Oni's Neverending Inventions
+
+STOP
+Star Trek - Oni's Pack
+
+Oni's Trek Technology Operation
+OTTO
+
+STG
+Star Trek GMod 
+
+STT
+Star Trek Technologies
+
+STM
+Star Trek Modules
+
+]]

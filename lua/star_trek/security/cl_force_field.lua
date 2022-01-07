@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2021 Jan Ziegler   --
+--    Copyright © 2022 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -20,9 +20,12 @@ local SOUND_CUTOFF = 500
 local cutOffSquared = SOUND_CUTOFF * SOUND_CUTOFF
 
 timer.Create("Star_Trek.Security.ForceFieldSound", 2, 0, function()
+	local ply = LocalPlayer()
+	if not IsValid(ply) then return end
+
 	local forceFields = ents.FindByClass("force_field")
 
-	local pos = LocalPlayer():GetPos()
+	local pos = ply:GetPos()
 
 	local nearByFields = {}
 	for _, ent in pairs(forceFields) do

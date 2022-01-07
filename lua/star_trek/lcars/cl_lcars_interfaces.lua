@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2021 Jan Ziegler   --
+--    Copyright © 2022 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -71,6 +71,13 @@ net.Receive("Star_Trek.LCARS.Open", function()
 	local interfaceData = net.ReadTable()
 
 	Star_Trek.LCARS:OpenInterface(id, interfaceData)
+end)
+
+hook.Add("InitPostEntity", "Star_Trek.LCARS.RequestSync", function()
+	if game.SinglePlayer() then return end
+
+	net.Start("Star_Trek.LCARS.Sync")
+	net.SendToServer()
 end)
 
 ------------------------
@@ -208,7 +215,6 @@ net.Receive("Star_Trek.LCARS.PlayerButtonDown", function()
 end)
 
 -- Save EyePos on Regular Intervals.
--- TODO: Do you need it?
 hook.Add("PreDrawTranslucentRenderables", "Star_Trek.LCARS.PreDraw", function(isDrawingDepth, isDrawingSkybox)
 	if isDrawingSkybox then return end
 	if wp and wp.drawing then return end
@@ -227,6 +233,10 @@ hook.Add("Think", "Star_Trek.LCARS.Think", function()
 
 	local removeInterfaces = {}
 	for id, interface in pairs(Star_Trek.LCARS.ActiveInterfaces) do
+		if not IsValid(interface.Ent) then
+			interface.Ent = ents.GetByIndex(id)
+		end
+
 		if hook.Run("Star_Trek.LCARS.PreventRender", interface, true) then
 			continue
 		end
@@ -285,11 +295,11 @@ hook.Add("PostDrawTranslucentRenderables", "Star_Trek.LCARS.Draw", function(isDr
 		if hook.Run("Star_Trek.LCARS.PreventRender", interface) then
 			continue
 		end
-
+		
 		if not interface.Solid then
 			render.OverrideBlend(true, BLEND_SRC_ALPHA, BLEND_ONE, BLENDFUNC_ADD, BLEND_SRC_ALPHA, BLEND_ONE, BLENDFUNC_ADD)
 		end
-
+		
 		for _, window in pairs(interface.Windows) do
 			Star_Trek.LCARS:DrawWindow(window, interface.AnimPos)
 		end

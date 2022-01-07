@@ -1,0 +1,10 @@
+"sandbox" {
+	"base"		"base"
+	"title"		"Star Trek Modules"
+	"maps"		"^stm_"
+	"menusystem"	"0"
+	
+	"settings" {
+		
+	}
+}

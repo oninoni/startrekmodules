@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2021 Jan Ziegler   --
+--    Copyright © 2022 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -50,12 +50,6 @@ function SELF:Initialize(text, number, color, selectedColor, flatLeft, flatRight
 	self.Disabled = disabled or false
 	self.Selected = selected or false
 	self.Hovered = hovered or false
-end
-
--- Style Changing function to be overridden.
---
--- @param String style
-function SELF:ApplyStyle()
 end
 
 -- Draw a given Variant of the element.

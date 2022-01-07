@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2021 Jan Ziegler   --
+--    Copyright © 2022 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -16,7 +16,9 @@
 --     LCARS Text Entry | Client     --
 ---------------------------------------
 
+if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
 local SELF = WINDOW
+
 function SELF:OnCreate(windowData)
 	self.Padding = self.Padding or 1
 	self.FrameType = self.FrameType or "frame"
@@ -126,7 +128,7 @@ function SELF:OnDraw(pos, animPos)
 		end
 		textAlpha = math.min(textAlpha, 255 * animPos)
 
-		draw.SimpleText(line.Text, "LCARSSmall", self.Area1X, y, ColorAlpha(line.Color, textAlpha), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+		draw.SimpleText(line.Text, "LCARSSmall", self.Area1X, y, ColorAlpha(line.Color or Star_Trek.LCARS.ColorLightBlue, textAlpha), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
 	end
 
 	SELF.Base.OnDraw(self, pos, animPos)

@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2021 Jan Ziegler   --
+--    Copyright © 2022 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -24,6 +24,31 @@
 -- Pos = Vector(),
 --      Position, where the target can place objects or around, if Multi-Target Mode is used.
 -- }
+
+function Star_Trek.Transporter:CanBeamEntity(ent)
+	if not IsValid(ent) then
+		return false
+	end
+
+	if ent:MapCreationID() ~= -1 then 
+		return false
+	end
+
+	if IsValid(ent:GetParent()) then
+		return false
+	end
+	
+	local phys = ent:GetPhysicsObject()
+	if not IsValid(phys) then
+		return false
+	end
+
+	if not phys:IsMotionEnabled() then
+		return false
+	end
+
+	return true
+end
 
 -- Combines a given table of multiple pattern Data tables.
 -- 
@@ -76,7 +101,7 @@ function Star_Trek.Transporter:GetPatternFromPad(pad)
 		pos = pad:GetAttachment(attachmentId).Pos
 	end
 
-	pattern = {
+	local pattern = {
 		Entities = {},
 		Pos = pos,
 	}
@@ -85,7 +110,11 @@ function Star_Trek.Transporter:GetPatternFromPad(pad)
 	local higherBounds = pos + Vector(25, 25, 120)
 	for _, ent in pairs(ents.FindInBox(lowerBounds, higherBounds)) do
 		local name = ent:GetName()
-		if not string.StartWith(name, "TRPad") then
+		if string.StartWith(name, "TRPad") then
+			continue
+		end
+
+		if Star_Trek.Transporter:CanBeamEntity(ent) then
 			table.insert(pattern.Entities, ent)
 		end
 	end
@@ -119,7 +148,7 @@ end
 function Star_Trek.Transporter:GetPatternFromPlayer(ply, wideField)
 	local pos = ply:GetPos()
 
-	pattern = {
+	local pattern = {
 		Entities = {ply},
 		Pos = pos,
 	}
@@ -129,14 +158,8 @@ function Star_Trek.Transporter:GetPatternFromPlayer(ply, wideField)
 		local  lowerBounds = pos - Vector(range, range, 0)
 		local higherBounds = pos + Vector(range, range, range * 2)
 		for _, ent in pairs(ents.FindInBox(lowerBounds, higherBounds)) do
-			if ent:MapCreationID() ~= -1 then continue end
-
-			local parent = ent:GetParent()
-			if not IsValid(parent) then
-				local phys = ent:GetPhysicsObject()
-				if IsValid(phys) and phys:IsMotionEnabled() and ent ~= targetEnt then
-					table.insert(pattern.Entities, ent)
-				end
+			if Star_Trek.Transporter:CanBeamEntity(ent) then
+				table.insert(pattern.Entities, ent)
 			end
 		end
 	end
@@ -166,12 +189,16 @@ end
 -- @param Number sectionId
 -- @return Table pattern
 function Star_Trek.Transporter:GetPatternsFromArea(deck, sectionId)
-	pattern = {
+	local pattern = {
 		Entities = {},
 		Pos = nil,
 	}
 
-	local entities = Star_Trek.Sections:GetInSection(deck, sectionId, nil, false)
+	local entities = Star_Trek.Sections:GetInSection(deck, sectionId, function(objects, ent)
+		if not Star_Trek.Transporter:CanBeamEntity(ent) then
+			return true
+		end
+	end)
 	for i, ent in pairs(entities) do
 		table.insert(pattern.Entities, ent)
 	end
@@ -202,7 +229,7 @@ end
 -- @param Boolean wideField
 -- @return Table pattern
 function Star_Trek.Transporter:GetPatternFromLocation(pos, wideField)
-	pattern = {
+	local pattern = {
 		Entities = {},
 		Pos = pos,
 	}
@@ -215,14 +242,8 @@ function Star_Trek.Transporter:GetPatternFromLocation(pos, wideField)
 	local  lowerBounds = pos - Vector(range, range, 0)
 	local higherBounds = pos + Vector(range, range, range * 2)
 	for _, ent in pairs(ents.FindInBox(lowerBounds, higherBounds)) do
-		if ent:MapCreationID() ~= -1 then continue end
-
-		local parent = ent:GetParent()
-		if not IsValid(parent) then
-			local phys = ent:GetPhysicsObject()
-			if IsValid(phys) and phys:IsMotionEnabled() then
-				table.insert(pattern.Entities, ent)
-			end
+		if Star_Trek.Transporter:CanBeamEntity(ent) then
+			table.insert(pattern.Entities, ent)
 		end
 	end
 
@@ -250,10 +271,12 @@ end
 -- @param Entity ent
 -- @return Table pattern
 function Star_Trek.Transporter:GetPatternFromBuffer(ent)
-	return {
+	local pattern = {
 		Entities = {ent},
 		Pos = nil,
 	}
+
+	return pattern
 end
 
 -- Determines all of the pattern Data Tables for a given list of entities.

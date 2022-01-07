@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2021 Jan Ziegler   --
+--    Copyright © 2022 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -142,6 +142,9 @@ end
 function Star_Trek.Sections:SetupSections()
 	self.Decks = {}
 
+	local globalMin = Vector( math.huge,  math.huge,  math.huge)
+	local globalMax = Vector(-math.huge, -math.huge, -math.huge)
+
 	for i = 1, self.DeckCount do
 		self.Decks[i] = {
 			Sections = {},
@@ -196,11 +199,25 @@ function Star_Trek.Sections:SetupSections()
 				Min = min,
 				Max = max,
 			})
+
+			globalMax = Vector(
+				math.max(globalMax.x, pos.x + max.x, pos.x + min.x),
+				math.max(globalMax.y, pos.y + max.y, pos.y + min.y),
+				math.max(globalMax.z, pos.z + max.z, pos.z + min.z)
+			)
+			
+			globalMin = Vector(
+				math.min(globalMin.x, pos.x + max.x, pos.x + min.x),
+				math.min(globalMin.y, pos.y + max.y, pos.y + min.y),
+				math.min(globalMin.z, pos.z + max.z, pos.z + min.z)
+			)
 		end
 
 		ent:Remove()
 	end
 
+	self.GlobalOffset = globalMin + (globalMax - globalMin) * 0.5
+	
 	hook.Run("Star_Trek.Sections.Loaded")
 end
 
@@ -245,10 +262,3 @@ end
 
 hook.Add("InitPostEntity", "Star_Trek.Sections.Setup", setupSections)
 hook.Add("PostCleanupMap", "Star_Trek.Sections.Setup", setupSections)
-
-util.AddNetworkString("Star_Trek.Sections.Sync")
-hook.Add("PlayerInitialSpawn", "Star_Trek.Sections.Sync", function(ply)
-	net.Start("Star_Trek.Sections.Sync")
-		net.WriteTable(Star_Trek.Sections.Decks)
-	net.Send(ply)
-end)

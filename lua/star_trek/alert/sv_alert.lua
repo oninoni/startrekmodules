@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2021 Jan Ziegler   --
+--    Copyright © 2022 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -95,3 +95,7 @@ function Star_Trek.Alert:Disable()
 
 	return true
 end
+
+hook.Add("PostCleanupMap", "Star_Trek.Alert.Cleanup", function()
+	Star_Trek.Alert:Disable()
+end)

@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2021 Jan Ziegler   --
+--    Copyright © 2022 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -16,6 +16,7 @@
 --  LCARS Transporter | Window Util  --
 ---------------------------------------
 
+if not istable(INTERFACE) then Star_Trek:LoadAllModules() return end
 local SELF = INTERFACE
 
 -- Create the menu window for a transporter screen.
@@ -47,11 +48,6 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip, padNumber)
 			Name = name,
 			Color = color,
 		}
-
-		-- TODO: Implement External Transporter Sources. (Tricorder Markers, Planetary "Default" Beamdown Locations (Event SWEP?))
-		if name == "External" then
-			button.Disabled = true
-		end
 
 		table.insert(buttons, button)
 	end
@@ -289,7 +285,7 @@ function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip, padN
 				Data = ent,
 			})
 		end
-	elseif modeName == "Other Pads" or modeName == "Transporter Pads"  then
+	elseif modeName == "Other Pads" or modeName == "Transporter Pads" then
 		titleShort = "Pads"
 
 		local pads = {}
@@ -312,6 +308,18 @@ function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip, padN
 			table.insert(buttons, {
 				Name = name,
 				Data = roomPads,
+			})
+		end
+	elseif modeName == "External" then
+		titleShort = "External Sensors"
+
+		local externalMarkers = {}
+		hook.Run("Star_Trek.Transporter.GetExternalMarkers", externalMarkers)
+
+		for _, markerData in pairs(externalMarkers) do
+			table.insert(buttons, {
+				Name = markerData.Name,
+				Data = markerData.Pos,
 			})
 		end
 	else

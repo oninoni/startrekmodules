@@ -8,15 +8,13 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2021 Jan Ziegler   --
+--    Copyright © 2022 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
 ---------------------------------------
 --         Star Trek | Loader        --
 ---------------------------------------
-
-game.AddParticles( "particles/intrepid_map.pcf" )
 
 --[[
 -- Some Code to quickly close and re-open lcars if changes to their keyvalues are made
@@ -164,6 +162,8 @@ function Star_Trek:LoadAllModules()
 			self:LoadModule(moduleName)
 		end
 	end
+	
+	hook.Run("Star_Trek.ModulesLoaded")
 
 	self.LoadingActive = nil
 end

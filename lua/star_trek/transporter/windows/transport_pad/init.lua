@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2021 Jan Ziegler   --
+--    Copyright © 2022 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -16,7 +16,9 @@
 --    LCARS Transport Pad | Client   --
 ---------------------------------------
 
+if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
 local SELF = WINDOW
+
 function SELF:OnCreate(padNumber, title, titleShort, hFlip)
 	local success = SELF.Base.OnCreate(self, title, titleShort, hFlip)
 	if not success then
@@ -77,12 +79,12 @@ function SELF:OnCreate(padNumber, title, titleShort, hFlip)
 
 			-- Pad Offset (Frame)
 			if hFlip then
-				pad.X = pad.X - 20
+				pad.X = pad.X - 90
 			else
-				pad.X = pad.X + 20
+				pad.X = pad.X - 40
 			end
 
-			pad.Y = pad.Y + 30
+			pad.Y = pad.Y - 60
 
 			self.Pads[k] = pad
 		end

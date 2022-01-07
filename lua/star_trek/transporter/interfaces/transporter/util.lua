@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2021 Jan Ziegler   --
+--    Copyright © 2022 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -16,6 +16,7 @@
 --      LCARS Transporter | Util     --
 ---------------------------------------
 
+if not istable(INTERFACE) then Star_Trek:LoadAllModules() return end
 local SELF = INTERFACE
 
 local DEMAT_DELAY = 5
@@ -135,6 +136,22 @@ function SELF:GetPatternData(menuTable, wideField)
 		end
 
 		return Star_Trek.Transporter:GetPatternsFromPads(pads)
+	elseif modeName == "External" then
+		local positions = {}
+		for _, button in pairs(mainWindow.Buttons) do
+			if button.Selected then
+				local pos = button.Data
+				table.insert(positions, pos)
+				
+				for i = 1, 6 do
+					local a = math.rad( ( i / 6 ) * -360 )
+
+					table.insert(positions, pos + 32 * Vector(math.sin(a), math.cos(a), 0))
+				end
+			end
+		end
+
+		return Star_Trek.Transporter:GetPatternsFromLocations(positions, wideField)
 	end
 end
 
@@ -149,7 +166,7 @@ function SELF:Energize(sourceMenuTable, targetMenuTable, wideField, textWindow, 
 	local targetPatterns = self:GetPatternData(targetMenuTable, false)
 	Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPatterns, textWindow)
 
-	--ent:EmitSound("star_trek.lcars_transporter_lock") -- TODO: Move to Activate Transporter and change + Add Check if anything is to beam at all -> Error
+	--ent:EmitSound("star_trek.lcars_transporter_lock")
 
 	if isfunction(callback) then
 		callback(sourcePatterns, targetPatterns)

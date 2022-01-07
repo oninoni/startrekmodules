@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2021 Jan Ziegler   --
+--    Copyright © 2022 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -17,15 +17,17 @@
 ---------------------------------------
 
 -- TODO: Check if transport in Progress at target location (No 2 Beams at the same pos at the same time.)
--- TODO: Buffer Decay
+-- TODO: Remove map based Transporter buffer and replace with simulated one (For upport with more maps.)
 
 local setupBuffer = function()
+	Star_Trek.Transporter.Buffer = {
+		Entities = {},
+		Pos = Vector(),
+	}
+
 	for _, ent in pairs(ents.GetAll()) do
 		if string.StartWith(ent:GetName(), "beamBuffer") then
-			Star_Trek.Transporter.Buffer = {
-				Entities = {},
-				Pos = ent:GetPos(),
-			}
+			Star_Trek.Transporter.Buffer.Pos = ent:GetPos()
 
 			return
 		end
@@ -141,7 +143,9 @@ function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPattern
 	if not sourcePatterns.IsBuffer then
 		for _, ent in pairs(remainingEntities) do
 			table.insert(Star_Trek.Transporter.Buffer.Entities, ent)
-			self:BeamObject(ent, Vector(), ent.Pad, nil, true)
+			ent.BufferQuality = 160
+
+			self:BeamObject(ent, Star_Trek.Transporter.Buffer.Pos, ent.Pad, nil, true)
 			textWindow:AddLine("Dematerialising Object...") -- TODO: Sensor Detection of ent Type (Sensors Module)
 			textWindow:AddLine("Warning: No Target Pattern Available! Storing in Buffer!", Star_Trek.LCARS.ColorRed)
 		end
@@ -168,5 +172,36 @@ hook.Add("PlayerCanPickupWeapon", "Star_Trek.Transporter.PreventPickup", functio
 
 	if ent.Replicated and not (ply:KeyDown(IN_USE) and ply:GetEyeTrace().Entity == ent) then
 		return false
+	end
+end)
+
+timer.Create("Star_Trek.Transporter.BufferThink", 1, 0, function()
+	local removeFromBuffer = {}
+
+	for _, ent in pairs(Star_Trek.Transporter.Buffer.Entities) do
+		if ent.BufferQuality <= 0 then
+			table.insert(removeFromBuffer, ent)
+
+			if ent:IsPlayer() then
+				Star_Trek.Transporter:BeamObject(ent, Star_Trek.Transporter.Buffer.Pos, nil, nil)
+				ent:Kill()
+			else
+				SafeRemoveEntity(ent)
+			end
+		end
+
+		ent.BufferQuality = ent.BufferQuality - 1
+
+		if ent.BufferQuality < 100 then
+			local maxHealth = ent:GetMaxHealth()
+			if maxHealth > 0 then
+				local health = math.min(ent:Health(), maxHealth * (ent.BufferQuality / 100))
+				ent:SetHealth(health)
+			end
+		end
+	end
+
+	for _, ent in pairs(removeFromBuffer) do
+		table.RemoveByValue(Star_Trek.Transporter.Buffer.Entities, ent)
 	end
 end)

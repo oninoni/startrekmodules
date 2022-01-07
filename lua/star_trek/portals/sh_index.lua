@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2021 Jan Ziegler   --
+--    Copyright © 2022 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -19,8 +19,6 @@
 Star_Trek:RequireModules()
 
 Star_Trek.Portals = Star_Trek.Portals or {}
-
--- TODO: "Doors Addon not installed" Compatibility
 
 if SERVER then
 	AddCSLuaFile("sh_portals.lua")

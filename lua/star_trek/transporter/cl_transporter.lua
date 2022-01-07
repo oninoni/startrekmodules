@@ -8,7 +8,7 @@
 -- This software can be used freely, --
 --    but only distributed by me.    --
 --                                   --
---    Copyright © 2021 Jan Ziegler   --
+--    Copyright © 2022 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
@@ -61,29 +61,53 @@ net.Receive("Star_Trek.Transporter.TriggerEffect", function()
 	local ent = net.ReadEntity()
 	local remat = net.ReadBool()
 	local replicator = net.ReadBool()
+	local targetPos = net.ReadVector()
 
 	Star_Trek.Transporter:TriggerEffect(ent, remat, replicator)
-end)
 
-net.Receive("Star_Trek.Transporter.TriggerPlayerEffect", function()
-	local active = net.ReadBool()
+	if ent == LocalPlayer() then
+		local offset = ent:WorldToLocal(ent:EyePos())
+		Star_Trek.Transporter.TargetPos = LocalToWorld(offset, Angle(), targetPos, ent:GetAngles())
 
-	if active then
-		Star_Trek.Transporter.SelfActive = true
-		Star_Trek.Transporter.SelfRefrac = 0
-	else
-		Star_Trek.Transporter.SelfActive = false
-		Star_Trek.Transporter.SelfRefrac = 255
+		if not remat then
+			Star_Trek.Transporter.SelfActive = true
+			Star_Trek.Transporter.SelfRefrac = 0
+		else
+			Star_Trek.Transporter.SelfActive = false
+			Star_Trek.Transporter.SelfRefrac = 1
+		end
 	end
 end)
 
-local lastSysTime = SysTime()
--- First Effect for beaming yourself.
+local rt = GetRenderTarget("TransporterFadeRT", ScrW(), ScrH())
+local tex = GetRenderTarget("TransporterFadeTexture", ScrW(), ScrH())
+local mat = CreateMaterial("TransporterFade", "UnlitGeneric", {
+    ["$basetexture"] = tex:GetName(),
+    ["$vertexalpha"] = "1",
+    ["$vertexcolor"] = "1",
+});
+
 hook.Add("RenderScreenspaceEffects", "Star_Trek.Transporter.Effect", function()
 	if Star_Trek.Transporter.SelfRefrac > 0 then
-		DrawMaterialOverlay("effects/water_warp01", Star_Trek.Transporter.SelfRefrac)
+		render.PushRenderTarget(rt)
+			render.Clear(0,0,0,255)
 
-		draw.RoundedBox(0, 0, 0, ScrW(), ScrH(), Color(31, 127, 255, Star_Trek.Transporter.SelfRefrac) )
+			render.RenderView( {
+				origin = Star_Trek.Transporter.TargetPos,
+				drawviewmodel = false,
+			})
+		render.PopRenderTarget()
+		
+		-- Push RT into new texture, to delete alpha values (WTF Man Garry. What is this???)
+		render.PushRenderTarget(tex)
+			render.DrawTextureToScreen(rt)
+		render.PopRenderTarget()
+
+		surface.SetDrawColor(255,255,255, 255 * Star_Trek.Transporter.SelfRefrac)
+		surface.SetMaterial(mat)
+		surface.DrawTexturedRect(-1, -1, ScrW()+1, ScrH()+1)
+		
+		DrawMaterialOverlay("effects/water_warp01", Star_Trek.Transporter.SelfRefrac * 0.1)
 	end
 end)
 
@@ -99,6 +123,7 @@ local function drawFlare(pos, vec, size)
 	)
 end
 
+local lastSysTime = SysTime()
 hook.Add("PostDrawTranslucentRenderables", "Voyager.Transporter.MainRender", function()
 	local vec = EyeVector()
 	vec[3] = 0
@@ -107,9 +132,9 @@ hook.Add("PostDrawTranslucentRenderables", "Voyager.Transporter.MainRender", fun
 	lastSysTime = SysTime()
 
 	if Star_Trek.Transporter.SelfActive then
-		Star_Trek.Transporter.SelfRefrac = math.min(255, Star_Trek.Transporter.SelfRefrac + 100 * frameTime)
+		Star_Trek.Transporter.SelfRefrac = math.min(1, Star_Trek.Transporter.SelfRefrac + 0.5 * frameTime)
 	else
-		Star_Trek.Transporter.SelfRefrac = math.max(0, Star_Trek.Transporter.SelfRefrac - 100 * frameTime)
+		Star_Trek.Transporter.SelfRefrac = math.max(0, Star_Trek.Transporter.SelfRefrac - 0.5 * frameTime)
 	end
 
 	local toBeRemoved = {}
@@ -168,18 +193,6 @@ hook.Add("PostDrawTranslucentRenderables", "Voyager.Transporter.MainRender", fun
 			drawFlare(pos + upHeight * maxEffectProgress, vec, size)
 			drawFlare(pos - (upHeight * maxEffectProgress + Vector(0, 0, 0.3)), vec, smallSize)
 			drawFlare(pos + (upHeight * maxEffectProgress + Vector(0, 0, 0.3)), vec, smallSize)
-
-			local dLight = DynamicLight(ent:EntIndex(), false)
-			if ( dLight ) then
-				dLight.pos = ent:GetPos()
-				dLight.r = 31
-				dLight.g = 127
-				dLight.b = 255
-				dLight.brightness = 1
-				dLight.Decay = 1000
-				dLight.Size = 512 * (maxAlpha + midAlpha)
-				dLight.DieTime = CurTime() + 1
-			end
 		end
 
 		if transportData.AnimPos > 1.3 then
