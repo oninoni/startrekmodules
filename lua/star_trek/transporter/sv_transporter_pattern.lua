@@ -101,7 +101,7 @@ function Star_Trek.Transporter:GetPatternFromPad(pad)
 		pos = pad:GetAttachment(attachmentId).Pos
 	end
 
-	pattern = {
+	local pattern = {
 		Entities = {},
 		Pos = pos,
 	}
@@ -148,7 +148,7 @@ end
 function Star_Trek.Transporter:GetPatternFromPlayer(ply, wideField)
 	local pos = ply:GetPos()
 
-	pattern = {
+	local pattern = {
 		Entities = {ply},
 		Pos = pos,
 	}
@@ -189,7 +189,7 @@ end
 -- @param Number sectionId
 -- @return Table pattern
 function Star_Trek.Transporter:GetPatternsFromArea(deck, sectionId)
-	pattern = {
+	local pattern = {
 		Entities = {},
 		Pos = nil,
 	}
@@ -229,7 +229,7 @@ end
 -- @param Boolean wideField
 -- @return Table pattern
 function Star_Trek.Transporter:GetPatternFromLocation(pos, wideField)
-	pattern = {
+	local pattern = {
 		Entities = {},
 		Pos = pos,
 	}
@@ -271,10 +271,12 @@ end
 -- @param Entity ent
 -- @return Table pattern
 function Star_Trek.Transporter:GetPatternFromBuffer(ent)
-	return {
+	local pattern = {
 		Entities = {ent},
 		Pos = nil,
 	}
+
+	return pattern
 end
 
 -- Determines all of the pattern Data Tables for a given list of entities.
