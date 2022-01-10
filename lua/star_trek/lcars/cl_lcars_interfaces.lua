@@ -153,6 +153,13 @@ function Star_Trek.LCARS:PlayerButtonDown(ply, button)
 			continue
 		end
 
+		if not IsValid(interface.Ent) then
+			interface.Ent = ents.GetByIndex(id)
+			if not IsValid(interface.Ent) then
+				continue
+			end
+		end
+
 		if hook.Run("Star_Trek.LCARS.PreventRender", interface, true) then
 			continue
 		end
@@ -233,15 +240,18 @@ hook.Add("Think", "Star_Trek.LCARS.Think", function()
 
 	local removeInterfaces = {}
 	for id, interface in pairs(Star_Trek.LCARS.ActiveInterfaces) do
+		interface.IVis = false
+
 		if not IsValid(interface.Ent) then
 			interface.Ent = ents.GetByIndex(id)
+			if not IsValid(interface.Ent) then
+				continue
+			end
 		end
 
 		if hook.Run("Star_Trek.LCARS.PreventRender", interface, true) then
 			continue
 		end
-
-		interface.IVis = false
 
 		local pos, ang = Star_Trek.LCARS:GetInterfacePosAngle(interface.Ent, interface.IPos, interface.IAng)
 
@@ -289,6 +299,11 @@ hook.Add("PostDrawTranslucentRenderables", "Star_Trek.LCARS.Draw", function(isDr
 
 	for _, interface in pairs(Star_Trek.LCARS.ActiveInterfaces) do
 		if not interface.IVis then
+			continue
+		end
+
+		-- Only Check! Dont fix! (For Performance Reasons!)
+		if not IsValid(interface.Ent) then
 			continue
 		end
 
