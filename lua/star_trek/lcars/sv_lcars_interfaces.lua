@@ -57,6 +57,7 @@ function Star_Trek.LCARS:OpenInterface(ply, triggerEntity, interfaceName, ...)
 
 	local interfaceData = {
 		Ent 			= ent,
+		Class 			= interfaceName,
 		InterfacePos	= interfacePos,
 		InterfaceAngle	= interfaceAngle,
 	}
@@ -75,6 +76,8 @@ function Star_Trek.LCARS:OpenInterface(ply, triggerEntity, interfaceName, ...)
 	if not istable(windows) or table.Count(windows) < 1 then
 		return false, "Invalid Interface Windows"
 	end
+
+	hook.Run("Star_Trek.Logs.OpenInterface", interfaceData, ply)
 
 	interfaceData.Windows = windows
 	interfaceData.OffsetPos = offsetPos
@@ -233,6 +236,8 @@ net.Receive("Star_Trek.LCARS.Pressed", function(len, ply)
 	if not istable(windowData) then
 		return
 	end
+	
+	hook.Run("Star_Trek.Logs.PressedInterface", interfaceData, ply)
 
 	local shouldUpdate = windowData:OnPress(interfaceData, ent, buttonId, windowData.Callback)
 	if shouldUpdate then
