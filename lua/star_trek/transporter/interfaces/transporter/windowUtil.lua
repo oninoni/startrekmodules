@@ -286,7 +286,6 @@ function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip, padN
 			if className == "prop_physics" then
 				name = "Pattern"
 			end
-			-- TODO: Scanner implementation to identify stuff? (Sensors Module)
 
 			table.insert(buttons, {
 				Name = name,

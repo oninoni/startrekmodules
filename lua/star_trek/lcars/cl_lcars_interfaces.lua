@@ -131,7 +131,6 @@ net.Receive("Star_Trek.LCARS.Update", function()
 			window.Interface = interface
 		end
 	else
-		-- TODO: Change this to maybe only update instead of calling OnCreate again?
 		hook.Run("Star_Trek.LCARS.PreWindowCreate", currentWindow, windowData)
 
 		local success = currentWindow:OnCreate(windowData)

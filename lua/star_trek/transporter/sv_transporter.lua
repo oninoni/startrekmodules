@@ -16,9 +16,6 @@
 --        Transporter | Server       --
 ---------------------------------------
 
--- TODO: Check if transport in Progress at target location (No 2 Beams at the same pos at the same time.)
--- TODO: Remove map based Transporter buffer and replace with simulated one (For upport with more maps.)
-
 local setupBuffer = function()
 	Star_Trek.Transporter.Buffer = {
 		Entities = {},
@@ -124,7 +121,7 @@ function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPattern
 						end
 
 						self:BeamObject(ent, targetPattern.Pos, sourcePattern.Pad, targetPattern.Pad, false)
-						textWindow:AddLine("Dematerialising Object...") -- TODO: Sensor Detection of ent Type (Sensors Module)
+						textWindow:AddLine("Dematerialising Object...")
 
 						i = i + 1
 					elseif isbool(targetPattern) then
@@ -146,7 +143,7 @@ function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPattern
 			ent.BufferQuality = 160
 
 			self:BeamObject(ent, Star_Trek.Transporter.Buffer.Pos, ent.Pad, nil, true)
-			textWindow:AddLine("Dematerialising Object...") -- TODO: Sensor Detection of ent Type (Sensors Module)
+			textWindow:AddLine("Dematerialising Object...")
 			textWindow:AddLine("Warning: No Target Pattern Available! Storing in Buffer!", Star_Trek.LCARS.ColorRed)
 		end
 	end
