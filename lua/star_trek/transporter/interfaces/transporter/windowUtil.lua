@@ -260,6 +260,10 @@ function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip, padN
 		titleShort = "LIFE"
 
 		for _, ply in pairs(player.GetHumans()) do
+			if hook.Run("Star_Trek.Transporter.CheckLifeforms", ply) == false then
+				continue
+			end
+
 			table.insert(buttons, {
 				Name = ply:GetName(),
 				Data = ply,
@@ -270,6 +274,10 @@ function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip, padN
 		titleShort = "Buffer"
 
 		for _, ent in pairs(Star_Trek.Transporter.Buffer.Entities) do
+			if not IsValid(ent) then
+				continue
+			end
+
 			local name = "Unknown Pattern"
 			if ent:IsPlayer() or ent:IsNPC() then
 				name = "Organic Pattern"
