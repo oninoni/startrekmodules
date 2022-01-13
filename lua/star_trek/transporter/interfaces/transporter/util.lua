@@ -79,7 +79,12 @@ function SELF:GetPatternData(menuTable, wideField)
 		local players = {}
 		for _, button in pairs(mainWindow.Buttons) do
 			if button.Selected then
-				table.insert(players, button.Data)
+				local ply = button.Data
+				if hook.Run("Star_Trek.Transporter.CheckLifeforms", ply) == false then
+					continue
+				end
+
+				table.insert(players, ply)
 			end
 		end
 

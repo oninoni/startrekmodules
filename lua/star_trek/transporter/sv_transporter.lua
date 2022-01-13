@@ -205,3 +205,10 @@ timer.Create("Star_Trek.Transporter.BufferThink", 1, 0, function()
 		table.RemoveByValue(Star_Trek.Transporter.Buffer.Entities, ent)
 	end
 end)
+
+-- Prevent Noclipped players from being listed.
+hook.Add("Star_Trek.Transporter.CheckLifeforms", "Star_Trek.Transporter.PreventAdmins", function(ply)
+	if ply:GetMoveType() == MOVETYPE_NOCLIP then
+		return false
+	end
+end)
