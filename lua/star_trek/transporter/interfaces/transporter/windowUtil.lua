@@ -256,8 +256,8 @@ function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip, padN
 	local titleShort = ""
 	local buttons = {}
 
-	if modeName == "Lifeforms" then
-		titleShort = "LIFE"
+	if modeName == "Crew" then
+		titleShort = "CREW"
 
 		for _, ply in pairs(player.GetHumans()) do
 			if hook.Run("Star_Trek.Transporter.CheckLifeforms", ply) == false then
@@ -370,7 +370,7 @@ end
 -- @return Table mainWindow
 function SELF:CreateWindowTable(menuPos, menuAngle, menuWidth, mainPos, mainAngle, mainWidth, mainHeight, hFlip, targetSide, padNumber)
 	local menuTypes = {
-		"Lifeforms",
+		"Crew",
 		"Transporter Pads",
 		"Sections",
 		"External",
@@ -381,7 +381,7 @@ function SELF:CreateWindowTable(menuPos, menuAngle, menuWidth, mainPos, mainAngl
 			"Transporter Pad",
 			"Other Pads",
 			"Sections",
-			"Lifeforms",
+			"Crew",
 			"External",
 			{"Buffer", false},
 		}

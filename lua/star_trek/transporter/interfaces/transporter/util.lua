@@ -75,7 +75,7 @@ function SELF:GetPatternData(menuTable, wideField)
 		end
 
 		return Star_Trek.Transporter:GetPatternsFromPads(pads)
-	elseif modeName == "Lifeforms" then
+	elseif modeName == "Crew" then
 		local players = {}
 		for _, button in pairs(mainWindow.Buttons) do
 			if button.Selected then
