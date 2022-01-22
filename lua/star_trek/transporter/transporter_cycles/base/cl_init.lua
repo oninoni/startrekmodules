@@ -64,6 +64,17 @@ function SELF:Initialize()
 	self.FlareSizeSmall = self.FlareSize * 0.3
 end
 
+function SELF:ResetRenderMode()
+	local ent = self.Entity
+
+	local defaultRenderMode = ent.TransporterDefaultRenderMode
+	if defaultRenderMode == nil then
+		defaultRenderMode = RENDERMODE_NORMAL
+	end
+
+	ent:SetRenderMode(defaultRenderMode)
+end
+
 function SELF:ResetColor()
 	local ent = self.Entity
 
@@ -79,9 +90,10 @@ function SELF:End()
 	if Star_Trek.Transporter.LocalCycle == self then
 		Star_Trek.Transporter.LocalCycle = nil
 	end
-
+	
 	local ent = self.Entity
 	if IsValid(ent) then
+		self:ResetRenderMode()
 		self:ResetColor()
 	end
 end
@@ -97,6 +109,17 @@ function SELF:ApplyState(state)
 	if not istable(stateData) then return end
 	
 	local ent = self.Entity
+
+	local renderMode = stateData.RenderMode
+	if renderMode ~= nil then
+		if renderMode == false then
+			self:ResetRenderMode()
+			ent.TransporterDefaultRenderMode = nil
+		else
+			ent.TransporterDefaultRenderMode = ent.TransporterDefaultRenderMode or ent:GetRenderMode()
+			ent:SetRenderMode(renderMode)
+		end
+	end
 
 	local colorFade = stateData.ColorFade
 	if isnumber(colorFade) then

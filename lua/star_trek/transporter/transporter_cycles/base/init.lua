@@ -41,17 +41,6 @@ function SELF:ResetCollisionGroup()
 	ent:SetCollisionGroup(defaultCollisionGroup)
 end
 
-function SELF:ResetRenderMode()
-	local ent = self.Entity
-
-	local defaultRenderMode = ent.TransporterDefaultRenderMode
-	if defaultRenderMode == nil then
-		defaultRenderMode = RENDERMODE_NORMAL
-	end
-
-	ent:SetRenderMode(defaultRenderMode)
-end
-
 function SELF:ResetMoveType()
 	local ent = self.Entity
 
@@ -67,7 +56,6 @@ function SELF:End()
 	local ent = self.Entity
 	
 	self:ResetCollisionGroup()
-	self:ResetRenderMode()
 	self:ResetMoveType()
 
 	ent:DrawShadow(true)
@@ -110,17 +98,6 @@ function SELF:ApplyState(state)
 		end
 	end
 	
-	local renderMode = stateData.RenderMode
-	if renderMode ~= nil then
-		if renderMode == false then
-			self:ResetRenderMode()
-			ent.TransporterDefaultRenderMode = nil
-		else
-			ent.TransporterDefaultRenderMode = ent.TransporterDefaultRenderMode or ent:GetRenderMode()
-			ent:SetRenderMode(renderMode)
-		end
-	end
-
 	local moveType = stateData.MoveType
 	if moveType ~= nil then
 		if moveType == false then
