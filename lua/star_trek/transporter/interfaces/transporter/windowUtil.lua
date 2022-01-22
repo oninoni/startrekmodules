@@ -49,11 +49,6 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip, padNumber)
 			Color = color,
 		}
 
-		-- TODO: Implement External Transporter Sources. (Tricorder Markers, Planetary "Default" Beamdown Locations (Event SWEP?))
-		if name == "External" then
-			button.Disabled = true
-		end
-
 		table.insert(buttons, button)
 	end
 
@@ -261,10 +256,14 @@ function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip, padN
 	local titleShort = ""
 	local buttons = {}
 
-	if modeName == "Lifeforms" then
-		titleShort = "LIFE"
+	if modeName == "Crew" then
+		titleShort = "CREW"
 
 		for _, ply in pairs(player.GetHumans()) do
+			if hook.Run("Star_Trek.Transporter.CheckLifeforms", ply) == false then
+				continue
+			end
+
 			table.insert(buttons, {
 				Name = ply:GetName(),
 				Data = ply,
@@ -275,6 +274,10 @@ function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip, padN
 		titleShort = "Buffer"
 
 		for _, ent in pairs(Star_Trek.Transporter.Buffer.Entities) do
+			if not IsValid(ent) then
+				continue
+			end
+
 			local name = "Unknown Pattern"
 			if ent:IsPlayer() or ent:IsNPC() then
 				name = "Organic Pattern"
@@ -283,14 +286,13 @@ function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip, padN
 			if className == "prop_physics" then
 				name = "Pattern"
 			end
-			-- TODO: Scanner implementation to identify stuff? (Sensors Module)
 
 			table.insert(buttons, {
 				Name = name,
 				Data = ent,
 			})
 		end
-	elseif modeName == "Other Pads" or modeName == "Transporter Pads"  then
+	elseif modeName == "Other Pads" or modeName == "Transporter Pads" then
 		titleShort = "Pads"
 
 		local pads = {}
@@ -313,6 +315,18 @@ function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip, padN
 			table.insert(buttons, {
 				Name = name,
 				Data = roomPads,
+			})
+		end
+	elseif modeName == "External" then
+		titleShort = "External Sensors"
+
+		local externalMarkers = {}
+		hook.Run("Star_Trek.Transporter.GetExternalMarkers", externalMarkers)
+
+		for _, markerData in pairs(externalMarkers) do
+			table.insert(buttons, {
+				Name = markerData.Name,
+				Data = markerData.Pos,
 			})
 		end
 	else
@@ -356,7 +370,7 @@ end
 -- @return Table mainWindow
 function SELF:CreateWindowTable(menuPos, menuAngle, menuWidth, mainPos, mainAngle, mainWidth, mainHeight, hFlip, targetSide, padNumber)
 	local menuTypes = {
-		"Lifeforms",
+		"Crew",
 		"Transporter Pads",
 		"Sections",
 		"External",
@@ -367,7 +381,7 @@ function SELF:CreateWindowTable(menuPos, menuAngle, menuWidth, mainPos, mainAngl
 			"Transporter Pad",
 			"Other Pads",
 			"Sections",
-			"Lifeforms",
+			"Crew",
 			"External",
 			{"Buffer", false},
 		}

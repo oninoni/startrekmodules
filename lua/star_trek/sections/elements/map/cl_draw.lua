@@ -19,9 +19,6 @@
 if not istable(ELEMENT) then Star_Trek:LoadAllModules() return end
 local SELF = ELEMENT
 
--- TODO: Add Offset
--- TODO: Add Scale
-
 function SELF:DrawMap(x, y, color, colorSelected, border)
 	local scale = self.Scale or 1
 

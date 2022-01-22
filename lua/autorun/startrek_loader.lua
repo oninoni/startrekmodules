@@ -31,9 +31,6 @@ hook.Add("Star_Trek.ChangedKeyValue", "Testing", function(ent, key, value)
 end)
 ]]
 
--- TODO: Rework all "if not success", to display the Error properly. (Mostly Net, Hook and Clientside Errors)
--- TODO: Check if all errors are caught.
-
 Star_Trek = Star_Trek or {}
 Star_Trek.Modules = Star_Trek.Modules or {}
 Star_Trek.LoadedModules = Star_Trek.LoadedModules or {}

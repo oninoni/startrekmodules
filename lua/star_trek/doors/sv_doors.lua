@@ -41,10 +41,6 @@ end
 
 -- Block Doors aborting animations.
 hook.Add("AcceptInput", "Star_Trek.BlockDoorIfAlreadyDooring", function(ent, input, activator, caller, value)
-	if Star_Trek.Doors.Doors[ent] then
-		print(ent, input, activator, caller, value)
-	end
-	
 	if Star_Trek.Doors.Doors[ent] and string.lower(input) == "setanimation" then
 		value = string.lower(value)
 

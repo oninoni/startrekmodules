@@ -75,11 +75,16 @@ function SELF:GetPatternData(menuTable, wideField)
 		end
 
 		return Star_Trek.Transporter:GetPatternsFromPads(pads)
-	elseif modeName == "Lifeforms" then
+	elseif modeName == "Crew" then
 		local players = {}
 		for _, button in pairs(mainWindow.Buttons) do
 			if button.Selected then
-				table.insert(players, button.Data)
+				local ply = button.Data
+				if hook.Run("Star_Trek.Transporter.CheckLifeforms", ply) == false then
+					continue
+				end
+
+				table.insert(players, ply)
 			end
 		end
 
@@ -136,6 +141,22 @@ function SELF:GetPatternData(menuTable, wideField)
 		end
 
 		return Star_Trek.Transporter:GetPatternsFromPads(pads)
+	elseif modeName == "External" then
+		local positions = {}
+		for _, button in pairs(mainWindow.Buttons) do
+			if button.Selected then
+				local pos = button.Data
+				table.insert(positions, pos)
+				
+				for i = 1, 6 do
+					local a = math.rad( ( i / 6 ) * -360 )
+
+					table.insert(positions, pos + 32 * Vector(math.sin(a), math.cos(a), 0))
+				end
+			end
+		end
+
+		return Star_Trek.Transporter:GetPatternsFromLocations(positions, wideField)
 	end
 end
 

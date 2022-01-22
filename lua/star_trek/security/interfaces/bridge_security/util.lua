@@ -120,8 +120,6 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 
 			local deck = sectionWindow.Selected
 
-			-- TODO: Redo using Sensors Module!
-
 			-------- Scan --------
 			if buttonName == "Scan Lifeforms" then
 				local entities = Star_Trek.Sections:GetInSections(deck, sectionIds, function(objects, ent)
