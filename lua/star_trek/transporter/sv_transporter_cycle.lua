@@ -24,7 +24,7 @@ function Star_Trek.Transporter:TransportObject(cycleType, ent, targetPos, skipDe
 	end
 
 	transporterCycle.Callback = callback
-	
+
 	-- Offset to prevent stucking in floor
 	local lowerBounds = ent:GetCollisionBounds()
 	transporterCycle.ZOffset = -lowerBounds.Z + 2 -- TODO: Check lower value
@@ -95,3 +95,14 @@ end)
 function Star_Trek.Transporter:GetBufferPos()
 	return Vector()
 end
+
+hook.Add("SetupPlayerVisibility", "Star_Trek.Transporter.PVS", function(ply, viewEntity)
+	local transporterCycle = Star_Trek.Transporter.ActiveCycles[ply]
+	if not istable(transporterCycle) then
+		return
+	end
+
+	if istable(Star_Trek.Transporter.Buffer) then
+		AddOriginToPVS(Star_Trek.Transporter.Buffer.Pos)
+	end
+end)

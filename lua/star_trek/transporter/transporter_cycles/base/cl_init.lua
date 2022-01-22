@@ -53,7 +53,7 @@ function SELF:Initialize()
 	self.ObjectHeight = high[3] - low[3]
 	local offset = high[3] + low[3]
 	self.Offset = Vector(0, 0, offset / 2)
-	
+
 	local up = ent:GetUp()
 	if ent:IsPlayer() then
 		up = Vector(0, 0, 1)

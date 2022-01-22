@@ -160,6 +160,13 @@ function SELF:GetPatternData(menuTable, wideField)
 	end
 end
 
+-- Prevent Noclipped players from being listed.
+hook.Add("Star_Trek.Transporter.CheckLifeforms", "Star_Trek.Transporter.PreventAdmins", function(ply)
+	if ply:GetMoveType() == MOVETYPE_NOCLIP then
+		return false
+	end
+end)
+
 -- Engage a transporter system with the given menu tables and wide field.
 --
 -- @param Table sourceMenuTable

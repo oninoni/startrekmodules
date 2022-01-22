@@ -39,7 +39,7 @@ CYCLE.States = {
 	},
 	[2] = { -- Demat Done (Buffer)
 		Duration = 2,
-		
+
 		CollisionGroup = false,
 		RenderMode = RENDERMODE_NONE,
 
@@ -47,14 +47,15 @@ CYCLE.States = {
 	},
 	[3] = { -- Remat
 		Duration = 2,
-		
+
 		CollisionGroup = COLLISION_GROUP_DEBRIS,
 		RenderMode = RENDERMODE_TRANSTEXTURE,
-		
+		MoveType = false,
+
 		SoundName = "star_trek.voy_beam_down", -- "star_trek.tng_replicator"
-		
+
 		TPToTarget = true,
-		
+
 		ParticleName = "beam_in",
 		ColorFade = -1,
 	}

@@ -34,6 +34,9 @@ if SERVER then
 
 	include("sh_transporter_cycle.lua")
 	include("sv_transporter_cycle.lua")
+
+	include("sv_transporter_pattern.lua")
+	include("sv_transporter.lua")
 end
 
 if CLIENT then

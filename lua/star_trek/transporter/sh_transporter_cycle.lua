@@ -26,7 +26,7 @@ function Star_Trek.Transporter:CreateCycle(cycleType, ent, targetPos, skipDemat,
 	if self.ActiveCycles[ent] then
 		return false, "Object already in Transport"
 	end
-	
+
 	local transporterCycle = {
 		CycleType = cycleType,
 		Entity = ent,
