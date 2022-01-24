@@ -58,6 +58,11 @@ CYCLE.States = {
 
 		ParticleName = "beam_in",
 		ColorFade = -1,
+	},
+	[4] = { -- Cleanup
+		Duration = 0,
+
+		TPToTarget = true,
 	}
 }
 

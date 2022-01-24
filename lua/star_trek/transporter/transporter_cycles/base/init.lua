@@ -59,7 +59,11 @@ function SELF:End()
 	self:ResetMoveType()
 
 	ent:DrawShadow(true)
-	--ent:Activate()
+
+	local phys = ent:GetPhysicsObject()
+	if IsValid(phys) then
+		phys:Wake()
+	end
 end
 
 -- Aborts the transporter cycle and brings the entity back to its normal state.
@@ -120,7 +124,10 @@ function SELF:ApplyState(state)
 	end
 
 	if stateData.TPToTarget then
-		ent:SetPos(self.TargetPos)
+		local lowerBounds = ent:GetCollisionBounds()
+		local zOffset = -lowerBounds.Z + 2 -- Offset to prevent stucking in floor
+
+		ent:SetPos(self.TargetPos + Vector(0, 0, zOffset))
 	end
 
 	local soundName = stateData.SoundName

@@ -24,6 +24,9 @@ function Star_Trek.Transporter:TransportObject(cycleType, ent, targetPos, skipDe
 	end
 
 	transporterCycle.Callback = callback
+	if isfunction(callback) then
+		callback(transporterCycle)
+	end
 
 	-- Offset to prevent stucking in floor
 	local lowerBounds = ent:GetCollisionBounds()
@@ -65,7 +68,7 @@ hook.Add("Think", "Star_Trek.Transporter.Think", function()
 			local success = transporterCycle:ApplyState(newState)
 			if not success then
 				transporterCycle:End()
-				
+
 				net.Start("Star_Trek.Transporter.End")
 					net.WriteEntity(ent)
 				net.Broadcast()
@@ -78,7 +81,7 @@ hook.Add("Think", "Star_Trek.Transporter.Think", function()
 			if isfunction(callback) then
 				callback(transporterCycle)
 			end
-			
+
 			net.Start("Star_Trek.Transporter.ApplyState")
 				net.WriteEntity(ent)
 				net.WriteInt(newState, 8)
