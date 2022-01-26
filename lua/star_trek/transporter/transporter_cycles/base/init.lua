@@ -89,8 +89,7 @@ function SELF:Abort()
 
 	local ent = self.Entity
 
-	local bufferPos = Star_Trek.Transporter:GetBufferPos()
-	ent:SetPos(bufferPos)
+	ent:SetPos(self.BufferPos)
 end
 
 -- Applies the current state to the transporter cycle.
@@ -138,8 +137,7 @@ function SELF:ApplyState(state)
 	end
 
 	if stateData.TPToBuffer then
-		local bufferPos = Star_Trek.Transporter:GetBufferPos()
-		ent:SetPos(bufferPos)
+		ent:SetPos(self.BufferPos)
 	end
 
 	if stateData.TPToTarget then

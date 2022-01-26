@@ -20,9 +20,10 @@ net.Receive("Star_Trek.Transporter.TransportObject", function()
 	local cycleType = net.ReadString()
 	local ent = net.ReadEntity()
 	local targetPos = net.ReadVector()
+	local bufferPos = net.ReadVector()
 	local skipDemat = net.ReadBool()
 
-	local success, transporterCycle = Star_Trek.Transporter:CreateCycle(cycleType, ent, targetPos, skipDemat)
+	local success, transporterCycle = Star_Trek.Transporter:CreateCycle(cycleType, ent, targetPos, bufferPos, skipDemat)
 	if not success then
 		print(transporterCycle)
 	end

@@ -18,7 +18,7 @@
 
 Star_Trek.Transporter.ActiveCycles = Star_Trek.Transporter.ActiveCycles or {}
 
-function Star_Trek.Transporter:CreateCycle(cycleType, ent, targetPos, skipDemat, skipRemat)
+function Star_Trek.Transporter:CreateCycle(cycleType, ent, targetPos, bufferPos, skipDemat, skipRemat)
 	if not IsValid(ent) then
 		return false, "Invalid Entity for Transport"
 	end
@@ -31,6 +31,7 @@ function Star_Trek.Transporter:CreateCycle(cycleType, ent, targetPos, skipDemat,
 		CycleType = cycleType,
 		Entity = ent,
 		TargetPos = targetPos,
+		BufferPos = bufferPos,
 
 		SkipDemat = skipDemat,
 		SkipRemat = skipRemat,

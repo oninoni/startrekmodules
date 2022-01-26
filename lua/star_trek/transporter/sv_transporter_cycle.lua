@@ -18,7 +18,13 @@
 
 util.AddNetworkString("Star_Trek.Transporter.TransportObject")
 function Star_Trek.Transporter:TransportObject(cycleType, ent, targetPos, skipDemat, skipRemat, callback)
-	local success, transporterCycle = self:CreateCycle(cycleType, ent, targetPos, skipDemat, skipRemat)
+	local moveType = ent:GetMoveType()
+	if moveType == MOVETYPE_NOCLIP then
+		return false, "Object is untouchable."
+	end
+
+	local bufferPos = Star_Trek.Transporter:GetBufferPos()
+	local success, transporterCycle = self:CreateCycle(cycleType, ent, targetPos, bufferPos, skipDemat, skipRemat)
 	if not success then
 		return false, transporterCycle
 	end
@@ -36,6 +42,7 @@ function Star_Trek.Transporter:TransportObject(cycleType, ent, targetPos, skipDe
 		net.WriteString(cycleType)
 		net.WriteEntity(ent)
 		net.WriteVector(targetPos)
+		net.WriteVector(bufferPos)
 		net.WriteBool(skipDemat)
 	net.Broadcast()
 
@@ -105,7 +112,8 @@ hook.Add("SetupPlayerVisibility", "Star_Trek.Transporter.PVS", function(ply, vie
 		return
 	end
 
-	if istable(Star_Trek.Transporter.Buffer) then
-		AddOriginToPVS(Star_Trek.Transporter.Buffer.Pos)
+	local bufferPos = transporterCycle.BufferPos
+	if isvector(bufferPos) then
+		AddOriginToPVS(bufferPos)
 	end
 end)
