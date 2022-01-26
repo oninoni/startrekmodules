@@ -51,10 +51,11 @@ function SELF:Initialize()
 
 	self.State = 1
 	if self.SkipDemat then
-		self.State = self.SkipDematState
-		for state = 1, self.State - 1 do
+		for state = 1, self.SkipDematState - 1 do
 			self:ApplyState(state)
 		end
+
+		self.State = self.SkipDematState
 	end
 end
 
