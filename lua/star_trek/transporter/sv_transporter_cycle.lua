@@ -146,7 +146,9 @@ function Star_Trek.Transporter:CleanUp(ent)
 		Star_Trek.Transporter.ActiveCycles[ent] = nil
 	end
 
-	if table.HasValue(Star_Trek.Transporter.Buffer.Entities, ent) then
+	if istable(Star_Trek.Transporter.Buffer)
+	and istable(Star_Trek.Transporter.Buffer.Entities)
+	and table.HasValue(Star_Trek.Transporter.Buffer.Entities, ent) then
 		table.RemoveByValue(Star_Trek.Transporter.Buffer.Entities, ent)
 		ent.BufferQuality = nil
 	end
