@@ -27,6 +27,9 @@ function SELF:Initialize()
 
 	if self.SkipDemat then
 		self.State = self.SkipDematState
+		for state = 1, self.State - 1 do
+			self:ApplyState(state)
+		end
 	end
 end
 

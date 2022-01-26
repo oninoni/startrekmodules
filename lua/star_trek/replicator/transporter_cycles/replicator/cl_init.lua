@@ -13,11 +13,27 @@
 ---------------------------------------
 
 ---------------------------------------
---     Federation Cycle | Shared     --
+--     Replicator Cycle | Client     --
 ---------------------------------------
 
 if not istable(CYCLE) then Star_Trek:LoadAllModules() return end
 local SELF = CYCLE
 
--- Determines the parent transport cycles name for this one. (Like Deriving Classes)
-SELF.BaseCycle = "base"
+-- Initializes the transporter cycle.
+--
+-- @param Entity ent
+function SELF:Initialize()
+	SELF.Base.Initialize(self)
+end
+
+-- Applies the current state to the transporter cycle.
+--
+-- @param Number state
+function SELF:ApplyState(state)
+	SELF.Base.ApplyState(self, state)
+end
+
+-- Renders the effects of the transporter cycle.
+function SELF:Render()
+	SELF.Base.Render(self)
+end

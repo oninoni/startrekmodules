@@ -23,11 +23,6 @@ local SELF = CYCLE
 --
 -- @param Entity ent
 function SELF:Initialize()
-	self.State = 1
-	if self.SkipDemat then
-		self.State = self.SkipDematState
-	end
-
 	local ent = self.Entity
 
 	if ent == LocalPlayer() then
@@ -53,6 +48,14 @@ function SELF:Initialize()
 	self.ObjectHeight = high[3] - low[3]
 	local offset = high[3] + low[3]
 	self.Offset = Vector(0, 0, offset / 2)
+
+	self.State = 1
+	if self.SkipDemat then
+		self.State = self.SkipDematState
+		for state = 1, self.State - 1 do
+			self:ApplyState(state)
+		end
+	end
 end
 
 function SELF:ResetParticleEffect()

@@ -52,50 +52,34 @@ function Star_Trek.Replicator:CreateObject(data, pos, angle)
 			ent:SetModel(model)
 		end
 
-		local min, _ = ent:GetCollisionBounds()
-		ent:SetPos(pos - Vector(0, 0, min[3]))
+		ent:SetPos(pos)
 		ent:SetAngles(angle)
+		local renderMode = ent:GetRenderMode()
+		ent:SetRenderMode(RENDERMODE_NONE)
 
 		ent:Spawn()
 		ent:Activate()
 
-		ent.Replicated = true
+		local phys = ent:GetPhysicsObject()
+		local motion
+		if IsValid(phys) then
+			motion = phys:IsMotionEnabled()
+			phys:EnableMotion(false)
+		end
 
-		local transportData = {
-			Object = ent,
-			TargetPos = ent:GetPos(),
-			StateTime = CurTime(),
-			State = 3,
-			ToBuffer = false,
-		}
+		timer.Simple(1, function()
+			ent:SetRenderMode(renderMode)
 
-		for _, activeTransportData in pairs(Star_Trek.Transporter.ActiveTransports) do
-			if activeTransportData.Object == ent then
-				return false, "Replicator Active"
+			local phys2 = ent:GetPhysicsObject()
+			if IsValid(phys2) then
+				phys2:EnableMotion(motion)
 			end
-		end
 
-		if ent.BufferData then
-			transportData = ent.BufferData
-			ent.BufferData = nil
+			ent.Replicated = true
 
-			transportData.TargetPos = targetPos or ent:GetPos()
-			transportData.TargetPad = targetPad
-			transportData.ToBuffer = false
-		else
-			ent:SetRenderMode(RENDERMODE_NONE)
+			Star_Trek.Transporter:TransportObject("replicator", ent, pos, true, false)
+		end)
 
-			transportData.OldMoveType = ent:GetMoveType()
-			ent:SetMoveType(MOVETYPE_NONE)
-
-			transportData.OldColor = ent:GetColor()
-			ent:SetColor(ColorAlpha(transportData.OldColor, 0))
-
-			Star_Trek.Transporter:TriggerEffect(transportData, ent)
-			Star_Trek.Transporter:BroadcastEffect(ent, true, true)
-		end
-
-		table.insert(Star_Trek.Transporter.ActiveTransports, transportData)
 
 		return true
 	end
@@ -122,31 +106,12 @@ function Star_Trek.Replicator:RecycleObject(ent)
 	if not ent.Replicated then return end
 	table.insert(self.RecycleList, ent)
 
-	local transportData = {
-		Object = ent,
-		TargetPos = pos,
-		StateTime = CurTime(),
-		State = 1,
-		ToBuffer = true,
-	}
-
-	for _, activeTransportData in pairs(Star_Trek.Transporter.ActiveTransports) do
-		if activeTransportData.Object == ent then return end
-	end
-
-	if ent.BufferData then
-		transportData = ent.BufferData
-		ent.BufferData = nil
-
-		transportData.TargetPos = targetPos or ent:GetPos()
-		transportData.TargetPad = targetPad
-		transportData.ToBuffer = false
-	else
-		Star_Trek.Transporter:TriggerEffect(transportData, ent)
-		Star_Trek.Transporter:BroadcastEffect(ent, false, true)
-	end
-
-	table.insert(Star_Trek.Transporter.ActiveTransports, transportData)
+	Star_Trek.Transporter:TransportObject("replicator", ent, ent:GetPos(), false, true, function(transporterCycle)
+		local state = transporterCycle.State
+		if state == 2 then
+			transporterCycle.Entity:Remove()
+		end
+	end)
 end
 
 -- Scan Replicated Matter
