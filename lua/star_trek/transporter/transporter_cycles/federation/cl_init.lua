@@ -57,7 +57,7 @@ function SELF:Render()
 
 	local diff = CurTime() - self.StateTime
 
-	local pos = ent:GetPos()
+	local pos = ent:GetPos() + self.Offset
 
 	local effectProgress1 = math.max(0, math.min(diff * 0.8 - 0.3, 1)) -- TODO Rebalance values
 	local effectProgress2 = math.max(0, math.min(diff * 0.8      , 1)) -- TODO Rebalance values
