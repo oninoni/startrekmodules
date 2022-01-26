@@ -16,33 +16,6 @@
 --        Transporter | Server       --
 ---------------------------------------
 
-hook.Add("PlayerCanPickupItem", "Star_Trek.Transporter.PreventPickup", function(ply, ent)
-	for _, transportData in pairs(Star_Trek.Transporter.ActiveTransports) do
-		if transportData.Object == ent then return false end
-	end
-end)
-
-hook.Add("PlayerCanPickupWeapon", "Star_Trek.Transporter.PreventPickup", function(ply, ent)
-	for _, transportData in pairs(Star_Trek.Transporter.ActiveTransports) do
-		if transportData.Object == ent then return false end
-	end
-end)
-
-hook.Add("PlayerDeathThink", "Star_Trek.Transporter.BufferReset", function(ply)
-	if table.HasValue(Star_Trek.Transporter.Buffer.Entities, ply) then
-		ply:Freeze(false)
-		table.RemoveByValue(Star_Trek.Transporter.Buffer.Entities, ply)
-	end
-end)
-
-hook.Add("PlayerSpawn", "Star_Trek.Transporter.BufferReset", function(ply)
-	if table.HasValue(Star_Trek.Transporter.Buffer.Entities, ply) then
-		ply:Freeze(false)
-
-		table.RemoveByValue(Star_Trek.Transporter.Buffer.Entities, ply)
-	end
-end)
-
 timer.Create("Star_Trek.Transporter.BufferThink", 1, 0, function()
 	local removeFromBuffer = {}
 

@@ -49,9 +49,19 @@ function Star_Trek.Transporter:TransportObject(cycleType, ent, targetPos, skipDe
 	return true, transporterCycle
 end
 
-function TestTransporter()
-	local ent = player.GetHumans()[1]:GetEyeTrace().Entity
-	print(Star_Trek.Transporter:TransportObject("federation", ent, ent:GetPos() + Vector(16, 0, 0)))
+function Star_Trek.Transporter:EndTransporterCycle(transporterCycle)
+	if not istable(transporterCycle) then
+		return false, "No Transporter Cycle given!"
+	end
+
+	transporterCycle:End()
+
+	net.Start("Star_Trek.Transporter.End")
+		net.WriteEntity(transporterCycle.Entity)
+		net.WriteInt(transporterCycle.State, 32)
+	net.Broadcast()
+
+	return true
 end
 
 util.AddNetworkString("Star_Trek.Transporter.ApplyState")
@@ -74,12 +84,7 @@ hook.Add("Think", "Star_Trek.Transporter.Think", function()
 
 			local success = transporterCycle:ApplyState(newState)
 			if not success then
-				transporterCycle:End()
-
-				net.Start("Star_Trek.Transporter.End")
-					net.WriteEntity(ent)
-					net.WriteInt(transporterCycle.State, 32)
-				net.Broadcast()
+				Star_Trek.Transporter:EndTransporterCycle(ent, transporterCycle)
 
 				table.insert(toBeRemoved, transporterCycle)
 			end
@@ -115,5 +120,37 @@ hook.Add("SetupPlayerVisibility", "Star_Trek.Transporter.PVS", function(ply, vie
 	local bufferPos = transporterCycle.BufferPos
 	if isvector(bufferPos) then
 		AddOriginToPVS(bufferPos)
+	end
+end)
+
+-- Prevent Item Pickup
+hook.Add("PlayerCanPickupItem", "Star_Trek.Transporter.PreventPickup", function(ply, ent)
+	local transporterCycle = Star_Trek.Transporter.ActiveCycles[ent]
+	if istable(transporterCycle) then
+		return false
+	end
+end)
+
+-- Prevent Weapon Pickup
+hook.Add("PlayerCanPickupWeapon", "Star_Trek.Transporter.PreventPickup", function(ply, ent)
+	local transporterCycle = Star_Trek.Transporter.ActiveCycles[ent]
+	if istable(transporterCycle) then
+		return false
+	end
+end)
+
+hook.Add("PlayerDeathThink", "Star_Trek.Transporter.BufferReset", function(ply)
+	local transporterCycle = Star_Trek.Transporter.ActiveCycles[ply]
+	if istable(transporterCycle) then
+		Star_Trek.Transporter:EndTransporterCycle(transporterCycle)
+		Star_Trek.Transporter.ActiveCycles[ply] = nil
+	end
+end)
+
+hook.Add("PlayerSpawn", "Star_Trek.Transporter.BufferReset", function(ply)
+	local transporterCycle = Star_Trek.Transporter.ActiveCycles[ply]
+	if istable(transporterCycle) then
+		Star_Trek.Transporter:EndTransporterCycle(transporterCycle)
+		Star_Trek.Transporter.ActiveCycles[ply] = nil
 	end
 end)

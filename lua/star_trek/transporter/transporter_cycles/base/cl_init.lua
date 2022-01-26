@@ -87,7 +87,6 @@ function SELF:End()
 	end
 
 	local stateData = self:GetStateData()
-	print(self.State, stateData)
 	if istable(stateData) then return end
 
 	local ent = self.Entity
