@@ -29,7 +29,8 @@ CYCLE.States = {
 
 		CollisionGroup = COLLISION_GROUP_DEBRIS,
 		RenderMode = RENDERMODE_TRANSTEXTURE,
-		MoveType = MOVETYPE_NONE, -- TODO Was in State 2, please experiment. Might not need Freeze anymore?
+
+		DisableMovement = true,
 		Shadow = false,
 
 		SoundName = "star_trek.voy_beam_up",
@@ -40,8 +41,8 @@ CYCLE.States = {
 	[2] = { -- Demat Done (Buffer)
 		Duration = 2,
 
-		CollisionGroup = false,
-		RenderMode = RENDERMODE_NONE,
+		CollisionGroup = COLLISION_GROUP_DEBRIS,
+		RenderMode = RENDERMODE_TRANSTEXTURE,
 
 		TPToBuffer = true,
 	},
@@ -50,7 +51,6 @@ CYCLE.States = {
 
 		CollisionGroup = COLLISION_GROUP_DEBRIS,
 		RenderMode = RENDERMODE_TRANSTEXTURE,
-		MoveType = false,
 
 		SoundName = "star_trek.voy_beam_down", -- "star_trek.tng_replicator"
 
@@ -59,10 +59,8 @@ CYCLE.States = {
 		ParticleName = "beam_in",
 		ColorFade = -1,
 	},
-	[4] = { -- Cleanup
+	[4] = { -- Cleanup (Variable Reset happen automatically)
 		Duration = 0,
-
-		TPToTarget = true,
 	}
 }
 
@@ -75,4 +73,15 @@ function SELF:GetStateData()
 	local stateData = self.States[state]
 
 	return stateData or false
+end
+
+function SELF:ResetRenderMode()
+	local ent = self.Entity
+
+	local defaultRenderMode = ent.TransporterDefaultRenderMode
+	if defaultRenderMode == nil then
+		defaultRenderMode = RENDERMODE_NORMAL
+	end
+
+	ent:SetRenderMode(defaultRenderMode)
 end

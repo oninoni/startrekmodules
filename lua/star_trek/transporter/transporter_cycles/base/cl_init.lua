@@ -32,7 +32,7 @@ function SELF:Initialize()
 
 	if ent == LocalPlayer() then
 		Star_Trek.Transporter.LocalCycle = self
-		
+
 		local offset = ent:WorldToLocal(ent:EyePos())
 		self.TargetEyePos = LocalToWorld(offset, Angle(), self.TargetPos, ent:GetAngles())
 
@@ -64,17 +64,6 @@ function SELF:Initialize()
 	self.FlareSizeSmall = self.FlareSize * 0.3
 end
 
-function SELF:ResetRenderMode()
-	local ent = self.Entity
-
-	local defaultRenderMode = ent.TransporterDefaultRenderMode
-	if defaultRenderMode == nil then
-		defaultRenderMode = RENDERMODE_NORMAL
-	end
-
-	ent:SetRenderMode(defaultRenderMode)
-end
-
 function SELF:ResetColor()
 	local ent = self.Entity
 
@@ -86,15 +75,27 @@ function SELF:ResetColor()
 	ent:SetColor(defaultColor)
 end
 
+function SELF:ResetParticleEffect()
+	if IsValid(self.ParticleEffect) then
+		self.ParticleEffect:StopEmission()
+	end
+end
+
 function SELF:End()
 	if Star_Trek.Transporter.LocalCycle == self then
 		Star_Trek.Transporter.LocalCycle = nil
 	end
-	
+
+	local stateData = self:GetStateData()
+	print(self.State, stateData)
+	if istable(stateData) then return end
+
 	local ent = self.Entity
 	if IsValid(ent) then
 		self:ResetRenderMode()
 		self:ResetColor()
+
+		self:ResetParticleEffect()
 	end
 end
 
@@ -107,7 +108,7 @@ function SELF:ApplyState(state)
 
 	local stateData = self:GetStateData()
 	if not istable(stateData) then return end
-	
+
 	local ent = self.Entity
 
 	local renderMode = stateData.RenderMode
@@ -132,10 +133,12 @@ function SELF:ApplyState(state)
 		end
 	end
 
+	self:ResetParticleEffect()
+
 	local particleName = stateData.ParticleName
 	if isstring(particleName) then
-		local partEffect = CreateParticleSystem(ent, particleName, PATTACH_ABSORIGIN_FOLLOW)
-		partEffect:SetControlPoint(1, ent:GetPos() + self.Offset)
+		self.ParticleEffect = CreateParticleSystem(ent, particleName, PATTACH_ABSORIGIN_FOLLOW)
+		self.ParticleEffect:SetControlPoint(1, ent:GetPos() + self.Offset)
 	end
 end
 
@@ -149,14 +152,17 @@ function SELF:Render()
 	local colorFade = stateData.ColorFade
 	if isnumber(colorFade) then
 		local diff = CurTime() - self.StateTime
-	
+
 		local fade = math.max(0, math.min(diff / 2, 1)) -- TODO Rebalance values
-		
+
+		local alpha
 		if colorFade > 0 then
-			ent:SetColor(ColorAlpha(ent.TransporterDefaultColor, 255 * (1 - fade)))
+			alpha = 255 * (1 - fade)
 		else
-			ent:SetColor(ColorAlpha(ent.TransporterDefaultColor, 255 * fade))
+			alpha = 255 * fade
 		end
+
+		ent:SetColor(ColorAlpha(ent.TransporterDefaultColor, alpha))
 	end
 end
 
@@ -178,10 +184,10 @@ function SELF:RenderScreenspaceEffect()
 	render.PushRenderTarget(self.RT2)
 		render.DrawTextureToScreen(self.RT1)
 	render.PopRenderTarget()
-	
+
 	surface.SetDrawColor(255, 255, 255, 255 * diff) -- TODO Rebalance values + minmax
 	surface.SetMaterial(mat)
 	surface.DrawTexturedRect(-1, -1, ScrW() + 1, ScrH() + 1)
-	
+
 	DrawMaterialOverlay("effects/water_warp01", diff * 0.1) -- TODO Rebalance values + minmax
 end

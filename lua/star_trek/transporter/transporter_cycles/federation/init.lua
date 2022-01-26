@@ -26,12 +26,6 @@ function SELF:Initialize()
 	SELF.Base.Initialize(self)
 end
 
--- Aborts the transporter cycle and brings the entity back to its normal state.
--- This can cause a player to be stuck somewhere he does not want to be and should only be used internally.
-function SELF:Abort()
-	SELF.Base.Abort(self)
-end
-
 -- Applies the current state to the transporter cycle.
 --
 -- @param Number state

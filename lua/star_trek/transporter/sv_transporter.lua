@@ -51,12 +51,8 @@ function Star_Trek.Transporter:CleanUpSourcePatterns(patterns)
 	local invalidPatterns = {}
 
 	for name, pattern in pairs(patterns) do
-		if istable(pattern) then
-			if table.Count(pattern.Entities) == 0 then
-				table.insert(invalidPatterns, pattern)
-			end
-		else
-			table.RemoveByValue(patterns, pattern)
+		if istable(pattern) and table.Count(pattern.Entities) == 0 then
+			table.insert(invalidPatterns, pattern)
 		end
 	end
 
@@ -72,12 +68,8 @@ function Star_Trek.Transporter:CleanUpTargetPatterns(patterns)
 	local invalidPatterns = {}
 
 	for _, pattern in pairs(patterns) do
-		if istable(pattern) then
-			if table.Count(pattern.Entities) > 0 then
-				table.insert(invalidPatterns, pattern)
-			end
-		else
-			table.RemoveByValue(patterns, pattern)
+		if istable(pattern) and table.Count(pattern.Entities) > 0 then
+			table.insert(invalidPatterns, pattern)
 		end
 	end
 
@@ -122,6 +114,10 @@ function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPattern
 
 	local targetPatternId = 1
 	for _, sourcePattern in pairs(sourcePatterns) do
+		if not istable(sourcePattern) then
+			continue
+		end
+
 		for _, ent in pairs(sourcePattern.Entities) do
 			local targetPattern = targetPatterns[targetPatternId]
 			if istable(targetPattern) then
@@ -131,6 +127,11 @@ function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPattern
 
 				Star_Trek.Transporter:TransportObject("federation", ent, targetPattern.Pos, sourcePatterns.IsBuffer, false, function(transporterCycle)
 					Star_Trek.Transporter:ApplyPadEffect(transporterCycle, sourcePattern, targetPattern)
+
+					local state = transporterCycle.State
+					if state == 2 then
+						textWindow:AddLine("Rematerialising Object...")
+					end
 				end)
 
 				textWindow:AddLine("Dematerialising Object...")
@@ -139,11 +140,17 @@ function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPattern
 			elseif isbool(targetPattern) then
 				continue
 			else
+				if sourcePatterns.IsBuffer then
+					textWindow:AddLine("Buffer Recursion Prevented!")
+
+					continue
+				end
+
 				table.insert(Star_Trek.Transporter.Buffer.Entities, ent)
 				ent.BufferQuality = 160
 
 				Star_Trek.Transporter:TransportObject("federation", ent, Vector(), false, true, function(transporterCycle)
-					Star_Trek.Transporter:ApplyPadEffect(transporterCycle, sourcePattern, targetPattern)
+					Star_Trek.Transporter:ApplyPadEffect(transporterCycle, sourcePattern, {})
 				end)
 
 				textWindow:AddLine("Dematerialising Object...")

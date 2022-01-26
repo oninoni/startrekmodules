@@ -71,10 +71,10 @@ hook.Add("Think", "Star_Trek.Transporter.Think", function()
 
 				net.Start("Star_Trek.Transporter.End")
 					net.WriteEntity(ent)
+					net.WriteInt(transporterCycle.State, 32)
 				net.Broadcast()
 
 				table.insert(toBeRemoved, transporterCycle)
-				continue
 			end
 
 			local callback = transporterCycle.Callback
@@ -96,7 +96,7 @@ end)
 
 -- TODO
 function Star_Trek.Transporter:GetBufferPos()
-	return Vector()
+	return Star_Trek.Transporter.Buffer.Pos
 end
 
 hook.Add("SetupPlayerVisibility", "Star_Trek.Transporter.PVS", function(ply, viewEntity)

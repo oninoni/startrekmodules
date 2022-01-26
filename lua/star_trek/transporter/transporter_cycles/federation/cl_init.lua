@@ -33,10 +33,6 @@ function SELF:ApplyState(state)
 	SELF.Base.ApplyState(self, state)
 end
 
-function SELF:DrawFlare(pos, vec, size)
-
-end
-
 -- Renders the effects of the transporter cycle.
 function SELF:Render()
 	SELF.Base.Render(self)

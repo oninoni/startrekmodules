@@ -41,28 +41,44 @@ function SELF:ResetCollisionGroup()
 	ent:SetCollisionGroup(defaultCollisionGroup)
 end
 
-function SELF:ResetMoveType()
+function SELF:ApplyDisableMovement(disableMovement)
 	local ent = self.Entity
 
-	local defaultMoveType = ent.TransporterDefaultMoveType
-	if defaultMoveType == nil then
-		defaultMoveType = MOVETYPE_VPHYSICS
+	if ent:IsPlayer() then
+		ent:Freeze(disableMovement)
+	elseif ent:IsNPC() then
+		if disableMovement then
+			ent:MoveStop()
+		else
+			ent:MoveStart()
+		end
+	elseif ent:IsNextBot() then
+		return -- TODO
+	else
+		local phys = ent:GetPhysicsObject()
+		if IsValid(phys) then
+			phys:EnableMotion(not disableMovement)
+		end
 	end
-
-	ent:SetMoveType(defaultMoveType)
 end
 
 function SELF:End()
+	local stateData = self:GetStateData()
+	print(self.State, stateData)
+	if istable(stateData) then return end
+
 	local ent = self.Entity
-	
-	self:ResetCollisionGroup()
-	self:ResetMoveType()
+	if IsValid(ent) then
+		self:ResetRenderMode()
+		self:ResetCollisionGroup()
 
-	ent:DrawShadow(true)
+		ent:DrawShadow(true)
+		self:ApplyDisableMovement(false)
 
-	local phys = ent:GetPhysicsObject()
-	if IsValid(phys) then
-		phys:Wake()
+		local phys = ent:GetPhysicsObject()
+		if IsValid(phys) then
+			phys:Wake()
+		end
 	end
 end
 
@@ -70,7 +86,7 @@ end
 -- This will dump the player into the transporter buffer!
 function SELF:Abort()
 	self:End()
-	
+
 	local ent = self.Entity
 
 	local bufferPos = Star_Trek.Transporter:GetBufferPos()
@@ -84,12 +100,21 @@ function SELF:ApplyState(state)
 	self.State = state
 	self.StateTime = CurTime()
 
-	if self.SkipRemat and state == self.SkipRematState then return false end
-
 	local stateData = self:GetStateData()
 	if not istable(stateData) then return false end
-	
+
 	local ent = self.Entity
+
+	local renderMode = stateData.RenderMode
+	if renderMode ~= nil then
+		if renderMode == false then
+			self:ResetRenderMode()
+			ent.TransporterDefaultRenderMode = nil
+		else
+			ent.TransporterDefaultRenderMode = ent.TransporterDefaultRenderMode or ent:GetRenderMode()
+			ent:SetRenderMode(renderMode)
+		end
+	end
 
 	local collisionGroup = stateData.CollisionGroup
 	if collisionGroup ~= nil then
@@ -101,16 +126,10 @@ function SELF:ApplyState(state)
 			ent:SetCollisionGroup(collisionGroup)
 		end
 	end
-	
-	local moveType = stateData.MoveType
-	if moveType ~= nil then
-		if moveType == false then
-			self:ResetMoveType()
-			ent.TransporterDefaultMoveType = nil
-		else
-			ent.TransporterDefaultMoveType = ent.TransporterDefaultMoveType or ent:GetMoveType()
-			ent:SetMoveType(moveType)
-		end
+
+	local disableMovement = stateData.DisableMovement
+	if disableMovement ~= nil then
+		self:ApplyDisableMovement(disableMovement)
 	end
 
 	local shadow = stateData.Shadow
@@ -134,6 +153,8 @@ function SELF:ApplyState(state)
 	if soundName then
 		sound.Play(soundName, ent:GetPos(), 20, 100, 0.5)
 	end
+
+	if self.SkipRemat and state == self.SkipRematState then return false end
 
 	return true
 end

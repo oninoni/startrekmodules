@@ -42,14 +42,16 @@ end)
 
 net.Receive("Star_Trek.Transporter.End", function()
 	local ent = net.ReadEntity()
+	local endState = net.ReadInt(32)
 
 	local transporterCycle = Star_Trek.Transporter.ActiveCycles[ent]
 	if not istable(transporterCycle) then
 		return
 	end
-	
+
+	transporterCycle.State = endState
 	transporterCycle:End()
-	
+
 	Star_Trek.Transporter.ActiveCycles[ent] = nil
 end)
 
