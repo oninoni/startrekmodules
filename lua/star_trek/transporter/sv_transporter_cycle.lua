@@ -84,7 +84,7 @@ hook.Add("Think", "Star_Trek.Transporter.Think", function()
 
 			local success = transporterCycle:ApplyState(newState)
 			if not success then
-				Star_Trek.Transporter:EndTransporterCycle(ent, transporterCycle)
+				Star_Trek.Transporter:EndTransporterCycle(transporterCycle)
 
 				table.insert(toBeRemoved, transporterCycle)
 			end
@@ -139,18 +139,63 @@ hook.Add("PlayerCanPickupWeapon", "Star_Trek.Transporter.PreventPickup", functio
 	end
 end)
 
-hook.Add("PlayerDeathThink", "Star_Trek.Transporter.BufferReset", function(ply)
-	local transporterCycle = Star_Trek.Transporter.ActiveCycles[ply]
+function Star_Trek.Transporter:CleanUp(ent)
+	local transporterCycle = Star_Trek.Transporter.ActiveCycles[ent]
 	if istable(transporterCycle) then
 		Star_Trek.Transporter:EndTransporterCycle(transporterCycle)
-		Star_Trek.Transporter.ActiveCycles[ply] = nil
+		Star_Trek.Transporter.ActiveCycles[ent] = nil
 	end
+
+	if table.HasValue(Star_Trek.Transporter.Buffer.Entities, ent) then
+		table.RemoveByValue(Star_Trek.Transporter.Buffer.Entities, ent)
+		ent.BufferQuality = nil
+	end
+end
+
+hook.Add("PlayerDeathThink", "Star_Trek.Transporter.BufferReset", function(ply)
+	Star_Trek.Transporter:CleanUp(ply)
 end)
 
 hook.Add("PlayerSpawn", "Star_Trek.Transporter.BufferReset", function(ply)
-	local transporterCycle = Star_Trek.Transporter.ActiveCycles[ply]
-	if istable(transporterCycle) then
-		Star_Trek.Transporter:EndTransporterCycle(transporterCycle)
-		Star_Trek.Transporter.ActiveCycles[ply] = nil
+	Star_Trek.Transporter:CleanUp(ply)
+end)
+
+hook.Add("PlayerDisconnected", "Star_Trek.Transporter.DisconnectReset", function(ply)
+	Star_Trek.Transporter:CleanUp(ply)
+end)
+
+hook.Add("EntityRemoved", "Star_Trek.Transporter.RemoveReset", function(ent)
+	Star_Trek.Transporter:CleanUp(ent)
+end)
+
+timer.Create("Star_Trek.Transporter.BufferThink", 1, 0, function()
+	local removeFromBuffer = {}
+
+	for _, ent in pairs(Star_Trek.Transporter.Buffer.Entities) do
+		if ent.BufferQuality <= 0 then
+			table.insert(removeFromBuffer, ent)
+
+			if ent:IsPlayer() then
+				Star_Trek.Transporter:BeamObject(ent, Star_Trek.Transporter.Buffer.Pos, nil, nil)
+				ent:Kill()
+			else
+				SafeRemoveEntity(ent)
+			end
+		end
+
+		ent.BufferQuality = ent.BufferQuality - 1
+
+		if ent.BufferQuality < 100 then
+			local maxHealth = ent:GetMaxHealth()
+			if maxHealth > 0 then
+				local health = math.min(ent:Health(), maxHealth * (ent.BufferQuality / 100))
+				ent:SetHealth(health)
+			end
+		end
+	end
+
+	for _, ent in pairs(removeFromBuffer) do
+		table.RemoveByValue(Star_Trek.Transporter.Buffer.Entities, ent)
+		ent.BufferQuality = nil
 	end
 end)

@@ -24,6 +24,17 @@ local SELF = CYCLE
 -- @param Entity ent
 function SELF:Initialize()
 	SELF.Base.Initialize(self)
+
+	local ent = self.Entity
+
+	local up = ent:GetUp()
+	if ent:IsPlayer() then
+		up = Vector(0, 0, 1)
+	end
+
+	self.FlareUpHeight = up * self.ObjectHeight * 0.5
+	self.FlareSize = self.ObjectSize * 6
+	self.FlareSizeSmall = self.FlareSize * 0.3
 end
 
 -- Applies the current state to the transporter cycle.

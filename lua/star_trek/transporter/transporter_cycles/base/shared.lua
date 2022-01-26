@@ -19,6 +19,22 @@
 if not istable(CYCLE) then Star_Trek:LoadAllModules() return end
 local SELF = CYCLE
 
+if SERVER then
+	AddCSLuaFile("modules/render_mode.lua")
+	AddCSLuaFile("modules/color.lua")
+	AddCSLuaFile("modules/particles.lua")
+
+	include("modules/collision_group.lua")
+	include("modules/render_mode.lua")
+	include("modules/movement.lua")
+end
+
+if CLIENT then
+	include("modules/render_mode.lua")
+	include("modules/color.lua")
+	include("modules/particles.lua")
+end
+
 -- Determines the parent transport cycles name for this one. (Like Deriving Classes)
 CYCLE.BaseCycle = nil
 
@@ -30,7 +46,7 @@ CYCLE.States = {
 		CollisionGroup = COLLISION_GROUP_DEBRIS,
 		RenderMode = RENDERMODE_TRANSTEXTURE,
 
-		DisableMovement = true,
+		EnableMovement = false,
 		Shadow = false,
 
 		SoundName = "star_trek.voy_beam_up",
@@ -73,15 +89,4 @@ function SELF:GetStateData()
 	local stateData = self.States[state]
 
 	return stateData or false
-end
-
-function SELF:ResetRenderMode()
-	local ent = self.Entity
-
-	local defaultRenderMode = ent.TransporterDefaultRenderMode
-	if defaultRenderMode == nil then
-		defaultRenderMode = RENDERMODE_NORMAL
-	end
-
-	ent:SetRenderMode(defaultRenderMode)
 end

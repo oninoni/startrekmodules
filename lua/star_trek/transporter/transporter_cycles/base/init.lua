@@ -30,49 +30,17 @@ function SELF:Initialize()
 	end
 end
 
-function SELF:ResetCollisionGroup()
-	local ent = self.Entity
-
-	local defaultCollisionGroup = ent.TransporterDefaultCollisionGroup
-	if defaultCollisionGroup == nil then
-		defaultCollisionGroup = COLLISION_GROUP_NONE
-	end
-
-	ent:SetCollisionGroup(defaultCollisionGroup)
-end
-
-function SELF:ApplyDisableMovement(disableMovement)
-	local ent = self.Entity
-
-	if ent:IsPlayer() then
-		ent:Freeze(disableMovement)
-	elseif ent:IsNPC() then
-		if disableMovement then
-			ent:MoveStop()
-		else
-			ent:MoveStart()
-		end
-	elseif ent:IsNextBot() then
-		return -- TODO
-	else
-		local phys = ent:GetPhysicsObject()
-		if IsValid(phys) then
-			phys:EnableMotion(not disableMovement)
-		end
-	end
-end
-
 function SELF:End()
 	local stateData = self:GetStateData()
 	if istable(stateData) then return end
 
 	local ent = self.Entity
 	if IsValid(ent) then
-		self:ResetRenderMode()
-		self:ResetCollisionGroup()
+		self:ResetCollisionGroups()
+		self:ResetRenderModes()
 
 		ent:DrawShadow(true)
-		self:ApplyDisableMovement(false)
+		self:ApplyMovement(true)
 
 		local phys = ent:GetPhysicsObject()
 		if IsValid(phys) then
@@ -103,31 +71,19 @@ function SELF:ApplyState(state)
 
 	local ent = self.Entity
 
-	local renderMode = stateData.RenderMode
-	if renderMode ~= nil then
-		if renderMode == false then
-			self:ResetRenderMode()
-			ent.TransporterDefaultRenderMode = nil
-		else
-			ent.TransporterDefaultRenderMode = ent.TransporterDefaultRenderMode or ent:GetRenderMode()
-			ent:SetRenderMode(renderMode)
-		end
-	end
-
 	local collisionGroup = stateData.CollisionGroup
 	if collisionGroup ~= nil then
-		if collisionGroup == false then
-			self:ResetCollisionGroup()
-			ent.TransporterDefaultCollisionGroup = nil
-		else
-			ent.TransporterDefaultCollisionGroup = ent.TransporterDefaultCollisionGroup or ent:GetCollisionGroup()
-			ent:SetCollisionGroup(collisionGroup)
-		end
+		self:ApplyCollisionGroups(collisionGroup)
 	end
 
-	local disableMovement = stateData.DisableMovement
-	if disableMovement ~= nil then
-		self:ApplyDisableMovement(disableMovement)
+	local renderMode = stateData.RenderMode
+	if renderMode ~= nil then
+		self:ApplyRenderModes(renderMode)
+	end
+
+	local enableMovement = stateData.EnableMovement
+	if enableMovement ~= nil then
+		self:ApplyMovement(enableMovement)
 	end
 
 	local shadow = stateData.Shadow

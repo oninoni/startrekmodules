@@ -140,7 +140,7 @@ function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPattern
 			elseif isbool(targetPattern) then
 				continue
 			else
-				if sourcePatterns.IsBuffer then
+				if sourcePatterns.IsBuffer or table.HasValue(Star_Trek.Transporter.Buffer.Entities, ent) then
 					textWindow:AddLine("Buffer Recursion Prevented!")
 
 					continue

@@ -53,32 +53,9 @@ function SELF:Initialize()
 	self.ObjectHeight = high[3] - low[3]
 	local offset = high[3] + low[3]
 	self.Offset = Vector(0, 0, offset / 2)
-
-	local up = ent:GetUp()
-	if ent:IsPlayer() then
-		up = Vector(0, 0, 1)
-	end
-
-	self.FlareUpHeight = up * self.ObjectHeight * 0.5
-	self.FlareSize = self.ObjectSize * 6
-	self.FlareSizeSmall = self.FlareSize * 0.3
-end
-
-function SELF:ResetColor()
-	local ent = self.Entity
-
-	local defaultColor = ent.TransporterDefaultColor
-	if defaultColor == nil then
-		defaultColor = Color(255, 255, 255, 255)
-	end
-
-	ent:SetColor(defaultColor)
 end
 
 function SELF:ResetParticleEffect()
-	if IsValid(self.ParticleEffect) then
-		self.ParticleEffect:StopEmission()
-	end
 end
 
 function SELF:End()
@@ -91,10 +68,10 @@ function SELF:End()
 
 	local ent = self.Entity
 	if IsValid(ent) then
-		self:ResetRenderMode()
-		self:ResetColor()
+		self:ResetRenderModes()
+		self:ResetColors()
 
-		self:ResetParticleEffect()
+		self:ResetParticleSystems()
 	end
 end
 
@@ -112,32 +89,19 @@ function SELF:ApplyState(state)
 
 	local renderMode = stateData.RenderMode
 	if renderMode ~= nil then
-		if renderMode == false then
-			self:ResetRenderMode()
-			ent.TransporterDefaultRenderMode = nil
-		else
-			ent.TransporterDefaultRenderMode = ent.TransporterDefaultRenderMode or ent:GetRenderMode()
-			ent:SetRenderMode(renderMode)
-		end
+		self:ApplyRenderModes(renderMode)
 	end
 
 	local colorFade = stateData.ColorFade
 	if isnumber(colorFade) then
-		if colorFade == 0 then
-			self:ResetColor()
-			ent.TransporterDefaultColor = nil
-		else
-			local color = ent:GetColor()
-			ent.TransporterDefaultColor = ent.TransporterDefaultColor or Color(color.r, color.g, color.g, color.a)
-		end
+		self:ApplyColors()
 	end
 
-	self:ResetParticleEffect()
+	self:ResetParticleSystems()
 
 	local particleName = stateData.ParticleName
 	if isstring(particleName) then
-		self.ParticleEffect = CreateParticleSystem(ent, particleName, PATTACH_ABSORIGIN_FOLLOW)
-		self.ParticleEffect:SetControlPoint(1, ent:GetPos() + self.Offset)
+		self:ApplyParticleSystems(particleName, ent:GetPos() + self.Offset)
 	end
 end
 
@@ -146,13 +110,10 @@ function SELF:Render()
 	local stateData = self:GetStateData()
 	if not istable(stateData) then return end
 
-	local ent = self.Entity
-
 	local colorFade = stateData.ColorFade
 	if isnumber(colorFade) then
 		local diff = CurTime() - self.StateTime
-
-		local fade = math.max(0, math.min(diff / 2, 1)) -- TODO Rebalance values
+		local fade = math.max(0, math.min(diff / stateData.Duration, 1))
 
 		local alpha
 		if colorFade > 0 then
@@ -161,7 +122,7 @@ function SELF:Render()
 			alpha = 255 * fade
 		end
 
-		ent:SetColor(ColorAlpha(ent.TransporterDefaultColor, alpha))
+		self:RenderColors(alpha)
 	end
 end
 
