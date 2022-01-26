@@ -155,3 +155,15 @@ hook.Add("Star_Trek.Sensors.PostScanEntity", "Sensors.CheckReplicated", function
 		scanData.Replicated = true
 	end
 end)
+
+hook.Add("PlayerCanPickupItem", "Star_Trek.Replicator.PreventPickup", function(ply, ent)
+	if ent.Replicated and not (ply:KeyDown(IN_USE) and ply:GetEyeTrace().Entity == ent) then
+		return false
+	end
+end)
+
+hook.Add("PlayerCanPickupItem", "Star_Trek.Replicator.PreventPickup", function(ply, ent)
+	if ent.Replicated and not (ply:KeyDown(IN_USE) and ply:GetEyeTrace().Entity == ent) then
+		return false
+	end
+end)
