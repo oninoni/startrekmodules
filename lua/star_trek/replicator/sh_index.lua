@@ -16,7 +16,7 @@
 --         Replicator | Index        --
 ---------------------------------------
 
-Star_Trek:RequireModules("util", "lcars")
+Star_Trek:RequireModules("util", "lcars", "transporter")
 
 Star_Trek.Replicator = Star_Trek.Replicator or {}
 
