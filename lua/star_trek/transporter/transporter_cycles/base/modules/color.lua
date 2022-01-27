@@ -44,7 +44,7 @@ end
 -- @param Entity ent
 -- @param Number alpha
 function SELF:RenderColor(ent, alpha)
-	ent:SetColor(ColorAlpha(ent.TransporterResetColor or Color(), alpha))
+	ent:SetColor(ColorAlpha(ent.TransporterResetColor or color_white, alpha))
 end
 
 -- Reset the color of the main entity and it's children.

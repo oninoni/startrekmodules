@@ -80,7 +80,6 @@ function Star_Trek.Replicator:CreateObject(data, pos, angle)
 			Star_Trek.Transporter:TransportObject("replicator", ent, pos, true, false)
 		end)
 
-
 		return true
 	end
 
