@@ -29,8 +29,9 @@ end
 -- Applies the current state to the transporter cycle.
 --
 -- @param Number state
-function SELF:ApplyState(state)
-	SELF.Base.ApplyState(self, state)
+-- @param Boolean onlyRestore
+function SELF:ApplyState(state, onlyRestore)
+	SELF.Base.ApplyState(self, state, onlyRestore)
 end
 
 -- Renders the effects of the transporter cycle.

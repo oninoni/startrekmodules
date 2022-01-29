@@ -52,7 +52,7 @@ function SELF:Initialize()
 	self.State = 1
 	if self.SkipDemat then
 		for state = 1, self.SkipDematState - 1 do
-			self:ApplyState(state)
+			self:ApplyState(state, true)
 		end
 
 		self.State = self.SkipDematState
@@ -67,22 +67,23 @@ function SELF:End()
 		Star_Trek.Transporter.LocalCycle = nil
 	end
 
-	local stateData = self:GetStateData()
-	if istable(stateData) then return end
-
 	local ent = self.Entity
 	if IsValid(ent) then
+		self:ResetParticleSystems()
+
+		local stateData = self:GetStateData()
+		if istable(stateData) then return end
+
 		self:ResetRenderModes()
 		self:ResetColors()
-
-		self:ResetParticleSystems()
 	end
 end
 
 -- Applies the current state to the transporter cycle.
 --
 -- @param Number state
-function SELF:ApplyState(state)
+-- @param Boolean onlyRestore
+function SELF:ApplyState(state, onlyRestore)
 	self.State = state
 	self.StateTime = CurTime()
 
@@ -96,9 +97,17 @@ function SELF:ApplyState(state)
 		self:ApplyRenderModes(renderMode)
 	end
 
-	local colorFade = stateData.ColorFade
-	if isnumber(colorFade) then
-		self:ApplyColors()
+	self:ApplyColors()
+
+	if onlyRestore then return end
+
+	local soundName = stateData.SoundName
+	if soundName then
+		if Star_Trek.Transporter.LocalCycle == self then
+			self.Entity:EmitSound(soundName, 20, 100, 0.5)
+		else
+			sound.Play(soundName, ent:GetPos(), 20, 100, 0.5)
+		end
 	end
 
 	self:ResetParticleSystems()
@@ -116,17 +125,7 @@ function SELF:Render()
 
 	local colorFade = stateData.ColorFade
 	if isnumber(colorFade) then
-		local diff = CurTime() - self.StateTime
-		local fade = math.max(0, math.min(diff / stateData.Duration, 1))
-
-		local alpha
-		if colorFade > 0 then
-			alpha = 255 * (1 - fade)
-		else
-			alpha = 255 * fade
-		end
-
-		self:RenderColors(alpha)
+		self:RenderColors(stateData.Duration, colorFade)
 	end
 end
 

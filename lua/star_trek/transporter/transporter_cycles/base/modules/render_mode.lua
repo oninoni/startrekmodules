@@ -39,6 +39,7 @@ function SELF:ApplyRenderMode(ent, renderMode)
 
 	ent.TransporterResetRenderMode = ent:GetRenderMode()
 	ent:SetRenderMode(renderMode)
+	print("RM", renderMode)
 end
 
 -- Reset the render mode of the main entity and it's children.

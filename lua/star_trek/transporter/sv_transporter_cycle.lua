@@ -112,7 +112,7 @@ function Star_Trek.Transporter:GetBufferPos()
 end
 
 hook.Add("SetupPlayerVisibility", "Star_Trek.Transporter.PVS", function(ply, viewEntity)
-	local transporterCycle = Star_Trek.Transporter.ActiveCycles[ply]
+	local _, transporterCycle = next(Star_Trek.Transporter.ActiveCycles)
 	if not istable(transporterCycle) then
 		return
 	end

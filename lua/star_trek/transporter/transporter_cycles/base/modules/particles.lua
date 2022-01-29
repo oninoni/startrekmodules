@@ -24,7 +24,7 @@ local SELF = CYCLE
 -- @param Entity ent
 function SELF:ResetParticleSystem(ent)
 	if IsValid(ent.TransporterParticleEffect) then
-		ent.TransporterParticleEffect:StopEmission()
+		ent.TransporterParticleEffect:StopEmission(false, true)
 	end
 end
 

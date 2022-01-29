@@ -26,6 +26,7 @@ if SERVER then
 
 	include("modules/collision_group.lua")
 	include("modules/render_mode.lua")
+	include("modules/color.lua")
 	include("modules/movement.lua")
 end
 
@@ -55,9 +56,8 @@ SELF.States = {
 		ColorFade = 1,
 	},
 	[2] = { -- Demat Done (Buffer)
-		Duration = 2,
+		Duration = 1,
 
-		CollisionGroup = COLLISION_GROUP_DEBRIS,
 		RenderMode = RENDERMODE_TRANSTEXTURE,
 
 		TPToBuffer = true,
@@ -65,7 +65,6 @@ SELF.States = {
 	[3] = { -- Remat
 		Duration = 2,
 
-		CollisionGroup = COLLISION_GROUP_DEBRIS,
 		RenderMode = RENDERMODE_TRANSTEXTURE,
 
 		SoundName = "star_trek.voy_beam_down",

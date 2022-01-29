@@ -29,8 +29,9 @@ end
 -- Applies the current state to the transporter cycle.
 --
 -- @param Number state
-function SELF:ApplyState(state)
-	local success = SELF.Base.ApplyState(self, state)
+-- @param Boolean onlyRestore
+function SELF:ApplyState(state, onlyRestore)
+	local success = SELF.Base.ApplyState(self, state, onlyRestore)
 	if not success then return false end
 
 	return true

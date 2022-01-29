@@ -27,7 +27,7 @@ function SELF:Initialize()
 
 	if self.SkipDemat then
 		for state = 1, self.SkipDematState - 1 do
-			self:ApplyState(state)
+			self:ApplyState(state, true)
 		end
 
 		self.State = self.SkipDematState
@@ -59,14 +59,14 @@ function SELF:Abort()
 	self:End()
 
 	local ent = self.Entity
-
 	ent:SetPos(self.BufferPos)
 end
 
 -- Applies the current state to the transporter cycle.
 --
 -- @param Number state
-function SELF:ApplyState(state)
+-- @param Boolean onlyRestore
+function SELF:ApplyState(state, onlyRestore)
 	self.State = state
 	self.StateTime = CurTime()
 
@@ -85,6 +85,8 @@ function SELF:ApplyState(state)
 		self:ApplyRenderModes(renderMode)
 	end
 
+	self:ApplyColors()
+
 	local enableMovement = stateData.EnableMovement
 	if enableMovement ~= nil then
 		self:ApplyMovement(enableMovement)
@@ -95,6 +97,8 @@ function SELF:ApplyState(state)
 		ent:DrawShadow(shadow)
 	end
 
+	if onlyRestore then return end
+
 	if stateData.TPToBuffer then
 		ent:SetPos(self.BufferPos)
 	end
@@ -104,11 +108,6 @@ function SELF:ApplyState(state)
 		local zOffset = -lowerBounds.Z + 2 -- Offset to prevent stucking in floor
 
 		ent:SetPos(self.TargetPos + Vector(0, 0, zOffset))
-	end
-
-	local soundName = stateData.SoundName
-	if soundName then
-		sound.Play(soundName, ent:GetPos(), 20, 100, 0.5)
 	end
 
 	if self.SkipRemat and state == self.SkipRematState then return false end
