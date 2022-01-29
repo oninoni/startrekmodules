@@ -117,7 +117,7 @@ hook.Add("SetupPlayerVisibility", "Star_Trek.Transporter.PVS", function(ply, vie
 		return
 	end
 
-	local bufferPos = transporterCycle.BufferPos
+	local bufferPos = Star_Trek.Transporter:GetBufferPos()
 	if isvector(bufferPos) then
 		AddOriginToPVS(bufferPos)
 	end

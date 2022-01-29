@@ -26,6 +26,7 @@ function SELF:ResetColor(ent)
 	local resetColor = ent.TransporterResetColor
 	if resetColor then
 		ent:SetColor(resetColor)
+		ent.TransporterResetColor = nil
 	end
 end
 
@@ -33,8 +34,6 @@ end
 --
 -- @param Entity ent
 function SELF:ApplyColor(ent, alpha)
-	self:ResetColor(ent)
-
 	local color = ent:GetColor()
 	ent.TransporterResetColor = Color(color.r, color.g, color.b, color.a)
 
