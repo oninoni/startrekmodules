@@ -143,12 +143,12 @@ local function checkPlayers(ent)
 
 	local entities = ents.FindInSphere(ent:GetPos(), 64)
 	for _, nearbyEnt in pairs(entities) do
-		if nearbyEnt:IsNPC() then 
-			return true
-		end
-
 		if nearbyEnt:GetMoveType() == MOVETYPE_NOCLIP then
 			continue
+		end
+
+		if nearbyEnt:IsNPC() then
+			return true
 		end
 
 		if nearbyEnt:IsPlayer() then
