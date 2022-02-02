@@ -38,7 +38,7 @@ end
 -- @param Number i
 function SELF:DrawElement(i, x, y)
 	color = self.Color
-	
+
 	if self.CurrentStyle == "LCARS_RED" then
 		color = Star_Trek.LCARS.ColorWhite
 	end
@@ -56,6 +56,10 @@ function SELF:DrawElement(i, x, y)
 	borderColor = Star_Trek.LCARS.ColorBlack
 	if i % 2 == 0 then
 		borderColor = Star_Trek.LCARS.ColorWhite
+
+		if self.CurrentStyle == "LCARS_RED" then
+			color = Star_Trek.LCARS.ColorRed
+		end
 	end
 
 	self:DrawPadButton(x, y, color, borderColor, self.Round, self.Number)

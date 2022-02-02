@@ -195,6 +195,24 @@ function Star_Trek.LCARS:PlayerButtonDown(ply, button)
 			local pos = Star_Trek.LCARS:Get3D2DMousePos(window)
 			if pos[1] > -width / 2 and pos[1] < width / 2
 			and pos[2] > -height / 2 and pos[2] < height / 2 then
+				local worldPos = Vector(pos[1] / window.WScale, pos[2] / -window.WScale, 0)
+				worldPos = LocalToWorld(worldPos or Vector(), Angle(), window.WPosG, window.WAngG)
+
+				local eyePos = ply:EyePos()
+				local trace = util.TraceLine({
+					start = eyePos,
+					endpos = worldPos,
+					filter = {
+						ply
+					},
+				})
+
+				local fullDistance = worldPos:Distance(eyePos)
+				local distance = trace.HitPos:Distance(eyePos)
+				if distance < fullDistance * 0.9 then
+					continue
+				end
+
 				local buttonId = window:OnPress(pos, interface.AnimPos)
 				if buttonId then
 					net.Start("Star_Trek.LCARS.Pressed")
