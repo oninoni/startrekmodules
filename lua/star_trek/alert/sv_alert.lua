@@ -37,9 +37,14 @@ function Star_Trek.Alert:Enable(type)
 	end
 
 	if isstring(alertType.Sound) then
-		self.ActiveAlertSound = CreateSound(Entity(1), alertType.Sound)
-		self.ActiveAlertSound:SetSoundLevel(0)
-		self.ActiveAlertSound:Play()
+		filter = RecipientFilter()
+		filter:AddAllPlayers()
+
+		self.ActiveAlertSound = CreateSound(game.GetWorld(), alertType.Sound, filter)
+		if self.ActiveAlertSound then
+			self.ActiveAlertSound:SetSoundLevel(0)
+			self.ActiveAlertSound:Play()
+		end
 	end
 
 	local bridgeLights = ents.FindByName(Star_Trek.Alert.BridgeDimName)
