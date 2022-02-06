@@ -38,7 +38,6 @@ function SELF:ApplyColor(ent, alpha)
 	ent.TransporterResetColor = Color(color.r, color.g, color.b, color.a)
 
 	if isnumber(alpha) then
-		print("Restored to", alpha)
 		ent:SetColor(ColorAlpha(ent.TransporterResetColor or color_white, alpha))
 	end
 end
@@ -101,8 +100,6 @@ function SELF:RenderColors(duration, colorFade)
 	else
 		alpha = 255 * fade
 	end
-
-	print(alpha)
 
 	local ent = self.Entity
 
