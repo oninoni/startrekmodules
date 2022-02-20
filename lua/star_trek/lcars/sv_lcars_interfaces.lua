@@ -125,6 +125,8 @@ util.AddNetworkString("Star_Trek.LCARS.Close")
 -- @return? String error
 function Star_Trek.LCARS:CloseInterface(ent, callback)
 	if not IsValid(ent) then
+		Star_Trek.LCARS.ActiveInterfaces[ent] = nil
+
 		return false, "Invalid Interface Entity!"
 	end
 
@@ -166,6 +168,10 @@ function Star_Trek.LCARS:CloseInterface(ent, callback)
 
 	return false
 end
+
+hook.Add("EntityRemoved", "Star_Trek.LCARS.RemoveEntity", function(ent)
+	Star_Trek.LCARS:CloseInterface(ent)
+end)
 
 -- Capture closeLcars Input
 hook.Add("AcceptInput", "Star_Trek.LCARS.Close", function(ent, input, activator, caller, value)

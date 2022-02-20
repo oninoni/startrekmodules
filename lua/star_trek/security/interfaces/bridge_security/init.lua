@@ -89,7 +89,7 @@ end
 -- @param Entity ent
 -- @return Boolean success
 -- @return? Table windows
-function SELF:Open(ent, engineering)
+function SELF:Open(ent)
 	local success, windows = self:OpenInternal(
 		Vector(-22, -34, 8.2),
 		Angle(0, 0, -90),

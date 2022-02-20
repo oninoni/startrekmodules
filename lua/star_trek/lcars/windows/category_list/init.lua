@@ -82,7 +82,10 @@ end
 function SELF:SetCategory(category)
 	self.Selected = category
 
-	self:SetButtons(self.Categories[self.Selected].Buttons)
+	local categoryData = self.Categories[self.Selected]
+	if categoryData then
+		self:SetButtons(categoryData.Buttons)
+	end
 end
 
 function SELF:SetSelected(data)
