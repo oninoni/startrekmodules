@@ -74,7 +74,7 @@ function SELF:OpenInternal(menuPos, menuAngle, menuWidth, mainPos, mainAngle, ma
 		24,
 		textWidth,
 		textHeight,
-		function(windowData, interfaceData, categoryId, buttonId)
+		function(windowData, interfaceData, ply, categoryId, buttonId)
 			return false
 		end,
 		Color(255, 255, 255),
@@ -93,7 +93,7 @@ function SELF:OpenInternal(menuPos, menuAngle, menuWidth, mainPos, mainAngle, ma
 		30,
 		200,
 		200,
-		function(windowData, interfaceData, buttonId)
+		function(windowData, interfaceData, ply, buttonId)
 			self:TriggerTransporter(sourceMenuTable, targetMenuTable, textWindow)
 		end
 	)

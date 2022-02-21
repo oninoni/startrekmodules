@@ -37,7 +37,7 @@ function SELF:Open(ent)
 		scale,
 		width,
 		height,
-		function(windowData, interfaceData, buttonId)
+		function(windowData, interfaceData, ply, buttonId)
 			local keyValues = ent.LCARSKeyData
 
 			if buttonId <= 4 then

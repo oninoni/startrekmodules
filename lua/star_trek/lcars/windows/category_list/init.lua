@@ -93,7 +93,7 @@ function SELF:SetSelected(data)
 	self.Base.SetSelected(self, data.Buttons)
 end
 
-function SELF:OnPress(interfaceData, ent, buttonId, callback)
+function SELF:OnPress(interfaceData, ply, buttonId, callback)
 	local shouldUpdate = false
 
 	local categoryId = self.Selected
@@ -107,23 +107,23 @@ function SELF:OnPress(interfaceData, ent, buttonId, callback)
 		self:SetCategory(buttonId)
 		shouldUpdate = true
 
-		if isfunction(callback) and callback(self, interfaceData, buttonId, nil) == false then
+		if isfunction(callback) and callback(self, interfaceData, ply, buttonId, nil) == false then
 			shouldUpdate = false
 		end
 	else
 		buttonId = buttonId - categoryCount
 
-		if SELF.Base.OnPress(self, interfaceData, ent, buttonId, nil) then
+		if SELF.Base.OnPress(self, interfaceData, ply, buttonId, nil) then
 			shouldUpdate = true
 		end
 
-		if isfunction(callback) and callback(self, interfaceData, categoryId, buttonId) then
+		if isfunction(callback) and callback(self, interfaceData, ply, categoryId, buttonId) then
 			shouldUpdate = true
 		end
 	end
 
 	if shouldUpdate then
-		ent:EmitSound("star_trek.lcars_beep")
+		interfaceData.Ent:EmitSound("star_trek.lcars_beep")
 	end
 
 	return shouldUpdate

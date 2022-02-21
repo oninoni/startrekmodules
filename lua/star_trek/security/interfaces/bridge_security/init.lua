@@ -23,6 +23,8 @@ local SELF = INTERFACE
 
 SELF.BaseInterface = "base"
 
+SELF.LogType = "Security Console"
+
 function SELF:OpenInternal(menuPos, menuAng, menuWidth, actionPos, actionAng, actionWidth, actionFlip, mapPos, mapAng, mapWidth, mapHeight, sectionPos, sectionAng, sectionWidth, sectionHeight, textPos, textAng, textWidth, textHeight)
 	local success2, menuWindow, actionWindow = self:CreateMenuWindow(menuPos, menuAng, menuWidth, actionPos, actionAng, actionWidth, actionFlip)
 	if not success2 then
@@ -41,7 +43,7 @@ function SELF:OpenInternal(menuPos, menuAng, menuWidth, actionPos, actionAng, ac
 		nil,
 		sectionWidth,
 		sectionHeight,
-		function(windowData, interfaceData, categoryId, buttonId)
+		function(windowData, interfaceData, ply, categoryId, buttonId)
 			if isnumber(buttonId) then
 				local buttonData = windowData.Buttons[buttonId]
 
@@ -69,7 +71,7 @@ function SELF:OpenInternal(menuPos, menuAng, menuWidth, actionPos, actionAng, ac
 		24,
 		textWidth,
 		textHeight,
-		function(windowData, interfaceData, categoryId, buttonId)
+		function(windowData, interfaceData, ply, categoryId, buttonId)
 			return false
 		end,
 		Color(255, 255, 255),

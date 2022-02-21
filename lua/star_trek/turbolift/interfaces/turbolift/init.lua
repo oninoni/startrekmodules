@@ -39,7 +39,7 @@ function SELF:Open(ent)
 		30,
 		500,
 		400,
-		function(windowData, interfaceData, buttonId)
+		function(windowData, interfaceData, ply, buttonId)
 			if ent.IsTurbolift then
 				local canStart = Star_Trek.Turbolift:StartLift(ent, buttonId)
 				if canStart then

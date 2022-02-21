@@ -38,6 +38,6 @@ function SELF:Close()
 	self.Interface:Close()
 end
 
-function SELF:OnPress(interfaceData, ent, buttonId, callback)
-	callback(self, interfaceData, buttonId)
+function SELF:OnPress(interfaceData, ply, buttonId, callback)
+	callback(self, interfaceData, ply, buttonId)
 end

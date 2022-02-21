@@ -49,7 +49,7 @@ function SELF:CreateControlMenu()
 		nil,
 		600,
 		300,
-		function(windowData, interfaceData, buttonId)
+		function(windowData, interfaceData, ply, buttonId)
 			if buttonId == 1 or buttonId == 2 then -- Next Log
 				local listWindow = self.Windows[3]
 				local intButtons = listWindow.Buttons
@@ -103,7 +103,7 @@ function SELF:CreateCategorySelectionWindow()
 		nil,
 		600,
 		300,
-		function(windowData, interfaceData, buttonId)
+		function(windowData, interfaceData, ply, buttonId)
 			self:DeSelectLogFile(true)
 
 			local types = {}
@@ -260,7 +260,7 @@ function SELF:CreateListWindow(page)
 		nil,
 		600,
 		600,
-		function(windowData, interfaceData, categoryId, buttonId)
+		function(windowData, interfaceData, ply, categoryId, buttonId)
 			if not buttonId then
 				if categoryId == 1 then
 					self:ApplyListWindowPage(windowData.Categories, self.Page - 1)

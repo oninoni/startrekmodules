@@ -49,11 +49,11 @@ function SELF:AddLine(text, color)
 	})
 end
 
-function SELF:OnPress(interfaceData, ent, buttonId, callback)
+function SELF:OnPress(interfaceData, ply, buttonId, callback)
 	if buttonId == 1 then
 		self.Active = not self.Active
 
-		ent:EmitSound("star_trek.lcars_beep")
+		interfaceData.Ent:EmitSound("star_trek.lcars_beep")
 
 		return true
 	end

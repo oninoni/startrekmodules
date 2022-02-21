@@ -34,7 +34,7 @@ function SELF:Open(ent)
 		nil,
 		500,
 		500,
-		function(windowData, interfaceData, categoryId, buttonId)
+		function(windowData, interfaceData, ply, categoryId, buttonId)
 			if buttonId then
 				local selected = windowData.Selected
 				local categoryData = windowData.Categories[selected]

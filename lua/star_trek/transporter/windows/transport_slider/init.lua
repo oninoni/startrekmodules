@@ -19,6 +19,6 @@
 if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
 local SELF = WINDOW
 
-function SELF:OnPress(interfaceData, ent, buttonId, callback)
-	callback(windowData, interfaceData, buttonId)
+function SELF:OnPress(interfaceData, ply, buttonId, callback)
+	callback(windowData, interfaceData, ply, buttonId)
 end

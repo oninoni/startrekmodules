@@ -48,7 +48,7 @@ function SELF:Open(ent)
 		16,
 		770,
 		380,
-		function(windowData, interfaceData, buttonId)
+		function(windowData, interfaceData, ply, buttonId)
 		end,
 		Color(255, 255, 255),
 		"Active Log Data",

@@ -127,7 +127,7 @@ function SELF:SetSectionActive(sectionId, active)
 	self:SetSelected(selected)
 end
 
-function SELF:OnPress(interfaceData, ent, buttonId, callback)
+function SELF:OnPress(interfaceData, ply, buttonId, callback)
 	local shouldUpdate = false
 
 	return shouldUpdate

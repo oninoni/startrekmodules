@@ -106,7 +106,7 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 		24,
 		width,
 		height,
-		function(windowData, interfaceData, buttonId)
+		function(windowData, interfaceData, ply, buttonId)
 			local buttonName = windowData.Buttons[buttonId].Name
 			local sectionWindow = interfaceData.Windows[2]
 			local mapWindow = interfaceData.Windows[3]
@@ -448,7 +448,7 @@ function SELF:CreateMenuWindow(pos, ang, width, actionPos, actionAng, actionWidt
 		24,
 		width,
 		height,
-		function(windowData, interfaceData, buttonId)
+		function(windowData, interfaceData, ply, buttonId)
 			if buttonId > modeCount then
 				windowData:Close()
 			else
@@ -480,7 +480,7 @@ end
 
 -- Generates the map view.
 function SELF:CreateMapWindow(pos, ang, width, height, deck)
-	local success, mapWindow = Star_Trek.LCARS:CreateWindow("section_map", pos, ang, nil, width, height, function(windowData, interfaceData, buttonId)
+	local success, mapWindow = Star_Trek.LCARS:CreateWindow("section_map", pos, ang, nil, width, height, function(windowData, interfaceData, ply, buttonId)
 		-- No Interactivity here yet.
 	end, deck)
 	if not success then

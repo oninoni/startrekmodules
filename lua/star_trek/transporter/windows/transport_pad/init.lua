@@ -117,7 +117,7 @@ function SELF:SetSelected(data)
 	end
 end
 
-function SELF:OnPress(interfaceData, ent, buttonId, callback)
+function SELF:OnPress(interfaceData, ply, buttonId, callback)
 	local shouldUpdate = false
 
 	local pad = self.Pads[buttonId]
@@ -127,15 +127,13 @@ function SELF:OnPress(interfaceData, ent, buttonId, callback)
 	end
 
 	if isfunction(callback) then
-		local updated = callback(self, interfaceData, buttonId)
+		local updated = callback(self, interfaceData, ply, buttonId)
 		if updated then
 			shouldUpdate = true
 		end
 	end
 
-	if Star_Trek.LCARS.ActiveInterfaces[ent] and not Star_Trek.LCARS.ActiveInterfaces[ent].Closing then
-		ent:EmitSound("star_trek.lcars_beep")
-	end
+	interfaceData.Ent:EmitSound("star_trek.lcars_beep")
 
 	return shouldUpdate
 end

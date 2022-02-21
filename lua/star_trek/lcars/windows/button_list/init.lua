@@ -106,7 +106,7 @@ function SELF:SetSelected(data)
 	end
 end
 
-function SELF:OnPress(interfaceData, ent, buttonId, callback)
+function SELF:OnPress(interfaceData, ply, buttonId, callback)
 	local shouldUpdate = false
 
 	if self.Toggle then
@@ -117,12 +117,12 @@ function SELF:OnPress(interfaceData, ent, buttonId, callback)
 		end
 	end
 
-	if isfunction(callback) and callback(self, interfaceData, buttonId) then
+	if isfunction(callback) and callback(self, interfaceData, ply, buttonId) then
 		shouldUpdate = true
 	end
 
 	if shouldUpdate then
-		ent:EmitSound("star_trek.lcars_beep")
+		interfaceData.Ent:EmitSound("star_trek.lcars_beep")
 	end
 
 	return shouldUpdate
