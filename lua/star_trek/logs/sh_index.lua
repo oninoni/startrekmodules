@@ -22,6 +22,7 @@ Star_Trek.Logs = Star_Trek.Logs or {}
 
 if SERVER then
 	include("sv_logs.lua")
+	include("sv_logs_archive.lua")
 end
 
 if CLIENT then

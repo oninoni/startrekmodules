@@ -117,8 +117,8 @@ function SELF:OnPress(interfaceData, ent, buttonId, callback)
 		end
 	end
 
-	if isfunction(callback) then
-		shouldUpdate = shouldUpdate or callback(self, interfaceData, buttonId)
+	if isfunction(callback) and callback(self, interfaceData, buttonId) then
+		shouldUpdate = true
 	end
 
 	if shouldUpdate then

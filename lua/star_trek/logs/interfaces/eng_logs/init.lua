@@ -23,23 +23,10 @@ local SELF = INTERFACE
 
 SELF.BaseInterface = "base"
 
-function SELF:Open(ent)
-	local buttons = {}
-	local success1, categorySelection = Star_Trek.LCARS:CreateWindow(
-		"button_list",
-		Vector(-12, -2, -14.25),
-		Angle(0, 0, 0),
-		24,
-		575,
-		570,
-		function(windowData, interfaceData, buttonId)
+SELF.LogType = "Logs Console"
 
-		end,
-		buttons,
-		"Categories",
-		"CTGRS",
-		false
-	)
+function SELF:Open(ent)
+	local success1, categorySelection = self:CreateCategorySelectionWindow()
 	if not success1 then
 		return false, categorySelection
 	end
@@ -56,17 +43,16 @@ function SELF:Open(ent)
 
 	local success4, logWindow = Star_Trek.LCARS:CreateWindow(
 		"text_entry",
-		Vector(15, -26.25, 2.5),
-		Angle(0, 0, -76.5),
-		nil,
-		600,
-		600,
+		Vector(0, -2, -14.25),
+		Angle(0, 0, 0),
+		16,
+		770,
+		380,
 		function(windowData, interfaceData, buttonId)
-
 		end,
 		Color(255, 255, 255),
-		"Logs",
-		nil,
+		"Active Log Data",
+		"LOGS",
 		true
 	)
 	if not success4 then

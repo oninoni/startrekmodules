@@ -242,7 +242,7 @@ net.Receive("Star_Trek.LCARS.Pressed", function(len, ply)
 	if not istable(windowData) then
 		return
 	end
-	
+
 	hook.Run("Star_Trek.Logs.PressedInterface", interfaceData, ply)
 
 	local shouldUpdate = windowData:OnPress(interfaceData, ent, buttonId, windowData.Callback)

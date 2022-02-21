@@ -57,13 +57,17 @@ end
 -- @param? Number pageSize
 -- @return Boolean success
 -- @return? String error
-function STar_Trek.Logs:GetPageCount(types, callback, pageSize)
+function Star_Trek.Logs:GetPageCount(types, callback, pageSize)
 	if not istable(types) then
 		return false, "Invalid Types"
 	end
 
+	if not isfunction(callback) then
+		return false, "Invalid callback"
+	end
+
 	if not isnumber(pageSize) then
-		pageSize = 20
+		pageSize = 25
 	end
 
 	local preventDefault = hook.Run("Star_Trek.Logs.GetPageCount", types, callback, pageSize) -- TODO: Gamemode Database Inplementation. Callback Rewrite
@@ -81,7 +85,9 @@ function STar_Trek.Logs:GetPageCount(types, callback, pageSize)
 		local entryCount = table.Count(filteredData)
 		local pageCount = math.ceil(entryCount / pageSize)
 
-		callback(true, pageCount)
+		timer.Simple(0.1, function()
+			callback(true, pageCount)
+		end)
 	end
 
 	return true
@@ -90,7 +96,7 @@ end
 -- Return the selected sessions.
 --
 -- @param Table types
--- @param function callback(success, pageCount)
+-- @param function callback(success, archiveData)
 -- @param? Number pageSize
 -- @param? Number page
 -- @return Boolean success
@@ -100,8 +106,12 @@ function Star_Trek.Logs:LoadSessionArchive(types, callback, pageSize, page)
 		return false, "Invalid Types"
 	end
 
+	if not isfunction(callback) then
+		return false, "Invalid callback"
+	end
+
 	if not isnumber(pageSize) then
-		pageSize = 20
+		pageSize = 25
 	end
 
 	if not isnumber(page) then
@@ -122,14 +132,16 @@ function Star_Trek.Logs:LoadSessionArchive(types, callback, pageSize, page)
 		end
 
 		local offset = (page - 1) * pageSize + 1
-		local entryCount = math.min(20, table.Count(filteredData) - (offset - 1))
+		local entryCount = math.min(pageSize, table.Count(filteredData) - (offset - 1))
 
-		local limit = offset + entryCount
+		local limit = offset + entryCount - 1
 		for i = offset, limit do
 			archiveData[i] = filteredData[i]
 		end
 
-		callback(true, archiveData)
+		timer.Simple(0.1, function()
+			callback(true, archiveData)
+		end)
 	end
 
 	return true

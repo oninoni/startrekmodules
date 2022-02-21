@@ -21,6 +21,8 @@ local SELF = INTERFACE
 
 SELF.BaseInterface = nil
 
+SELF.LogType = "LCARS Interface"
+
 -- Opens the Interface. Must return the windows in a table.
 -- 
 -- @param Entity ent

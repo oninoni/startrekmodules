@@ -24,6 +24,27 @@ ST_LOGS_DELETED = 3
 -- Active Sessions
 Star_Trek.Logs.Sessions = Star_Trek.Logs.Sessions or {}
 
+-- Registered Types
+Star_Trek.Logs.Types = Star_Trek.Logs.Types or {}
+
+function Star_Trek.Logs:RegisterType(type)
+	if table.HasValue(self.Types, type) then
+		return
+	end
+
+	table.insert(self.Types, type)
+end
+
+-- Register the default LCARS Types
+hook.Add("Star_Trek.ModulesLoaded", "LoadInterfaceTypes", function()
+	for interfaceName, interface in pairs(Star_Trek.LCARS.Interfaces) do
+		local type = interface.LogType
+		if type then
+			Star_Trek.Logs:RegisterType(type)
+		end
+	end
+end)
+
 -- Starts a session of the given type.
 --
 -- @param Entity ent
@@ -66,6 +87,11 @@ function Star_Trek.Logs:StartSession(ent, ply, type)
 	return true
 end
 
+-- Hook Implementation
+hook.Add("Star_Trek.Logs.OpenInterface", "Star_Trek.Logs.StartSession", function(interfaceData, ply)
+	print(Star_Trek.Logs:StartSession(interfaceData.Ent, ply, interfaceData.LogType))
+end)
+
 -- Returns the session data of the given entity.
 --
 -- @param Entity ent
@@ -87,13 +113,12 @@ end
 -- @return Boolean success
 -- @return? String error
 function Star_Trek.Logs:AddEntryToSession(sessionData, ply, text)
-	if not IsValid(ply) or not ply:IsPlayer() then
-		return false, "Invalid player."
-	end
-
-	local name = hook.Run("Star_Trek.GetPlayerName", ply) -- TODO: Implement in Gamemode
-	if not isstring(name) then
-		name = ply:Name()
+	local name = "[INTERNAL]"
+	if IsValid(ply) and ply:IsPlayer() then
+		name = hook.Run("Star_Trek.GetPlayerName", ply) -- TODO: Implement in Gamemode
+		if not isstring(name) then
+			name = ply:Name()
+		end
 	end
 
 	if not isstring(text) then
@@ -137,18 +162,23 @@ end
 -- @param Player ply
 -- @return Boolean success
 -- @return? String error
-function Star_Trek.Logs:EndSession(ent, ply)
+function Star_Trek.Logs:EndSession(ent)
 	local sessionData = self:GetSession(ent)
 	if not sessionData then
 		return false, "Entity does not have an active session"
 	end
 
-	local success, error = self:AddEntry(ent, ply, "Session terminated.")
+	local success, error = self:AddEntry(ent, nil, "Session terminated.")
 	if not success then
 		return false, error
 	end
 
-	local success2, error2 = self:ArchiveSession(sessionData)
+	local success2, error2 = self:ArchiveSession(sessionData, function(success)
+		if not success then
+			print("ERROR while storing session.")
+			PrintTable(sessionData)
+		end
+	end)
 	if not success2 then
 		return false, error2
 	end
@@ -157,3 +187,8 @@ function Star_Trek.Logs:EndSession(ent, ply)
 
 	return true
 end
+
+-- Hook Implementation
+hook.Add("Star_Trek.LCARS.PostCloseInterface", "Star_Trek.Logs.EndSession", function(ent)
+	print(Star_Trek.Logs:EndSession(ent))
+end)
