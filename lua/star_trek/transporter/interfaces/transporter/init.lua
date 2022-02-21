@@ -24,6 +24,8 @@ local SELF = INTERFACE
 
 SELF.BaseInterface = "base"
 
+SELF.LogType = "Transporter Console"
+
 SELF.Solid = true
 
 function SELF:OpenInternal(menuPos, menuAngle, menuWidth, mainPos, mainAngle, mainWidth, mainHeight, sliderPos, sliderAngle, textPos, textAngle, textWidth, textHeight, padNumber)
@@ -94,7 +96,7 @@ function SELF:OpenInternal(menuPos, menuAngle, menuWidth, mainPos, mainAngle, ma
 		200,
 		200,
 		function(windowData, interfaceData, ply, buttonId)
-			self:TriggerTransporter(sourceMenuTable, targetMenuTable, textWindow)
+			self:TriggerTransporter(ply, sourceMenuTable, targetMenuTable)
 		end
 	)
 	if not sliderSuccess then
