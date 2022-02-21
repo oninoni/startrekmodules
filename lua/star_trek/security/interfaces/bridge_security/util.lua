@@ -110,7 +110,6 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 			local buttonName = windowData.Buttons[buttonId].Name
 			local sectionWindow = interfaceData.Windows[2]
 			local mapWindow = interfaceData.Windows[3]
-			local textWindow = interfaceData.Windows[5]
 			local sectionIds = {}
 			for _, buttonData in pairs(sectionWindow.Buttons) do
 				if buttonData.Selected then
@@ -131,14 +130,16 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 				mapWindow:SetObjects(entities)
 				mapWindow:Update()
 
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "")
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Lifeform scan started!")
+
 				for _, ent in pairs(entities) do
 					local sectionName = Star_Trek.Sections:GetSectionName(deck, ent.DetectedInSection)
 
-					textWindow:AddLine("Lifeform found in " .. sectionName)
+					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Lifeform found in " .. sectionName)
 				end
-				textWindow:AddLine("Total: " .. table.Count(entities) .. " Lifeforms found.", Star_Trek.LCARS.ColorRed)
-				textWindow:AddLine("")
-				textWindow:Update()
+
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Total: " .. table.Count(entities) .. " Lifeforms found.")
 
 				return true
 			elseif buttonName == "Scan Objects" then
@@ -151,14 +152,15 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 				mapWindow:SetObjects(entities)
 				mapWindow:Update()
 
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "")
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Non-Lifeform scan started!")
+
 				for _, ent in pairs(entities) do
 					local sectionName = Star_Trek.Sections:GetSectionName(deck, ent.DetectedInSection)
 
-					textWindow:AddLine("Object found in " .. sectionName)
+					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Non-Lifeform found in " .. sectionName)
 				end
-				textWindow:AddLine("Total: " .. table.Count(entities) .. " Non-Lifeforms found.", Star_Trek.LCARS.ColorRed)
-				textWindow:AddLine("")
-				textWindow:Update()
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Total: " .. table.Count(entities) .. " Non-Lifeforms found.")
 
 				return true
 			elseif buttonName == "Scan Weapons" then
@@ -172,24 +174,25 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 				mapWindow:SetObjects(entities)
 				mapWindow:Update()
 
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "")
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Internal scan started!")
+
 				local lifeforms = 0
 				local objects = 0
 				for _, ent in pairs(entities) do
 					local sectionName = Star_Trek.Sections:GetSectionName(deck, ent.DetectedInSection)
 
 					if hook.Run("Star_Trek.Util.IsLifeForm", ent) then
-						textWindow:AddLine("Lifeform found in " .. sectionName)
+						Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Lifeform found in " .. sectionName)
 						lifeforms = lifeforms + 1
 					else
-						textWindow:AddLine("Object found in " .. sectionName)
+						Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Non-Lifeform found in " .. sectionName)
 						objects = objects + 1
 					end
 				end
-				textWindow:AddLine("Total: " .. lifeforms .. " Lifeforms found.", Star_Trek.LCARS.ColorOrange)
-				textWindow:AddLine("Total: " .. objects .. " Non-Lifeforms found.", Star_Trek.LCARS.ColorOrange)
-				textWindow:AddLine("Total: " .. lifeforms + objects .. " Objects found.", Star_Trek.LCARS.ColorRed)
-				textWindow:AddLine("")
-				textWindow:Update()
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Total: " .. lifeforms .. " Lifeforms found.")
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Total: " .. objects .. " Non-Lifeforms found.")
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Total: " .. lifeforms + objects .. " Objects found.")
 
 				return true
 
@@ -207,19 +210,19 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 					return true
 				end, true)
 
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "")
+
 				for _, door in pairs(doors) do
 					door:Fire("AddOutput", "lcars_locked 1")
 
 					local sectionName = Star_Trek.Sections:GetSectionName(deck, door.DetectedInSection)
-					textWindow:AddLine("Door #" .. door:MapCreationID() .. " in " .. sectionName .. " has been locked.")
+					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Door #" .. door:MapCreationID() .. " in " .. sectionName .. " has been locked.")
 				end
 
 				mapWindow:SetObjects(doors)
 				mapWindow:Update()
 
-				textWindow:AddLine("Total: " .. table.Count(doors) .. " Doors locked.", Star_Trek.LCARS.ColorRed)
-				textWindow:AddLine("")
-				textWindow:Update()
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Total: " .. table.Count(doors) .. " Doors locked.")
 
 				return true
 			elseif buttonName == "Unlock Doors" then
@@ -235,19 +238,19 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 					return true
 				end, true)
 
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "")
+
 				for _, door in pairs(doors) do
 					door:Fire("AddOutput", "lcars_locked 0")
 
 					local sectionName = Star_Trek.Sections:GetSectionName(deck, door.DetectedInSection)
-					textWindow:AddLine("Door #" .. door:MapCreationID() .. " in " .. sectionName .. " has been unlocked.")
+					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Door #" .. door:MapCreationID() .. " in " .. sectionName .. " has been unlocked.")
 				end
 
 				mapWindow:SetObjects(doors)
 				mapWindow:Update()
 
-				textWindow:AddLine("Total: " .. table.Count(doors) .. " Doors unlocked.", Star_Trek.LCARS.ColorRed)
-				textWindow:AddLine("")
-				textWindow:Update()
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Total: " .. table.Count(doors) .. " Doors unlocked.")
 
 				return true
 			elseif buttonName == "Enable Forcefields" then
@@ -256,6 +259,8 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 					return
 				end
 
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "")
+
 				local objects = {}
 				for _, posData in pairs(forceFieldPositions) do
 					local objectTable = {
@@ -266,15 +271,13 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 					table.insert(objects, objectTable)
 
 					local sectionName = Star_Trek.Sections:GetSectionName(deck, posData.DetectedInSection)
-					textWindow:AddLine("Force Field in " .. sectionName .. " has been enabled.")
+					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Force Field in " .. sectionName .. " has been enabled.")
 				end
 
 				mapWindow:SetObjects(objects)
 				mapWindow:Update()
 
-				textWindow:AddLine("Total: " .. table.Count(forceFieldPositions) .. " Forcefields enabled.", Star_Trek.LCARS.ColorRed)
-				textWindow:AddLine("")
-				textWindow:Update()
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Total: " .. table.Count(forceFieldPositions) .. " Forcefields enabled.")
 
 				return true
 			elseif buttonName == "Disable Forcefields" then
@@ -283,6 +286,8 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 					return
 				end
 
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "")
+
 				local objects = {}
 				for _, posData in pairs(forceFieldPositions) do
 					local objectTable = {
@@ -293,15 +298,13 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 					table.insert(objects, objectTable)
 
 					local sectionName = Star_Trek.Sections:GetSectionName(deck, posData.DetectedInSection)
-					textWindow:AddLine("Force Field in " .. sectionName .. " has been disabled.")
+					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Force Field in " .. sectionName .. " has been disabled.")
 				end
 
 				mapWindow:SetObjects(objects)
 				mapWindow:Update()
 
-				textWindow:AddLine("Total: " .. table.Count(forceFieldPositions) .. " Forcefields disabled.", Star_Trek.LCARS.ColorRed)
-				textWindow:AddLine("")
-				textWindow:Update()
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Total: " .. table.Count(forceFieldPositions) .. " Forcefields disabled.")
 
 				return true
 			elseif buttonName == "Unlock All" then
@@ -322,11 +325,13 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 					return
 				end
 
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "")
+
 				for _, door in pairs(doors) do
 					door:Fire("AddOutput", "lcars_locked 0")
 
 					local sectionName = Star_Trek.Sections:GetSectionName(deck, door.DetectedInSection)
-					textWindow:AddLine("Door #" .. door:MapCreationID() .. " in " .. sectionName .. " has been unlocked.")
+					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Door #" .. door:MapCreationID() .. " in " .. sectionName .. " has been unlocked.")
 				end
 
 				mapWindow:SetObjects(doors)
@@ -339,16 +344,14 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 					table.insert(mapWindow.Objects, objectTable)
 
 					local sectionName = Star_Trek.Sections:GetSectionName(deck, posData.DetectedInSection)
-					textWindow:AddLine("Force Field in " .. sectionName .. " has been disabled.")
+					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Force Field in " .. sectionName .. " has been disabled.")
 				end
 
 				mapWindow:Update()
 
-				textWindow:AddLine("Total: " .. table.Count(doors) .. " Doors unlocked.", Star_Trek.LCARS.ColorOrange)
-				textWindow:AddLine("Total: " .. table.Count(forceFieldPositions) .. " Forcefields disabled.", Star_Trek.LCARS.ColorOrange)
-				textWindow:AddLine("Total: " .. table.Count(forceFieldPositions) + table.Count(doors) .. " Security Measures disabled.", Star_Trek.LCARS.ColorRed)
-				textWindow:AddLine("")
-				textWindow:Update()
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Total: " .. table.Count(doors) .. " Doors unlocked.")
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Total: " .. table.Count(forceFieldPositions) .. " Forcefields disabled.")
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Total: " .. table.Count(forceFieldPositions) + table.Count(doors) .. " Security Measures disabled.")
 
 				return true
 
@@ -356,41 +359,36 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 			elseif buttonName == "Red Alert" then
 				Star_Trek.Alert:Enable("red")
 
-				textWindow:AddLine("RED ALERT!", Star_Trek.LCARS.ColorRed)
-				textWindow:AddLine("")
-				textWindow:Update()
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "")
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "RED ALERT!")
 
 				return true
 			elseif buttonName == "Yellow Alert" then
 				Star_Trek.Alert:Enable("yellow")
 
-				textWindow:AddLine("YELLOW ALERT!", Star_Trek.LCARS.ColorOrange)
-				textWindow:AddLine("")
-				textWindow:Update()
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "")
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "YELLOW ALERT!")
 
 				return true
 			elseif buttonName == "Intruder Alert" then
 				Star_Trek.Alert:Enable("intruder")
 
-				textWindow:AddLine("INTRUDER ALERT!", Star_Trek.LCARS.ColorOrange)
-				textWindow:AddLine("")
-				textWindow:Update()
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "")
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "INTRUDER ALERT!")
 
 				return true
 			elseif buttonName == "Blue Alert" then
 				Star_Trek.Alert:Enable("blue")
 
-				textWindow:AddLine("BLUE ALERT!", Star_Trek.LCARS.ColorBlue)
-				textWindow:AddLine("")
-				textWindow:Update()
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "")
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "BLUE ALERT!")
 
 				return true
 			elseif buttonName == "Disable Alert" then
 				Star_Trek.Alert:Disable()
 
-				textWindow:AddLine("Alerts Disabled!")
-				textWindow:AddLine("")
-				textWindow:Update()
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "")
+				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Alerts Disabled!")
 
 				return true
 			end
