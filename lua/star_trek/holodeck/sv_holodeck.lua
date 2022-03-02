@@ -53,7 +53,7 @@ function Star_Trek.Holodeck:Deactivate(programmId)
 	end
 end
 
-hook.Add("Star_Trek.LCARS.BasicPressed", "Test", function(interfaceData, buttonId)
+hook.Add("Star_Trek.LCARS.BasicPressed", "Test", function(ply, interfaceData, buttonId)
 	local ent = interfaceData.Ent
 
 	local name = ent:GetName()

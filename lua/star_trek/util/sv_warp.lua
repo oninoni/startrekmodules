@@ -60,3 +60,27 @@ hook.Add("PlayerInitialSpawn", "WarpCoreSync", function(ply)
 		net.Send(ply)
 	end
 end)
+
+hook.Add("Star_Trek.ModulesLoaded", "Star_Trek.Warp.LoadLogType", function()
+	Star_Trek.Logs:RegisterType("Warp Core Control")
+end)
+
+hook.Add("Star_Trek.Logs.GetSessionName", "Star_Trek.Warp.GetSessionName", function(interfaceData)
+	local ent = interfaceData.Ent
+	if ent:GetName() == "coreBut1" then
+		return "Warp Core Control"
+	end
+end)
+
+hook.Add("Star_Trek.LCARS.BasicPressed", "Star_Trek.Warp.BasicPressed", function(ply, interfaceData, buttonId)
+	local ent = interfaceData.Ent
+	if ent:GetName() == "coreBut1" then
+		if buttonId == 1 then
+			Star_Trek.Logs:AddEntry(ent, ply, "Force Field enabled!")
+		elseif buttonId == 2 then
+			Star_Trek.Logs:AddEntry(ent, ply, "Force Field disabled!")
+		elseif buttonId == 3 then
+			Star_Trek.Logs:AddEntry(ent, ply, "Warp Core ejected!")
+		end
+	end
+end)
