@@ -23,12 +23,11 @@ Star_Trek.Util = Star_Trek.Util or {}
 if SERVER then
 	AddCSLuaFile("cl_warp.lua")
 	--AddCSLuaFile("cl_rendermap.lua")
-	
+
 	include("sv_warp.lua")
 
 	include("sv_positions.lua")
 	include("sv_keyvalues.lua")
-	include("sv_models.lua")
 
 	include("luabsp.lua")
 	include("sv_luabsp.lua")
