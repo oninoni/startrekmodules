@@ -39,7 +39,7 @@ end
 hook.Add("Star_Trek.ModulesLoaded", "Star_Trek.Logs.LoadTypes", function()
 	for interfaceName, interface in pairs(Star_Trek.LCARS.Interfaces) do
 		local type = interface.LogType
-		if type then
+		if isstring(type) then
 			Star_Trek.Logs:RegisterType(type)
 		end
 	end
