@@ -146,35 +146,48 @@ end
 -- Start the journey from the given lift to an entity
 --
 -- @return Boolean canStart
-function Star_Trek.Turbolift:StartLift(sourceLift, targetLiftId)
+function Star_Trek.Turbolift:StartLift(ply, sourceLift, targetLiftId)
 	local sourceLiftData = sourceLift.Data
 	local targetLiftData = self.Lifts[targetLiftId]
 	if targetLiftData then
 		local podData = self:GetUnusedPod()
 		if podData then
-			self:LockDoors(sourceLift)
+			local ent = podData.Entity
+			if istable(Star_Trek.Logs) then
+				Star_Trek.Logs:StartSession(ent, ply, "Turbolift")
+			end
 
+			self:LockDoors(sourceLift)
 
 			sourceLiftData.InUse = true
 			sourceLiftData.ClosingTime = 1
 			sourceLiftData.CloseCallback = function()
 				local sourceLiftObjects = self:GetObjects(sourceLift)
 				if table.Count(sourceLiftObjects) > 0 then
-					self:Teleport(sourceLift, podData.Entity, sourceLiftObjects)
+					self:Teleport(sourceLift, ent, sourceLiftObjects)
 
 					local filter = RecipientFilter()
 					filter:AddAllPlayers()
 
-					podData.LoopSound = CreateSound(podData.Entity, "star_trek.turbolift_start")
+					podData.LoopSound = CreateSound(ent, "star_trek.turbolift_start")
 					podData.LoopSound:Play()
 
 					-- Target Pod and calc travel time/path.
 					podData.TravelTarget = targetLiftData
 					podData.TravelPath = self:GetFullPath(sourceLiftData, targetLiftData)
 					podData.TravelTime = #podData.TravelPath
+
+					if istable(Star_Trek.Logs) then
+						Star_Trek.Logs:AddEntry(ent, ply, "Lift heading towards " .. targetLiftData.Name)
+						Star_Trek.Logs:AddEntry(ent, ply, "Estimated time of arrival: " .. podData.TravelTime .. "s")
+					end
 				else
 					-- Disable Pod again when there's nobody actually travelling.
 					podData.InUse = false
+
+					if istable(Star_Trek.Logs) then
+						Star_Trek.Logs:EndSession(ent)
+					end
 				end
 
 				podData.Stopped = false
@@ -191,38 +204,51 @@ function Star_Trek.Turbolift:StartLift(sourceLift, targetLiftId)
 	return true
 end
 
-function Star_Trek.Turbolift:StopPod(podData)
+function Star_Trek.Turbolift:StopPod(ply, podData)
 	podData.Stopped = true
 
 	podData.Entity:EmitSound("star_trek.turbolift_stop")
 	podData.LoopSound:Stop()
+
+	if istable(Star_Trek.Logs) then
+		Star_Trek.Logs:AddEntry(podData.Entity, ply, "Turbolift halted!")
+	end
 end
 
-function Star_Trek.Turbolift:ResumePod(podData)
+function Star_Trek.Turbolift:ResumePod(ply, podData)
 	podData.Stopped = false
 
 	podData.LoopSound = CreateSound(podData.Entity, "star_trek.turbolift_start")
 	podData.LoopSound:Play()
+
+	if istable(Star_Trek.Logs) then
+		Star_Trek.Logs:AddEntry(podData.Entity, ply, "")
+		Star_Trek.Logs:AddEntry(podData.Entity, ply, "Turbolift resumed!")
+	end
 end
 
-function Star_Trek.Turbolift:TogglePos(pod)
+function Star_Trek.Turbolift:TogglePos(ply, pod)
 	local podData = pod.Data
 	if podData.Stopped then
-		self:ResumePod(podData)
+		self:ResumePod(ply, podData)
 		return false
 	else
-		self:StopPod(podData)
+		self:StopPod(ply, podData)
 		return true
 	end
 end
 
-function Star_Trek.Turbolift:ReRoutePod(pod, targetLiftId)
+function Star_Trek.Turbolift:ReRoutePod(ply, pod, targetLiftId)
 	local podData = pod.Data
 
 	local targetLiftData = self.Lifts[targetLiftId]
 	if targetLiftData then
+		if not podData.Stopped and istable(Star_Trek.Logs) then
+			Star_Trek.Logs:AddEntry(podData.Entity, ply, "Turbolift halted!")
+		end
+
 		podData.InUse = true
-		self:ResumePod(podData)
+		self:ResumePod(ply, podData)
 
 		local sourceDeck = podData.CurrentDeck
 		local odlTargetDeck = podData.TravelTarget
@@ -234,6 +260,11 @@ function Star_Trek.Turbolift:ReRoutePod(pod, targetLiftId)
 		podData.TravelTarget = targetLiftData
 		podData.TravelPath = self:GetPath(sourceDeck, targetDeck)
 		podData.TravelTime = #podData.TravelPath
+
+		if istable(Star_Trek.Logs) then
+			Star_Trek.Logs:AddEntry(podData.Entity, ply, "Lift heading towards " .. targetLiftData.Name)
+			Star_Trek.Logs:AddEntry(podData.Entity, ply, "Estimated time of arrival: " .. podData.TravelTime .. "s")
+		end
 	end
 end
 
@@ -245,6 +276,7 @@ hook.Add("Think", "Star_Trek.Turbolift.Think", function()
 	for _, turboliftData in pairs(Star_Trek.Turbolift.Lifts) do
 		if turboliftData.LeaveTime > 0 then
 			turboliftData.LeaveTime = turboliftData.LeaveTime - 1
+
 			if turboliftData.LeaveTime == 0 then
 				turboliftData.InUse = false
 			end
@@ -276,6 +308,10 @@ hook.Add("Think", "Star_Trek.Turbolift.Think", function()
 				podData.TravelTime = 0
 				podData.TravelTarget = nil
 				podData.TravelPath = nil
+
+				if istable(Star_Trek.Logs) then
+					Star_Trek.Logs:EndSession(podData.Entity)
+				end
 			end
 
 			podData.Entity:SetSkin(0)
@@ -347,6 +383,10 @@ hook.Add("Think", "Star_Trek.Turbolift.Think", function()
 						else
 							podData.InUse = false
 							podData.Stopped = false
+
+							if istable(Star_Trek.Logs) then
+								Star_Trek.Logs:EndSession(podData.Entity)
+							end
 						end
 
 						Star_Trek.Turbolift:Teleport(podData.Entity, targetLiftData.Entity, podObjects)
@@ -360,4 +400,9 @@ hook.Add("Think", "Star_Trek.Turbolift.Think", function()
 			end
 		end
 	end
+end)
+
+-- Register the default LCARS Types
+hook.Add("Star_Trek.ModulesLoaded", "Star_Trek.Turbolift.LoadLogType", function()
+	Star_Trek.Logs:RegisterType("Turbolift")
 end)

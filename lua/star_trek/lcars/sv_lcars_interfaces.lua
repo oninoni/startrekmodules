@@ -77,7 +77,7 @@ function Star_Trek.LCARS:OpenInterface(ply, triggerEntity, interfaceName, ...)
 		return false, "Invalid Interface Windows"
 	end
 
-	hook.Run("Star_Trek.Logs.OpenInterface", interfaceData, ply)
+	hook.Run("Star_Trek.LCARS.OpenInterface", interfaceData, ply)
 
 	interfaceData.Windows = windows
 	interfaceData.OffsetPos = offsetPos
@@ -136,6 +136,8 @@ function Star_Trek.LCARS:CloseInterface(ent, callback)
 
 	local interfaceData = Star_Trek.LCARS.ActiveInterfaces[ent]
 	if interfaceData then
+		hook.Run("Star_Trek.LCARS.PreCloseInterface", interfaceData)
+
 		net.Start("Star_Trek.LCARS.Close")
 			net.WriteInt(ent:EntIndex(), 32)
 		net.Broadcast()
@@ -243,7 +245,7 @@ net.Receive("Star_Trek.LCARS.Pressed", function(len, ply)
 		return
 	end
 
-	hook.Run("Star_Trek.Logs.PressedInterface", interfaceData, ply)
+	hook.Run("Star_Trek.LCARS.PressedInterface", interfaceData, ply)
 
 	local shouldUpdate = windowData:OnPress(interfaceData, ply, buttonId, windowData.Callback)
 	if shouldUpdate then

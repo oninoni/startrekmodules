@@ -36,7 +36,7 @@ function Star_Trek.Logs:RegisterType(type)
 end
 
 -- Register the default LCARS Types
-hook.Add("Star_Trek.ModulesLoaded", "LoadInterfaceTypes", function()
+hook.Add("Star_Trek.ModulesLoaded", "Star_Trek.Logs.LoadTypes", function()
 	for interfaceName, interface in pairs(Star_Trek.LCARS.Interfaces) do
 		local type = interface.LogType
 		if type then
@@ -88,8 +88,25 @@ function Star_Trek.Logs:StartSession(ent, ply, type)
 end
 
 -- Hook Implementation
-hook.Add("Star_Trek.Logs.OpenInterface", "Star_Trek.Logs.StartSession", function(interfaceData, ply)
-	print(Star_Trek.Logs:StartSession(interfaceData.Ent, ply, interfaceData.LogType))
+hook.Add("Star_Trek.LCARS.OpenInterface", "Star_Trek.Logs.StartSession", function(interfaceData, ply)
+	local logType = hook.Run("Star_Trek.Logs.GetSessionName", interfaceData)
+	if not logType then
+		logType = interfaceData.LogType
+	end
+
+	if logType == false then
+		return
+	end
+
+	local ent = hook.Run("Star_Trek.Logs.GetSessionEntity", interfaceData)
+	if not ent then
+		ent = interfaceData.Ent
+	end
+
+	local success, error = Star_Trek.Logs:StartSession(ent, ply, logType)
+	if not success then
+		print(error) -- TODO
+	end
 end)
 
 -- Returns the session data of the given entity.
@@ -165,7 +182,7 @@ end
 function Star_Trek.Logs:EndSession(ent)
 	local sessionData = self:GetSession(ent)
 	if not sessionData then
-		return false, "Entity does not have an active session"
+		return true
 	end
 
 	local success, error = self:AddEntry(ent, nil, "Session terminated.")
@@ -189,6 +206,14 @@ function Star_Trek.Logs:EndSession(ent)
 end
 
 -- Hook Implementation
-hook.Add("Star_Trek.LCARS.PostCloseInterface", "Star_Trek.Logs.EndSession", function(ent)
-	print(Star_Trek.Logs:EndSession(ent))
+hook.Add("Star_Trek.LCARS.PreCloseInterface", "Star_Trek.Logs.EndSession", function(interfaceData)
+	local ent = hook.Run("Star_Trek.Logs.GetSessionEntity", interfaceData)
+	if not ent then
+		ent = interfaceData.Ent
+	end
+
+	local success, error = Star_Trek.Logs:EndSession(ent)
+	if not success then
+		print(error) -- TODO
+	end
 end)

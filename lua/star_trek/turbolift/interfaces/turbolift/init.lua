@@ -23,6 +23,8 @@ local SELF = INTERFACE
 
 SELF.BaseInterface = "base"
 
+SELF.LogType = false
+
 SELF.Solid = true
 
 -- Opening a turbolift control menu.
@@ -41,7 +43,7 @@ function SELF:Open(ent)
 		400,
 		function(windowData, interfaceData, ply, buttonId)
 			if ent.IsTurbolift then
-				local canStart = Star_Trek.Turbolift:StartLift(ent, buttonId)
+				local canStart = Star_Trek.Turbolift:StartLift(ply, ent, buttonId)
 				if canStart then
 					ent:EmitSound("star_trek.lcars_close")
 					Star_Trek.LCARS:CloseInterface(ent)
@@ -50,7 +52,7 @@ function SELF:Open(ent)
 				end
 			elseif ent.IsPod then
 				if buttonId == 1 then
-					if Star_Trek.Turbolift:TogglePos(ent) then
+					if Star_Trek.Turbolift:TogglePos(ply, ent) then
 						windowData.Buttons[1].Name = "Resume Lift"
 					else
 						windowData.Buttons[1].Name = "Stop Lift"
@@ -58,7 +60,7 @@ function SELF:Open(ent)
 
 					return true
 				else
-					Star_Trek.Turbolift:ReRoutePod(ent, buttonId - 1)
+					Star_Trek.Turbolift:ReRoutePod(ply, ent, buttonId - 1)
 
 					ent:EmitSound("star_trek.lcars_close")
 					Star_Trek.LCARS:CloseInterface(ent)
