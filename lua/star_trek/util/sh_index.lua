@@ -25,6 +25,7 @@ if SERVER then
 	--AddCSLuaFile("cl_rendermap.lua")
 
 	include("sv_warp.lua")
+	include("sv_airlock.lua")
 
 	include("sv_positions.lua")
 	include("sv_keyvalues.lua")
