@@ -105,9 +105,10 @@ hook.Add("PostCleanupMap", "Star_Trek.Alert.Cleanup", function()
 	Star_Trek.Alert:Disable()
 end)
 
-
 hook.Add("Star_Trek.ModulesLoaded", "Star_Trek.Alert.LoadLogType", function()
-	Star_Trek.Logs:RegisterType("Alert Master Control")
+	if istable(Star_Trek.Logs) then
+		Star_Trek.Logs:RegisterType("Alert Master Control")
+	end
 end)
 
 hook.Add("Star_Trek.Logs.GetSessionName", "Star_Trek.Alert.GetSessionName", function(interfaceData)
@@ -119,7 +120,7 @@ end)
 
 hook.Add("Star_Trek.LCARS.BasicPressed", "Star_Trek.Alert.BasicPressed", function(ply, interfaceData, buttonId)
 	local ent = interfaceData.Ent
-	if ent:GetName() == "bridgeBut1" then
+	if ent:GetName() == "bridgeBut1" and istable(Star_Trek.Logs) then
 		if buttonId == 1 then
 			Star_Trek.Logs:AddEntry(ent, ply, "Yellow Alert!")
 		elseif buttonId == 2 then
