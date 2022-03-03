@@ -16,7 +16,7 @@
 --            Logs | Index           --
 ---------------------------------------
 
-Star_Trek:RequireModules("lcars", "button")
+Star_Trek:RequireModules("lcars", "button", "sections")
 
 Star_Trek.Logs = Star_Trek.Logs or {}
 

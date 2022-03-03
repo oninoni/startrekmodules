@@ -340,6 +340,7 @@ function SELF:SelectLogFile(archivedSession)
 	local logWindow = self.Windows[4]
 
 	logWindow:AddLine("Log Type: " .. archivedSession.Type, Star_Trek.LCARS.ColorRed)
+	logWindow:AddLine("Log Location: " .. archivedSession.SectionName, Star_Trek.LCARS.ColorOrange)
 	logWindow:AddLine("Log file started at " .. archivedSession.SessionStarted, Star_Trek.LCARS.ColorLightBlue)
 	logWindow:AddLine("Log file archived at " .. archivedSession.SessionArchived, Star_Trek.LCARS.ColorLightBlue)
 

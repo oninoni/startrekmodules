@@ -68,14 +68,19 @@ function Star_Trek.Logs:StartSession(ent, ply, type)
 		return false, "Invalid Session Type"
 	end
 
+	local deck, sectionId = Star_Trek.Sections:DetermineSection(ply:EyePos())
+	local sectionName = "DATA MISSING"
+	if deck then
+		sectionName = Star_Trek.Sections:GetSectionName(deck, sectionId)
+	end
+
 	local sessionData = {
 		Type = type,
 		Status = ST_LOGS_ACTIVE,
 		SessionStarted = os.time(),
+		SectionName = sectionName,
 		Entries = {},
 	}
-
-	-- TODO: Add Start Session Reason (Add last entry with a given string / ply)
 
 	self.Sessions[ent] = sessionData
 
@@ -90,7 +95,7 @@ end
 -- Hook Implementation
 hook.Add("Star_Trek.LCARS.OpenInterface", "Star_Trek.Logs.StartSession", function(interfaceData, ply)
 	local logType = hook.Run("Star_Trek.Logs.GetSessionName", interfaceData)
-	if not logType then
+	if logType == nil then
 		logType = interfaceData.LogType
 	end
 
