@@ -31,12 +31,12 @@ function SELF:CreateControlMenu()
 			Name = "Next Entry",
 			Disabled = true,
 		},
-		[4] = {
+		[3] = {
 			Name = "Delete Entry",
 			Color = Star_Trek.LCARS.ColorRed,
 			Disabled = true,
 		},
-		[6] = {
+		[4] = {
 			Name = "Disable Console",
 			Color = Star_Trek.LCARS.ColorRed,
 		}
@@ -44,11 +44,11 @@ function SELF:CreateControlMenu()
 
 	local success, controlWindow = Star_Trek.LCARS:CreateWindow(
 		"button_list",
-		Vector(15, -28.05, 10),
+		Vector(15, -28.5, 12),
 		Angle(0, 0, -76.5),
 		nil,
 		600,
-		300,
+		210,
 		function(windowData, interfaceData, ply, buttonId)
 			if buttonId == 1 or buttonId == 2 then -- Next Log
 				local listWindow = self.Windows[3]
@@ -70,7 +70,7 @@ function SELF:CreateControlMenu()
 						return
 					end
 				end
-			elseif buttonId == 6 then -- Disable Button
+			elseif buttonId == 4 then -- Disable Button
 				windowData:Close()
 			end
 		end,
@@ -98,11 +98,11 @@ function SELF:CreateCategorySelectionWindow()
 
 	local success, categorySelection = Star_Trek.LCARS:CreateWindow(
 		"button_list",
-		Vector(15, -24.5, -4.75),
+		Vector(15, -24.7, -3.95),
 		Angle(0, 0, -76.5),
 		nil,
 		600,
-		300,
+		440,
 		function(windowData, interfaceData, ply, buttonId)
 			self:DeSelectLogFile(true)
 
