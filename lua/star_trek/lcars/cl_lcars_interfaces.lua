@@ -199,7 +199,12 @@ function Star_Trek.LCARS:PlayerButtonDown(ply, button)
 				worldPos = LocalToWorld(worldPos or Vector(), Angle(), window.WPosG, window.WAngG)
 
 				local eyePos = ply:EyePos()
-				local trace = util.TraceLine({
+				local fullDistance = worldPos:Distance(eyePos)
+				if fullDistance > 80 then
+					continue
+				end
+
+				local forwardTrace = util.TraceLine({
 					start = eyePos,
 					endpos = worldPos,
 					filter = {
@@ -207,11 +212,29 @@ function Star_Trek.LCARS:PlayerButtonDown(ply, button)
 						interface.Ent
 					},
 				})
+				local backwardsTrace = util.TraceLine({
+					start = worldPos,
+					endpos = eyePos,
+					filter = {
+						ply,
+						interface.Ent
+					},
+				})
 
-				local fullDistance = worldPos:Distance(eyePos)
-				local distance = trace.HitPos:Distance(eyePos)
-				if distance < fullDistance * 0.9 then
-					continue
+				-- debugoverlay.Line(eyePos, forwardTrace.HitPos, 10, Color(255, 0, 0), true)
+				-- debugoverlay.Line(worldPos, backwardsTrace.HitPos, 10, Color(255, 0, 0), true)
+
+				local forwardsDistance = eyePos:Distance(forwardTrace.HitPos)
+				local backwardsDistance = worldPos:Distance(backwardsTrace.HitPos)
+
+				if backwardsTrace.HitWorld and forwardTrace.HitWorld then
+					if fullDistance - 10 > forwardsDistance then
+						continue
+					end
+				else
+					if fullDistance > forwardsDistance + backwardsDistance then
+						continue
+					end
 				end
 
 				local buttonId = window:OnPress(pos, interface.AnimPos)
