@@ -113,7 +113,7 @@ function Star_Trek.LCARS:UpdateWindow(ent, windowId, windowData)
 	windowData = interfaceData.Windows[windowId]
 
 	Star_Trek.LCARS:ApplyWindow(interfaceData, windowId, windowData)
-	local clientWindowData = self:GetClientWindowData(windowData)
+	local clientWindowData = windowData:GetClientData()
 
 	net.Start("Star_Trek.LCARS.Update")
 		net.WriteInt(ent:EntIndex(), 32)

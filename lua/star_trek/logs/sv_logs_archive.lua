@@ -50,6 +50,15 @@ function Star_Trek.Logs:ArchiveSession(sessionData, callback)
 	return true
 end
 
+hook.Add("PostCleanupMap", "Star_Trek.Logs.ArchiveAll", function()
+	for _, sessionData in pairs(Star_Trek.Logs.Sessions) do
+		Star_Trek.Logs:ArchiveSession(sessionData, function() end)
+	end
+
+	-- Reset if Archive Fails Anyways.
+	Star_Trek.Logs.Sessions = {}
+end)
+
 -- Return the ammount of pages to have with the given types.
 --
 -- @param Table types

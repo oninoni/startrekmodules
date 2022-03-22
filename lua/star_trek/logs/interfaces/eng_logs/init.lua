@@ -49,7 +49,8 @@ function SELF:Open(ent)
 		770,
 		380,
 		function(windowData, interfaceData, ply, buttonId)
-		end
+		end,
+		true
 	)
 	if not success4 then
 		return false, logWindow

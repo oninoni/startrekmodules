@@ -175,6 +175,18 @@ function SELF:ApplyListWindowPage(categories, page, disableAll)
 
 	Star_Trek.Logs:LoadSessionArchive(self.Types or {}, function(successInternal, archiveData)
 		mainCategory.Buttons = {}
+		for _, sessionData in pairs(Star_Trek.Logs.Sessions) do
+			if table.HasValue(self.Types, sessionData.Type) then
+				local button = {
+					Name = sessionData.Type .. " - " .. sessionData.SectionName .. " - [ACTIVE]",
+					Color = Star_Trek.LCARS.ColorRed,
+					Data = sessionData
+				}
+
+				table.insert(mainCategory.Buttons, button)
+			end
+		end
+
 		if not successInternal then
 			table.insert(mainCategory.Buttons, {
 				Name = "Error Loading Data!",
@@ -188,7 +200,7 @@ function SELF:ApplyListWindowPage(categories, page, disableAll)
 		else
 			for _, archivedSession in SortedPairsByMemberValue(archiveData, "SessionArchived", true) do
 				local button = {
-					Name = archivedSession.Type .. "-" .. archivedSession.SessionArchived,
+					Name = archivedSession.Type .. " - " .. archivedSession.SectionName .. " - " .. archivedSession.SessionArchived,
 					Data = archivedSession
 				}
 
