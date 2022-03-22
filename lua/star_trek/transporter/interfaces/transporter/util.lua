@@ -147,7 +147,7 @@ function SELF:GetPatternData(menuTable, wideField)
 			if button.Selected then
 				local pos = button.Data
 				table.insert(positions, pos)
-				
+
 				for i = 1, 6 do
 					local a = math.rad( ( i / 6 ) * -360 )
 

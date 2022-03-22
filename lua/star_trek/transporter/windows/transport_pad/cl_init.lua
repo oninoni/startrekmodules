@@ -31,7 +31,7 @@ function SELF:OnCreate(windowData)
 
 	for id, padData in pairs(self.Pads) do
 		local successButton, button = self:GenerateElement("pad_button", self.Id .. "_" .. id, self.PadRadius * 2, self.PadRadius * 2,
-			id, 
+			id,
 			Star_Trek.LCARS.ColorBlue, padData.ActiveColor,
 			padData.Type == "Round",
 			padData.Disabled, padData.Selected, false)

@@ -36,15 +36,20 @@ function SELF:OnCreate(windowData)
 	self.Selected = windowData.Selected
 	self.Categories = windowData.Categories
 
+	local categories = {}
+	for i, categoryData in pairs(self.Categories) do
+		categoryData.Id = i
+		categories[i] = categoryData
+	end
+
 	self.CategoryRows = {}
-	local categories = table.Copy(self.Categories)
 	while true do
 		if #categories > 4 then
 			local subCategories = {
-				table.remove(categories, 1),
-				table.remove(categories, 1),
-				table.remove(categories, 1),
-				table.remove(categories, 1),
+				table.remove(categories, 1), -- 1st Entry in List
+				table.remove(categories, 1), -- 2nd Entry in List
+				table.remove(categories, 1), -- 3rd Entry in List
+				table.remove(categories, 1), -- 4th Entry in List
 			}
 
 			table.insert(self.CategoryRows, self:SetupCategoryRow(subCategories))

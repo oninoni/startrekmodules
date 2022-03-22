@@ -33,9 +33,19 @@ function SELF:OnCreate(fallbackColor, title, titleShort, hFlip, lines)
 
 	self.Active = false
 	self.FallbackColor = fallbackColor
-	self.Inverted = true
 
 	return true
+end
+
+function SELF:GetClientData()
+	local clientData = SELF.Base.GetClientData(self)
+
+	clientData.Active = self.Active
+	clientData.FallbackColor = self.FallbackColor
+
+	clientData.Lines = self.Lines
+
+	return clientData
 end
 
 function SELF:ClearLines()

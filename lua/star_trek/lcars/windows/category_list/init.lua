@@ -29,10 +29,32 @@ function SELF:OnCreate(categories, title, titleShort, hFlip, toggle, buttonHeigh
 		return false
 	end
 
-	self:SetCategoryButtonHeight(categoryButtonHeight)
 	self:SetCategories(categories)
 
+	self.CategoryButtonHeight = categoryButtonHeight or 32
+
 	return true
+end
+
+function SELF:GetClientData()
+	local clientData = SELF.Base.GetClientData(self)
+
+	clientData.Categories = {}
+	for i, categoryData in pairs(self.Categories) do
+		local clientCategoryData = {
+			Name = categoryData.Name,
+			Disabled = categoryData.Disabled,
+
+			Color = categoryData.Color,
+		}
+
+		clientData.Categories[i] = clientCategoryData
+	end
+
+	clientData.Selected = self.Selected
+	clientData.CategoryButtonHeight = self.CategoryButtonHeight
+
+	return clientData
 end
 
 function SELF:SetCategories(categories, default)
@@ -59,15 +81,10 @@ function SELF:SetCategories(categories, default)
 
 		categoryData.Buttons = category.Buttons
 
-		categoryData.Id = table.insert(self.Categories, categoryData)
+		table.insert(self.Categories, categoryData)
 	end
 
-	self.Selected = default or 1
-	self:SetCategory(self.Selected)
-end
-
-function SELF:SetCategoryButtonHeight(categoryButtonHeight)
-	self.CategoryButtonHeight = categoryButtonHeight or 32
+	self:SetCategory(default or 1)
 end
 
 function SELF:GetSelected()

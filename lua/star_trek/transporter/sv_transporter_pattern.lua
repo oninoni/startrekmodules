@@ -30,14 +30,14 @@ function Star_Trek.Transporter:CanBeamEntity(ent)
 		return false
 	end
 
-	if ent:MapCreationID() ~= -1 then 
+	if ent:MapCreationID() ~= -1 then
 		return false
 	end
 
 	if IsValid(ent:GetParent()) then
 		return false
 	end
-	
+
 	local phys = ent:GetPhysicsObject()
 	if not IsValid(phys) then
 		return false

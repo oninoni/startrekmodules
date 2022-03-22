@@ -29,11 +29,36 @@ function SELF:OnCreate(buttons, title, titleShort, hFlip, toggle, buttonHeight)
 		return false
 	end
 
-	self:SetButtonHeight(buttonHeight)
 	self:SetButtons(buttons)
-	self:SetToggle(toggle)
+
+	self.Toggle = toggle or false
+	self.ButtonHeight = buttonHeight or 35
 
 	return true
+end
+
+function SELF:GetClientData()
+	local clientData = SELF.Base.GetClientData(self)
+
+	clientData.Buttons = {}
+	for i, buttonData in pairs(self.Buttons) do
+		local clientButtonData = {
+			Name = buttonData.Name,
+			Disabled = buttonData.Disabled,
+			Selected = buttonData.Selected,
+
+			Color = buttonData.Color,
+			ActiveColor = buttonData.ActiveColor,
+
+			RandomNumber = buttonData.RandomNumber,
+		}
+
+		clientData.Buttons[i] = clientButtonData
+	end
+
+	clientData.ButtonHeight = self.ButtonHeight
+
+	return clientData
 end
 
 function SELF:SetButtons(buttons)
@@ -76,14 +101,6 @@ function SELF:SetButtons(buttons)
 			end
 		end
 	end
-end
-
-function SELF:SetToggle(toggle)
-	self.Toggle = toggle or false
-end
-
-function SELF:SetButtonHeight(buttonHeight)
-	self.ButtonHeight = buttonHeight or 35
 end
 
 function SELF:GetSelected()

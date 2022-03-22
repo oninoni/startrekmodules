@@ -77,12 +77,12 @@ function Star_Trek.LCARS:OpenInterface(ply, triggerEntity, interfaceName, ...)
 		return false, "Invalid Interface Windows"
 	end
 
-	hook.Run("Star_Trek.LCARS.OpenInterface", interfaceData, ply)
-
 	interfaceData.Windows = windows
 	interfaceData.OffsetPos = offsetPos
 	interfaceData.OffsetAng = offsetAng
 	Star_Trek.LCARS:ApplyWindows(interfaceData)
+
+	hook.Run("Star_Trek.LCARS.OpenInterface", interfaceData, ply)
 
 	local clientInterfaceData = Star_Trek.LCARS:GetClientInterfaceData(interfaceData)
 

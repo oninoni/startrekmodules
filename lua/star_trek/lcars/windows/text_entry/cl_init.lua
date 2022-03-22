@@ -78,7 +78,7 @@ function SELF:ProcessText(lines)
 	-- Prep Font for recursion.
 	surface.SetFont("LCARSText")
 
-	for _, line in pairs(lines) do
+	for _, line in pairs(lines or {}) do
 		local words = string.Split(line.Text, " ")
 
 		local subLines = self:CheckLine(words)

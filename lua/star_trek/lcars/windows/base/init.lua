@@ -23,6 +23,21 @@ function SELF:OnCreate()
 	return true
 end
 
+function SELF:GetClientData()
+	local clientData = {
+		WType = self.WindowType,
+
+		WPos = self.WindowPos,
+		WAng = self.WindowAngles,
+
+		WScale = self.WindowScale,
+		WWidth = self.WindowWidth,
+		WHeight = self.WindowHeight,
+	}
+
+	return clientData
+end
+
 function SELF:GetSelected()
 	return {}
 end

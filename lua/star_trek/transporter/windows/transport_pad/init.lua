@@ -42,10 +42,8 @@ function SELF:OnCreate(padNumber, title, titleShort, hFlip)
 
 			if n ~= padNumber then continue end
 
-			local pad = {
-				Name = k .. "_" .. n,
-				Data = ent,
-			}
+			local pad = {}
+			pad.Data = ent
 
 			if k == 7 then
 				pad.X = 0
@@ -94,22 +92,40 @@ function SELF:OnCreate(padNumber, title, titleShort, hFlip)
 	return self
 end
 
+function SELF:GetClientData()
+	local clientData = SELF.Base.GetClientData(self)
+
+	clientData.Pads = {}
+	for i, pad in pairs(self.Pads) do
+		clientPad = {
+			Type = pad.Type,
+
+			X = pad.X,
+			Y = pad.Y,
+		}
+
+		clientData.Pads[i] = clientPad
+	end
+
+	return clientData
+end
+
 function SELF:GetSelected()
 	local data = {}
 
-	for _, pad in pairs(self.Pads) do
-		data[pad.Name] = pad.Selected
+	for i, pad in pairs(self.Pads) do
+		data[i] = pad.Selected
 	end
 
 	return data
 end
 
 function SELF:SetSelected(data)
-	for _, pad in pairs(self.Pads) do
+	for i, pad in pairs(self.Pads) do
 		pad.Selected = false
 
-		for name, selected in pairs(data) do
-			if pad.Name == name then
+		for iData, selected in pairs(data) do
+			if i == iData then
 				pad.Selected = selected
 				break
 			end
