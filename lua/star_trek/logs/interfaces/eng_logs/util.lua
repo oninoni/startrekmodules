@@ -338,24 +338,7 @@ function SELF:SelectLogFile(archivedSession)
 	end
 
 	local logWindow = self.Windows[4]
-
-	logWindow:AddLine("Log Type: " .. archivedSession.Type, Star_Trek.LCARS.ColorRed)
-	logWindow:AddLine("Log Location: " .. archivedSession.SectionName, Star_Trek.LCARS.ColorOrange)
-	logWindow:AddLine("Log file started at " .. archivedSession.SessionStarted, Star_Trek.LCARS.ColorLightBlue)
-	logWindow:AddLine("Log file archived at " .. archivedSession.SessionArchived, Star_Trek.LCARS.ColorLightBlue)
-
-	local currentName = nil
-	for _, entry in pairs(archivedSession.Entries) do
-		local name = entry.Name
-		if name ~= currentName then
-			logWindow:AddLine("")
-			logWindow:AddLine(name .. ":", Star_Trek.LCARS.ColorOrange)
-
-			currentName = name
-		end
-
-		logWindow:AddLine(entry.Text, Star_Trek.LCARS.ColorLightBlue)
-	end
+	logWindow:SetSessionData(archivedSession)
 
 	controlWindow:Update()
 	logWindow:Update()

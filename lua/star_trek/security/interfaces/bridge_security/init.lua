@@ -65,7 +65,7 @@ function SELF:OpenInternal(menuPos, menuAng, menuWidth, actionPos, actionAng, ac
 	end
 
 	local success5, textWindow = Star_Trek.LCARS:CreateWindow(
-		"text_entry",
+		"log_entry",
 		textPos,
 		textAng,
 		24,
@@ -73,11 +73,7 @@ function SELF:OpenInternal(menuPos, menuAng, menuWidth, actionPos, actionAng, ac
 		textHeight,
 		function(windowData, interfaceData, ply, categoryId, buttonId)
 			return false
-		end,
-		Color(255, 255, 255),
-		"Log File",
-		"LOG",
-		true
+		end
 	)
 	if not success5 then
 		return false, textWindow

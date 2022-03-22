@@ -102,6 +102,7 @@ end
 function Star_Trek.LCARS:LoadWindow(windowDirectory, windowName)
 	WINDOW = {}
 	WINDOW.Class = windowName
+	WINDOW.IsLCARSWindow = true
 
 	local success = pcall(function()
 		if SERVER then
@@ -178,6 +179,7 @@ if SERVER then
 	function Star_Trek.LCARS:LoadInterface(interfaceDirectory, interfaceName)
 		INTERFACE = {}
 		INTERFACE.Class = interfaceName
+		INTERFACE.IsLCARSInterface = true
 
 		local success = pcall(function()
 			include(interfaceDirectory .. interfaceName .. "/init.lua")

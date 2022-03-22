@@ -80,6 +80,7 @@ function Star_Trek.Logs:StartSession(ent, ply, type)
 		SessionStarted = os.time(),
 		SectionName = sectionName,
 		Entries = {},
+		Watchers = {},
 	}
 
 	self.Sessions[ent] = sessionData
@@ -112,6 +113,21 @@ hook.Add("Star_Trek.LCARS.OpenInterface", "Star_Trek.Logs.StartSession", functio
 	if not success then
 		print(error) -- TODO
 	end
+
+	--[[
+	for _, window in pairs(interfaceData.Windows) do
+		if isfunction(window.SetSessionData) then
+			local sessionData = Star_Trek.Logs:GetSession(ent)
+			print(sessionData)
+
+			window:SetSessionData(sessionData)
+
+			if not table.HasValue(sessionData.Watchers, window) then
+				print("Applying Watcher")
+				table.insert(sessionData.Watchers, window)
+			end
+		end
+	end]]
 end)
 
 -- Returns the session data of the given entity.
@@ -153,6 +169,16 @@ function Star_Trek.Logs:AddEntryToSession(sessionData, ply, text)
 	}
 
 	table.insert(sessionData.Entries, entryData)
+
+	--[[
+	for _, watcherWindow in pairs(sessionData.Watchers or {}) do
+		print("Test", watcherWindow)
+		-- TODO: Check if window still open! If not Remove from list!
+
+		watcherWindow:UpdateContent()
+		watcherWindow:Update()
+	end
+	]]
 
 	return true
 end

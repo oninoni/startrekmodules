@@ -42,18 +42,14 @@ function SELF:Open(ent)
 	end
 
 	local success4, logWindow = Star_Trek.LCARS:CreateWindow(
-		"text_entry",
+		"log_entry",
 		Vector(0, -2, -14.25),
 		Angle(0, 0, 0),
 		16,
 		770,
 		380,
 		function(windowData, interfaceData, ply, buttonId)
-		end,
-		Color(255, 255, 255),
-		"Active Log Data",
-		"LOGS",
-		true
+		end
 	)
 	if not success4 then
 		return false, logWindow
