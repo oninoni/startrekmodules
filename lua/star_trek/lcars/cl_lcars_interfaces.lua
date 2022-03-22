@@ -119,7 +119,7 @@ net.Receive("Star_Trek.LCARS.Update", function()
 	local oldVis = currentWindow.WVis
 
 	local windowData = net.ReadTable()
-	if currentWindow.WType ~= windowData.WindowType then
+	if currentWindow.WType ~= windowData.WType then
 		local pos, ang = Star_Trek.LCARS:GetInterfacePosAngle(interface.Ent, interface.IPos, interface.IAng)
 
 		local success, window = Star_Trek.LCARS:LoadWindowData(id .. "_" .. windowId, windowData, pos, ang)
