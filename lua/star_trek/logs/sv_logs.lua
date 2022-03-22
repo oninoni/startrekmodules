@@ -220,6 +220,8 @@ function Star_Trek.Logs:EndSession(ent)
 		end
 	end)
 	if not success2 then
+		self.Sessions[ent] = nil
+
 		return false, error2
 	end
 

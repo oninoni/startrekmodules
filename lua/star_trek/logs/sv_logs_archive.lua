@@ -33,6 +33,10 @@ function Star_Trek.Logs:ArchiveSession(sessionData, callback)
 		return false, "Invalid callback"
 	end
 
+	if #sessionData.Entries <= 2 then
+		return false, "Empty Log"
+	end
+
 	sessionData.Watchers = nil
 
 	sessionData.SessionArchived = os.time()
