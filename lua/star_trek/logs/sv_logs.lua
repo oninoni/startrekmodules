@@ -116,8 +116,6 @@ hook.Add("Star_Trek.LCARS.OpenInterface", "Star_Trek.Logs.StartSession", functio
 
 	for _, window in pairs(interfaceData.Windows) do
 		if isfunction(window.SetSessionData) then
-			print(window)
-
 			local sessionData = Star_Trek.Logs:GetSession(ent)
 
 			if not window.PreventAutoLink then
@@ -167,9 +165,7 @@ function Star_Trek.Logs:AddEntryToSession(sessionData, ply, text)
 
 	table.insert(sessionData.Entries, entryData)
 
-	print("---")
 	for _, watcherWindow in pairs(sessionData.Watchers or {}) do
-		print("Test", watcherWindow)
 		-- TODO: Check if window still open! If not Remove from list!
 
 		watcherWindow:UpdateContent()

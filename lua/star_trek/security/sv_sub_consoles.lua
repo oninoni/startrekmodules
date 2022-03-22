@@ -34,7 +34,6 @@ end)
 
 hook.Add("Star_Trek.Logs.GetSessionName", "Star_Trek.Security.GetSessionName", function(interfaceData)
 	local ent = interfaceData.Ent
-	print(ent:GetName())
 	if table.HasValue(subConsoles, ent:GetName()) then
 		return "Security Sub-Console"
 	end
