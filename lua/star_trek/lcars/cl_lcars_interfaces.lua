@@ -116,6 +116,7 @@ net.Receive("Star_Trek.LCARS.Update", function()
 
 	local windowId = net.ReadInt(32)
 	local currentWindow = interface.Windows[windowId]
+	local oldVis = currentWindow.WVis
 
 	local windowData = net.ReadTable()
 	if currentWindow.WType ~= windowData.WindowType then
@@ -128,7 +129,9 @@ net.Receive("Star_Trek.LCARS.Update", function()
 
 		if istable(window) then
 			interface.Windows[windowId] = window
+
 			window.Interface = interface
+			window.WVis = oldVis
 		end
 	else
 		hook.Run("Star_Trek.LCARS.PreWindowCreate", currentWindow, windowData)
