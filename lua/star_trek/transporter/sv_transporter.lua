@@ -101,16 +101,17 @@ function Star_Trek.Transporter:ApplyPadEffect(transporterCycle, sourcePattern, t
 	end
 end
 
-function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPatterns, textWindow)
+function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatterns, targetPatterns)
 	if not istable(sourcePatterns) then return end
 
 	sourcePatterns = self:CleanUpSourcePatterns(sourcePatterns)
 	targetPatterns = self:CleanUpTargetPatterns(targetPatterns)
 
-	textWindow:AddLine("Initialising Transporter...")
-	textWindow:AddLine(table.Count(sourcePatterns) .. " Pattern Sources Selected.")
-	textWindow:AddLine(table.Count(sourcePatterns) .. " Pattern Targets Selected.")
-	textWindow:AddLine("Dematerialising...")
+	Star_Trek.Logs:AddEntry(interfaceEnt, ply, "")
+	Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Initialising Transporter...")
+	Star_Trek.Logs:AddEntry(interfaceEnt, ply, table.Count(sourcePatterns) .. " Pattern Sources Selected.")
+	Star_Trek.Logs:AddEntry(interfaceEnt, ply, table.Count(sourcePatterns) .. " Pattern Targets Selected.")
+	Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Dematerialising...")
 
 	local targetPatternId = 1
 	for _, sourcePattern in pairs(sourcePatterns) do
@@ -130,18 +131,18 @@ function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPattern
 
 					local state = transporterCycle.State
 					if state == 2 then
-						textWindow:AddLine("Rematerialising Object...")
+						Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Rematerialising Object...")
 					end
 				end)
 
-				textWindow:AddLine("Dematerialising Object...")
+				Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Dematerialising Object...")
 
 				targetPatternId = targetPatternId + 1
 			elseif isbool(targetPattern) then
 				continue
 			else
 				if sourcePatterns.IsBuffer or table.HasValue(Star_Trek.Transporter.Buffer.Entities, ent) then
-					textWindow:AddLine("Buffer Recursion Prevented!")
+					Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Buffer Recursion Prevented!")
 
 					continue
 				end
@@ -153,12 +154,9 @@ function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPattern
 					Star_Trek.Transporter:ApplyPadEffect(transporterCycle, sourcePattern, {})
 				end)
 
-				textWindow:AddLine("Dematerialising Object...")
-				textWindow:AddLine("Warning: No Target Pattern Available! Storing in Buffer!", Star_Trek.LCARS.ColorRed)
+				Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Dematerialising Object...")
+				Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Warning: No Target Pattern Available! Storing in Buffer!")
 			end
 		end
 	end
-
-	textWindow:AddLine("")
-	textWindow:Update()
 end

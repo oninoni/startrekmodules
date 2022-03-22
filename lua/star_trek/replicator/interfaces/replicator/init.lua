@@ -23,6 +23,8 @@ local SELF = INTERFACE
 
 SELF.BaseInterface = "base"
 
+SELF.LogType = "Replicator"
+
 -- Opens the replicator menu.
 function SELF:Open(ent)
 	local categories, categoryCount = self:GenerateCategories(ent)
@@ -34,7 +36,7 @@ function SELF:Open(ent)
 		nil,
 		500,
 		500,
-		function(windowData, interfaceData, categoryId, buttonId)
+		function(windowData, interfaceData, ply, categoryId, buttonId)
 			if buttonId then
 				local selected = windowData.Selected
 				local categoryData = windowData.Categories[selected]
@@ -45,6 +47,10 @@ function SELF:Open(ent)
 						local pos, angle = Star_Trek.LCARS:GetInterfacePosAngleGlobal(ent)
 						pos = pos + angle:Up() * -7
 						pos = pos + angle:Right() * 6
+
+						if istable(Star_Trek.Logs) then
+							Star_Trek.Logs:AddEntry(ent, ply, "Replicating " .. buttonData.Name)
+						end
 
 						Star_Trek.Replicator:CreateObject(buttonData.Data, pos, ent:GetAngles())
 					end
@@ -67,6 +73,10 @@ function SELF:Open(ent)
 					if #cleanEntities == 0 then
 						ent:EmitSound("star_trek.lcars_error")
 					else
+						if istable(Star_Trek.Logs) then
+							Star_Trek.Logs:AddEntry(ent, ply, "Activating Recycler")
+						end
+
 						for _, cleanEnt in pairs(cleanEntities) do
 							Star_Trek.Replicator:RecycleObject(cleanEnt)
 						end

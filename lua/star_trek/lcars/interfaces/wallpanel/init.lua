@@ -58,7 +58,7 @@ function SELF:Open(ent)
 		scale,
 		w * scale,
 		h * scale,
-		function(windowData, interfaceData, buttonId)
+		function(windowData, interfaceData, ply, buttonId)
 			if buttonId == 12 then
 				ent:EmitSound("star_trek.lcars_close")
 				interfaceData:Close()
@@ -83,7 +83,7 @@ function SELF:Open(ent)
 		scale,
 		(w2 - 1) * scale,
 		h * scale,
-		function(windowData, interfaceData, buttonId)
+		function(windowData, interfaceData, ply, buttonId)
 		end,
 		nil,
 		"Logs",

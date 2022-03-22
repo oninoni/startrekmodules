@@ -13,12 +13,25 @@
 ---------------------------------------
 
 ---------------------------------------
---  LCARS Transport Slider | Server  --
+--      LCARS Log Entry | Client     --
 ---------------------------------------
 
 if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
 local SELF = WINDOW
 
-function SELF:OnPress(interfaceData, ply, buttonId, callback)
-	callback(windowData, interfaceData, ply, buttonId)
+function SELF:OnCreate(windowData)
+	local success = SELF.Base.OnCreate(self, windowData)
+	if not success then
+		return false
+	end
+
+	return true
+end
+
+function SELF:OnPress(pos, animPos)
+	return SELF.Base.OnPress(self, pos, animPos)
+end
+
+function SELF:OnDraw(pos, animPos)
+	SELF.Base.OnDraw(self, pos, animPos)
 end

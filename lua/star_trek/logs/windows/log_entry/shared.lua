@@ -13,5 +13,8 @@
 ---------------------------------------
 
 ---------------------------------------
---          Models | Server          --
+--      LCARS Log Entry | Shared     --
 ---------------------------------------
+
+-- Determines the parent windows name for this one. (Like Deriving Classes)
+WINDOW.BaseWindow = "text_entry"

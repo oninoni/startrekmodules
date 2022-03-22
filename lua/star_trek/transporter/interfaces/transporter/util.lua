@@ -147,7 +147,7 @@ function SELF:GetPatternData(menuTable, wideField)
 			if button.Selected then
 				local pos = button.Data
 				table.insert(positions, pos)
-				
+
 				for i = 1, 6 do
 					local a = math.rad( ( i / 6 ) * -360 )
 
@@ -169,14 +169,15 @@ end)
 
 -- Engage a transporter system with the given menu tables and wide field.
 --
+-- @param Player ply
 -- @param Table sourceMenuTable
 -- @param Table targetMenuTable
 -- @param? Boolean wideField
 -- @param? Function callback
-function SELF:Energize(sourceMenuTable, targetMenuTable, wideField, textWindow, callback)
+function SELF:Energize(ply, sourceMenuTable, targetMenuTable, wideField, callback)
 	local sourcePatterns = self:GetPatternData(sourceMenuTable, wideField)
 	local targetPatterns = self:GetPatternData(targetMenuTable, false)
-	Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPatterns, textWindow)
+	Star_Trek.Transporter:ActivateTransporter(self.Ent, ply, sourcePatterns, targetPatterns)
 
 	--ent:EmitSound("star_trek.lcars_transporter_lock")
 
@@ -201,9 +202,10 @@ end
 
 -- Trigger a Transporter.
 --
+-- @param Player ply
 -- @param Table sourceMenuTable
 -- @param Table targetMenuTable
-function SELF:TriggerTransporter(sourceMenuTable, targetMenuTable, textWindow)
+function SELF:TriggerTransporter(ply, sourceMenuTable, targetMenuTable)
 	local wideField = false
 	if isfunction(sourceMenuTable.GetUtilButtonState) then
 		wideField = sourceMenuTable:GetUtilButtonState()
@@ -216,12 +218,12 @@ function SELF:TriggerTransporter(sourceMenuTable, targetMenuTable, textWindow)
 
 	if delayDematerialisation then
 		timer.Simple(DEMAT_DELAY, function()
-			self:Energize(sourceMenuTable, targetMenuTable, wideField, textWindow, function(sourcePatterns, targetPatterns)
+			self:Energize(ply, sourceMenuTable, targetMenuTable, wideField, function(sourcePatterns, targetPatterns)
 				if sourcePatterns.IsBuffer then self:UpdateBufferMenu(sourceMenuTable) end
 			end)
 		end)
 	else
-		self:Energize(sourceMenuTable, targetMenuTable, wideField, textWindow, function(sourcePatterns, targetPatterns)
+		self:Energize(ply, sourceMenuTable, targetMenuTable, wideField, function(sourcePatterns, targetPatterns)
 			if sourcePatterns.IsBuffer then self:UpdateBufferMenu(sourceMenuTable) end
 		end)
 	end

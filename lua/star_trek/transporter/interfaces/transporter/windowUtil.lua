@@ -92,7 +92,7 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip, padNumber)
 		24,
 		width,
 		height,
-		function(windowData, interfaceData, buttonId)
+		function(windowData, interfaceData, ply, buttonId)
 			if buttonId > n then -- Custom Buttons
 				local button = windowData.Buttons[buttonId]
 				if button.Name == "Wide Beam" or button.Name == "Narrow Beam" then

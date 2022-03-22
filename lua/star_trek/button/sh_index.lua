@@ -13,12 +13,17 @@
 ---------------------------------------
 
 ---------------------------------------
---  LCARS Transport Slider | Server  --
+--           Button | Index          --
 ---------------------------------------
 
-if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
-local SELF = WINDOW
+Star_Trek:RequireModules("lcars")
 
-function SELF:OnPress(interfaceData, ply, buttonId, callback)
-	callback(windowData, interfaceData, ply, buttonId)
+Star_Trek.Button = Star_Trek.Button or {}
+
+if SERVER then
+	include("sv_button.lua")
+end
+
+if CLIENT then
+	return
 end

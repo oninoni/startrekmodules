@@ -28,6 +28,8 @@ if SERVER then
 	include("sh_config.lua")
 	include("sh_sounds.lua")
 	include("sv_force_field.lua")
+
+	include("sv_sub_consoles.lua")
 end
 
 if CLIENT then

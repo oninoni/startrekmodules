@@ -96,46 +96,23 @@ end
 --   Network Filters  --
 ------------------------
 
--- Returns filtered windowData, that can be safely transmitted to the client without issues.
---
--- @param Table windowData
--- @return Table clientWindowData
-function Star_Trek.LCARS:GetClientWindowData(windowData)
-	local clientWindowData = table.Copy(windowData)
-	for id, data in pairs(windowData) do
-		if isfunction(data) then
-			clientWindowData[id] = nil
-		end
-	end
-
-	-- Prevent Recursion
-	clientWindowData.Interface = nil
-
-	clientWindowData.AppliedOffset = nil
-
-	return clientWindowData
-end
-
 -- Returns filtered interfaceData, that can be safely transmitted to the client without issues.
 --
 -- @param Table interfaceData
 -- @return Table clientInterfaceData
 function Star_Trek.LCARS:GetClientInterfaceData(interfaceData)
-	local clientInterfaceData = table.Copy(interfaceData)
-	for id, data in pairs(interfaceData) do
-		if isfunction(data) then
-			clientInterfaceData[id] = nil
-		end
-	end
+	local clientInterfaceData = {
+		Ent = interfaceData.Ent,
+		Class = interfaceData.Class,
+		InterfacePos = interfaceData.InterfacePos,
+		InterfaceAngle = interfaceData.InterfaceAngle,
 
-	clientInterfaceData.Solid = interfaceData.Solid
-
-	clientInterfaceData.OffsetPos = nil
-	clientInterfaceData.OffsetAng = nil
+		Solid = interfaceData.Solid,
+	}
 
 	clientInterfaceData.Windows = {}
 	for id, windowData in pairs(interfaceData.Windows) do
-		clientInterfaceData.Windows[id] = self:GetClientWindowData(windowData)
+		clientInterfaceData.Windows[id] = windowData:GetClientData()
 	end
 
 	return clientInterfaceData

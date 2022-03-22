@@ -203,7 +203,8 @@ function Star_Trek.LCARS:PlayerButtonDown(ply, button)
 					start = eyePos,
 					endpos = worldPos,
 					filter = {
-						ply
+						ply,
+						interface.Ent
 					},
 				})
 
@@ -214,6 +215,7 @@ function Star_Trek.LCARS:PlayerButtonDown(ply, button)
 				end
 
 				local buttonId = window:OnPress(pos, interface.AnimPos)
+
 				if buttonId then
 					net.Start("Star_Trek.LCARS.Pressed")
 						net.WriteInt(id, 32)
