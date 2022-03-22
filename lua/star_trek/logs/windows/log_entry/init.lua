@@ -76,11 +76,12 @@ end
 
 function SELF:SetSessionData(sessionData)
 	local oldSessionData = self.SessionData
-	if istable(oldSessionData) and table.HasValue(oldSessionData.Watchers, v) then
+	if istable(oldSessionData) and istable(oldSessionData.Watchers) and table.HasValue(oldSessionData.Watchers, v) then
 		table.RemoveByValue(oldSessionData.Watchers, self)
 	end
 
 	self.SessionData = sessionData
+	sessionData.Watchers = sessionData.Watchers or {}
 
 	if not table.HasValue(sessionData.Watchers, self) then
 		table.insert(sessionData.Watchers, self)

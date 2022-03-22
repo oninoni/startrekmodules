@@ -148,7 +148,7 @@ end
 function Star_Trek.Logs:AddEntryToSession(sessionData, ply, text)
 	local name = "[INTERNAL]"
 	if IsValid(ply) and ply:IsPlayer() then
-		name = hook.Run("Star_Trek.GetPlayerName", ply) -- TODO: Implement in Gamemode
+		name = hook.Run("Star_Trek.Logs.GetPlayerName", ply)
 		if not isstring(name) then
 			name = ply:Name()
 		end

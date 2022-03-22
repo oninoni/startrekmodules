@@ -33,16 +33,15 @@ function Star_Trek.Logs:ArchiveSession(sessionData, callback)
 		return false, "Invalid callback"
 	end
 
-	local archiveSessionData = table.Copy(sessionData)
+	sessionData.Watchers = nil
 
-	archiveSessionData.SessionArchived = os.time()
+	sessionData.SessionArchived = os.time()
+	sessionData.Status = ST_LOGS_ARCHIVED
+	sessionData.RandomSeed = math.random(0, 2^16)
 
-	archiveSessionData.Status = ST_LOGS_ARCHIVED
-	archiveSessionData.RandomSeed = math.random(0, 2^16)
-
-	local preventDefault = hook.Run("Star_Trek.Logs.ArchiveSession", archiveSessionData, callback) -- TODO: Gamemode Database Inplementation. Callback Rewrite
+	local preventDefault = hook.Run("Star_Trek.Logs.ArchiveSession", sessionData, callback) -- TODO: Gamemode Database Inplementation. Callback Rewrite
 	if not preventDefault then
-		table.insert(Star_Trek.Logs.Archive, archiveSessionData)
+		table.insert(Star_Trek.Logs.Archive, sessionData)
 
 		callback(true)
 	end
@@ -77,6 +76,14 @@ function Star_Trek.Logs:GetPageCount(types, callback, pageSize)
 
 	if not isnumber(pageSize) then
 		pageSize = 25
+	end
+
+	if #types == 0 then
+		timer.Simple(0.1, function()
+			callback(true, 0)
+		end)
+
+		return true
 	end
 
 	local preventDefault = hook.Run("Star_Trek.Logs.GetPageCount", types, callback, pageSize) -- TODO: Gamemode Database Inplementation. Callback Rewrite
@@ -125,6 +132,14 @@ function Star_Trek.Logs:LoadSessionArchive(types, callback, pageSize, page)
 
 	if not isnumber(page) then
 		page = 1
+	end
+
+	if #types == 0 or page == 0 then
+		timer.Simple(0.1, function()
+			callback(true, {})
+		end)
+
+		return true
 	end
 
 	local preventDefault = hook.Run("Star_Trek.Logs.LoadSessionArchive", types, callback, pageSize, page) -- TODO: Gamemode Database Inplementation. Callback Rewrite
