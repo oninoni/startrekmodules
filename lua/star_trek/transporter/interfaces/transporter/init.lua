@@ -70,7 +70,7 @@ function SELF:OpenInternal(menuPos, menuAngle, menuWidth, mainPos, mainAngle, ma
 	targetMenuTable.SourceMenuTable = sourceMenuTable
 
 	local textSuccess, textWindow = Star_Trek.LCARS:CreateWindow(
-		"text_entry",
+		"log_entry",
 		textPos,
 		textAngle,
 		24,
@@ -78,11 +78,7 @@ function SELF:OpenInternal(menuPos, menuAngle, menuWidth, mainPos, mainAngle, ma
 		textHeight,
 		function(windowData, interfaceData, ply, categoryId, buttonId)
 			return false
-		end,
-		Color(255, 255, 255),
-		"Log File",
-		"LOG",
-		false
+		end
 	)
 	if not textSuccess then
 		return false, textWindow
