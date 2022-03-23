@@ -102,6 +102,8 @@ function SELF:GetClientData()
 
 			X = pad.X,
 			Y = pad.Y,
+
+			Selected = pad.Selected,
 		}
 
 		clientData.Pads[i] = clientPad
