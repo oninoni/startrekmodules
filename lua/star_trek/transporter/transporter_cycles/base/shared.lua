@@ -68,6 +68,7 @@ SELF.States = {
 		RenderMode = RENDERMODE_TRANSTEXTURE,
 
 		SoundName = "star_trek.voy_beam_down",
+		PlaySoundAtTarget = true,
 
 		TPToTarget = true,
 

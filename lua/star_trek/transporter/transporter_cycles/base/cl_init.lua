@@ -106,7 +106,11 @@ function SELF:ApplyState(state, onlyRestore)
 		if Star_Trek.Transporter.LocalCycle == self then
 			self.Entity:EmitSound(soundName, 20, 100, 0.5)
 		else
-			sound.Play(soundName, ent:GetPos(), 20, 100, 0.5)
+			if stateData.PlaySoundAtTarget then
+				sound.Play(soundName, self.TargetPos, 20, 100, 0.5)
+			else
+				sound.Play(soundName, ent:GetPos(), 20, 100, 0.5)
+			end
 		end
 	end
 
