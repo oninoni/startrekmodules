@@ -58,12 +58,16 @@ end
 -- @return Angle globalInterfaceAngle
 function Star_Trek.LCARS:GetInterfacePosAngleGlobal(ent)
 	local globalInterfacePos = ent:GetPos()
-	local globalInterfaceAngle = ent:GetUp():Angle()
+	local globalInterfaceAngle = ent:GetAngles()
 
 	-- If "movedir" keyvalue is set, then override globalInterfaceAngle
 	local moveDir = ent:GetKeyValues()["movedir"]
 	if isvector(moveDir) then
 		globalInterfaceAngle = moveDir:Angle()
+
+		-- Rotate to fit normal orientation.
+		globalInterfaceAngle:RotateAroundAxis(globalInterfaceAngle:Right(), -90)
+		globalInterfaceAngle:RotateAroundAxis(globalInterfaceAngle:Up(), 90)
 	end
 
 	-- If an "button" attachment exists on the model of the entity, then that is used instead.
@@ -72,10 +76,11 @@ function Star_Trek.LCARS:GetInterfacePosAngleGlobal(ent)
 		local attachmentPoint = ent:GetAttachment(attachmentID)
 		globalInterfacePos = attachmentPoint.Pos
 		globalInterfaceAngle = attachmentPoint.Ang
-	end
 
-	globalInterfaceAngle:RotateAroundAxis(globalInterfaceAngle:Right(), -90)
-	globalInterfaceAngle:RotateAroundAxis(globalInterfaceAngle:Up(), 90)
+		-- Rotate to fit normal orientation.
+		globalInterfaceAngle:RotateAroundAxis(globalInterfaceAngle:Right(), -90)
+		globalInterfaceAngle:RotateAroundAxis(globalInterfaceAngle:Up(), 90)
+	end
 
 	return globalInterfacePos, globalInterfaceAngle
 end
