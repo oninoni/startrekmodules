@@ -69,19 +69,21 @@ function SELF:OpenInternal(menuPos, menuAngle, menuWidth, mainPos, mainAngle, ma
 	sourceMenuTable.TargetMenuTable = targetMenuTable
 	targetMenuTable.SourceMenuTable = sourceMenuTable
 
-	local textSuccess, textWindow = Star_Trek.LCARS:CreateWindow(
-		"log_entry",
-		textPos,
-		textAngle,
-		24,
-		textWidth,
-		textHeight,
-		function(windowData, interfaceData, ply, categoryId, buttonId)
-			return false
+	if isvector(textPos) and isangle(textAngle) and isnumber(textWidth) and isnumber(textHeight) then
+		local textSuccess, textWindow = Star_Trek.LCARS:CreateWindow(
+			"log_entry",
+			textPos,
+			textAngle,
+			24,
+			textWidth,
+			textHeight,
+			function(windowData, interfaceData, ply, categoryId, buttonId)
+				return false
+			end
+		)
+		if not textSuccess then
+			return false, textWindow
 		end
-	)
-	if not textSuccess then
-		return false, textWindow
 	end
 
 	local sliderSuccess, sliderWindow = Star_Trek.LCARS:CreateWindow(
