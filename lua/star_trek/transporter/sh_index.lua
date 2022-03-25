@@ -20,8 +20,6 @@ Star_Trek:RequireModules("util", "sections", "lcars")
 
 Star_Trek.Transporter = Star_Trek.Transporter or {}
 
--- Test
-
 if SERVER then
 	AddCSLuaFile("resources/sh_sounds.lua")
 	AddCSLuaFile("resources/sh_particles.lua")
