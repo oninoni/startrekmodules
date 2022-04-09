@@ -29,7 +29,7 @@ function SELF:OnCreate(windowData)
 	self.PadRadius = 30
 	self.Pads = {}
 
-	self.Scale = 2 -- TODO: Automate using min/max
+	self.Scale = 2
 
 	local avPos = Vector()
 	local minX, minY =  math.huge,  math.huge

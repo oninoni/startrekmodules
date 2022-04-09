@@ -80,7 +80,7 @@ function Star_Trek.Transporter:CleanUpTargetPatterns(patterns)
 	return patterns
 end
 
-function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatterns, targetPatterns, cycleClass)
+function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatterns, targetPatterns, cycleClass, noBuffer)
 	if not istable(sourcePatterns) then return end
 
 	sourcePatterns = self:CleanUpSourcePatterns(sourcePatterns)
@@ -102,7 +102,7 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 			local targetPattern = targetPatterns[targetPatternId]
 			if istable(targetPattern) then
 				if sourcePatterns.IsBuffer then
-					table.RemoveByValue(Star_Trek.Transporter.Buffer.Entities, ent) -- Doesnt work
+					table.RemoveByValue(Star_Trek.Transporter.Buffer.Entities, ent)
 				end
 
 				Star_Trek.Transporter:TransportObject(cycleClass or "base", ent, targetPattern.Pos, sourcePatterns.IsBuffer, false, function(transporterCycle)
@@ -120,6 +120,10 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 			elseif isbool(targetPattern) then
 				continue
 			else
+				if noBuffer then
+					continue
+				end
+
 				if sourcePatterns.IsBuffer or table.HasValue(Star_Trek.Transporter.Buffer.Entities, ent) then
 					Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Buffer Recursion Prevented!")
 

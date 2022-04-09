@@ -23,22 +23,29 @@ SELF.BaseInterface = "transporter"
 
 SELF.Solid = false
 
+SELF.AdvancedMode = false
+
 function SELF:Open(ent)
 	local success, windows = self:OpenInternal(
-		Vector(-12, 4, -14.25),
-		Angle(0, 0, 0),
-		580,
-		Vector(-15, -26.25, 2.5),
-		Angle(0, 0, -76.5),
-		600,
-		600,
-		Vector(12, -8, -14.25),
-		Angle(0, 0, 0),
-		Vector(-12, -8, -14.25),
-		Angle(0, 0, 0),
-		580,
-		280,
-		nil
+		{
+			Pos = Vector(-12, 4, -14.25),
+			Ang = Angle(0, 0, 0),
+			Width = 580,
+		},
+		{
+			Pos = Vector(-15, -26.25, 2.5),
+			Ang = Angle(0, 0, -76.5),
+			Width = 600, Height = 600,
+		},
+		{
+			Pos = Vector(12, -8, -14.25),
+			Ang = Angle(0, 0, 0),
+		},
+		{
+			Pos = Vector(-12, -8, -14.25),
+			Ang = Angle(0, 0, 0),
+			Width = 580, Height = 280,
+		}
 	)
 	if not success then
 		return false, windows

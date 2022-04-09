@@ -26,10 +26,9 @@ local SELF = INTERFACE
 -- @param Number width
 -- @param Table menuTable
 -- @param? Boolean hFlip
--- @param? Number padNumber
 -- @return Boolean success 
 -- @return Table menuWindow
-function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip, padNumber)
+function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip)
 	local buttons = {}
 
 	local n = 0
@@ -52,7 +51,7 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip, padNumber)
 		table.insert(buttons, button)
 	end
 
-	if isnumber(padNumber) then
+	if self.AdvancedMode then
 		local utilButtonData = {}
 		if not menuTable.Target then
 			utilButtonData.Name = "Narrow Beam"
@@ -201,25 +200,10 @@ end
 -- @param Number height
 -- @param Table menuTable
 -- @param? Boolean hFlip
--- @param? Number padNumber
 -- @return Boolean success 
 -- @return Table mainWindow
-function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip, padNumber)
+function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip)
 	local modeName = self:GetMode(menuTable)
-
-	local padEntities = {}
-	for _, ent in pairs(ents.GetAll()) do
-		local name = ent:GetName()
-
-		if string.StartWith(name, "TRPad") then
-			local values = string.Split(string.sub(name, 6), "_")
-			local n = tonumber(values[2])
-
-			if n ~= padNumber then continue end
-
-			table.insert(padEntities, ent)
-		end
-	end
 
 	-- Transport Pad Window
 	if modeName == "Transporter Pad" then
@@ -231,7 +215,7 @@ function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip, padN
 			width,
 			height,
 			nil,
-			padEntities,
+			self.PadEntities or {},
 			"Transporter Pad",
 			"Pad",
 			hFlip
@@ -306,18 +290,18 @@ function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip, padN
 				Data = ent,
 			})
 		end
-	elseif modeName == "Other Pads" or modeName == "Transporter Pads" then
+	elseif modeName == "Transporter Rooms" then
 		titleShort = "Pads"
 
 		local pads = {}
 		for _, pad in pairs(ents.GetAll()) do
 			local name = pad:GetName()
 			if isstring(name) and string.StartWith(name, "TRPad") then
+				if table.HasValue(self.PadEntities, pad) then continue end
+
 				local idString = string.sub(name, 6)
 				local split = string.Split(idString, "_")
 				local roomId = split[2]
-
-				if padNumber and padNumber == roomId then continue end
 
 				local roomName = "Transporter Room " .. roomId
 				pads[roomName] = pads[roomName] or {}
@@ -379,26 +363,28 @@ end
 -- @param Number mainHeight
 -- @param Boolean hFlip
 -- @param Boolean targetSide
--- @param? Number padNumber
 -- @return Boolean success 
 -- @return Table mainWindow
-function SELF:CreateWindowTable(menuPos, menuAngle, menuWidth, mainPos, mainAngle, mainWidth, mainHeight, hFlip, targetSide, padNumber)
+function SELF:CreateWindowTable(menuPos, menuAngle, menuWidth, mainPos, mainAngle, mainWidth, mainHeight, hFlip, targetSide)
 	local menuTypes = {
 		"Crew",
-		"Transporter Pads",
+		"Transporter Rooms",
 		"Sections",
 		"External",
 	}
-
-	if padNumber then
+	if istable(self.PadEntities) and table.Count(self.PadEntities) > 0 then
 		menuTypes = {
 			"Transporter Pad",
-			"Other Pads",
+			"Transporter Rooms",
 			"Sections",
 			"Crew",
 			"External",
-			{"Buffer", false},
 		}
+	end
+
+	if self.AdvancedMode then
+		table.insert(menuTypes, {"Buffer", false})
+
 	end
 
 	local menuTable = {
@@ -406,7 +392,7 @@ function SELF:CreateWindowTable(menuPos, menuAngle, menuWidth, mainPos, mainAngl
 		Target = targetSide or false,
 	}
 
-	local success, menuWindow = self:CreateMenuWindow(menuPos, menuAngle, menuWidth, menuTable, hFlip, padNumber)
+	local success, menuWindow = self:CreateMenuWindow(menuPos, menuAngle, menuWidth, menuTable, hFlip)
 	if not success then
 		return false, "Error on MenuWindow: " .. menuWindow
 	end
@@ -419,7 +405,7 @@ function SELF:CreateWindowTable(menuPos, menuAngle, menuWidth, mainPos, mainAngl
 			[name] = true,
 		})
 
-		local success2, mainWindow = interfaceData:CreateMainWindow(mainPos, mainAngle, mainWidth, mainHeight, menuTable, hFlip, padNumber)
+		local success2, mainWindow = interfaceData:CreateMainWindow(mainPos, mainAngle, mainWidth, mainHeight, menuTable, hFlip)
 		if not success2 then
 			return false, "Error on MainWindow: " .. mainWindow
 		end
