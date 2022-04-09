@@ -13,19 +13,26 @@
 ---------------------------------------
 
 ---------------------------------------
---   Transporter Particles | Shared  --
+--     Federation Cycle | Server     --
 ---------------------------------------
 
-game.AddParticles( "particles/voyager.pcf" )
+if not istable(CYCLE) then Star_Trek:LoadAllModules() return end
+local SELF = CYCLE
 
-PrecacheParticleSystem("beam_out")
-PrecacheParticleSystem( "beam_in")
+-- Initializes the transporter cycle.
+--
+-- @param Entity ent
+function SELF:Initialize()
+	SELF.Base.Initialize(self)
+end
 
-PrecacheParticleSystem("beam_out_red")
-PrecacheParticleSystem( "beam_in_red")
+-- Applies the current state to the transporter cycle.
+--
+-- @param Number state
+-- @param Boolean onlyRestore
+function SELF:ApplyState(state, onlyRestore)
+	local success = SELF.Base.ApplyState(self, state, onlyRestore)
+	if not success then return false end
 
-PrecacheParticleSystem("beam_out_orange")
-PrecacheParticleSystem( "beam_in_orange")
-
-PrecacheParticleSystem("beam_out_green")
-PrecacheParticleSystem( "beam_in_green")
+	return true
+end

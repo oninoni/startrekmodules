@@ -25,7 +25,7 @@ SELF.BaseCycle = "base"
 -- Data of the states being processed.
 SELF.States = {
 	[1] = { -- Demat
-		Duration = 2,
+		Duration = 3,
 
 		CollisionGroup = COLLISION_GROUP_DEBRIS,
 		RenderMode = RENDERMODE_TRANSTEXTURE,
@@ -36,25 +36,28 @@ SELF.States = {
 		SoundName = "star_trek.tng_replicator",
 
 		ParticleName = "beam_out",
+		ColorTint = Color(63, 127, 255),
 		ColorFade = 1,
 	},
 	[2] = { -- Demat Done (Buffer)
 		Duration = 2,
 
-		CollisionGroup = COLLISION_GROUP_DEBRIS,
 		RenderMode = RENDERMODE_TRANSTEXTURE,
 
 		TPToBuffer = true,
 	},
 	[3] = { -- Remat
-		Duration = 2,
+		Duration = 3,
 
-		CollisionGroup = COLLISION_GROUP_DEBRIS,
 		RenderMode = RENDERMODE_TRANSTEXTURE,
+
+		SoundName = "star_trek.tng_replicator",
+		PlaySoundAtTarget = true,
 
 		TPToTarget = true,
 
 		ParticleName = "beam_in",
+		ColorTint = Color(63, 127, 255),
 		ColorFade = -1,
 	},
 	[4] = { -- Cleanup (Variable Reset happen automatically)

@@ -23,6 +23,8 @@ local SELF = CYCLE
 --
 -- @param Entity ent
 function SELF:ResetColor(ent)
+	print("R", ent.TransporterResetColor)
+
 	local resetColor = ent.TransporterResetColor
 	if resetColor then
 		ent:SetColor(resetColor)
@@ -34,6 +36,8 @@ end
 --
 -- @param Entity ent
 function SELF:ApplyColor(ent, alpha)
+	self:ResetColor(ent)
+
 	local color = ent:GetColor()
 	ent.TransporterResetColor = Color(color.r, color.g, color.b, color.a)
 
@@ -45,9 +49,10 @@ end
 -- Draws the alpha faded color of a given entity.
 --
 -- @param Entity ent
+-- @param Color color
 -- @param Number alpha
-function SELF:RenderColor(ent, alpha)
-	ent:SetColor(ColorAlpha(ent.TransporterResetColor or color_white, alpha))
+function SELF:RenderColor(ent, color)
+	ent:SetColor(color)
 end
 
 -- Reset the color of the main entity and it's children.
@@ -90,22 +95,27 @@ function SELF:ApplyColors()
 end
 
 -- Stores the color of the main entity and it's children.
-function SELF:RenderColors(duration, colorFade)
+function SELF:RenderColors(duration, colorFade, colorTint)
 	local diff = CurTime() - self.StateTime
 	local fade = math.max(0, math.min(diff / duration, 1))
 
-	local alpha
 	if colorFade > 0 then
-		alpha = 255 * (1 - fade)
-	else
-		alpha = 255 * fade
+		fade = 1 - fade
 	end
+
+	local alpha = 255 * fade
 
 	local ent = self.Entity
 
-	self:RenderColor(ent, alpha)
+	local color = color_white
+	if colorTint then
+		color = LerpVector(1 - fade, ent.TransporterResetColor:ToVector() or Vector(1, 1, 1), colorTint:ToVector()):ToColor()
+	end
+	color = ColorAlpha(color, alpha)
+
+	self:RenderColor(ent, color)
 
 	for _, child in pairs(ent:GetChildren()) do
-		self:RenderColor(child, alpha)
+		self:RenderColor(child, color)
 	end
 end

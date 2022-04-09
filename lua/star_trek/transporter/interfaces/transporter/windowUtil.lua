@@ -207,6 +207,20 @@ end
 function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip, padNumber)
 	local modeName = self:GetMode(menuTable)
 
+	local padEntities = {}
+	for _, ent in pairs(ents.GetAll()) do
+		local name = ent:GetName()
+
+		if string.StartWith(name, "TRPad") then
+			local values = string.Split(string.sub(name, 6), "_")
+			local n = tonumber(values[2])
+
+			if n ~= padNumber then continue end
+
+			table.insert(padEntities, ent)
+		end
+	end
+
 	-- Transport Pad Window
 	if modeName == "Transporter Pad" then
 		local success, mainWindow = Star_Trek.LCARS:CreateWindow(
@@ -217,7 +231,7 @@ function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip, padN
 			width,
 			height,
 			nil,
-			padNumber,
+			padEntities,
 			"Transporter Pad",
 			"Pad",
 			hFlip

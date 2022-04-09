@@ -27,17 +27,14 @@ function SELF:Initialize()
 
 	local ent = self.Entity
 
-	local up = ent:GetUp()
-	if ent:IsPlayer() then
-		up = Vector(0, 0, 1)
-	end
-
 	local low, high = ent:GetCollisionBounds()
-	local objectHeight = high[3] - low[3]
+	local objectWidth = (high[1] - low[1]) + (high[2] - low[2]) / 2
 
-	self.FlareUpHeight = up * objectHeight * 0.5
-	self.FlareSize = self.ObjectSize * 6
-	self.FlareSizeSmall = self.FlareSize * 0.3
+	self.FlareRight = ent:GetRight() * objectWidth * 0.25
+	self.FlareForward = ent:GetForward() * objectWidth * 0.25
+
+	self.FlareSize = self.ObjectSize * 3
+	self.FlareSizeSmall = self.FlareSize * 0.8
 end
 
 -- Applies the current state to the transporter cycle.
@@ -63,29 +60,22 @@ function SELF:Render()
 
 	local pos = ent:GetPos() + self.Offset
 
-	local effectProgress1 = math.max(0, math.min(diff * 0.7 - 0.3, 1)) -- TODO Rebalance values
-	local effectProgress2 = math.max(0, math.min(diff * 0.7      , 1)) -- TODO Rebalance values
+	local effectProgress1 = math.max(0, math.min(diff * 0.5, 1)) -- TODO Rebalance values
 
 	local alpha1 = (0.5 - math.abs(effectProgress1 - 0.5))
 	alpha1 = math.min(alpha1, 0.2) * 1.5
-	local alpha2 = (0.5 - math.abs(effectProgress2 - 0.5))
-	alpha2 = math.min(alpha2, 0.2) * 1.5
 
-	local effectProgress1Slope = (math.cos(effectProgress1 * math.pi) + 1) / 2
-	local effectProgress2Slope = (math.cos(effectProgress2 * math.pi) + 1) / 2
-
-	if stateData.ColorFade > 0 then
-		effectProgress1Slope = 1 - effectProgress1Slope
-		effectProgress2Slope = 1 - effectProgress2Slope
-	end
+	local effectProgress1Slope = 1 - (math.cos(effectProgress1 * math.pi) + 1) / 2
 
 	local vec = EyeVector()
 	vec[3] = 0
 
-	local mat = Material("oninoni/startrek/flare_blue")
+	local mat = Material("oninoni/startrek/flare_red_vertical")
 	render.SetMaterial(mat)
 
-	local upHeight = self.FlareUpHeight
+	local flareRight = self.FlareRight
+	local flareForward = self.FlareForward
+
 	local size = self.FlareSize
 	local smallSize = self.FlareSizeSmall
 
@@ -93,14 +83,13 @@ function SELF:Render()
 	local c = Color(0, 0, 0, 0)
 
 	mat:SetVector( "$alpha", Vector(alpha1, 0, 0))
-	render.DrawQuadEasy(pos -  upHeight * effectProgress1Slope,           vec, size     , size     , c)
-	render.DrawQuadEasy(pos +  upHeight * effectProgress1Slope,           vec, size     , size     , c)
-	render.DrawQuadEasy(pos - (upHeight * effectProgress1Slope + offset), vec, smallSize, smallSize, c)
-	render.DrawQuadEasy(pos + (upHeight * effectProgress1Slope + offset), vec, smallSize, smallSize, c)
+	render.DrawQuadEasy(pos -  flareRight * effectProgress1Slope,           vec, size     , size     , c)
+	render.DrawQuadEasy(pos +  flareRight * effectProgress1Slope,           vec, size     , size     , c)
+	render.DrawQuadEasy(pos - (flareRight * effectProgress1Slope + offset), vec, smallSize, smallSize, c)
+	render.DrawQuadEasy(pos + (flareRight * effectProgress1Slope + offset), vec, smallSize, smallSize, c)
 
-	mat:SetVector( "$alpha", Vector(alpha2, 0, 0))
-	render.DrawQuadEasy(pos -  upHeight * effectProgress2Slope,           vec, size     , size     , c)
-	render.DrawQuadEasy(pos +  upHeight * effectProgress2Slope,           vec, size     , size     , c)
-	render.DrawQuadEasy(pos - (upHeight * effectProgress2Slope + offset), vec, smallSize, smallSize, c)
-	render.DrawQuadEasy(pos + (upHeight * effectProgress2Slope + offset), vec, smallSize, smallSize, c)
+	render.DrawQuadEasy(pos -  flareForward * effectProgress1Slope,           vec, size     , size     , c)
+	render.DrawQuadEasy(pos +  flareForward * effectProgress1Slope,           vec, size     , size     , c)
+	render.DrawQuadEasy(pos - (flareForward * effectProgress1Slope + offset), vec, smallSize, smallSize, c)
+	render.DrawQuadEasy(pos + (flareForward * effectProgress1Slope + offset), vec, smallSize, smallSize, c)
 end

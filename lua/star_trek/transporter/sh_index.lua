@@ -28,12 +28,16 @@ if SERVER then
 	AddCSLuaFile("sh_transporter_cycle.lua")
 	AddCSLuaFile("cl_transporter_cycle.lua")
 
+	AddCSLuaFile("sh_transporter_pads.lua")
+
 	include("resources/sh_sounds.lua")
 	include("resources/sh_particles.lua")
 	include("sh_loader.lua")
 
 	include("sh_transporter_cycle.lua")
 	include("sv_transporter_cycle.lua")
+
+	include("sh_transporter_pads.lua")
 
 	include("sv_transporter_pattern.lua")
 	include("sv_transporter.lua")
@@ -46,4 +50,6 @@ if CLIENT then
 
 	include("sh_transporter_cycle.lua")
 	include("cl_transporter_cycle.lua")
+
+	include("sh_transporter_pads.lua")
 end

@@ -45,7 +45,6 @@ function SELF:Initialize()
 	local xSize = high[1] - low[1]
 	local ySize = high[2] - low[2]
 	self.ObjectSize = (xSize + ySize) / 2
-	self.ObjectHeight = high[3] - low[3]
 	local offset = high[3] + low[3]
 	self.Offset = Vector(0, 0, offset / 2)
 
@@ -129,7 +128,7 @@ function SELF:Render()
 
 	local colorFade = stateData.ColorFade
 	if isnumber(colorFade) then
-		self:RenderColors(stateData.Duration, colorFade)
+		self:RenderColors(stateData.Duration, colorFade, stateData.ColorTint)
 	end
 end
 

@@ -80,27 +80,6 @@ function Star_Trek.Transporter:CleanUpTargetPatterns(patterns)
 	return patterns
 end
 
-function Star_Trek.Transporter:ApplyPadEffect(transporterCycle, sourcePattern, targetPattern)
-	local state = transporterCycle.State
-	if state == 1 then
-		if IsValid(sourcePattern.Pad) then
-			sourcePattern.Pad:SetSkin(1)
-		end
-	elseif state == 2 then
-		if IsValid(sourcePattern.Pad) then
-			sourcePattern.Pad:SetSkin(0)
-		end
-	elseif state == 3 then
-		if IsValid(targetPattern.Pad) then
-			targetPattern.Pad:SetSkin(1)
-		end
-	elseif state == 4 then
-		if IsValid(targetPattern.Pad) then
-			targetPattern.Pad:SetSkin(0)
-		end
-	end
-end
-
 function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatterns, targetPatterns)
 	if not istable(sourcePatterns) then return end
 
@@ -126,7 +105,7 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 					table.RemoveByValue(Star_Trek.Transporter.Buffer.Entities, ent) -- Doesnt work
 				end
 
-				Star_Trek.Transporter:TransportObject("federation", ent, targetPattern.Pos, sourcePatterns.IsBuffer, false, function(transporterCycle)
+				Star_Trek.Transporter:TransportObject("klingon", ent, targetPattern.Pos, sourcePatterns.IsBuffer, false, function(transporterCycle)
 					Star_Trek.Transporter:ApplyPadEffect(transporterCycle, sourcePattern, targetPattern)
 
 					local state = transporterCycle.State
@@ -150,7 +129,7 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 				table.insert(Star_Trek.Transporter.Buffer.Entities, ent)
 				ent.BufferQuality = 160
 
-				Star_Trek.Transporter:TransportObject("federation", ent, Vector(), false, true, function(transporterCycle)
+				Star_Trek.Transporter:TransportObject("klingon", ent, Vector(), false, true, function(transporterCycle)
 					Star_Trek.Transporter:ApplyPadEffect(transporterCycle, sourcePattern, {})
 				end)
 

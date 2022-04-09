@@ -35,6 +35,15 @@ sound.Add({
 })
 
 sound.Add({
+	name = "star_trek.klingon_transporter",
+	channel = CHAN_AUTO,
+	volume = .9,
+	level = 70,
+	pitch = 100,
+	sound = "oninoni/startrek/transporter/klingon_transporter.wav"
+})
+
+sound.Add({
 	name = "star_trek.tng_replicator",
 	channel = CHAN_AUTO,
 	volume = .8,

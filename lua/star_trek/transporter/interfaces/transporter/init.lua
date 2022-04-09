@@ -141,8 +141,11 @@ end
 function SELF:GetData()
 	local data = {}
 
-	data.LogData = self.Windows[6].Lines
-	data.LogTitle = "Transporter"
+	local window = self.Windows[6]
+	if window then
+		data.LogData = window.Lines
+		data.LogTitle = "Transporter"
+	end
 
 	return data
 end

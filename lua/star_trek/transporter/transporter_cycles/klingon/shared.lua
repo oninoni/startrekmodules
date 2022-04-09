@@ -13,31 +13,14 @@
 ---------------------------------------
 
 ---------------------------------------
---  Base Transporter Cycle | Shared  --
+--     Federation Cycle | Shared     --
 ---------------------------------------
 
 if not istable(CYCLE) then Star_Trek:LoadAllModules() return end
 local SELF = CYCLE
 
-if SERVER then
-	AddCSLuaFile("modules/render_mode.lua")
-	AddCSLuaFile("modules/color.lua")
-	AddCSLuaFile("modules/particles.lua")
-
-	include("modules/collision_group.lua")
-	include("modules/render_mode.lua")
-	include("modules/color.lua")
-	include("modules/movement.lua")
-end
-
-if CLIENT then
-	include("modules/render_mode.lua")
-	include("modules/color.lua")
-	include("modules/particles.lua")
-end
-
 -- Determines the parent transport cycles name for this one. (Like Deriving Classes)
-SELF.BaseCycle = nil
+SELF.BaseCycle = "base"
 
 -- Data of the states being processed.
 SELF.States = {
@@ -50,10 +33,10 @@ SELF.States = {
 		EnableMovement = false,
 		Shadow = false,
 
-		SoundName = "star_trek.voy_beam_up",
+		SoundName = "star_trek.klingon_transporter",
 
-		ParticleName = "beam_out",
-		ColorTint = Color(255, 255, 255),
+		ParticleName = "beam_out_red",
+		ColorTint = Color(255, 63, 63),
 		ColorFade = 1,
 	},
 	[2] = { -- Demat Done (Buffer)
@@ -68,27 +51,16 @@ SELF.States = {
 
 		RenderMode = RENDERMODE_TRANSTEXTURE,
 
-		SoundName = "star_trek.voy_beam_down",
+		SoundName = "star_trek.klingon_transporter",
 		PlaySoundAtTarget = true,
 
 		TPToTarget = true,
 
-		ParticleName = "beam_in",
-		ColorTint = Color(255, 255, 255),
+		ParticleName = "beam_in_red",
+		ColorTint = Color(255, 63, 63),
 		ColorFade = -1,
 	},
 	[4] = { -- Cleanup (Variable Reset happen automatically)
 		Duration = 0,
 	}
 }
-
--- Cycle Start / End ID's for skipping Demat or Remat.
-SELF.SkipDematState = 3
-SELF.SkipRematState = 2
-
-function SELF:GetStateData()
-	local state = self.State
-	local stateData = self.States[state]
-
-	return stateData or false
-end
