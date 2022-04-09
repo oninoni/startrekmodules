@@ -80,7 +80,7 @@ function Star_Trek.Transporter:CleanUpTargetPatterns(patterns)
 	return patterns
 end
 
-function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatterns, targetPatterns)
+function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatterns, targetPatterns, cycleClass)
 	if not istable(sourcePatterns) then return end
 
 	sourcePatterns = self:CleanUpSourcePatterns(sourcePatterns)
@@ -105,7 +105,7 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 					table.RemoveByValue(Star_Trek.Transporter.Buffer.Entities, ent) -- Doesnt work
 				end
 
-				Star_Trek.Transporter:TransportObject("klingon", ent, targetPattern.Pos, sourcePatterns.IsBuffer, false, function(transporterCycle)
+				Star_Trek.Transporter:TransportObject(cycleClass or "base", ent, targetPattern.Pos, sourcePatterns.IsBuffer, false, function(transporterCycle)
 					Star_Trek.Transporter:ApplyPadEffect(transporterCycle, sourcePattern, targetPattern)
 
 					local state = transporterCycle.State
@@ -129,7 +129,7 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 				table.insert(Star_Trek.Transporter.Buffer.Entities, ent)
 				ent.BufferQuality = 160
 
-				Star_Trek.Transporter:TransportObject("klingon", ent, Vector(), false, true, function(transporterCycle)
+				Star_Trek.Transporter:TransportObject(cycleClass or "base", ent, Vector(), false, true, function(transporterCycle)
 					Star_Trek.Transporter:ApplyPadEffect(transporterCycle, sourcePattern, {})
 				end)
 

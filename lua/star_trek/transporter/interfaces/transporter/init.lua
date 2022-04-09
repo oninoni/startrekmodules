@@ -28,6 +28,8 @@ SELF.LogType = "Transporter Console"
 
 SELF.Solid = true
 
+SELF.CycleClass = "federation"
+
 function SELF:OpenInternal(menuPos, menuAngle, menuWidth, mainPos, mainAngle, mainWidth, mainHeight, sliderPos, sliderAngle, textPos, textAngle, textWidth, textHeight, padNumber)
 	local menuPosSource = menuPos + Vector()
 	local menuPosTarget = menuPos + Vector()

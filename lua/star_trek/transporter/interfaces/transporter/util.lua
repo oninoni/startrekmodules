@@ -177,7 +177,7 @@ end)
 function SELF:Energize(ply, sourceMenuTable, targetMenuTable, wideField, callback)
 	local sourcePatterns = self:GetPatternData(sourceMenuTable, wideField)
 	local targetPatterns = self:GetPatternData(targetMenuTable, false)
-	Star_Trek.Transporter:ActivateTransporter(self.Ent, ply, sourcePatterns, targetPatterns)
+	Star_Trek.Transporter:ActivateTransporter(self.Ent, ply, sourcePatterns, targetPatterns, self.CycleClass)
 
 	--ent:EmitSound("star_trek.lcars_transporter_lock")
 
