@@ -297,7 +297,7 @@ function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip)
 		for _, pad in pairs(ents.GetAll()) do
 			local name = pad:GetName()
 			if isstring(name) and string.StartWith(name, "TRPad") then
-				if table.HasValue(self.PadEntities, pad) then continue end
+				if table.HasValue(self.PadEntities or {}, pad) then continue end
 
 				local idString = string.sub(name, 6)
 				local split = string.Split(idString, "_")

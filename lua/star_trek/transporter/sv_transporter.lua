@@ -139,6 +139,20 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 
 				Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Dematerialising Object...")
 				Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Warning: No Target Pattern Available! Storing in Buffer!")
+				if ent:IsPlayer() or ent:IsNPC() then
+					Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Warning: Organic Pattern in Buffer detected!")
+
+					local timerName = "Star_Trek.Transporter.BufferAlert." .. interfaceEnt:EntIndex()
+
+					if timer.Exists(timerName) then
+						continue
+					end
+
+					-- 5x Alert Sound
+					timer.Create(timerName, 1, 5, function()
+						interfaceEnt:EmitSound("star_trek.lcars_alert14")
+					end)
+				end
 			end
 		end
 	end

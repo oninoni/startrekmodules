@@ -53,6 +53,15 @@ sound.Add({
 })
 
 sound.Add({
+	name = "star_trek.lcars_alert14",
+	channel = CHAN_AUTO,
+	volume = .8,
+	level = 70,
+	pitch = 100,
+	sound = "oninoni/startrek/lcars/lcars_alert14.wav",
+})
+
+sound.Add({
 	name = "star_trek.lcars_close",
 	channel = CHAN_AUTO,
 	volume = .8,

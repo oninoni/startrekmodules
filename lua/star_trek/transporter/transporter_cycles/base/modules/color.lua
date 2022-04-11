@@ -23,8 +23,6 @@ local SELF = CYCLE
 --
 -- @param Entity ent
 function SELF:ResetColor(ent)
-	print("R", ent.TransporterResetColor)
-
 	local resetColor = ent.TransporterResetColor
 	if resetColor then
 		ent:SetColor(resetColor)

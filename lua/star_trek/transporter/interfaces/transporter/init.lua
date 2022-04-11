@@ -73,8 +73,9 @@ function SELF:OpenInternal(menuTable, mainTable, sliderTable, textTable)
 	sourceMenuTable.TargetMenuTable = targetMenuTable
 	targetMenuTable.SourceMenuTable = sourceMenuTable
 
+	local textSuccess, textWindow
 	if istable(textTable) then
-		local textSuccess, textWindow = Star_Trek.LCARS:CreateWindow(
+		textSuccess, textWindow = Star_Trek.LCARS:CreateWindow(
 			"log_entry",
 			textTable.Pos,
 			textTable.Ang,

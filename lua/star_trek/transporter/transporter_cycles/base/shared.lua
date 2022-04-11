@@ -42,7 +42,7 @@ SELF.BaseCycle = nil
 -- Data of the states being processed.
 SELF.States = {
 	[1] = { -- Demat
-		Duration = 3,
+		Duration = 1,
 
 		CollisionGroup = COLLISION_GROUP_DEBRIS,
 		RenderMode = RENDERMODE_TRANSTEXTURE,
@@ -50,30 +50,30 @@ SELF.States = {
 		EnableMovement = false,
 		Shadow = false,
 
-		SoundName = "star_trek.voy_beam_up",
+		--SoundName = "star_trek.voy_beam_up",
 
-		ParticleName = "beam_out",
+		--ParticleName = "beam_out",
 		ColorTint = Color(255, 255, 255),
 		ColorFade = 1,
 	},
 	[2] = { -- Demat Done (Buffer)
-		Duration = 2,
+		Duration = 1,
 
 		RenderMode = RENDERMODE_TRANSTEXTURE,
 
 		TPToBuffer = true,
 	},
 	[3] = { -- Remat
-		Duration = 3,
+		Duration = 1,
 
 		RenderMode = RENDERMODE_TRANSTEXTURE,
 
-		SoundName = "star_trek.voy_beam_down",
-		PlaySoundAtTarget = true,
+		--SoundName = "star_trek.voy_beam_down",
+		--PlaySoundAtTarget = true,
 
 		TPToTarget = true,
 
-		ParticleName = "beam_in",
+		--ParticleName = "beam_in",
 		ColorTint = Color(255, 255, 255),
 		ColorFade = -1,
 	},
