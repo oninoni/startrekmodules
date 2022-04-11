@@ -125,7 +125,7 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 					if table.HasValue(classBlacklist, ent:GetClass()) then return true end
 
 					if not hook.Run("Star_Trek.Util.IsLifeForm", ent) then return true end
-				end)
+				end, false, true)
 
 				mapWindow:SetObjects(entities)
 				mapWindow:Update()
@@ -147,7 +147,7 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 					if table.HasValue(classBlacklist, ent:GetClass()) then return true end
 
 					if hook.Run("Star_Trek.Util.IsLifeForm", ent) then return true end
-				end)
+				end, false, true)
 
 				mapWindow:SetObjects(entities)
 				mapWindow:Update()
@@ -169,7 +169,7 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 			elseif buttonName == "Scan All" then
 				local entities = Star_Trek.Sections:GetInSections(deck, sectionIds, function(objects, ent)
 					if table.HasValue(classBlacklist, ent:GetClass()) then return true end
-				end)
+				end, false, true)
 
 				mapWindow:SetObjects(entities)
 				mapWindow:Update()
