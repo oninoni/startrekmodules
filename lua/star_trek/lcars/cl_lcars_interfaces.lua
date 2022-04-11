@@ -230,12 +230,12 @@ function Star_Trek.LCARS:PlayerButtonDown(ply, button)
 				local forwardsDistance = eyePos:Distance(forwardTrace.HitPos)
 				local backwardsDistance = worldPos:Distance(backwardsTrace.HitPos)
 
-				if backwardsTrace.HitWorld and forwardTrace.HitWorld then
+				if forwardTrace.HitWorld and backwardsTrace.HitWorld then
 					if fullDistance - 10 > forwardsDistance then
 						continue
 					end
 				else
-					if fullDistance > forwardsDistance + backwardsDistance then
+					if fullDistance > forwardsDistance + backwardsDistance + 1 then
 						continue
 					end
 				end
@@ -355,11 +355,11 @@ hook.Add("PostDrawTranslucentRenderables", "Star_Trek.LCARS.Draw", function(isDr
 		if hook.Run("Star_Trek.LCARS.PreventRender", interface) then
 			continue
 		end
-		
+
 		if not interface.Solid then
 			render.OverrideBlend(true, BLEND_SRC_ALPHA, BLEND_ONE, BLENDFUNC_ADD, BLEND_SRC_ALPHA, BLEND_ONE, BLENDFUNC_ADD)
 		end
-		
+
 		for _, window in pairs(interface.Windows) do
 			Star_Trek.LCARS:DrawWindow(window, interface.AnimPos)
 		end
