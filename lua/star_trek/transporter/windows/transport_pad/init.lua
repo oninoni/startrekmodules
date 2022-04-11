@@ -43,7 +43,7 @@ function SELF:GetClientData()
 	clientData.Pads = {}
 	for i, pad in pairs(self.Pads) do
 		clientPad = {
-			Data = pad.Data,
+			Data = pad.Data:EntIndex(),
 
 			Selected = pad.Selected,
 			Disabled = pad.Disabled,
@@ -51,6 +51,8 @@ function SELF:GetClientData()
 
 		clientData.Pads[i] = clientPad
 	end
+
+	PrintTable(clientData)
 
 	return clientData
 end

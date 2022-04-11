@@ -40,7 +40,8 @@ function SELF:OnCreate(windowData)
 		padData.Disabled = pad.Disabled
 		padData.Selected = pad.Selected
 
-		local ent = pad.Data
+		local entIndex = pad.Data
+		local ent = ents.GetByIndex(entIndex)
 		local pos = Star_Trek.Transporter:GetPadPosition(ent)
 
 		padData.X = pos.x
