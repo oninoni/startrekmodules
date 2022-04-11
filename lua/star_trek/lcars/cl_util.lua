@@ -140,3 +140,14 @@ net.Receive("Star_Trek.LCARS.EnableEButton", function()
 
 	ply.DisableEButton = nil
 end)
+
+------------------------
+--     Networking     --
+------------------------
+
+function Star_Trek.LCARS:ReadNetTable()
+	local size = net.ReadUInt(32)
+	local compressedData = net.ReadData(size)
+
+	return util.JSONToTable(util.Decompress(compressedData))
+end
