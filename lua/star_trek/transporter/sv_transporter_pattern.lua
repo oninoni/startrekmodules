@@ -95,6 +95,8 @@ end
 -- @param Entity pad
 -- @return Table pattern
 function Star_Trek.Transporter:GetPatternFromPad(pad)
+	print(pad)
+
 	local pos = pad:GetPos()
 	local attachmentId = pad:LookupAttachment("teleportPoint")
 	if attachmentId > 0 then
@@ -130,6 +132,8 @@ end
 -- @return Table patterns
 function Star_Trek.Transporter:GetPatternsFromPads(pads)
 	local patterns = {}
+
+	PrintTable(pads)
 
 	for i, pad in pairs(pads) do
 		patterns[i] = self:GetPatternFromPad(pad)

@@ -130,7 +130,7 @@ function SELF:GetPatternData(menuTable, wideField)
 		end
 
 		return Star_Trek.Transporter:GetPatternsFromBuffers(entities)
-	elseif modeName == "Other Pads" or modeName == "Transporter Pads"  then
+	elseif modeName == "Transporter Rooms"  then
 		local pads = {}
 		for _, button in pairs(mainWindow.Buttons) do
 			if button.Selected then

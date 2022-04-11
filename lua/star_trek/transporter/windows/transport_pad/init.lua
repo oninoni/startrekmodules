@@ -28,6 +28,8 @@ function SELF:OnCreate(padEntities, title, titleShort, hFlip)
 	self.Pads = {}
 
 	for _, ent in pairs(padEntities) do
+		if not IsValid(ent) then continue end
+
 		local pad = {}
 		pad.Data = ent
 
@@ -51,8 +53,6 @@ function SELF:GetClientData()
 
 		clientData.Pads[i] = clientPad
 	end
-
-	PrintTable(clientData)
 
 	return clientData
 end

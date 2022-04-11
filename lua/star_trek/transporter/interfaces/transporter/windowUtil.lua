@@ -291,7 +291,7 @@ function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip)
 			})
 		end
 	elseif modeName == "Transporter Rooms" then
-		titleShort = "Pads"
+		titleShort = "Rooms"
 
 		local pads = {}
 		for _, pad in pairs(ents.GetAll()) do
@@ -308,6 +308,8 @@ function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip)
 				table.insert(pads[roomName], pad)
 			end
 		end
+
+		hook.Run("Star_Trek.Transporter.AddRooms", self, pads)
 
 		for name, roomPads in SortedPairs(pads) do
 			table.insert(buttons, {

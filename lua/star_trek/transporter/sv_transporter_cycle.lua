@@ -54,7 +54,6 @@ function Star_Trek.Transporter:EndTransporterCycle(transporterCycle)
 		return false, "No Transporter Cycle given!"
 	end
 
-	print("Ending")
 	transporterCycle:End()
 
 	net.Start("Star_Trek.Transporter.End")
