@@ -130,7 +130,7 @@ function Star_Trek.LCARS:UpdateWindow(ent, windowId, windowData)
 	net.Broadcast()
 
 	-- Recursive Delayed Spam Protection
-	timer.Create(timerName, 0.5, 1, function()
+	timer.Create(timerName, 0, 1, function()
 		if windowData.NeedsUpdate then
 			windowData.NeedsUpdate = false
 
