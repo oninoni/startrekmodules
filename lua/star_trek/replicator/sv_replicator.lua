@@ -68,6 +68,8 @@ function Star_Trek.Replicator:CreateObject(data, pos, angle)
 		end
 
 		timer.Simple(1, function()
+			if not IsValid(ent) then return end
+
 			ent:SetRenderMode(renderMode)
 
 			local phys2 = ent:GetPhysicsObject()

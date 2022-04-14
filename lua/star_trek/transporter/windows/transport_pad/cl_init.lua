@@ -42,6 +42,8 @@ function SELF:OnCreate(windowData)
 
 		local entIndex = pad.Data
 		local ent = ents.GetByIndex(entIndex)
+		if not IsValid(ent) then continue end
+
 		local pos = Star_Trek.Transporter:GetPadPosition(ent)
 
 		padData.X = pos.x

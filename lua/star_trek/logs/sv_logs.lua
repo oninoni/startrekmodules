@@ -58,7 +58,7 @@ function Star_Trek.Logs:StartSession(ent, ply, type)
 	end
 
 	if self:GetSession(ent) then
-		local success, error = self:EndSession(ent, ply)
+		local success, error = self:EndSession(ent)
 		if not success then
 			return false, error
 		end
@@ -68,10 +68,12 @@ function Star_Trek.Logs:StartSession(ent, ply, type)
 		return false, "Invalid Session Type"
 	end
 
-	local deck, sectionId = Star_Trek.Sections:DetermineSection(ply:EyePos())
 	local sectionName = "DATA MISSING"
-	if deck then
-		sectionName = Star_Trek.Sections:GetSectionName(deck, sectionId)
+	if IsValid(ply) and ply:IsPlayer() then
+		local deck, sectionId = Star_Trek.Sections:DetermineSection(ply:EyePos())
+		if deck then
+			sectionName = Star_Trek.Sections:GetSectionName(deck, sectionId)
+		end
 	end
 
 	local sessionData = {
@@ -199,7 +201,6 @@ end
 -- Ends the session of the given entity.
 --
 -- @param Entity ent
--- @param Player ply
 -- @return Boolean success
 -- @return? String error
 function Star_Trek.Logs:EndSession(ent)
