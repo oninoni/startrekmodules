@@ -16,5 +16,8 @@
 --  LCARS Transport Slider | Shared  --
 ---------------------------------------
 
+if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
+local SELF = WINDOW
+
 -- Determines the parent windows name for this one. (Like Deriving Classes)
-WINDOW.BaseWindow = "base"
+SELF.BaseWindow = "base"

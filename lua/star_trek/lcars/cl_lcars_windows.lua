@@ -104,4 +104,8 @@ function Star_Trek.LCARS:DrawWindow(window, animPos, drawCursor)
 			surface.DrawTexturedRect(mousePos[1] - 15, mousePos[2] - 15, 30, 30)
 		end
 	cam.End3D2D()
+
+	if isfunction(window.OnDraw3D) then
+		window:OnDraw3D(wPos, wAng, animPos)
+	end
 end
