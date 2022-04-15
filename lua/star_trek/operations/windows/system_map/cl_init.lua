@@ -31,7 +31,7 @@ function SELF:OnCreate(windowData)
 	self.Ships = {}
 	for i = 0, 16 do
 		local ship = {
-			Pos = Vector(math.random(-10, 10), math.random(-10, 10), math.random(-10, 10)),
+			Pos = Vector(math.random(-18, 18), math.random(-18, 18), math.random(-5, 5)),
 			Size = math.random(0.5, 2),
 		}
 
@@ -54,10 +54,10 @@ end
 function SELF:OnDraw3D(wPos, wAng, animPos)
 	render.SetColorMaterial()
 
-	self.Offset = self.Offset + FrameTime()
+	local color = ColorAlpha(Star_Trek.LCARS.ColorLightBlue, animPos * 255)
 
 	for _, ship in pairs(self.Ships) do
-		local shipPos = LocalToWorld(ship.Pos, Angle(), wPos, wAng + Angle(0, self.Offset * 45, self.Offset * 90))
-		render.DrawSphere(shipPos, ship.Size, 8, 8, Star_Trek.LCARS.ColorLightBlue)
+		local shipPos = LocalToWorld(ship.Pos, Angle(), wPos, wAng)
+		render.DrawSphere(shipPos, ship.Size, 8, 8, color)
 	end
 end
