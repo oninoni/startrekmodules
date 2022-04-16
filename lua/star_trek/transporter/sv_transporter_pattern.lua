@@ -236,7 +236,7 @@ function Star_Trek.Transporter:GetPatterns(patternObjects, isTarget, wideField)
 	for _, pattern in pairs(patterns) do
 		for _, singlePattern in pairs(pattern) do
 			local ent = singlePattern.Ent
-			if IsValid(ent) then
+			if IsEntity(ent) and IsValid(ent) then
 				local parent = ent:GetParent()
 				if IsValid(parent) then
 					continue

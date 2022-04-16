@@ -88,7 +88,7 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 	for _, sourcePattern in pairs(sourcePatterns) do
 		local ent = sourcePattern.Ent
 
-		if not IsValid(ent) then
+		if IsEntity(ent) and not IsValid(ent) then
 			continue
 		end
 
@@ -101,11 +101,9 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 			end
 
 			local pos = targetPattern.Pos
-			if not self:CanBeamTo(ent, pos) then
+			if not targetPattern.AllowBeam and not sourcePattern.AllowBeam and not self:CanBeamTo(ent, pos) then
 				continue
 			end
-
-			print("B")
 
 			if isBuffer then
 				table.RemoveByValue(Star_Trek.Transporter.Buffer.Entities, ent)
