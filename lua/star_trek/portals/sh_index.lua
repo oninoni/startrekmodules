@@ -16,7 +16,7 @@
 --          Portals | Index          --
 ---------------------------------------
 
-Star_Trek:RequireModules()
+Star_Trek:RequireModules("doors")
 
 Star_Trek.Portals = Star_Trek.Portals or {}
 
