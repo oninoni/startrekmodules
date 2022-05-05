@@ -98,6 +98,42 @@ function Star_Trek:LoadModule(name)
 		Star_Trek:Message("Loaded Weapon \"" .. weaponName .. "\"")
 	end
 
+	local stoolsDirectory = moduleDirectory .. "stools/"
+	local _, stoolsDirectories = file.Find(stoolsDirectory .. "*", "LUA")
+	for _, stoolName in pairs(stoolsDirectories) do
+		print("STOOL: ", stoolName)
+
+		local stoolDirectory = stoolsDirectory .. stoolName .. "/"
+
+		local oldTOOL = TOOL
+
+		local ToolObj = getmetatable(weapons.Get("gmod_tool").Tool["remover"])
+		TOOL = ToolObj:Create()
+		TOOL.Mode = stoolName
+
+		if SERVER then
+			AddCSLuaFile(stoolDirectory .. "shared.lua")
+
+			include(stoolDirectory .. "shared.lua")
+		end
+
+		if CLIENT then
+			include(stoolDirectory .. "shared.lua")
+		end
+
+		TOOL:CreateConVars()
+
+		weapons.GetStored("gmod_tool").Tool[stoolName] = TOOL
+
+		TOOL = oldTOOL
+	end
+
+	if CLIENT then
+		timer.Create("Star_Trek.ReloadSpawnmenu", 1, 1, function()
+			RunConsoleCommand("spawnmenu_reload")
+		end)
+	end
+
 	hook.Run("Star_Trek.ModuleLoaded", name, moduleDirectory)
 
 	Star_Trek.LoadedModules[name] = true
