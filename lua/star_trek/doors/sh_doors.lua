@@ -17,7 +17,7 @@
 ---------------------------------------
 
 function Star_Trek.Doors:IsDoor(ent)
-	if ent:GetClass() == "prop_dynamic" and self.ModelNames[ent:GetModel()] then
+	if IsValid(ent) and ent:GetClass() == "prop_dynamic" and self.ModelNames[ent:GetModel()] then
 		return true
 	end
 
