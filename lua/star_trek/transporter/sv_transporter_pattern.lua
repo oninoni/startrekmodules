@@ -190,12 +190,16 @@ function Star_Trek.Transporter:GetPatternFromTable(data, isTarget, wideField)
 	local sectionIds = data.SectionIds
 
 	if isnumber(deck) and istable(sectionIds) then
-		return self:GetPatternFromSections(deck, sectionIds, isTarget, wideField)
+		return self:GetPatternFromSections(deck, sectionIds, isTarget)
 	end
 
 	local pad = data.Pad
 	if IsEntity(pad) then
-		return self:GetPatternFromPad(pad, isTarget, wideField)
+		return self:GetPatternFromPad(pad, isTarget)
+	end
+
+	if isfunction(pad) then
+		return pad(isTarget, wideField)
 	end
 end
 

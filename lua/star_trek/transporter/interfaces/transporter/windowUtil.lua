@@ -293,40 +293,21 @@ function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip)
 	elseif modeName == "Transporter Rooms" then
 		titleShort = "Rooms"
 
-		local pads = {}
-		for _, pad in pairs(ents.GetAll()) do
-			local name = pad:GetName()
-			if isstring(name) and string.StartWith(name, "TRPad") then
-				if table.HasValue(self.PadEntities or {}, pad) then continue end
-
-				local idString = string.sub(name, 6)
-				local split = string.Split(idString, "_")
-				local roomId = split[2]
-
-				local roomName = "Transporter Room " .. roomId
-				pads[roomName] = pads[roomName] or {}
-				table.insert(pads[roomName], pad)
-			end
-		end
-
-		hook.Run("Star_Trek.Transporter.AddRooms", self, pads)
-
-		for name, roomPads in SortedPairs(pads) do
+		local pads = Star_Trek.Transporter:GetTransporterRooms(self)
+		for _, roomData in SortedPairs(pads) do
 			table.insert(buttons, {
-				Name = name,
-				Data = roomPads,
+				Name = roomData.Name,
+				Data = roomData.Pads,
 			})
 		end
-	elseif modeName == "External" then
-		titleShort = "External Sensors"
+	elseif modeName == "External Sensors" then
+		titleShort = "External"
 
-		local externalMarkers = {}
-		hook.Run("Star_Trek.Transporter.GetExternalMarkers", externalMarkers)
-
-		for _, markerData in pairs(externalMarkers) do
+		local externalMarkers = Star_Trek.Transporter:GetExternalMarkers(self)
+		for _, externalData in pairs(externalMarkers) do
 			table.insert(buttons, {
-				Name = markerData.Name,
-				Data = markerData.Pos,
+				Name = externalData.Name,
+				Data = externalData.Pos,
 			})
 		end
 	else
@@ -372,7 +353,7 @@ function SELF:CreateWindowTable(menuPos, menuAngle, menuWidth, mainPos, mainAngl
 		"Crew",
 		"Transporter Rooms",
 		"Sections",
-		"External",
+		"External Sensors",
 	}
 	if istable(self.PadEntities) and table.Count(self.PadEntities) > 0 then
 		menuTypes = {
@@ -380,7 +361,7 @@ function SELF:CreateWindowTable(menuPos, menuAngle, menuWidth, mainPos, mainAngl
 			"Transporter Rooms",
 			"Sections",
 			"Crew",
-			"External",
+			"External Sensors",
 		}
 	end
 

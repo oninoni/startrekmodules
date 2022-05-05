@@ -118,7 +118,7 @@ function SELF:GetPatternData(menuTable, wideField)
 		end
 
 		table.insert(patternObjects, patternObject)
-	elseif modeName == "External" then
+	elseif modeName == "External Sensors" then
 		for _, button in pairs(mainWindow.Buttons) do
 			if button.Selected then
 				local pos = button.Data
