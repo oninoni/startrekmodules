@@ -124,12 +124,8 @@ function Star_Trek.Transporter:GetBufferPos()
 	return Star_Trek.Transporter.Buffer.Pos
 end
 
+-- Load Objects in Buffer to the client.
 hook.Add("SetupPlayerVisibility", "Star_Trek.Transporter.PVS", function(ply, viewEntity)
-	local _, transporterCycle = next(Star_Trek.Transporter.ActiveCycles)
-	if not istable(transporterCycle) then
-		return
-	end
-
 	local bufferPos = Star_Trek.Transporter:GetBufferPos()
 	if isvector(bufferPos) then
 		AddOriginToPVS(bufferPos)
