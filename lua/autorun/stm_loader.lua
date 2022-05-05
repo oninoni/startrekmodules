@@ -16,21 +16,6 @@
 --         Star Trek | Loader        --
 ---------------------------------------
 
---[[
--- Some Code to quickly close and re-open lcars if changes to their keyvalues are made
-hook.Add("Star_Trek.ChangedKeyValue", "Testing", function(ent, key, value)
-
-	if not IsValid(ent) then return end
-	
-    ent:Fire("CloseLcars")
-
-    timer.Simple(1, function()
-		if not IsValid(ent) then return end
-        ent:Fire("Press")
-    end)
-end)
-]]
-
 Star_Trek = Star_Trek or {}
 Star_Trek.Modules = Star_Trek.Modules or {}
 Star_Trek.LoadedModules = Star_Trek.LoadedModules or {}
@@ -159,7 +144,7 @@ function Star_Trek:LoadAllModules()
 			self:LoadModule(moduleName)
 		end
 	end
-	
+
 	hook.Run("Star_Trek.ModulesLoaded")
 
 	self.LoadingActive = nil
@@ -168,3 +153,18 @@ end
 hook.Add("PostGamemodeLoaded", "Star_Trek.Load", function()
 	Star_Trek:LoadAllModules()
 end)
+
+--[[
+-- Some Code to quickly close and re-open lcars if changes to their keyvalues are made
+hook.Add("Star_Trek.ChangedKeyValue", "Testing", function(ent, key, value)
+
+	if not IsValid(ent) then return end
+	
+    ent:Fire("CloseLcars")
+
+    timer.Simple(1, function()
+		if not IsValid(ent) then return end
+        ent:Fire("Press")
+    end)
+end)
+]]
