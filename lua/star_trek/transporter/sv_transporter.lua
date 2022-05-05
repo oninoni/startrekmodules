@@ -111,7 +111,7 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 
 			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Dematerialising Object...")
 			Star_Trek.Transporter:TransportObject(cycleClass or "base", ent, pos, isBuffer, false, function(transporterCycle)
-				Star_Trek.Transporter:ApplyPadEffect(transporterCycle, sourcePattern, targetPattern)
+				Star_Trek.Transporter:ApplyPadEffect(transporterCycle, sourcePattern.Pad, targetPattern.Pad)
 
 				local state = transporterCycle.State
 				if state == 2 then
@@ -145,7 +145,7 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 
 		Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Dematerialising Object...")
 		Star_Trek.Transporter:TransportObject(cycleClass or "base", ent, Vector(), false, true, function(transporterCycle)
-			Star_Trek.Transporter:ApplyPadEffect(transporterCycle, sourcePattern, {})
+			Star_Trek.Transporter:ApplyPadEffect(transporterCycle, sourcePattern.Pad)
 		end)
 
 		Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Warning: No Free Target Position Available! Storing in Buffer!")

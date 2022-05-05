@@ -16,23 +16,23 @@
 --     Transporter Pads | Shared     --
 ---------------------------------------
 
-function Star_Trek.Transporter:ApplyPadEffect(transporterCycle, sourcePattern, targetPattern)
+function Star_Trek.Transporter:ApplyPadEffect(transporterCycle, sourcePad, targetPad)
 	local state = transporterCycle.State
 	if state == 1 then
-		if IsValid(sourcePattern.Pad) then
-			sourcePattern.Pad:SetSkin(1)
+		if IsValid(sourcePad) then
+			sourcePad:SetSkin(1)
 		end
 	elseif state == 2 then
-		if IsValid(sourcePattern.Pad) then
-			sourcePattern.Pad:SetSkin(0)
+		if IsValid(sourcePad) then
+			sourcePad:SetSkin(0)
 		end
 	elseif state == 3 then
-		if IsValid(targetPattern.Pad) then
-			targetPattern.Pad:SetSkin(1)
+		if IsValid(targetPad) then
+			targetPad:SetSkin(1)
 		end
 	elseif state == 4 then
-		if IsValid(targetPattern.Pad) then
-			targetPattern.Pad:SetSkin(0)
+		if IsValid(targetPad) then
+			targetPad:SetSkin(0)
 		end
 	end
 end
