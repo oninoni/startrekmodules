@@ -122,9 +122,8 @@ end
 --
 -- @param Entity pad
 -- @param Boolean isTarget
--- @param Boolean wideField
 -- @return Table pattern
-function Star_Trek.Transporter:GetPatternFromPad(pad, isTarget, wideField)
+function Star_Trek.Transporter:GetPatternFromPad(pad, isTarget)
 	local pattern = {}
 
 	local pos = Star_Trek.Transporter:GetPadPosition(pad)
@@ -149,9 +148,8 @@ end
 -- @param Number deck
 -- @param Table sectionIds
 -- @param Boolean isTarget
--- @param Boolean wideField
 -- @return Table pattern
-function Star_Trek.Transporter:GetPatternFromSections(deck, sectionIds, isTarget, wideField)
+function Star_Trek.Transporter:GetPatternFromSections(deck, sectionIds, isTarget)
 	local pattern = {}
 
 	if not isTarget then -- Source
