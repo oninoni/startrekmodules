@@ -83,7 +83,6 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 	Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Initialising Transporter...")
 	Star_Trek.Logs:AddEntry(interfaceEnt, ply, table.Count(sourcePatterns) .. " Pattern Sources Detected.")
 	Star_Trek.Logs:AddEntry(interfaceEnt, ply, table.Count(sourcePatterns) .. " Pattern Targets Detected.")
-	Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Dematerialising...")
 
 	for _, sourcePattern in pairs(sourcePatterns) do
 		local ent = sourcePattern.Ent
@@ -142,6 +141,11 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 		-- Beam into Buffer
 		table.insert(Star_Trek.Transporter.Buffer.Entities, ent)
 		ent.BufferQuality = 160
+
+		if istable(ent) then
+			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Warning: Remote Transporter Request has no target. Aborting!")
+			continue
+		end
 
 		Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Dematerialising Object...")
 		Star_Trek.Transporter:TransportObject(cycleClass or "base", ent, Vector(), false, true, function(transporterCycle)

@@ -294,6 +294,7 @@ function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip)
 		titleShort = "Rooms"
 
 		local pads = Star_Trek.Transporter:GetTransporterRooms(self)
+
 		for _, roomData in SortedPairs(pads) do
 			table.insert(buttons, {
 				Name = roomData.Name,

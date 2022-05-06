@@ -101,8 +101,6 @@ function Star_Trek:LoadModule(name)
 	local stoolsDirectory = moduleDirectory .. "stools/"
 	local _, stoolsDirectories = file.Find(stoolsDirectory .. "*", "LUA")
 	for _, stoolName in pairs(stoolsDirectories) do
-		print("STOOL: ", stoolName)
-
 		local stoolDirectory = stoolsDirectory .. stoolName .. "/"
 
 		local oldTOOL = TOOL
