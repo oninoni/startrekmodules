@@ -71,13 +71,8 @@ function SELF:Render()
 	local alpha2 = (0.5 - math.abs(effectProgress2 - 0.5))
 	alpha2 = math.min(alpha2, 0.2) * 1.5
 
-	local effectProgress1Slope = (math.cos(effectProgress1 * math.pi) + 1) / 2
-	local effectProgress2Slope = (math.cos(effectProgress2 * math.pi) + 1) / 2
-
-	if stateData.ColorFade > 0 then
-		effectProgress1Slope = 1 - effectProgress1Slope
-		effectProgress2Slope = 1 - effectProgress2Slope
-	end
+	local effectProgress1Slope = 1 - (math.cos(effectProgress1 * math.pi) + 1) / 2
+	local effectProgress2Slope = 1 - (math.cos(effectProgress2 * math.pi) + 1) / 2
 
 	local vec = EyeVector()
 	vec[3] = 0

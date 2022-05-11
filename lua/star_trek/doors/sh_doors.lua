@@ -13,24 +13,13 @@
 ---------------------------------------
 
 ---------------------------------------
---           Doors | Index           --
+--           Doors | Shared          --
 ---------------------------------------
 
-Star_Trek:RequireModules()
+function Star_Trek.Doors:IsDoor(ent)
+	if IsValid(ent) and ent:GetClass() == "prop_dynamic" and self.ModelNames[ent:GetModel()] then
+		return true
+	end
 
-Star_Trek.Doors = Star_Trek.Doors or {}
-
-if SERVER then
-	AddCSLuaFile("sh_config.lua")
-	AddCSLuaFile("sh_doors.lua")
-
-	include("sh_config.lua")
-	include("sh_doors.lua")
-
-	include("sv_doors.lua")
-end
-
-if CLIENT then
-	include("sh_config.lua")
-	include("sh_doors.lua")
+	return false
 end

@@ -104,7 +104,7 @@ function SELF:ApplyState(state, onlyRestore)
 	end
 
 	if stateData.TPToTarget then
-		local lowerBounds = ent:GetCollisionBounds()
+		local lowerBounds = ent:GetRotatedAABB(ent:OBBMins(), ent:OBBMaxs())
 		local zOffset = -lowerBounds.Z + 2 -- Offset to prevent stucking in floor
 
 		ent:SetPos(self.TargetPos + Vector(0, 0, zOffset))

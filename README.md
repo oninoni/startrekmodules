@@ -5,6 +5,7 @@ This Addon was developed as an API for the Intrepid-Class Gmod Map, but can be u
 
 Additional Modules:
 - https://github.com/oninoni/startrekmodules_sweps
+- https://github.com/oninoni/startrekmodules_transporter
 
 Trello Board:
 - https://trello.com/b/OXe7kwID/star-trek-modules

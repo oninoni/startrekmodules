@@ -18,12 +18,23 @@
 
 util.AddNetworkString("Star_Trek.Transporter.TransportObject")
 function Star_Trek.Transporter:TransportObject(cycleType, ent, targetPos, skipDemat, skipRemat, callback)
+	hook.Run("Star_Trek.Transporter.PreTransportObject", cycleType, ent, targetPos, skipDemat, skipRemat, callback)
+
+	if not IsEntity(ent) or not IsValid(ent) then
+		return false, "Invalid Object"
+	end
+
 	local moveType = ent:GetMoveType()
 	if moveType == MOVETYPE_NOCLIP then
 		return false, "Object is untouchable."
 	end
 
-	local bufferPos = Star_Trek.Transporter:GetBufferPos()
+	local bufferPos = self:GetBufferPos()
+	if not isvector(targetPos) then
+		targetPos = bufferPos
+		skipRemat = true
+	end
+
 	local success, transporterCycle = self:CreateCycle(cycleType, ent, targetPos, bufferPos, skipDemat, skipRemat)
 	if not success then
 		return false, transporterCycle
@@ -60,6 +71,8 @@ function Star_Trek.Transporter:EndTransporterCycle(transporterCycle)
 		net.WriteEntity(transporterCycle.Entity)
 		net.WriteInt(transporterCycle.State, 32)
 	net.Broadcast()
+
+	hook.Run("Star_Trek.Transporter.EndTransporterCycle", transporterCycle)
 
 	return true
 end
@@ -111,12 +124,8 @@ function Star_Trek.Transporter:GetBufferPos()
 	return Star_Trek.Transporter.Buffer.Pos
 end
 
+-- Load Objects in Buffer to the client.
 hook.Add("SetupPlayerVisibility", "Star_Trek.Transporter.PVS", function(ply, viewEntity)
-	local _, transporterCycle = next(Star_Trek.Transporter.ActiveCycles)
-	if not istable(transporterCycle) then
-		return
-	end
-
 	local bufferPos = Star_Trek.Transporter:GetBufferPos()
 	if isvector(bufferPos) then
 		AddOriginToPVS(bufferPos)
