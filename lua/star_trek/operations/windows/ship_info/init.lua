@@ -13,17 +13,20 @@
 ---------------------------------------
 
 ---------------------------------------
--- LCARS Tactical Interface | Server --
+--      LCARS Ship Info | Server     --
 ---------------------------------------
 
-if not istable(INTERFACE) then Star_Trek:LoadAllModules() return end
-local SELF = INTERFACE
+if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
+local SELF = WINDOW
 
-SELF.BaseInterface = "bridge_targeting_base"
+function SELF:OnCreate(hFlip)
+	local success = SELF.Base.OnCreate(self, 0, true, hFlip)
+	if not success then
+		return false
+	end
 
--- Opening general purpose menus.
-function SELF:Open(ent)
-	local success, windows, offsetPos, offsetAngle = SELF.Base.Open(self, ent, true)
+	self.Title = "Ship Information"
+	self.TitleShort = "SHIP"
 
-	return success, windows, offsetPos, offsetAngle
+	return true
 end

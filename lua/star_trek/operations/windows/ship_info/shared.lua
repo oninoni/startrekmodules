@@ -13,17 +13,11 @@
 ---------------------------------------
 
 ---------------------------------------
--- LCARS Tactical Interface | Server --
+--      LCARS Ship Info | Shared     --
 ---------------------------------------
 
-if not istable(INTERFACE) then Star_Trek:LoadAllModules() return end
-local SELF = INTERFACE
+if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
+local SELF = WINDOW
 
-SELF.BaseInterface = "bridge_targeting_base"
-
--- Opening general purpose menus.
-function SELF:Open(ent)
-	local success, windows, offsetPos, offsetAngle = SELF.Base.Open(self, ent, true)
-
-	return success, windows, offsetPos, offsetAngle
-end
+-- Determines the parent windows name for this one. (Like Deriving Classes)
+SELF.BaseWindow = "target_info"

@@ -19,13 +19,14 @@
 if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
 local SELF = WINDOW
 
-function SELF:OnCreate(targetName, hFlip)
-	local success = SELF.Base.OnCreate(self, targetName, "TARGET", hFlip)
+function SELF:OnCreate(targetId, simple, hFlip)
+	local success = SELF.Base.OnCreate(self, "Target Information", "TARGET", hFlip)
 	if not success then
 		return false
 	end
 
-	-- TODO
+	self.Simple = simple
+	self.TargetId = targetId
 
 	return true
 end
@@ -33,7 +34,8 @@ end
 function SELF:GetClientData()
 	local clientData = SELF.Base.GetClientData(self)
 
-	-- TODO
+	clientData.Simple = self.Simple
+	clientData.TargetId = self.TargetId
 
 	return clientData
 end

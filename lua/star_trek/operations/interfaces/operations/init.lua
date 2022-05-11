@@ -19,31 +19,11 @@
 if not istable(INTERFACE) then Star_Trek:LoadAllModules() return end
 local SELF = INTERFACE
 
-SELF.BaseInterface = "base"
+SELF.BaseInterface = "bridge_targeting_base"
 
 -- Opening general purpose menus.
 function SELF:Open(ent)
-	local targetName = "NX-74205 USS Defiant"
+	local success, windows, offsetPos, offsetAngle = SELF.Base.Open(self, ent, false)
 
-	local success1, targetInfoWindow = Star_Trek.LCARS:CreateWindow("target_info",
-	Vector(-45.6, -20, 3.6), Angle(0, 71.5, 27),
-		nil, 420, 140,
-		function(windowData, interfaceData, ply, buttonId)
-
-	end, targetName, false)
-	if not success1 then
-		return false, targetInfoWindow
-	end
-
-	local success2, mapWindow = Star_Trek.LCARS:CreateWindow("system_map",
-		Vector(-45, -10, 30), Angle(0, 70, 90),
-		15, 600, 600,
-		function(windowData, interfaceData, ply, buttonId)
-		-- No Interactivity here yet.
-	end, systemName, true)
-	if not success2 then
-		return false, mapWindow
-	end
-
-	return true, {targetInfoWindow, mapWindow}, Vector(), Angle(0, 90, 0)
+	return success, windows, offsetPos, offsetAngle
 end
