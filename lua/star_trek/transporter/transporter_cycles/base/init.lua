@@ -58,8 +58,7 @@ end
 function SELF:Abort()
 	self:End()
 
-	local ent = self.Entity
-	ent:SetPos(self.BufferPos)
+	self:SetPos(self.BufferPos)
 end
 
 -- Applies the current state to the transporter cycle.
@@ -100,14 +99,14 @@ function SELF:ApplyState(state, onlyRestore)
 	if onlyRestore then return end
 
 	if stateData.TPToBuffer then
-		ent:SetPos(self.BufferPos)
+		self:SetPos(self.BufferPos)
 	end
 
 	if stateData.TPToTarget then
 		local lowerBounds = ent:GetRotatedAABB(ent:OBBMins(), ent:OBBMaxs())
 		local zOffset = -lowerBounds.Z + 2 -- Offset to prevent stucking in floor
 
-		ent:SetPos(self.TargetPos + Vector(0, 0, zOffset))
+		self:SetPos(self.TargetPos + Vector(0, 0, zOffset))
 	end
 
 	if self.SkipRemat and state == self.SkipRematState then return false end

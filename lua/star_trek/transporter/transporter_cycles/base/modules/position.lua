@@ -13,41 +13,32 @@
 ---------------------------------------
 
 ---------------------------------------
---    Transporter Cycle | Movement   --
+--    Transporter Cycle | Position   --
 ---------------------------------------
 
 if not istable(CYCLE) then Star_Trek:LoadAllModules() return end
 local SELF = CYCLE
 
--- Applies the movement to the entity.
--- Parenting is not done since parented entities do not move.
---
--- @param Bool movementEnabled
-function SELF:ApplyMovement(movementEnabled)
+function SELF:SetPos(pos)
 	local ent = self.Entity
 
-	if ent:IsPlayer() then
-		ent:Freeze(not movementEnabled)
-	elseif ent:IsNPC() then
-		if movementEnabled then
-			ent:MoveStart()
-		else
-			ent:MoveStop()
-		end
-	elseif ent:IsNextBot() then
-		return -- TODO
-	else
-		local phys = ent:GetPhysicsObject()
-		if IsValid(phys) then
-			phys:EnableMotion(movementEnabled)
-		end
+	if ent:IsRagdoll() then
+		local entPos = ent:GetPos()
+		local entAng = ent:GetAngles()
 
 		local pCount = ent:GetPhysicsObjectCount()
-		if pCount > 1 then
-			for i = 1, pCount - 1 do
-				local subPhys = ent:GetPhysicsObjectNum(i)
-				subPhys:EnableMotion(movementEnabled)
-			end
+		for i = 0, pCount - 1 do
+			local phys = ent:GetPhysicsObjectNum(i)
+
+			local offPos, offAng = WorldToLocal(phys:GetPos(), phys:GetAngles(), entPos, entAng)
+			local newPos, newAng = LocalToWorld(offPos, offAng, pos, ent:GetAngles())
+
+			phys:SetPos(newPos)
+			phys:SetAngles(newAng)
+
+			phys:Wake()
 		end
 	end
+
+	ent:SetPos(pos)
 end

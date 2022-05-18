@@ -42,6 +42,10 @@ function Star_Trek.Transporter:CanBeamEntity(ent)
 		return false
 	end
 
+	if ent:IsPlayer() and not ent:Alive() then
+		return false
+	end
+
 	return true
 end
 
