@@ -22,9 +22,10 @@
 -- @param Angle ang
 -- @param Vector size
 -- @param Function callback(ent, ply)
+-- @param Boolean strict
 -- @return Boolean success
 -- @return? String error
-function Star_Trek.Button:CreateButton(pos, ang, model, callback)
+function Star_Trek.Button:CreateButton(pos, ang, model, callback, strict)
 	local ent = ents.Create("gmod_button")
 
 	ent:SetPos(pos)
@@ -33,8 +34,10 @@ function Star_Trek.Button:CreateButton(pos, ang, model, callback)
 	ent:SetModel(model)
 	ent:Spawn()
 
-	ent:SetNoDraw(true)
-	ent:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+	if not strict then
+		ent:SetNoDraw(true)
+		ent:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+	end
 
 	local phys = ent:GetPhysicsObject()
 	if phys then
@@ -59,9 +62,10 @@ end
 -- @param Angle ang
 -- @param Vector size
 -- @param String interfaceName
+-- @param Boolean strict
 -- @return Boolean success
 -- @return? String error
-function Star_Trek.Button:CreateInterfaceButton(pos, ang, size, interfaceName)
+function Star_Trek.Button:CreateInterfaceButton(pos, ang, size, interfaceName, strict)
 	if not isstring(interfaceName) then
 		return false, "Interface Type Invalid"
 	end
@@ -72,7 +76,7 @@ function Star_Trek.Button:CreateInterfaceButton(pos, ang, size, interfaceName)
 			print("Callback Error: ", error2)
 			return
 		end
-	end)
+	end, strict)
 
 	if not success then
 		return false, ent
