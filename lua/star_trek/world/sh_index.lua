@@ -22,7 +22,8 @@ Star_Trek.World = Star_Trek.World or {}
 
 if SERVER then
 	AddCSLuaFile("sh_config.lua")
-	AddCSLuaFile("sh_entity_classes.lua")
+	AddCSLuaFile("sh_loaders.lua")
+
 	AddCSLuaFile("util/sh_vector.lua")
 	AddCSLuaFile("sh_entities.lua")
 
@@ -31,7 +32,8 @@ if SERVER then
 	AddCSLuaFile("cl_entities.lua")
 
 	include("sh_config.lua")
-	include("sh_entity_classes.lua")
+	include("sh_loaders.lua")
+
 	include("util/sh_vector.lua")
 	include("sh_entities.lua")
 
@@ -42,7 +44,8 @@ end
 
 if CLIENT then
 	include("sh_config.lua")
-	include("sh_entity_classes.lua")
+	include("sh_loaders.lua")
+
 	include("util/sh_vector.lua")
 	include("sh_entities.lua")
 

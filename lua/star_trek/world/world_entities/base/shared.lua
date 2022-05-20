@@ -17,7 +17,10 @@
 --           Base | Shared           --
 ---------------------------------------
 
-ENT.BaseClass = nil
+if not istable(ENT) then Star_Trek:LoadAllModules() return end
+local SELF = ENT
 
-function ENT:Think(deltaT)
+SELF.BaseClass = nil
+
+function SELF:Think(deltaT)
 end

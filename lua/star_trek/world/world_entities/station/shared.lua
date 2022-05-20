@@ -17,4 +17,7 @@
 --          Station | Shared         --
 ---------------------------------------
 
-ENT.BaseClass = "base"
+if not istable(ENT) then Star_Trek:LoadAllModules() return end
+local SELF = ENT
+
+SELF.BaseClass = "base"

@@ -17,10 +17,13 @@
 --           Base | Server           --
 ---------------------------------------
 
-function ENT:WriteDynData()
+if not istable(ENT) then Star_Trek:LoadAllModules() return end
+local SELF = ENT
+
+function SELF:WriteDynData()
 end
 
-function ENT:WriteData()
+function SELF:WriteData()
 	net.WriteWorldVector(self.Pos)
 	net.WriteAngle(self.Ang)
 
@@ -29,12 +32,18 @@ function ENT:WriteData()
 	self:WriteDynData()
 end
 
-function ENT:Init(pos, ang, models)
-	self.Pos = pos
-	self.Ang = ang
+function SELF:Init(pos, ang, models)
+	self.Pos = pos or WorldVector()
+	self.Ang = ang or Angle()
 
-	self.Models = models
+	self.Models = models or {
+		{Model = ""}
+	}
 end
 
-function ENT:Terminate()
+function SELF:Terminate()
+end
+
+function SELF:Update()
+	Star_Trek.World:NetworkUpdate(self)
 end

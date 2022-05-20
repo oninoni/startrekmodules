@@ -16,3 +16,6 @@
 --            World Entity           --
 --          Planet | Client          --
 ---------------------------------------
+
+if not istable(ENT) then Star_Trek:LoadAllModules() return end
+local SELF = ENT

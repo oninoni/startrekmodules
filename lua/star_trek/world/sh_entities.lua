@@ -18,6 +18,10 @@
 
 Star_Trek.World.Entities = Star_Trek.World.Entities or {}
 
+function Star_Trek.World:GetEntity(id)
+	return self.Entities[id]
+end
+
 function Star_Trek.World:InitEntity(id, class, ...)
 	local ent = {}
 	ent.Id = id
@@ -26,6 +30,7 @@ function Star_Trek.World:InitEntity(id, class, ...)
 	if not istable(entClass) then
 		return false, "Invalid Class \"" .. class .. "\""
 	end
+
 	setmetatable(ent, {__index = entClass})
 	ent.Class = class
 
@@ -54,11 +59,11 @@ function Star_Trek.World:Think(deltaT)
 	end
 end
 
-local lasTime = SysTime()
+local lastTime = SysTime()
 hook.Add("Think", "Star_Trek.World.Think", function()
 	local sysTime = SysTime()
-	local deltaT = lasTime - sysTime
-	lasTime = sysTime
+	local deltaT = sysTime - lastTime
+	lastTime = sysTime
 
 	Star_Trek.World:Think(deltaT)
 end)

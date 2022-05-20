@@ -14,29 +14,15 @@
 
 ---------------------------------------
 --            World Entity           --
---       Base Dynamic | Server       --
+--       Base Velocity | Shared      --
 ---------------------------------------
 
-function ENT:WriteDynData()
-	net.WriteWorldVector(self.Pos)
-	net.WriteAngle(self.Ang)
-end
+if not istable(ENT) then Star_Trek:LoadAllModules() return end
+local SELF = ENT
 
-function ENT:WriteData()
-	net.WriteTable(self.Models)
+SELF.BaseClass = "base"
 
-	net.WriteVector(self.Vel)
-	net.WriteAngle(self.AngVel)
-
-	self:WriteDynData()
-end
-
-function ENT:Init(pos, ang, models, vel, angVel)
-	self.Pos = pos
-	self.Ang = ang
-
-	self.Models = models
-
-	self.Vel = vel
-	self.AngVel = angVel
+function SELF:Think(deltaT)
+	self.Pos = self.Pos + (self.Vel * deltaT)
+	self.Ang = self.Ang + (self.AngVel * deltaT)
 end

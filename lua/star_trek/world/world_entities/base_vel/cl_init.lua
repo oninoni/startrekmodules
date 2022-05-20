@@ -14,12 +14,22 @@
 
 ---------------------------------------
 --            World Entity           --
---       Base Dynamic | Shared       --
+--       Base Velocity | Client      --
 ---------------------------------------
 
-ENT.BaseClass = "base"
+if not istable(ENT) then Star_Trek:LoadAllModules() return end
+local SELF = ENT
 
-function ENT:Think(deltaT)
-	self.Pos = self.Pos + (self.Vel * deltaT)
-	self.Ang = self.Ang + (self.AngVel * deltaT)
+function SELF:ReadDynData()
+	self.Pos = net.ReadWorldVector()
+	self.Ang = net.ReadAngle()
+end
+
+function SELF:ReadData()
+	self.Models = net.ReadTable()
+
+	self.Vel 	= net.ReadVector() -- TODO: Maybe need World Vector?
+	self.AngVel = net.ReadAngle()
+
+	self:ReadDynData()
 end

@@ -14,8 +14,18 @@
 
 ---------------------------------------
 --            World Entity           --
---          Station | Client         --
+--     Base Acceleration | Shared    --
 ---------------------------------------
 
 if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
+
+SELF.BaseClass = "base_vel"
+
+function SELF:Think(deltaT)
+	self.Vel = self.Vel + (self.Acc * deltaT)
+	self.AngVel = self.AngVel + (self.AngAcc * deltaT)
+
+	self.Pos = self.Pos + (self.Vel * deltaT)
+	self.Ang = self.Ang + (self.AngVel * deltaT)
+end

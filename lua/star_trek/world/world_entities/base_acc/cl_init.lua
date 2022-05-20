@@ -14,50 +14,25 @@
 
 ---------------------------------------
 --            World Entity           --
---           Base | Client           --
+--     Base Acceleration | Client    --
 ---------------------------------------
 
 if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
 
 function SELF:ReadDynData()
-end
-
-function SELF:ReadData()
 	self.Pos = net.ReadWorldVector()
 	self.Ang = net.ReadAngle()
 
+	self.Vel = net.ReadVector()
+	self.AngVel = net.ReadAngle()
+end
+
+function SELF:ReadData()
 	self.Models = net.ReadTable()
 
+	self.Acc 	= net.ReadVector()
+	self.AngAcc = net.ReadAngle()
+
 	self:ReadDynData()
-end
-
-function SELF:Init()
-	self:ReadData()
-
-	self.ClientEntities = {}
-	for i, modelData in pairs(self.Models) do
-		local ent = ClientsideModel(modelData.Model, RENDERGROUP_BOTH)
-
-		ent:SetModelScale(modelData.Scale)
-		ent.Scale = modelData.Scale
-
-		ent:SetNoDraw(true)
-
-		-- TODO: Add Support for Offset / Parenting (Parenting might be possible clientside improving performance?)
-
-		self.ClientEntities[i] = ent
-	end
-end
-
-function SELF:Terminate()
-	for i, ent in pairs(self.ClientEntities) do
-		SafeRemoveEntity(ent)
-	end
-end
-
-function SELF:Draw(camPos, relPos, relAng)
-	for _, ent in pairs(self.ClientEntities) do
-		Star_Trek.World:DrawEntity(ent, camPos, relPos, relAng)
-	end
 end

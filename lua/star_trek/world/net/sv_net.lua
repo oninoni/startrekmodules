@@ -18,12 +18,13 @@
 
 util.AddNetworkString("Star_Trek.World.Load")
 util.AddNetworkString("Star_Trek.World.UnLoad")
+util.AddNetworkString("Star_Trek.World.Update")
 util.AddNetworkString("Star_Trek.World.Sync")
 
 -- Network a newly loaded world entity to the clients.
-function Star_Trek.World:NetworkLoad(id, ent)
+function Star_Trek.World:NetworkLoad(ent)
 	net.Start("Star_Trek.World.Load")
-		net.WriteInt(id, 32)
+		net.WriteInt(ent.Id, 32)
 		net.WriteString(ent.Class)
 		ent:WriteData()
 	net.Broadcast()
@@ -49,8 +50,16 @@ function Star_Trek.World:NetworkUnLoad(id)
 	net.Start("Star_Trek.World.UnLoad")
 		net.WriteInt(id, 32)
 	net.Broadcast()
-	
+
 	return true
+end
+
+-- Update all data of the given entity.
+function Star_Trek.World:NetworkUpdate(ent)
+	net.Start("Star_Trek.World.Update")
+		net.WriteInt(ent.Id, 32)
+		ent:WriteData()
+	net.Broadcast()
 end
 
 -- Synchronize the dynamic data of all loaded world entities to all players.
@@ -62,6 +71,6 @@ function Star_Trek.World:NetworkSync()
 			ent:WriteDynData()
 		net.Broadcast()
 	end
-	
+
 	return true
 end

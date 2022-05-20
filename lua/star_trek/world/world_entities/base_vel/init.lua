@@ -14,19 +14,29 @@
 
 ---------------------------------------
 --            World Entity           --
---       Base Dynamic | Client       --
+--       Base Velocity | Server      --
 ---------------------------------------
 
-function ENT:ReadDynData()
-	self.Pos = net.ReadWorldVector()
-	self.Ang = net.ReadAngle()
+if not istable(ENT) then Star_Trek:LoadAllModules() return end
+local SELF = ENT
+
+function SELF:WriteDynData()
+	net.WriteWorldVector(self.Pos)
+	net.WriteAngle(self.Ang)
 end
 
-function ENT:ReadData()
-	self.Models = net.ReadTable()
+function SELF:WriteData()
+	net.WriteTable(self.Models)
 
-	self.Vel 	= net.ReadVector() -- TODO: Maybe need World Vector?
-	self.AngVel = net.ReadAngle()
+	net.WriteVector(self.Vel)
+	net.WriteAngle(self.AngVel)
 
-	self:ReadDynData()
+	self:WriteDynData()
+end
+
+function SELF:Init(pos, ang, models, vel, angVel)
+	SELF.Base.Init(self, pos, ang, models)
+
+	self.Vel = vel or Vector()
+	self.AngVel = angVel or Angle()
 end

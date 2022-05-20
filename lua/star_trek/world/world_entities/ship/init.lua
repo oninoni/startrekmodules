@@ -17,3 +17,9 @@
 --           Ship | Server           --
 ---------------------------------------
 
+if not istable(ENT) then Star_Trek:LoadAllModules() return end
+local SELF = ENT
+
+function SELF:Init(pos, ang, models)
+	SELF.Base.Init(self, pos, ang, models)
+end

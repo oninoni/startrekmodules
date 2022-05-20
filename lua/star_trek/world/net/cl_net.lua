@@ -32,6 +32,15 @@ net.Receive("Star_Trek.World.UnLoad", function()
 	Star_Trek.World:UnLoadEntity(id)
 end)
 
+net.Receive("Star_Trek.World.Update", function()
+	local id = net.ReadInt(32)
+
+	local ent = Star_Trek.World.Entities[id]
+	if ent then
+		ent:ReadData()
+	end
+end)
+
 net.Receive("Star_Trek.World.Sync", function()
 	local id = net.ReadInt(32)
 
