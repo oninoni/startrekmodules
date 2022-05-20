@@ -34,7 +34,7 @@ function Star_Trek.Logs:ArchiveSession(sessionData, callback)
 	end
 
 	if #sessionData.Entries <= 2 then
-		return false, "Empty Log"
+		return true
 	end
 
 	sessionData.Watchers = nil
