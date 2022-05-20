@@ -109,7 +109,6 @@ hook.Add( "RenderScene", "Star_Trek.RenderWindow", function( plyOrigin, plyAngle
 
 			render.PopCustomClipPlane()
 			render.EnableClipping( oldClip )
-
 		render.PopRenderTarget()
 
 		hook.Call( "wp-postrender", GAMEMODE, window, exitPortal, plyOrigin )
