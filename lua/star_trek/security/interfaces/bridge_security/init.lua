@@ -23,6 +23,8 @@ local SELF = INTERFACE
 
 SELF.BaseInterface = "base"
 
+SELF.LogType = "Security Console"
+
 function SELF:OpenInternal(menuPos, menuAng, menuWidth, actionPos, actionAng, actionWidth, actionFlip, mapPos, mapAng, mapWidth, mapHeight, sectionPos, sectionAng, sectionWidth, sectionHeight, textPos, textAng, textWidth, textHeight)
 	local success2, menuWindow, actionWindow = self:CreateMenuWindow(menuPos, menuAng, menuWidth, actionPos, actionAng, actionWidth, actionFlip)
 	if not success2 then
@@ -41,7 +43,7 @@ function SELF:OpenInternal(menuPos, menuAng, menuWidth, actionPos, actionAng, ac
 		nil,
 		sectionWidth,
 		sectionHeight,
-		function(windowData, interfaceData, categoryId, buttonId)
+		function(windowData, interfaceData, ply, categoryId, buttonId)
 			if isnumber(buttonId) then
 				local buttonData = windowData.Buttons[buttonId]
 
@@ -63,19 +65,15 @@ function SELF:OpenInternal(menuPos, menuAng, menuWidth, actionPos, actionAng, ac
 	end
 
 	local success5, textWindow = Star_Trek.LCARS:CreateWindow(
-		"text_entry",
+		"log_entry",
 		textPos,
 		textAng,
 		24,
 		textWidth,
 		textHeight,
-		function(windowData, interfaceData, categoryId, buttonId)
+		function(windowData, interfaceData, ply, categoryId, buttonId)
 			return false
-		end,
-		Color(255, 255, 255),
-		"Log File",
-		"LOG",
-		true
+		end
 	)
 	if not success5 then
 		return false, textWindow
@@ -89,7 +87,7 @@ end
 -- @param Entity ent
 -- @return Boolean success
 -- @return? Table windows
-function SELF:Open(ent, engineering)
+function SELF:Open(ent)
 	local success, windows = self:OpenInternal(
 		Vector(-22, -34, 8.2),
 		Angle(0, 0, -90),

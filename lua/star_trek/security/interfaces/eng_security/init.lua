@@ -26,7 +26,7 @@ SELF.BaseInterface = "bridge_security"
 -- @param Entity ent
 -- @return Boolean success
 -- @return? Table windows
-function SELF:Open(ent, engineering)
+function SELF:Open(ent)
 	local success, windows = self:OpenInternal(
 		Vector(-12, -8.1, -14.25),
 		Angle(0, 0, 0),
@@ -57,5 +57,5 @@ end
 
 -- Wrap for use in Map.
 function Star_Trek.LCARS:OpenSecurityEngMenu()
-	Star_Trek.LCARS:OpenInterface(TRIGGER_PLAYER, CALLER, "eng_security", true)
+	Star_Trek.LCARS:OpenInterface(TRIGGER_PLAYER, CALLER, "eng_security")
 end

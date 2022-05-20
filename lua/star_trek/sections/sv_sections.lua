@@ -139,6 +139,18 @@ function Star_Trek.Sections:GetSectionName(deck, sectionId)
 	return "Section " .. sectionData.RealId .. " " .. sectionData.Name
 end
 
+function Star_Trek.Sections:DetermineSection(pos)
+	for deck, deckData in SortedPairs(Star_Trek.Sections.Decks) do
+		for sectionId, sectionData in pairs(deckData.Sections) do
+			if self:IsInSection(deck, sectionId, pos) then
+				return deck, sectionId
+			end
+		end
+	end
+
+	return false
+end
+
 function Star_Trek.Sections:SetupSections()
 	self.Decks = {}
 

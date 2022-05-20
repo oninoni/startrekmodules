@@ -37,7 +37,7 @@ function SELF:Open(ent)
 		scale,
 		width,
 		height,
-		function(windowData, interfaceData, buttonId)
+		function(windowData, interfaceData, ply, buttonId)
 			local keyValues = ent.LCARSKeyData
 
 			if buttonId <= 4 then
@@ -52,13 +52,13 @@ function SELF:Open(ent)
 				end
 			end
 
+			hook.Run("Star_Trek.LCARS.BasicPressed", ply, interfaceData, buttonId)
+
 			if istable(keyValues) and keyValues["lcars_keep_open"] then
 				ent:EmitSound("star_trek.lcars_beep")
 
 				return
 			end
-
-			hook.Run("Star_Trek.LCARS.BasicPressed", interfaceData, buttonId)
 
 			ent:EmitSound("star_trek.lcars_close")
 			interfaceData:Close()

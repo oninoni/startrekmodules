@@ -30,24 +30,24 @@
 -- @return? Table window
 function Star_Trek.LCARS:LoadWindowData(id, windowData, pos, ang)
 	local window = {
-		WType = windowData.WindowType,
+		WType = windowData.WType,
 		Id = id,
 
-		WPos = windowData.WindowPos,
-		WAng = windowData.WindowAngles,
+		WPos = windowData.WPos,
+		WAng = windowData.WAng,
 
 		WVis = false,
 
-		WScale = windowData.WindowScale,
-		WWidth = windowData.WindowWidth,
-		WD2 = windowData.WindowWidth / 2,
-		WHeight = windowData.WindowHeight,
-		HD2 = windowData.WindowHeight / 2,
+		WScale = windowData.WScale,
+		WWidth = windowData.WWidth,
+		WD2 = windowData.WWidth / 2,
+		WHeight = windowData.WHeight,
+		HD2 = windowData.WHeight / 2,
 	}
 
 	window.WPosG, window.WAngG = LocalToWorld(window.WPos, window.WAng, pos, ang)
 
-	local windowFunctions = self.Windows[windowData.WindowType]
+	local windowFunctions = self.Windows[windowData.WType]
 	if not istable(windowFunctions) then
 		return false, "Invalid Window Type"
 	end
@@ -104,4 +104,8 @@ function Star_Trek.LCARS:DrawWindow(window, animPos, drawCursor)
 			surface.DrawTexturedRect(mousePos[1] - 15, mousePos[2] - 15, 30, 30)
 		end
 	cam.End3D2D()
+
+	if isfunction(window.OnDraw3D) then
+		window:OnDraw3D(wPos, wAng, animPos)
+	end
 end

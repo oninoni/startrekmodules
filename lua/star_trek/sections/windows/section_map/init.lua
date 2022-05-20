@@ -25,15 +25,22 @@ function SELF:OnCreate(deck, hFlip, objects)
 		return false
 	end
 
-	self:SetDeck(deck)
-	self:SetObjects(objects)
-
-	self.MapScale = 0.2
+	self:SetDeck(deck, objects)
 
 	return self
 end
 
-function SELF:SetDeck(deck)
+
+function SELF:GetClientData()
+	local clientData = SELF.Base.GetClientData(self)
+
+	clientData.Sections = self.Sections
+	clientData.Objects = self.Objects
+
+	return clientData
+end
+
+function SELF:SetDeck(deck, objects)
 	self.Sections = {}
 
 	local deckData = Star_Trek.Sections.Decks[deck]
@@ -50,11 +57,11 @@ function SELF:SetDeck(deck)
 
 			areaButtonData.Width = math.abs(areaData.Min[1]) + math.abs(areaData.Max[1])
 			areaButtonData.Height = math.abs(areaData.Min[2]) + math.abs(areaData.Max[2])
-			
+
 			areaButtonData.Pos = areaData.Pos - Vector(areaData.Min[1] + areaData.Max[1], areaData.Min[2] + areaData.Max[2], 0)
 			areaButtonData.Pos = areaButtonData.Pos - Star_Trek.Sections.GlobalOffset
 			areaButtonData.Pos.y = -areaButtonData.Pos.y
-			
+
 			areaButtonData.Pos = areaButtonData.Pos - Vector(areaButtonData.Width / 2, areaButtonData.Height / 2, 0)
 
 			table.insert(sectionButtonData.Areas, areaButtonData)
@@ -63,7 +70,7 @@ function SELF:SetDeck(deck)
 		table.insert(self.Sections, sectionButtonData)
 	end
 
-	self:SetObjects({})
+	self:SetObjects(objects)
 end
 
 function SELF:SetObjects(objects)
@@ -127,7 +134,7 @@ function SELF:SetSectionActive(sectionId, active)
 	self:SetSelected(selected)
 end
 
-function SELF:OnPress(interfaceData, ent, buttonId, callback)
+function SELF:OnPress(interfaceData, ply, buttonId, callback)
 	local shouldUpdate = false
 
 	return shouldUpdate

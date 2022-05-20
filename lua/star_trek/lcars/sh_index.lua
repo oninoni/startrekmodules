@@ -21,6 +21,10 @@ Star_Trek:RequireModules("util")
 Star_Trek.LCARS = Star_Trek.LCARS or {}
 Star_Trek.LCARS.ActiveInterfaces = Star_Trek.LCARS.ActiveInterfaces or {}
 
+hook.Add("PostCleanupMap", "Star_Trek.LCARS.Cleanup", function()
+	Star_Trek.LCARS.ActiveInterfaces = {}
+end)
+
 if SERVER then
 	AddCSLuaFile("resources/sh_colors.lua")
 	AddCSLuaFile("resources/sh_sounds.lua")

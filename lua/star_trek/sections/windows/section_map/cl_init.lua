@@ -31,7 +31,7 @@ function SELF:OnCreate(windowData)
 		return false
 	end
 
-	self.MapScale = windowData.MapScale or 0.2
+	self.MapScale = 0.2
 
 	local successMap, mapElement = self:GenerateElement("map", self.Id .. "_", self.Area1Width, self.Area1Height,
 		windowData.Sections, Vector(), self.MapScale

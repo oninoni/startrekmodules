@@ -16,28 +16,23 @@
 --   Transporter Patterns | Server   --
 ---------------------------------------
 
---      Pattern Data Format:
--- {
--- Entities = {},
---      Table, that contains all of the entities detected from that pattern search.
---      If it is used as a target those entities need to be considered in relation to if the target is valid.
--- Pos = Vector(),
---      Position, where the target can place objects or around, if Multi-Target Mode is used.
--- }
-
 function Star_Trek.Transporter:CanBeamEntity(ent)
+	if table.HasValue(Star_Trek.Transporter.Buffer.Entities, ent) then
+		return true
+	end
+
 	if not IsValid(ent) then
 		return false
 	end
 
-	if ent:MapCreationID() ~= -1 then 
+	if ent:MapCreationID() ~= -1 then
 		return false
 	end
 
 	if IsValid(ent:GetParent()) then
 		return false
 	end
-	
+
 	local phys = ent:GetPhysicsObject()
 	if not IsValid(phys) then
 		return false
@@ -47,119 +42,140 @@ function Star_Trek.Transporter:CanBeamEntity(ent)
 		return false
 	end
 
+	if ent:IsPlayer() and not ent:Alive() then
+		return false
+	end
+
 	return true
 end
 
--- Combines a given table of multiple pattern Data tables.
--- 
--- @param Table patterns
--- @return Table patterns
-function Star_Trek.Transporter:CleanupPatternList(patterns)
-	-- Cleanup Double-Mentions fo entities.
-	local patternEntities = {}
-	for _, pattern in pairs(patterns) do
-		local removeEntities = {}
-		for _, ent in pairs(pattern.Entities) do
-			if table.HasValue(patternEntities, ent) then
-				table.insert(removeEntities, ent)
-			else
-				table.insert(patternEntities, ent)
-			end
-		end
-
-		for _, removeEnt in pairs(removeEntities) do
-			table.RemoveByValue(pattern.Entities, removeEnt)
-		end
-	end
-
-	-- Determine Entities, that have a parent entity and remove them from their patterns.
-	for _, pattern in pairs(patterns) do
-		local removeEntities = {}
-		for _, ent in pairs(pattern.Entities) do
-			local parent = ent:GetParent()
-			if parent and IsValid(parent) then
-				table.insert(removeEntities, ent)
-			end
-		end
-
-		for _, removeEnt in pairs(removeEntities) do
-			table.RemoveByValue(pattern.Entities, removeEnt)
-		end
-	end
-
-	return patterns
-end
-
--- Returns pattern data from a single transporter pad.
+-- Returns a pattern for the given entity.
 --
--- @param Entity pad
+-- @param Entity ent
+-- @param Boolean isTarget
+-- @param Boolean wideField
 -- @return Table pattern
-function Star_Trek.Transporter:GetPatternFromPad(pad)
-	local pos = pad:GetPos()
-	local attachmentId = pad:LookupAttachment("teleportPoint")
-	if attachmentId > 0 then
-		pos = pad:GetAttachment(attachmentId).Pos
+function Star_Trek.Transporter:GetPatternFromEntity(ent, isTarget, wideField)
+	local pattern = {}
+
+	local pos = ent:GetPos()
+
+	if not isTarget then -- Source
+		if wideField then
+			local range = 64
+
+			local  lowerBounds = pos - Vector(range, range, 0)
+			local higherBounds = pos + Vector(range, range, range * 2)
+			for _, foundEnt in pairs(ents.FindInBox(lowerBounds, higherBounds)) do
+				if Star_Trek.Transporter:CanBeamEntity(foundEnt) then
+					table.insert(pattern, {Ent = foundEnt})
+				end
+			end
+		else
+			if Star_Trek.Transporter:CanBeamEntity(ent) then
+				table.insert(pattern, {Ent = ent})
+			end
+		end
+	else -- Target
+		for i = 1, 6 do
+			local a = math.rad( ( i / 6 ) * -360 )
+			local p = pos + 32 * Vector(math.sin(a), math.cos(a), 0)
+			table.insert(pattern, {Pos = p})
+		end
 	end
 
-	local pattern = {
-		Entities = {},
-		Pos = pos,
-	}
-
-	local  lowerBounds = pos - Vector(25, 25, 0)
-	local higherBounds = pos + Vector(25, 25, 120)
-	for _, ent in pairs(ents.FindInBox(lowerBounds, higherBounds)) do
-		local name = ent:GetName()
-		if string.StartWith(name, "TRPad") then
-			continue
-		end
-
-		if Star_Trek.Transporter:CanBeamEntity(ent) then
-			table.insert(pattern.Entities, ent)
-		end
-	end
-
-	pattern.Pad = pad
 	return pattern
 end
 
--- Determines all of the pattern Data Tables for a given Group of transporter Pads.
--- Intended, to be all pads inside of an Transporter Room, etc..
+-- Returns a pattern for the given vector.
 --
--- @param Table pads
--- @return Table patterns
-function Star_Trek.Transporter:GetPatternsFromPads(pads)
-	local patterns = {}
-
-	for i, pad in pairs(pads) do
-		patterns[i] = self:GetPatternFromPad(pad)
-	end
-
-	patterns = self:CleanupPatternList(patterns)
-
-	return patterns
-end
-
--- Returns pattern data from a player.
---
--- @param Player ply
+-- @param Vector pos
+-- @param Boolean isTarget
 -- @param Boolean wideField
 -- @return Table pattern
-function Star_Trek.Transporter:GetPatternFromPlayer(ply, wideField)
-	local pos = ply:GetPos()
+function Star_Trek.Transporter:GetPatternFromVector(pos, isTarget, wideField)
+	local pattern = {}
 
-	local pattern = {
-		Entities = {ply},
-		Pos = pos,
-	}
+	if not isTarget then -- Source
+		local range = 32
+		if wideField then
+			range = 64
+		end
 
-	if wideField then
-		local range = 64
 		local  lowerBounds = pos - Vector(range, range, 0)
 		local higherBounds = pos + Vector(range, range, range * 2)
 		for _, ent in pairs(ents.FindInBox(lowerBounds, higherBounds)) do
 			if Star_Trek.Transporter:CanBeamEntity(ent) then
-				table.insert(pattern.Entities, ent)
+				table.insert(pattern, {Ent = ent})
+			end
+		end
+	else -- Target
+		table.insert(pattern, {Pos = pos})
+
+		for i = 1, 6 do
+			local a = math.rad( ( i / 6 ) * -360 )
+			local p = pos + 32 * Vector(math.sin(a), math.cos(a), 0)
+			table.insert(pattern, {Pos = p})
+		end
+	end
+
+	return pattern
+end
+
+-- Returns a pattern for the given Sections
+--
+-- @param Entity pad
+-- @param Boolean isTarget
+-- @return Table pattern
+function Star_Trek.Transporter:GetPatternFromPad(pad, isTarget)
+	local pattern = {}
+
+	local pos = Star_Trek.Transporter:GetPadPosition(pad)
+
+	if not isTarget then -- Source
+		local  lowerBounds = pos - Vector(25, 25, 0)
+		local higherBounds = pos + Vector(25, 25, 120)
+		for _, foundEnt in pairs(ents.FindInBox(lowerBounds, higherBounds)) do
+			if Star_Trek.Transporter:CanBeamEntity(foundEnt) then
+				table.insert(pattern, {Pad = pad, Ent = foundEnt})
+			end
+		end
+	else -- Target
+		table.insert(pattern, {Pad = pad, Pos = pos})
+	end
+
+	return pattern
+end
+
+-- Returns a pattern for the given Sections
+--
+-- @param Number deck
+-- @param Table sectionIds
+-- @param Boolean isTarget
+-- @return Table pattern
+function Star_Trek.Transporter:GetPatternFromSections(deck, sectionIds, isTarget)
+	local pattern = {}
+
+	if not isTarget then -- Source
+		for _, sectionId in pairs(sectionIds) do
+			local entities = Star_Trek.Sections:GetInSection(deck, sectionId, function(objects, ent)
+				if not Star_Trek.Transporter:CanBeamEntity(ent) then
+					return true
+				end
+			end)
+			for i, foundEnt in pairs(entities) do
+				table.insert(pattern, {Ent = foundEnt})
+			end
+		end
+	else -- Target
+		for _, sectionId in pairs(sectionIds) do
+			local sectionData = Star_Trek.Sections:GetSection(deck, sectionId)
+			if not sectionData then
+				continue
+			end
+
+			for _, pos in pairs(sectionData.BeamLocations or {}) do
+				table.insert(pattern, {Pos = pos})
 			end
 		end
 	end
@@ -167,131 +183,81 @@ function Star_Trek.Transporter:GetPatternFromPlayer(ply, wideField)
 	return pattern
 end
 
--- Determines all of the pattern Data Tables for a given list of players.
+-- Returns a pattern for the given table, which either contains Sections or a Pad Entity.
 --
--- @param Table players
--- @return Table patterns
-function Star_Trek.Transporter:GetPatternsFromPlayers(players, wideField)
-	local patterns = {}
-
-	for i, ply in pairs(players) do
-		patterns[i] = self:GetPatternFromPlayer(ply, wideField)
-	end
-
-	patterns = self:CleanupPatternList(patterns)
-
-	return patterns
-end
-
--- Returns pattern data from a section.
---
--- @param Number deck
--- @param Number sectionId
--- @return Table pattern
-function Star_Trek.Transporter:GetPatternsFromArea(deck, sectionId)
-	local pattern = {
-		Entities = {},
-		Pos = nil,
-	}
-
-	local entities = Star_Trek.Sections:GetInSection(deck, sectionId, function(objects, ent)
-		if not Star_Trek.Transporter:CanBeamEntity(ent) then
-			return true
-		end
-	end)
-	for i, ent in pairs(entities) do
-		table.insert(pattern.Entities, ent)
-	end
-
-	return pattern
-end
-
--- Determines all of the pattern Data Tables for a given list of sections on a deck.
---
--- @param Number deck
--- @param Table sectionIds
--- @return Table pattern
-function Star_Trek.Transporter:GetPatternsFromAreas(deck, sectionIds)
-	local patterns = {}
-
-	for i, sectionId in pairs(sectionIds) do
-		patterns[i] = self:GetPatternsFromArea(deck, sectionId)
-	end
-
-	patterns = self:CleanupPatternList(patterns)
-
-	return patterns
-end
-
--- Returns pattern data from a location.
---
--- @param Vector pos
+-- @param Table data
+-- @param Boolean isTarget
 -- @param Boolean wideField
 -- @return Table pattern
-function Star_Trek.Transporter:GetPatternFromLocation(pos, wideField)
-	local pattern = {
-		Entities = {},
-		Pos = pos,
-	}
+function Star_Trek.Transporter:GetPatternFromTable(data, isTarget, wideField)
+	local deck = data.Deck
+	local sectionIds = data.SectionIds
 
-	local range = 32
-	if wideField then
-		range = 64
+	if isnumber(deck) and istable(sectionIds) then
+		return self:GetPatternFromSections(deck, sectionIds, isTarget)
 	end
 
-	local  lowerBounds = pos - Vector(range, range, 0)
-	local higherBounds = pos + Vector(range, range, range * 2)
-	for _, ent in pairs(ents.FindInBox(lowerBounds, higherBounds)) do
-		if Star_Trek.Transporter:CanBeamEntity(ent) then
-			table.insert(pattern.Entities, ent)
+	local pad = data.Pad
+	if IsEntity(pad) then
+		return self:GetPatternFromPad(pad, isTarget)
+	end
+
+	if isfunction(pad) then
+		return pad(isTarget, wideField)
+	end
+end
+
+-- Returns all patterns from the requested patternObjects.
+--
+-- @param Table patternObjects
+-- @param Boolean isTarget
+-- @param Boolean wideField
+-- @return Table patterns
+function Star_Trek.Transporter:GetPatterns(patternObjects, isTarget, wideField)
+	local patterns = {}
+
+	for _, patternObject in pairs(patternObjects) do
+		local pattern
+
+		if IsEntity(patternObject) then
+			pattern = self:GetPatternFromEntity(patternObject, isTarget, wideField)
+		elseif isvector(patternObject) then
+			pattern = self:GetPatternFromVector(patternObject, isTarget, wideField)
+		elseif istable(patternObject) then
+			pattern = self:GetPatternFromTable(patternObject, isTarget, wideField)
+		elseif isfunction(patternObject) then
+			pattern = patternObject(isTarget, wideField)
+		end
+
+		if not istable(pattern) then
+			continue
+		end
+
+		table.insert(patterns, pattern)
+	end
+
+	-- Unwrap the patterns into a single table and check for doubles / child entities.
+	local unWrappedPatterns = {}
+	local patternEntities = {}
+	for _, pattern in pairs(patterns) do
+		for _, singlePattern in pairs(pattern) do
+			local ent = singlePattern.Ent
+			if IsEntity(ent) and IsValid(ent) then
+				local parent = ent:GetParent()
+				if IsValid(parent) then
+					continue
+				end
+
+				if table.HasValue(patternEntities, ent) then
+					continue
+				else
+					table.insert(patternEntities, ent)
+				end
+			end
+
+			table.insert(unWrappedPatterns, singlePattern)
 		end
 	end
 
-	return pattern
-end
-
--- Determines all of the pattern Data Tables for a given list of locations.
---
--- @param Table positions
--- @return Table patterns
-function Star_Trek.Transporter:GetPatternsFromLocations(positions, wideField)
-	local patterns = {}
-
-	for i, pos in pairs(positions) do
-		patterns[i] = self:GetPatternFromLocation(pos, wideField)
-	end
-
-	patterns = self:CleanupPatternList(patterns)
-
-	return patterns
-end
-
--- Returns pattern buffer data containing the given entity.
---
--- @param Entity ent
--- @return Table pattern
-function Star_Trek.Transporter:GetPatternFromBuffer(ent)
-	local pattern = {
-		Entities = {ent},
-		Pos = nil,
-	}
-
-	return pattern
-end
-
--- Determines all of the pattern Data Tables for a given list of entities.
---
--- @param Table entities
--- @return Table patterns
-function Star_Trek.Transporter:GetPatternsFromBuffers(entities)
-	local patterns = {}
-
-	for i, ent in pairs(entities) do
-		patterns[i] = self:GetPatternFromBuffer(ent)
-	end
-
-	patterns = self:CleanupPatternList(patterns)
-
-	patterns.IsBuffer = true
-	return patterns
+	return unWrappedPatterns
 end

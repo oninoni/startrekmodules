@@ -35,6 +35,42 @@ sound.Add({
 })
 
 sound.Add({
+	name = "star_trek.klingon_transporter",
+	channel = CHAN_AUTO,
+	volume = .9,
+	level = 70,
+	pitch = 100,
+	sound = "oninoni/startrek/transporter/klingon_transporter.wav"
+})
+
+sound.Add({
+	name = "star_trek.cardassian_transporter",
+	channel = CHAN_AUTO,
+	volume = .8,
+	level = 70,
+	pitch = 100,
+	sound = "oninoni/startrek/transporter/cardassian_transporter.wav"
+})
+
+sound.Add({
+	name = "star_trek.romulan_transporter",
+	channel = CHAN_AUTO,
+	volume = .8,
+	level = 70,
+	pitch = 100,
+	sound = "oninoni/startrek/transporter/romulan_transporter.wav"
+})
+
+sound.Add({
+	name = "star_trek.borg_transporter",
+	channel = CHAN_AUTO,
+	volume = .8,
+	level = 70,
+	pitch = 100,
+	sound = "oninoni/startrek/transporter/borg_transporter.wav"
+})
+
+sound.Add({
 	name = "star_trek.tng_replicator",
 	channel = CHAN_AUTO,
 	volume = .8,

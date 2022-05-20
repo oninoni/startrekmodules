@@ -32,7 +32,7 @@ function Star_Trek.Doors:GetPortalDoor(door)
 
 		local targetEntities = ents.FindInSphere(targetPortal:GetPos(), 8)
 		for _, partnerDoor in pairs(targetEntities) do
-			if partnerDoor:GetClass() == "prop_dynamic" and self.ModelNames[partnerDoor:GetModel()] then
+			if self:IsDoor(partnerDoor) then
 				return partnerDoor
 			end
 		end
@@ -119,7 +119,7 @@ end)
 -- Open door when pressing use on them.
 hook.Add("KeyPress", "Star_Trek.OpenDoors", function(ply, key)
 	local traceLine = util.RealTraceLine or util.TraceLine
-	
+
 	if key == IN_USE then
 		local trace = traceLine({
 			start = ply:EyePos(),
@@ -138,12 +138,16 @@ hook.Add("KeyPress", "Star_Trek.OpenDoors", function(ply, key)
 	end
 end)
 
-local function checkPlayers(ent)	
+local function checkPlayers(ent)
 	local traceLine = util.RealTraceLine or util.TraceLine
 
 	local entities = ents.FindInSphere(ent:GetPos(), 64)
 	for _, nearbyEnt in pairs(entities) do
-		if nearbyEnt:IsNPC() then 
+		if nearbyEnt:GetMoveType() == MOVETYPE_NOCLIP then
+			continue
+		end
+
+		if nearbyEnt:IsNPC() then
 			return true
 		end
 
@@ -156,7 +160,6 @@ local function checkPlayers(ent)
 			if distance <= 32 or ent.Open then
 				return true
 			end
-		
 
 			local trace = traceLine({
 				start = nearbyEnt:EyePos(),
@@ -214,7 +217,7 @@ local setupDoors = function()
 	Star_Trek.Doors.Doors = {}
 
 	for _, ent in pairs(ents.GetAll()) do
-		if ent:GetClass() == "prop_dynamic" and Star_Trek.Doors.ModelNames[ent:GetModel()] then
+		if Star_Trek.Doors:IsDoor(ent) then
 			ent.DoorLastSequenceStart = CurTime()
 
 			Star_Trek.Doors.Doors[ent] = true

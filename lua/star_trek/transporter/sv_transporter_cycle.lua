@@ -13,261 +13,204 @@
 ---------------------------------------
 
 ---------------------------------------
---     Transporter Cycle | Server    --
+--        Transporter | Server       --
 ---------------------------------------
 
-Star_Trek.Transporter.ActiveTransports = Star_Trek.Transporter.ActiveTransports or {}
+util.AddNetworkString("Star_Trek.Transporter.TransportObject")
+function Star_Trek.Transporter:TransportObject(cycleType, ent, targetPos, skipDemat, skipRemat, callback)
+	hook.Run("Star_Trek.Transporter.PreTransportObject", cycleType, ent, targetPos, skipDemat, skipRemat, callback)
 
-util.AddNetworkString("Star_Trek.Transporter.TriggerEffect")
-
--- Applies the serverside effects to the entity depending on the current state of the transport cycle.
---
--- @param Table transportData
--- @param Entity ent
-function Star_Trek.Transporter:TriggerEffect(transportData, ent)
-	local mode = transportData.State
-
-	if mode == 1 then
-		transportData.OldRenderMode = ent:GetRenderMode()
-		ent:SetRenderMode(RENDERMODE_TRANSTEXTURE)
-
-		transportData.OldCollisionGroup = ent:GetCollisionGroup()
-		ent:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-
-		if ent:IsPlayer() then
-			ent:Freeze(true)
-		else
-			local phys = ent:GetPhysicsObject()
-			if IsValid(phys) then
-				transportData.OldMotionEnabled = phys:IsMotionEnabled()
-				phys:EnableMotion(false)
-			end
-		end
-
-		local lowerBounds = ent:GetCollisionBounds()
-		transportData.ZOffset = -lowerBounds.Z + 2 -- Offset to prevent stucking in floor
-
-		ent:DrawShadow(false)
-
-		for _, child in pairs(ent:GetChildren()) do
-			child.OldRenderMode = child:GetRenderMode()
-			child:SetRenderMode(RENDERMODE_TRANSTEXTURE)
-
-			child.OldColor = child:GetColor()
-			child:SetColor(Color(255, 255, 255, 0))
-		end
-
-	elseif mode == 2 then
-		ent:SetRenderMode(RENDERMODE_NONE)
-		
-		ent:SetCollisionGroup(transportData.OldCollisionGroup)
-
-		transportData.OldMoveType = ent:GetMoveType()
-		ent:SetMoveType(MOVETYPE_NONE)
-
-		transportData.OldColor = ent:GetColor()
-		ent:SetColor(ColorAlpha(transportData.OldColor, 0))
-	elseif mode == 3 then
-		ent:SetRenderMode(RENDERMODE_TRANSTEXTURE)
-		
-		ent:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-
-		ent:SetPos((transportData.TargetPos or ent:GetPos()) + Vector(0, 0, transportData.ZOffset))
-	else
-		if transportData.OldColor ~= nil then
-			ent:SetColor(transportData.OldColor)
-		end
-
-		if transportData.OldRenderMode ~= nil then
-			ent:SetRenderMode(transportData.OldRenderMode)
-		end
-
-		if transportData.OldCollisionGroup ~= nil then
-			ent:SetCollisionGroup(transportData.OldCollisionGroup)
-		end
-
-		if transportData.OldMoveType ~= nil then
-			ent:SetMoveType(transportData.OldMoveType)
-		end
-
-		-- Make sure Position is set properly.
-		-- Looks strange but is needed. (Probably a bug with setting the Move Type back)
-		ent:SetPos(ent:GetPos())
-
-		if ent:IsPlayer() then
-			ent:Freeze(false)
-		else
-			local phys = ent:GetPhysicsObject()
-			if IsValid(phys) then
-				if transportData.OldMotionEnabled ~= nil then
-					phys:EnableMotion(transportData.OldMotionEnabled)
-				end
-
-				phys:Wake()
-			end
-		end
-
-		ent:DrawShadow(true)
-
-		for _, child in pairs(ent:GetChildren()) do
-			if child.OldRenderMode ~= nil then
-				child:SetRenderMode(child.OldRenderMode)
-			end
-
-			child.OldRenderMode = nil
-
-			child:SetColor(child.OldColor)
-			child.OldColor = nil
-		end
-
-		ent:Activate()
+	if not IsEntity(ent) or not IsValid(ent) then
+		return false, "Invalid Object"
 	end
+
+	local moveType = ent:GetMoveType()
+	if moveType == MOVETYPE_NOCLIP then
+		return false, "Object is untouchable."
+	end
+
+	local bufferPos = self:GetBufferPos()
+	if not isvector(targetPos) then
+		targetPos = bufferPos
+		skipRemat = true
+	end
+
+	local success, transporterCycle = self:CreateCycle(cycleType, ent, targetPos, bufferPos, skipDemat, skipRemat)
+	if not success then
+		return false, transporterCycle
+	end
+
+	transporterCycle.Callback = callback
+	if isfunction(callback) then
+		callback(transporterCycle)
+	end
+
+	-- Offset to prevent stucking in floor
+	local lowerBounds = ent:GetCollisionBounds()
+	transporterCycle.ZOffset = -lowerBounds.Z + 2 -- TODO: Check lower value
+
+	net.Start("Star_Trek.Transporter.TransportObject")
+		net.WriteString(cycleType)
+		net.WriteEntity(ent)
+		net.WriteVector(targetPos)
+		net.WriteVector(bufferPos)
+		net.WriteBool(skipDemat)
+	net.Broadcast()
+
+	return true, transporterCycle
 end
 
--- Sets up and executes the clientside transporter effect.
---
--- @param Entity ent
--- @param Boolean remat
--- @param? Boolean replicator
-function Star_Trek.Transporter:BroadcastEffect(ent, remat, replicator, targetPos)
-	if not IsValid(ent) then return end
-
-	targetPos = targetPos or Vector()
-
-	local oldCollisionGroup = ent:GetCollisionGroup()
-	ent:SetCollisionGroup(COLLISION_GROUP_NONE)
-
-	ent:SetCollisionGroup(oldCollisionGroup)
-
-	if replicator then
-		sound.Play("star_trek.tng_replicator", ent:GetPos(), 10, 100, 0.5)
-		ent:EmitSound("star_trek.tng_replicator", 10, 100, 0.5)
-	else
-		if remat then
-			sound.Play("star_trek.voy_beam_down", ent:GetPos(), 10, 100, 0.5)
-			ent:EmitSound("star_trek.voy_beam_down", 10, 100, 0.5)
-		else
-			sound.Play("star_trek.voy_beam_up"  , ent:GetPos(), 10, 100, 0.5)
-			ent:EmitSound("star_trek.voy_beam_up", 10, 100, 0.5)
-		end
+function Star_Trek.Transporter:EndTransporterCycle(transporterCycle)
+	if not istable(transporterCycle) then
+		return false, "No Transporter Cycle given!"
 	end
 
-	timer.Simple(0.5, function()
-		net.Start("Star_Trek.Transporter.TriggerEffect")
-			net.WriteEntity(ent)
-			net.WriteBool(remat)
-			net.WriteBool(replicator)
-			net.WriteVector(targetPos)
-		net.Broadcast()
-	end)
+	transporterCycle:End()
+
+	net.Start("Star_Trek.Transporter.End")
+		net.WriteEntity(transporterCycle.Entity)
+		net.WriteInt(transporterCycle.State, 32)
+	net.Broadcast()
+
+	hook.Run("Star_Trek.Transporter.EndTransporterCycle", transporterCycle)
+
+	return true
 end
 
--- Beaming a given object from point a to b.
---
--- @param Entity ent
--- @param Vector targetPos
--- @param? Entity sourcePad
--- @param? Entity targetPad
--- @param? Boolean toBuffer
--- @param? Boolean replicator
-function Star_Trek.Transporter:BeamObject(ent, targetPos, sourcePad, targetPad, toBuffer, replicator)
-	local transportData = {
-		Object = ent,
-		TargetPos = targetPos or ent:GetPos(),
-		StateTime = CurTime(),
-		State = 1,
-		SourcePad = sourcePad,
-		TargetPad = targetPad,
-		ToBuffer = toBuffer,
-		Replicator = replicator,
-	}
+util.AddNetworkString("Star_Trek.Transporter.ApplyState")
+util.AddNetworkString("Star_Trek.Transporter.End")
 
-	for _, activeTransportData in pairs(self.ActiveTransports) do
-		if activeTransportData.Object == ent then return end
-	end
-
-	if IsValid(sourcePad) then
-		sourcePad:SetSkin(1)
-	end
-	if ent.BufferData then
-		transportData = ent.BufferData
-		ent.BufferData = nil
-
-		transportData.TargetPos = targetPos or ent:GetPos()
-		transportData.TargetPad = targetPad
-		transportData.ToBuffer = false
-	else
-		self:TriggerEffect(transportData, ent)
-		self:BroadcastEffect(ent, false, replicator, Star_Trek.Transporter.Buffer.Pos)
-	end
-
-	table.insert(self.ActiveTransports, transportData)
-end
-
-hook.Add("Think", "Star_Trek.Tranporter.Think", function()
+hook.Add("Think", "Star_Trek.Transporter.Think", function()
 	local toBeRemoved = {}
-	for _, transportData in pairs(Star_Trek.Transporter.ActiveTransports) do
-		local curTime = CurTime()
+	for _, transporterCycle in pairs(Star_Trek.Transporter.ActiveCycles) do
+		local ent = transporterCycle.Entity
+		if not IsValid(ent) then
+			table.insert(toBeRemoved, transporterCycle)
+			continue
+		end
 
-		local stateTime = transportData.StateTime
-		local state = transportData.State
-		local ent = transportData.Object
+		local stateData = transporterCycle:GetStateData()
+		if not stateData then continue end
 
-		if IsValid(ent) then
-			if state == 1 and (stateTime + 3) < curTime then
-				transportData.State = 2
+		if CurTime() > transporterCycle.StateTime + stateData.Duration then
+			local newState = transporterCycle.State + 1
 
-				ent:SetPos(Star_Trek.Transporter.Buffer.Pos)
+			local success = transporterCycle:ApplyState(newState)
+			if not success then
+				Star_Trek.Transporter:EndTransporterCycle(transporterCycle)
 
-				-- Object is now dematerialized and moved to the buffer!
-				Star_Trek.Transporter:TriggerEffect(transportData, ent)
-
-				transportData.StateTime = curTime
-
-				if IsValid(transportData.SourcePad) then
-					transportData.SourcePad:SetSkin(0)
-				end
-
-				if transportData.Replicator then
-					table.insert(toBeRemoved, transportData)
-				end
-
-				if transportData.ToBuffer then
-					transportData.Object.BufferData = transportData
-
-					table.insert(toBeRemoved, transportData)
-				end
-			elseif state == 2 and (stateTime + 4) < curTime then
-				transportData.State = 3
-
-				-- Object will now be removed from the buffer.
-				Star_Trek.Transporter:TriggerEffect(transportData, ent)
-
-				Star_Trek.Transporter:BroadcastEffect(ent, true, transportData.Replicator, Star_Trek.Transporter.Buffer.Pos)
-
-				transportData.StateTime = curTime
-
-				if IsValid(transportData.TargetPad) then
-					transportData.TargetPad:SetSkin(1)
-				end
-			elseif state == 3 and (stateTime + 3) < curTime then
-				transportData.State = 4
-
-				-- Object is now visible again.
-				Star_Trek.Transporter:TriggerEffect(transportData, ent)
-
-				if IsValid(transportData.TargetPad) then
-					transportData.TargetPad:SetSkin(0)
-				end
-
-				table.insert(toBeRemoved, transportData)
+				table.insert(toBeRemoved, transporterCycle)
 			end
-		else
-			table.insert(toBeRemoved, transportData)
+
+			local callback = transporterCycle.Callback
+			if isfunction(callback) then
+				callback(transporterCycle)
+			end
+
+			net.Start("Star_Trek.Transporter.ApplyState")
+				net.WriteEntity(ent)
+				net.WriteInt(newState, 8)
+			net.Broadcast()
 		end
 	end
 
-	for _, transportData in pairs(toBeRemoved) do
-		table.RemoveByValue(Star_Trek.Transporter.ActiveTransports, transportData)
+	for _, transporterCycle in pairs(toBeRemoved) do
+		table.RemoveByValue(Star_Trek.Transporter.ActiveCycles, transporterCycle)
+	end
+end)
+
+-- TODO
+function Star_Trek.Transporter:GetBufferPos()
+	return Star_Trek.Transporter.Buffer.Pos
+end
+
+-- Load Objects in Buffer to the client.
+hook.Add("SetupPlayerVisibility", "Star_Trek.Transporter.PVS", function(ply, viewEntity)
+	local bufferPos = Star_Trek.Transporter:GetBufferPos()
+	if isvector(bufferPos) then
+		AddOriginToPVS(bufferPos)
+	end
+end)
+
+-- Prevent Item Pickup
+hook.Add("PlayerCanPickupItem", "Star_Trek.Transporter.PreventPickup", function(ply, ent)
+	local transporterCycle = Star_Trek.Transporter.ActiveCycles[ent]
+	if istable(transporterCycle) then
+		return false
+	end
+end)
+
+-- Prevent Weapon Pickup
+hook.Add("PlayerCanPickupWeapon", "Star_Trek.Transporter.PreventPickup", function(ply, ent)
+	local transporterCycle = Star_Trek.Transporter.ActiveCycles[ent]
+	if istable(transporterCycle) then
+		return false
+	end
+end)
+
+function Star_Trek.Transporter:CleanUp(ent, forceRemat)
+	local transporterCycle = Star_Trek.Transporter.ActiveCycles[ent]
+	if istable(transporterCycle) then
+		Star_Trek.Transporter:EndTransporterCycle(transporterCycle)
+		Star_Trek.Transporter.ActiveCycles[ent] = nil
+	end
+
+	if istable(Star_Trek.Transporter.Buffer)
+	and istable(Star_Trek.Transporter.Buffer.Entities)
+	and table.HasValue(Star_Trek.Transporter.Buffer.Entities, ent) then
+		table.RemoveByValue(Star_Trek.Transporter.Buffer.Entities, ent)
+		ent.BufferQuality = nil
+
+		if forceRemat then
+			Star_Trek.Transporter:TransportObject("base", ent, ent:GetPos(), true, false)
+		end
+	end
+end
+
+hook.Add("PlayerDeath", "Star_Trek.Transporter.BufferReset", function(ply)
+	Star_Trek.Transporter:CleanUp(ply, true)
+end)
+
+hook.Add("PlayerSpawn", "Star_Trek.Transporter.BufferReset", function(ply)
+	Star_Trek.Transporter:CleanUp(ply)
+end)
+
+hook.Add("PlayerDisconnected", "Star_Trek.Transporter.DisconnectReset", function(ply)
+	Star_Trek.Transporter:CleanUp(ply)
+end)
+
+hook.Add("EntityRemoved", "Star_Trek.Transporter.RemoveReset", function(ent)
+	Star_Trek.Transporter:CleanUp(ent)
+end)
+
+timer.Create("Star_Trek.Transporter.BufferThink", 1, 0, function()
+	local removeFromBuffer = {}
+
+	for _, ent in pairs(Star_Trek.Transporter.Buffer.Entities) do
+		if ent.BufferQuality <= 0 then
+			table.insert(removeFromBuffer, ent)
+
+			if ent:IsPlayer() then
+				Star_Trek.Transporter:BeamObject(ent, Star_Trek.Transporter.Buffer.Pos, nil, nil)
+				ent:Kill()
+			else
+				SafeRemoveEntity(ent)
+			end
+		end
+
+		ent.BufferQuality = ent.BufferQuality - 1
+
+		if ent.BufferQuality < 100 then
+			local maxHealth = ent:GetMaxHealth()
+			if maxHealth > 0 then
+				local health = math.min(ent:Health(), maxHealth * (ent.BufferQuality / 100))
+				ent:SetHealth(health)
+			end
+		end
+	end
+
+	for _, ent in pairs(removeFromBuffer) do
+		table.RemoveByValue(Star_Trek.Transporter.Buffer.Entities, ent)
+		ent.BufferQuality = nil
 	end
 end)

@@ -113,11 +113,29 @@ function Star_Trek.LCARS:UpdateWindow(ent, windowId, windowData)
 	windowData = interfaceData.Windows[windowId]
 
 	Star_Trek.LCARS:ApplyWindow(interfaceData, windowId, windowData)
-	local clientWindowData = self:GetClientWindowData(windowData)
+	local clientWindowData = windowData:GetClientData()
 
+	-- Spam Protection
+	local timerName = "Star_Trek.LCARS.Update." .. ent:EntIndex() .. "." .. windowId
+	if timer.Exists(timerName) then
+		windowData.NeedsUpdate = true
+		return
+	end
+
+	-- Networking
 	net.Start("Star_Trek.LCARS.Update")
 		net.WriteInt(ent:EntIndex(), 32)
 		net.WriteInt(windowId, 32)
-		net.WriteTable(clientWindowData)
+		Star_Trek.LCARS:WriteNetTable(clientWindowData)
 	net.Broadcast()
+
+	-- Recursive Delayed Spam Protection
+	timer.Create(timerName, 0, 1, function()
+		if windowData.NeedsUpdate then
+			windowData.NeedsUpdate = false
+
+			timer.Remove(timerName)
+			self:UpdateWindow(ent, windowId, windowData)
+		end
+	end)
 end

@@ -57,6 +57,7 @@ function Star_Trek.LCARS:OpenInterface(ply, triggerEntity, interfaceName, ...)
 
 	local interfaceData = {
 		Ent 			= ent,
+		Class 			= interfaceName,
 		InterfacePos	= interfacePos,
 		InterfaceAngle	= interfaceAngle,
 	}
@@ -81,11 +82,13 @@ function Star_Trek.LCARS:OpenInterface(ply, triggerEntity, interfaceName, ...)
 	interfaceData.OffsetAng = offsetAng
 	Star_Trek.LCARS:ApplyWindows(interfaceData)
 
+	hook.Run("Star_Trek.LCARS.OpenInterface", interfaceData, ply)
+
 	local clientInterfaceData = Star_Trek.LCARS:GetClientInterfaceData(interfaceData)
 
 	net.Start("Star_Trek.LCARS.Open")
 		net.WriteInt(ent:EntIndex(), 32)
-		net.WriteTable(clientInterfaceData)
+		Star_Trek.LCARS:WriteNetTable(clientInterfaceData)
 	net.Broadcast()
 
 	self.ActiveInterfaces[ent] = interfaceData
@@ -103,7 +106,7 @@ net.Receive("Star_Trek.LCARS.Sync", function(len, ply)
 
 		net.Start("Star_Trek.LCARS.Open")
 			net.WriteInt(ent:EntIndex(), 32)
-			net.WriteTable(clientInterfaceData)
+			Star_Trek.LCARS:WriteNetTable(clientInterfaceData)
 		net.Send(ply)
 	end
 end)
@@ -122,6 +125,8 @@ util.AddNetworkString("Star_Trek.LCARS.Close")
 -- @return? String error
 function Star_Trek.LCARS:CloseInterface(ent, callback)
 	if not IsValid(ent) then
+		Star_Trek.LCARS.ActiveInterfaces[ent] = nil
+
 		return false, "Invalid Interface Entity!"
 	end
 
@@ -131,6 +136,8 @@ function Star_Trek.LCARS:CloseInterface(ent, callback)
 
 	local interfaceData = Star_Trek.LCARS.ActiveInterfaces[ent]
 	if interfaceData then
+		hook.Run("Star_Trek.LCARS.PreCloseInterface", interfaceData)
+
 		net.Start("Star_Trek.LCARS.Close")
 			net.WriteInt(ent:EntIndex(), 32)
 		net.Broadcast()
@@ -163,6 +170,10 @@ function Star_Trek.LCARS:CloseInterface(ent, callback)
 
 	return false
 end
+
+hook.Add("EntityRemoved", "Star_Trek.LCARS.RemoveEntity", function(ent)
+	Star_Trek.LCARS:CloseInterface(ent)
+end)
 
 -- Capture closeLcars Input
 hook.Add("AcceptInput", "Star_Trek.LCARS.Close", function(ent, input, activator, caller, value)
@@ -234,7 +245,9 @@ net.Receive("Star_Trek.LCARS.Pressed", function(len, ply)
 		return
 	end
 
-	local shouldUpdate = windowData:OnPress(interfaceData, ent, buttonId, windowData.Callback)
+	hook.Run("Star_Trek.LCARS.PressedInterface", interfaceData, ply)
+
+	local shouldUpdate = windowData:OnPress(interfaceData, ply, buttonId, windowData.Callback)
 	if shouldUpdate then
 		windowData:Update()
 	end

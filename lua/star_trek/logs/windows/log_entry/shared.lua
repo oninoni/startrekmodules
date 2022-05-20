@@ -13,10 +13,11 @@
 ---------------------------------------
 
 ---------------------------------------
---   Transporter Particles | Shared  --
+--      LCARS Log Entry | Shared     --
 ---------------------------------------
 
-game.AddParticles( "particles/voyager.pcf" )
+if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
+local SELF = WINDOW
 
-PrecacheParticleSystem("beam_out")
-PrecacheParticleSystem("beam_in")
+-- Determines the parent windows name for this one. (Like Deriving Classes)
+SELF.BaseWindow = "text_entry"

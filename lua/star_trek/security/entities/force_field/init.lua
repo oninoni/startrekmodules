@@ -20,10 +20,6 @@ AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 include("shared.lua")
 
-ENT.Delay = 1
-ENT.Damage = 5
-ENT.Force = 1
-
 function ENT:Initialize()
 	self:SetPersistent(true)
 	self:SetRenderMode(RENDERGROUP_BOTH)
@@ -51,7 +47,7 @@ function ENT:TouchSound()
 end
 
 function ENT:Touch(ent)
-	if not ent.LastTouch or ent.LastTouch + self.Delay < CurTime() then
+	if not ent.LastTouch or ent.LastTouch + Star_Trek.Security.ForceFieldDelay < CurTime() then
 		ent.LastTouch = CurTime()
 
 		local normal = ent:GetPos() - self:GetPos()
@@ -65,9 +61,9 @@ function ENT:Touch(ent)
 			dmg:SetAttacker(self)
 			dmg:SetInflictor(self)
 
-			dmg:SetDamage(self.Damage)
+			dmg:SetDamage(Star_Trek.Security.ForceFieldDamage)
 			dmg:SetDamageType(DMG_SHOCK)
-			dmg:SetDamageForce(normal * phys:GetMass() * self.Force)
+			dmg:SetDamageForce(normal * phys:GetMass() * Star_Trek.Security.ForceFieldForce)
 
 			ent:TakeDamageInfo(dmg)
 		end

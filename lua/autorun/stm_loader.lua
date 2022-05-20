@@ -16,24 +16,6 @@
 --         Star Trek | Loader        --
 ---------------------------------------
 
---[[
--- Some Code to quickly close and re-open lcars if changes to their keyvalues are made
-hook.Add("Star_Trek.ChangedKeyValue", "Testing", function(ent, key, value)
-
-	if not IsValid(ent) then return end
-	
-    ent:Fire("CloseLcars")
-
-    timer.Simple(1, function()
-		if not IsValid(ent) then return end
-        ent:Fire("Press")
-    end)
-end)
-]]
-
--- TODO: Rework all "if not success", to display the Error properly. (Mostly Net, Hook and Clientside Errors)
--- TODO: Check if all errors are caught.
-
 Star_Trek = Star_Trek or {}
 Star_Trek.Modules = Star_Trek.Modules or {}
 Star_Trek.LoadedModules = Star_Trek.LoadedModules or {}
@@ -116,6 +98,40 @@ function Star_Trek:LoadModule(name)
 		Star_Trek:Message("Loaded Weapon \"" .. weaponName .. "\"")
 	end
 
+	local stoolsDirectory = moduleDirectory .. "stools/"
+	local _, stoolsDirectories = file.Find(stoolsDirectory .. "*", "LUA")
+	for _, stoolName in pairs(stoolsDirectories) do
+		local stoolDirectory = stoolsDirectory .. stoolName .. "/"
+
+		local oldTOOL = TOOL
+
+		local ToolObj = getmetatable(weapons.Get("gmod_tool").Tool["remover"])
+		TOOL = ToolObj:Create()
+		TOOL.Mode = stoolName
+
+		if SERVER then
+			AddCSLuaFile(stoolDirectory .. "shared.lua")
+
+			include(stoolDirectory .. "shared.lua")
+		end
+
+		if CLIENT then
+			include(stoolDirectory .. "shared.lua")
+		end
+
+		TOOL:CreateConVars()
+
+		weapons.GetStored("gmod_tool").Tool[stoolName] = TOOL
+
+		TOOL = oldTOOL
+	end
+
+	if CLIENT then
+		timer.Create("Star_Trek.ReloadSpawnmenu", 1, 1, function()
+			RunConsoleCommand("spawnmenu_reload")
+		end)
+	end
+
 	hook.Run("Star_Trek.ModuleLoaded", name, moduleDirectory)
 
 	Star_Trek.LoadedModules[name] = true
@@ -162,7 +178,7 @@ function Star_Trek:LoadAllModules()
 			self:LoadModule(moduleName)
 		end
 	end
-	
+
 	hook.Run("Star_Trek.ModulesLoaded")
 
 	self.LoadingActive = nil
@@ -171,3 +187,18 @@ end
 hook.Add("PostGamemodeLoaded", "Star_Trek.Load", function()
 	Star_Trek:LoadAllModules()
 end)
+
+--[[
+-- Some Code to quickly close and re-open lcars if changes to their keyvalues are made
+hook.Add("Star_Trek.ChangedKeyValue", "Testing", function(ent, key, value)
+
+	if not IsValid(ent) then return end
+	
+    ent:Fire("CloseLcars")
+
+    timer.Simple(1, function()
+		if not IsValid(ent) then return end
+        ent:Fire("Press")
+    end)
+end)
+]]

@@ -66,107 +66,88 @@ function SELF:GetPatternData(menuTable, wideField)
 	local modeName = self:GetMode(menuTable)
 	local mainWindow = menuTable.MainWindow
 
+	-- Transporter Pad: 			Table Wrapped Pad Entity
+	-- Transporter Rooms: 			Table Wrapped Pad Entity
+	-- Crew: 						Entities
+	-- Buffer: 						Entities (Force wideField = False)
+	-- Externals: 					Vectors
+	-- Sections: 					Tables (Deck + SectionId)
+	-- Custom: 						Callback Functions
+
+	local patternObjects = {}
 	if modeName == "Transporter Pad" then
-		local pads = {}
 		for _, pad in pairs(mainWindow.Pads) do
 			if pad.Selected then
-				table.insert(pads, pad.Data)
+				local padTable = {Pad = pad.Data}
+				table.insert(patternObjects, padTable)
 			end
 		end
-
-		return Star_Trek.Transporter:GetPatternsFromPads(pads)
-	elseif modeName == "Lifeforms" then
-		local players = {}
+	elseif modeName == "Transporter Rooms"  then
 		for _, button in pairs(mainWindow.Buttons) do
 			if button.Selected then
-				table.insert(players, button.Data)
+				for _, padEntity in pairs(button.Data) do
+					local padTable = {Pad = padEntity}
+					table.insert(patternObjects, padTable)
+				end
 			end
 		end
-
-		return Star_Trek.Transporter:GetPatternsFromPlayers(players, wideField)
-	elseif modeName == "Sections" then
-		local deck = mainWindow.Selected
-		if menuTable.Target then
-			local positions = {}
-
-			for _, button in pairs(mainWindow.Buttons or {}) do
-				if not button.Selected then
-					continue
-				end
-
-				local sectionData = Star_Trek.Sections:GetSection(deck, button.Data)
-				if not sectionData then
-					continue
-				end
-
-				for _, pos in pairs(sectionData.BeamLocations or {}) do
-					table.insert(positions, pos)
-				end
+	elseif modeName == "Crew" then
+		for _, button in pairs(mainWindow.Buttons) do
+			if button.Selected then
+				table.insert(patternObjects, button.Data)
 			end
-
-			return Star_Trek.Transporter:GetPatternsFromLocations(positions, wideField)
-		else
-			local sectionIds = {}
-
-			for buttonId, buttonData in pairs(mainWindow.Buttons) do
-				if buttonData.Selected then
-					table.insert(sectionIds, buttonData.Data)
-				end
-			end
-
-			return Star_Trek.Transporter:GetPatternsFromAreas(deck, sectionIds)
 		end
 	elseif modeName == "Buffer" then
-		local entities = {}
+		wideField = false -- Forcing WideField False, to only ever take one person out of buffer.
+
 		for _, button in pairs(mainWindow.Buttons) do
 			if button.Selected then
-				table.insert(entities, button.Data)
+				table.insert(patternObjects, button.Data)
+			end
+		end
+	elseif modeName == "Sections" then
+		local patternObject = {
+			Deck = mainWindow.Selected,
+			SectionIds = {}
+		}
+
+		for buttonId, buttonData in pairs(mainWindow.Buttons) do
+			if buttonData.Selected then
+				table.insert(patternObject.SectionIds, buttonData.Data)
 			end
 		end
 
-		return Star_Trek.Transporter:GetPatternsFromBuffers(entities)
-	elseif modeName == "Other Pads" or modeName == "Transporter Pads"  then
-		local pads = {}
-		for _, button in pairs(mainWindow.Buttons) do
-			if button.Selected then
-				for _, pad in pairs(button.Data) do
-					table.insert(pads, pad)
-				end
-			end
-		end
-
-		return Star_Trek.Transporter:GetPatternsFromPads(pads)
-	elseif modeName == "External" then
-		local positions = {}
+		table.insert(patternObjects, patternObject)
+	elseif modeName == "External Sensors" then
 		for _, button in pairs(mainWindow.Buttons) do
 			if button.Selected then
 				local pos = button.Data
-				table.insert(positions, pos)
-				
-				for i = 1, 6 do
-					local a = math.rad( ( i / 6 ) * -360 )
-
-					table.insert(positions, pos + 32 * Vector(math.sin(a), math.cos(a), 0))
-				end
+				table.insert(patternObjects, pos)
 			end
 		end
-
-		return Star_Trek.Transporter:GetPatternsFromLocations(positions, wideField)
 	end
+
+	return Star_Trek.Transporter:GetPatterns(patternObjects, menuTable.Target, wideField)
 end
+
+-- Prevent Noclipped players from being listed.
+hook.Add("Star_Trek.Transporter.CheckLifeforms", "Star_Trek.Transporter.PreventAdmins", function(ply)
+	if ply:GetMoveType() == MOVETYPE_NOCLIP then
+		return false
+	end
+end)
 
 -- Engage a transporter system with the given menu tables and wide field.
 --
+-- @param Player ply
 -- @param Table sourceMenuTable
 -- @param Table targetMenuTable
 -- @param? Boolean wideField
 -- @param? Function callback
-function SELF:Energize(sourceMenuTable, targetMenuTable, wideField, textWindow, callback)
+function SELF:Energize(ply, sourceMenuTable, targetMenuTable, wideField, callback)
 	local sourcePatterns = self:GetPatternData(sourceMenuTable, wideField)
 	local targetPatterns = self:GetPatternData(targetMenuTable, false)
-	Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPatterns, textWindow)
-
-	--ent:EmitSound("star_trek.lcars_transporter_lock")
+	Star_Trek.Transporter:ActivateTransporter(self.Ent, ply, sourcePatterns, targetPatterns, self.CycleClass, self.NoBuffer)
 
 	if isfunction(callback) then
 		callback(sourcePatterns, targetPatterns)
@@ -189,9 +170,10 @@ end
 
 -- Trigger a Transporter.
 --
+-- @param Player ply
 -- @param Table sourceMenuTable
 -- @param Table targetMenuTable
-function SELF:TriggerTransporter(sourceMenuTable, targetMenuTable, textWindow)
+function SELF:TriggerTransporter(ply, sourceMenuTable, targetMenuTable)
 	local wideField = false
 	if isfunction(sourceMenuTable.GetUtilButtonState) then
 		wideField = sourceMenuTable:GetUtilButtonState()
@@ -204,12 +186,12 @@ function SELF:TriggerTransporter(sourceMenuTable, targetMenuTable, textWindow)
 
 	if delayDematerialisation then
 		timer.Simple(DEMAT_DELAY, function()
-			self:Energize(sourceMenuTable, targetMenuTable, wideField, textWindow, function(sourcePatterns, targetPatterns)
+			self:Energize(ply, sourceMenuTable, targetMenuTable, wideField, function(sourcePatterns, targetPatterns)
 				if sourcePatterns.IsBuffer then self:UpdateBufferMenu(sourceMenuTable) end
 			end)
 		end)
 	else
-		self:Energize(sourceMenuTable, targetMenuTable, wideField, textWindow, function(sourcePatterns, targetPatterns)
+		self:Energize(ply, sourceMenuTable, targetMenuTable, wideField, function(sourcePatterns, targetPatterns)
 			if sourcePatterns.IsBuffer then self:UpdateBufferMenu(sourceMenuTable) end
 		end)
 	end

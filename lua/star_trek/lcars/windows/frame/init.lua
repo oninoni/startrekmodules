@@ -31,3 +31,21 @@ function SELF:OnCreate(title, titleShort, hFlip)
 
 	return true
 end
+
+function SELF:GetClientData()
+	local clientData = SELF.Base.GetClientData(self)
+
+	clientData.FrameType = self.FrameType
+	clientData.Padding = self.Padding
+
+	clientData.Title 	  = self.Title
+	clientData.TitleShort = self.TitleShort
+	clientData.HFlip 	  = self.HFlip
+
+	clientData.Color1 = self.Color1
+	clientData.Color2 = self.Color2
+	clientData.Color3 = self.Color3
+	clientData.Color4 = self.Color4
+
+	return clientData
+end

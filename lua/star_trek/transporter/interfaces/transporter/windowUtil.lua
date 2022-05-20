@@ -26,10 +26,9 @@ local SELF = INTERFACE
 -- @param Number width
 -- @param Table menuTable
 -- @param? Boolean hFlip
--- @param? Number padNumber
 -- @return Boolean success 
 -- @return Table menuWindow
-function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip, padNumber)
+function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip)
 	local buttons = {}
 
 	local n = 0
@@ -52,7 +51,7 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip, padNumber)
 		table.insert(buttons, button)
 	end
 
-	if isnumber(padNumber) then
+	if self.AdvancedMode then
 		local utilButtonData = {}
 		if not menuTable.Target then
 			utilButtonData.Name = "Narrow Beam"
@@ -92,7 +91,7 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip, padNumber)
 		24,
 		width,
 		height,
-		function(windowData, interfaceData, buttonId)
+		function(windowData, interfaceData, ply, buttonId)
 			if buttonId > n then -- Custom Buttons
 				local button = windowData.Buttons[buttonId]
 				if button.Name == "Wide Beam" or button.Name == "Narrow Beam" then
@@ -201,10 +200,9 @@ end
 -- @param Number height
 -- @param Table menuTable
 -- @param? Boolean hFlip
--- @param? Number padNumber
 -- @return Boolean success 
 -- @return Table mainWindow
-function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip, padNumber)
+function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip)
 	local modeName = self:GetMode(menuTable)
 
 	-- Transport Pad Window
@@ -217,7 +215,7 @@ function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip, padN
 			width,
 			height,
 			nil,
-			padNumber,
+			self.PadEntities or {},
 			"Transporter Pad",
 			"Pad",
 			hFlip
@@ -256,10 +254,14 @@ function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip, padN
 	local titleShort = ""
 	local buttons = {}
 
-	if modeName == "Lifeforms" then
-		titleShort = "LIFE"
+	if modeName == "Crew" then
+		titleShort = "CREW"
 
 		for _, ply in pairs(player.GetHumans()) do
+			if hook.Run("Star_Trek.Transporter.CheckLifeforms", ply) == false then
+				continue
+			end
+
 			table.insert(buttons, {
 				Name = ply:GetName(),
 				Data = ply,
@@ -270,6 +272,10 @@ function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip, padN
 		titleShort = "Buffer"
 
 		for _, ent in pairs(Star_Trek.Transporter.Buffer.Entities) do
+			if not IsValid(ent) then
+				continue
+			end
+
 			local name = "Unknown Pattern"
 			if ent:IsPlayer() or ent:IsNPC() then
 				name = "Organic Pattern"
@@ -278,48 +284,31 @@ function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip, padN
 			if className == "prop_physics" then
 				name = "Pattern"
 			end
-			-- TODO: Scanner implementation to identify stuff? (Sensors Module)
 
 			table.insert(buttons, {
 				Name = name,
 				Data = ent,
 			})
 		end
-	elseif modeName == "Other Pads" or modeName == "Transporter Pads" then
-		titleShort = "Pads"
+	elseif modeName == "Transporter Rooms" then
+		titleShort = "Rooms"
 
-		local pads = {}
-		for _, pad in pairs(ents.GetAll()) do
-			local name = pad:GetName()
-			if isstring(name) and string.StartWith(name, "TRPad") then
-				local idString = string.sub(name, 6)
-				local split = string.Split(idString, "_")
-				local roomId = split[2]
+		local pads = Star_Trek.Transporter:GetTransporterRooms(self)
 
-				if padNumber and padNumber == roomId then continue end
-
-				local roomName = "Transporter Room " .. roomId
-				pads[roomName] = pads[roomName] or {}
-				table.insert(pads[roomName], pad)
-			end
-		end
-
-		for name, roomPads in SortedPairs(pads) do
+		for _, roomData in SortedPairs(pads) do
 			table.insert(buttons, {
-				Name = name,
-				Data = roomPads,
+				Name = roomData.Name,
+				Data = roomData.Pads,
 			})
 		end
-	elseif modeName == "External" then
-		titleShort = "External Sensors"
+	elseif modeName == "External Sensors" then
+		titleShort = "External"
 
-		local externalMarkers = {}
-		hook.Run("Star_Trek.Transporter.GetExternalMarkers", externalMarkers)
-
-		for _, markerData in pairs(externalMarkers) do
+		local externalMarkers = Star_Trek.Transporter:GetExternalMarkers(self)
+		for _, externalData in pairs(externalMarkers) do
 			table.insert(buttons, {
-				Name = markerData.Name,
-				Data = markerData.Pos,
+				Name = externalData.Name,
+				Data = externalData.Pos,
 			})
 		end
 	else
@@ -358,26 +347,28 @@ end
 -- @param Number mainHeight
 -- @param Boolean hFlip
 -- @param Boolean targetSide
--- @param? Number padNumber
 -- @return Boolean success 
 -- @return Table mainWindow
-function SELF:CreateWindowTable(menuPos, menuAngle, menuWidth, mainPos, mainAngle, mainWidth, mainHeight, hFlip, targetSide, padNumber)
+function SELF:CreateWindowTable(menuPos, menuAngle, menuWidth, mainPos, mainAngle, mainWidth, mainHeight, hFlip, targetSide)
 	local menuTypes = {
-		"Lifeforms",
-		"Transporter Pads",
+		"Crew",
+		"Transporter Rooms",
 		"Sections",
-		"External",
+		"External Sensors",
 	}
-
-	if padNumber then
+	if istable(self.PadEntities) and table.Count(self.PadEntities) > 0 then
 		menuTypes = {
 			"Transporter Pad",
-			"Other Pads",
+			"Transporter Rooms",
 			"Sections",
-			"Lifeforms",
-			"External",
-			{"Buffer", false},
+			"Crew",
+			"External Sensors",
 		}
+	end
+
+	if self.AdvancedMode then
+		table.insert(menuTypes, {"Buffer", false})
+
 	end
 
 	local menuTable = {
@@ -385,7 +376,7 @@ function SELF:CreateWindowTable(menuPos, menuAngle, menuWidth, mainPos, mainAngl
 		Target = targetSide or false,
 	}
 
-	local success, menuWindow = self:CreateMenuWindow(menuPos, menuAngle, menuWidth, menuTable, hFlip, padNumber)
+	local success, menuWindow = self:CreateMenuWindow(menuPos, menuAngle, menuWidth, menuTable, hFlip)
 	if not success then
 		return false, "Error on MenuWindow: " .. menuWindow
 	end
@@ -398,7 +389,7 @@ function SELF:CreateWindowTable(menuPos, menuAngle, menuWidth, mainPos, mainAngl
 			[name] = true,
 		})
 
-		local success2, mainWindow = interfaceData:CreateMainWindow(mainPos, mainAngle, mainWidth, mainHeight, menuTable, hFlip, padNumber)
+		local success2, mainWindow = interfaceData:CreateMainWindow(mainPos, mainAngle, mainWidth, mainHeight, menuTable, hFlip)
 		if not success2 then
 			return false, "Error on MainWindow: " .. mainWindow
 		end

@@ -58,12 +58,16 @@ end
 -- @return Angle globalInterfaceAngle
 function Star_Trek.LCARS:GetInterfacePosAngleGlobal(ent)
 	local globalInterfacePos = ent:GetPos()
-	local globalInterfaceAngle = ent:GetUp():Angle()
+	local globalInterfaceAngle = ent:GetAngles()
 
 	-- If "movedir" keyvalue is set, then override globalInterfaceAngle
 	local moveDir = ent:GetKeyValues()["movedir"]
 	if isvector(moveDir) then
 		globalInterfaceAngle = moveDir:Angle()
+
+		-- Rotate to fit normal orientation.
+		globalInterfaceAngle:RotateAroundAxis(globalInterfaceAngle:Right(), -90)
+		globalInterfaceAngle:RotateAroundAxis(globalInterfaceAngle:Up(), 90)
 	end
 
 	-- If an "button" attachment exists on the model of the entity, then that is used instead.
@@ -72,10 +76,11 @@ function Star_Trek.LCARS:GetInterfacePosAngleGlobal(ent)
 		local attachmentPoint = ent:GetAttachment(attachmentID)
 		globalInterfacePos = attachmentPoint.Pos
 		globalInterfaceAngle = attachmentPoint.Ang
-	end
 
-	globalInterfaceAngle:RotateAroundAxis(globalInterfaceAngle:Right(), -90)
-	globalInterfaceAngle:RotateAroundAxis(globalInterfaceAngle:Up(), 90)
+		-- Rotate to fit normal orientation.
+		globalInterfaceAngle:RotateAroundAxis(globalInterfaceAngle:Right(), -90)
+		globalInterfaceAngle:RotateAroundAxis(globalInterfaceAngle:Up(), 90)
+	end
 
 	return globalInterfacePos, globalInterfaceAngle
 end
@@ -96,46 +101,23 @@ end
 --   Network Filters  --
 ------------------------
 
--- Returns filtered windowData, that can be safely transmitted to the client without issues.
---
--- @param Table windowData
--- @return Table clientWindowData
-function Star_Trek.LCARS:GetClientWindowData(windowData)
-	local clientWindowData = table.Copy(windowData)
-	for id, data in pairs(windowData) do
-		if isfunction(data) then
-			clientWindowData[id] = nil
-		end
-	end
-
-	-- Prevent Recursion
-	clientWindowData.Interface = nil
-
-	clientWindowData.AppliedOffset = nil
-
-	return clientWindowData
-end
-
 -- Returns filtered interfaceData, that can be safely transmitted to the client without issues.
 --
 -- @param Table interfaceData
 -- @return Table clientInterfaceData
 function Star_Trek.LCARS:GetClientInterfaceData(interfaceData)
-	local clientInterfaceData = table.Copy(interfaceData)
-	for id, data in pairs(interfaceData) do
-		if isfunction(data) then
-			clientInterfaceData[id] = nil
-		end
-	end
+	local clientInterfaceData = {
+		Ent = interfaceData.Ent,
+		Class = interfaceData.Class,
+		InterfacePos = interfaceData.InterfacePos,
+		InterfaceAngle = interfaceData.InterfaceAngle,
 
-	clientInterfaceData.Solid = interfaceData.Solid
-
-	clientInterfaceData.OffsetPos = nil
-	clientInterfaceData.OffsetAng = nil
+		Solid = interfaceData.Solid,
+	}
 
 	clientInterfaceData.Windows = {}
 	for id, windowData in pairs(interfaceData.Windows) do
-		clientInterfaceData.Windows[id] = self:GetClientWindowData(windowData)
+		clientInterfaceData.Windows[id] = windowData:GetClientData()
 	end
 
 	return clientInterfaceData
@@ -156,3 +138,16 @@ hook.Add("PlayerLeaveVehicle", "", function(ply, veh)
 	net.Start("Star_Trek.LCARS.EnableEButton")
 	net.Send(ply)
 end)
+
+------------------------
+--     Networking     --
+------------------------
+
+function Star_Trek.LCARS:WriteNetTable(data)
+	local compressedData = util.Compress(util.TableToJSON(data))
+
+	local size = #compressedData
+
+	net.WriteUInt(size, 32)
+	net.WriteData(compressedData, size)
+end

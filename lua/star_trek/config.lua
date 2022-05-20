@@ -25,6 +25,9 @@ Star_Trek.Modules["world"] = true
 
 Star_Trek.Modules["lcars"] = true
 
+Star_Trek.Modules["button"] = true
+Star_Trek.Modules["logs"] = true
+
 Star_Trek.Modules["sections"] = true
 Star_Trek.Modules["turbolift"] = true
 Star_Trek.Modules["transporter"] = true

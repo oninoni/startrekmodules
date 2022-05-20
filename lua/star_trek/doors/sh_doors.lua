@@ -13,5 +13,13 @@
 ---------------------------------------
 
 ---------------------------------------
---          Models | Server          --
+--           Doors | Shared          --
 ---------------------------------------
+
+function Star_Trek.Doors:IsDoor(ent)
+	if IsValid(ent) and ent:GetClass() == "prop_dynamic" and self.ModelNames[ent:GetModel()] then
+		return true
+	end
+
+	return false
+end

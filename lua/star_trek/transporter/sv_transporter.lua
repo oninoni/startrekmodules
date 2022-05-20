@@ -16,192 +16,156 @@
 --        Transporter | Server       --
 ---------------------------------------
 
--- TODO: Check if transport in Progress at target location (No 2 Beams at the same pos at the same time.)
--- TODO: Remove map based Transporter buffer and replace with simulated one (For upport with more maps.)
-
-local setupBuffer = function()
+-- Set up buffer and beam locations.
+hook.Add("Star_Trek.Sections.Loaded", "Star_Trek.Transporter.DetectLocations", function()
 	Star_Trek.Transporter.Buffer = {
 		Entities = {},
 		Pos = Vector(),
 	}
 
-	for _, ent in pairs(ents.GetAll()) do
-		if string.StartWith(ent:GetName(), "beamBuffer") then
-			Star_Trek.Transporter.Buffer.Pos = ent:GetPos()
-
-			return
-		end
+	local bufferEntities = ents.FindByName("beamBuffer")
+	if istable(bufferEntities) and IsValid(bufferEntities[1]) then
+		Star_Trek.Transporter.Buffer.Pos = bufferEntities[1]:GetPos()
 	end
-end
-hook.Add("InitPostEntity", "Star_Trek.Transporter.Setup", setupBuffer)
-hook.Add("PostCleanupMap", "Star_Trek.Transporter.Setup", setupBuffer)
 
-hook.Add("Star_Trek.Sections.Loaded", "Star_Trek.Transporter.DetectLocations", function()
 	for deck, deckData in pairs(Star_Trek.Sections.Decks) do
 		for sectionId, sectionData in pairs(deckData.Sections) do
 			sectionData.BeamLocations = {}
 
-			local entities = Star_Trek.Sections:GetInSection(deck, sectionId, nil, true)
-
-			for _, ent in pairs(entities) do
-				if ent:GetName() == "beamLocation" then
-					table.insert(sectionData.BeamLocations, ent:GetPos())
-
-					ent:Remove()
+			local beamLocationEntities = Star_Trek.Sections:GetInSection(deck, sectionId, function(objects, ent)
+				if ent:GetName() ~= "beamLocation" then
+					return true
 				end
+			end, true)
+
+			for _, ent in pairs(beamLocationEntities) do
+				table.insert(sectionData.BeamLocations, ent:GetPos())
+				ent:Remove()
 			end
 		end
 	end
 end)
 
-hook.Add("SetupPlayerVisibility", "Star_Trek.Transporter.PVS", function(ply, viewEntity)
-	if istable(Star_Trek.Transporter.Buffer) then
-		AddOriginToPVS(Star_Trek.Transporter.Buffer.Pos)
-	end
-end)
+function Star_Trek.Transporter:CanBeamTo(ent, pos)
+	local min, max = ent:GetRotatedAABB(ent:OBBMins(), ent:OBBMaxs())
+	max.z = max.z - min.z
+	min.z = 0
 
-function Star_Trek.Transporter:CleanUpSourcePatterns(patterns)
-	if not istable(patterns) then return patterns end
-	local invalidPatterns = {}
+	local offsetPos = pos + Vector(0, 0, 2)
 
-	for name, pattern in pairs(patterns) do
-		if istable(pattern) and table.Count(pattern.Entities) == 0 then
-			table.insert(invalidPatterns, pattern)
-		end
-	end
+	local trace = util.TraceHull({
+		start = offsetPos,
+		endpos = offsetPos,
+		maxs = max,
+		mins = min,
+		filter = {
+			ent
+		}
+	})
 
-	for _, pattern in pairs(invalidPatterns) do
-		table.RemoveByValue(patterns, pattern)
-	end
-
-	return patterns
-end
-
-function Star_Trek.Transporter:CleanUpTargetPatterns(patterns)
-	if not istable(patterns) then return patterns end
-	local invalidPatterns = {}
-
-	for _, pattern in pairs(patterns) do
-		if istable(pattern) and table.Count(pattern.Entities) > 0 then
-			table.insert(invalidPatterns, pattern)
-		end
-	end
-
-	for _, pattern in pairs(invalidPatterns) do
-		table.RemoveByValue(patterns, pattern)
-	end
-
-	return patterns
-end
-
-function Star_Trek.Transporter:ActivateTransporter(sourcePatterns, targetPatterns, textWindow)
-	sourcePatterns = self:CleanUpSourcePatterns(sourcePatterns)
-	targetPatterns = self:CleanUpTargetPatterns(targetPatterns)
-
-	textWindow:AddLine("Initialising Transporter...")
-	textWindow:AddLine(table.Count(sourcePatterns) .. " Pattern Sources Selected.")
-	textWindow:AddLine(table.Count(sourcePatterns) .. " Pattern Targets Selected.")
-	textWindow:AddLine("Dematerialising...")
-
-	local remainingEntities = {}
-	if not istable(targetPatterns) then
-		for _, sourcePattern in pairs(sourcePatterns) do
-			if istable(sourcePattern) then
-				for _, ent in pairs(sourcePattern.Entities) do
-					table.insert(remainingEntities, ent)
-				end
-			end
-		end
-	else
-		local i = 1
-		for _, sourcePattern in pairs(sourcePatterns) do
-			if istable(sourcePattern) then
-				for _, ent in pairs(sourcePattern.Entities) do
-					local targetPattern = targetPatterns[i]
-					if istable(targetPattern) then
-						if sourcePatterns.IsBuffer then
-							table.RemoveByValue(Star_Trek.Transporter.Buffer.Entities, ent)
-						end
-
-						self:BeamObject(ent, targetPattern.Pos, sourcePattern.Pad, targetPattern.Pad, false)
-						textWindow:AddLine("Dematerialising Object...") -- TODO: Sensor Detection of ent Type (Sensors Module)
-
-						i = i + 1
-					elseif isbool(targetPattern) then
-						continue
-					else
-						if not sourcePatterns.IsBuffer then
-							table.insert(remainingEntities, ent)
-							ent.Pad = sourcePattern.Pad
-						end
-					end
-				end
-			end
-		end
-	end
-
-	if not sourcePatterns.IsBuffer then
-		for _, ent in pairs(remainingEntities) do
-			table.insert(Star_Trek.Transporter.Buffer.Entities, ent)
-			ent.BufferQuality = 160
-
-			self:BeamObject(ent, Star_Trek.Transporter.Buffer.Pos, ent.Pad, nil, true)
-			textWindow:AddLine("Dematerialising Object...") -- TODO: Sensor Detection of ent Type (Sensors Module)
-			textWindow:AddLine("Warning: No Target Pattern Available! Storing in Buffer!", Star_Trek.LCARS.ColorRed)
-		end
-	end
-
-	textWindow:AddLine("")
-	textWindow:Update()
-end
-
-hook.Add("PlayerCanPickupItem", "Star_Trek.Transporter.PreventPickup", function(ply, ent)
-	for _, transportData in pairs(Star_Trek.Transporter.ActiveTransports) do
-		if transportData.Object == ent then return false end
-	end
-
-	if ent.Replicated and not (ply:KeyDown(IN_USE) and ply:GetEyeTrace().Entity == ent) then
+	if trace.Hit then
 		return false
 	end
-end)
 
-hook.Add("PlayerCanPickupWeapon", "Star_Trek.Transporter.PreventPickup", function(ply, ent)
-	for _, transportData in pairs(Star_Trek.Transporter.ActiveTransports) do
-		if transportData.Object == ent then return false end
-	end
-
-	if ent.Replicated and not (ply:KeyDown(IN_USE) and ply:GetEyeTrace().Entity == ent) then
-		return false
-	end
-end)
-
-timer.Create("Star_Trek.Transporter.BufferThink", 1, 0, function()
-	local removeFromBuffer = {}
-
-	for _, ent in pairs(Star_Trek.Transporter.Buffer.Entities) do
-		if ent.BufferQuality <= 0 then
-			table.insert(removeFromBuffer, ent)
-
-			if ent:IsPlayer() then
-				Star_Trek.Transporter:BeamObject(ent, Star_Trek.Transporter.Buffer.Pos, nil, nil)
-				ent:Kill()
-			else
-				SafeRemoveEntity(ent)
-			end
-		end
-
-		ent.BufferQuality = ent.BufferQuality - 1
-
-		if ent.BufferQuality < 100 then
-			local maxHealth = ent:GetMaxHealth()
-			if maxHealth > 0 then
-				local health = math.min(ent:Health(), maxHealth * (ent.BufferQuality / 100))
-				ent:SetHealth(health)
-			end
+	for _, transporterCycle in pairs(self.ActiveCycles) do
+		if transporterCycle.TargetPos:Distance(pos) < 16 then
+			return false
 		end
 	end
 
-	for _, ent in pairs(removeFromBuffer) do
-		table.RemoveByValue(Star_Trek.Transporter.Buffer.Entities, ent)
+	return true
+end
+
+function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatterns, targetPatterns, cycleClass, noBuffer)
+	if not istable(sourcePatterns) then return end
+
+	Star_Trek.Logs:AddEntry(interfaceEnt, ply, "")
+	Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Initialising Transporter...")
+	Star_Trek.Logs:AddEntry(interfaceEnt, ply, table.Count(sourcePatterns) .. " Pattern Sources Detected.")
+	Star_Trek.Logs:AddEntry(interfaceEnt, ply, table.Count(sourcePatterns) .. " Pattern Targets Detected.")
+
+	for _, sourcePattern in pairs(sourcePatterns) do
+		local ent = sourcePattern.Ent
+
+		if IsEntity(ent) and not IsValid(ent) then
+			continue
+		end
+
+		local isBuffer = table.HasValue(Star_Trek.Transporter.Buffer.Entities, ent)
+
+		local successfulTransport = false
+		for _, targetPattern in pairs(targetPatterns) do
+			if targetPattern.Used then
+				continue
+			end
+
+			local pos = targetPattern.Pos
+			if not targetPattern.AllowBeam and not sourcePattern.AllowBeam and not self:CanBeamTo(ent, pos) then
+				continue
+			end
+
+			if isBuffer then
+				table.RemoveByValue(Star_Trek.Transporter.Buffer.Entities, ent)
+			end
+
+			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Dematerialising Object...")
+			Star_Trek.Transporter:TransportObject(cycleClass or "base", ent, pos, isBuffer, false, function(transporterCycle)
+				Star_Trek.Transporter:ApplyPadEffect(transporterCycle, sourcePattern.Pad, targetPattern.Pad)
+
+				local state = transporterCycle.State
+				if state == 2 then
+					Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Rematerialising Object...")
+				end
+			end)
+
+			targetPattern.Used = true
+			successfulTransport = true
+
+			break
+		end
+
+		if successfulTransport then
+			continue
+		end
+
+		if noBuffer then
+			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Buffer Usage Prevented!")
+			continue
+		end
+
+		if isBuffer then
+			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Buffer Recursion Prevented!")
+			continue
+		end
+
+		-- Beam into Buffer
+		table.insert(Star_Trek.Transporter.Buffer.Entities, ent)
+		ent.BufferQuality = 160
+
+		if istable(ent) then
+			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Warning: Remote Transporter Request has no target. Aborting!")
+			continue
+		end
+
+		Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Dematerialising Object...")
+		Star_Trek.Transporter:TransportObject(cycleClass or "base", ent, Vector(), false, true, function(transporterCycle)
+			Star_Trek.Transporter:ApplyPadEffect(transporterCycle, sourcePattern.Pad)
+		end)
+
+		Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Warning: No Free Target Position Available! Storing in Buffer!")
+		if ent:IsPlayer() or ent:IsNPC() then
+			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Warning: Organic Pattern in Buffer detected!")
+
+			local timerName = "Star_Trek.Transporter.BufferAlert." .. interfaceEnt:EntIndex()
+
+			if timer.Exists(timerName) then
+				continue
+			end
+
+			-- 5x Alert Sound
+			timer.Create(timerName, 1, 5, function()
+				interfaceEnt:EmitSound("star_trek.lcars_alert14")
+			end)
+		end
 	end
-end)
+end

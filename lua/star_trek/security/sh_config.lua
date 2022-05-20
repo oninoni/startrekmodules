@@ -13,25 +13,14 @@
 ---------------------------------------
 
 ---------------------------------------
---         Star Trek | Loader        --
+--         Security | Config         --
 ---------------------------------------
 
-if not string.StartWith(game.GetMap(), "stm_showroom") then return end
+-- Delay between Force Field Damage Intervals in Seconds.
+Star_Trek.Security.ForceFieldDelay = 1
 
-if SERVER then 
-	AddCSLuaFile()
-end
+-- Ammount of Damage applied in each Force Field Interval.
+Star_Trek.Security.ForceFieldDamage = 5
 
-if CLIENT then
-    RunConsoleCommand( "mat_specular", "1")
-    
-    local convar = GetConVar("mat_hdr_level")
-    if convar:GetInt() ~= 2 then
-        chat.AddText("Invalid HDR Setup Detected. Restarting Map with HDR Active!")
-        chat.AddText("In multiplayer you will have to re-join the server!")
-
-        timer.Simple(1, function()
-            RunConsoleCommand( "mat_hdr_level", "2" )
-        end)
-    end
-end
+-- Ammount of Knockback force applied in each Force Field Interval.
+Star_Trek.Security.ForceFieldForce = 1

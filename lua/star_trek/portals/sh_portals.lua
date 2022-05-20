@@ -18,6 +18,9 @@
 
 function Star_Trek.Portals:IsBlocked(portal)
 	local parent = portal:GetParent()
+
+	if not Star_Trek.Doors:IsDoor(parent) then return false end
+
 	if IsValid(parent) then
 		local sequenceId = parent:GetSequence()
 		if parent.LastSequence ~= sequenceId then

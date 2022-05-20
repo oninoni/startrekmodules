@@ -68,7 +68,7 @@ end
 -- Receive the network message, to open an interface.
 net.Receive("Star_Trek.LCARS.Open", function()
 	local id = net.ReadInt(32)
-	local interfaceData = net.ReadTable()
+	local interfaceData = Star_Trek.LCARS:ReadNetTable()
 
 	Star_Trek.LCARS:OpenInterface(id, interfaceData)
 end)
@@ -116,9 +116,10 @@ net.Receive("Star_Trek.LCARS.Update", function()
 
 	local windowId = net.ReadInt(32)
 	local currentWindow = interface.Windows[windowId]
+	local oldVis = currentWindow.WVis
 
-	local windowData = net.ReadTable()
-	if currentWindow.WType ~= windowData.WindowType then
+	local windowData = Star_Trek.LCARS:ReadNetTable()
+	if currentWindow.WType ~= windowData.WType then
 		local pos, ang = Star_Trek.LCARS:GetInterfacePosAngle(interface.Ent, interface.IPos, interface.IAng)
 
 		local success, window = Star_Trek.LCARS:LoadWindowData(id .. "_" .. windowId, windowData, pos, ang)
@@ -128,10 +129,11 @@ net.Receive("Star_Trek.LCARS.Update", function()
 
 		if istable(window) then
 			interface.Windows[windowId] = window
+
 			window.Interface = interface
+			window.WVis = oldVis
 		end
 	else
-		-- TODO: Change this to maybe only update instead of calling OnCreate again?
 		hook.Run("Star_Trek.LCARS.PreWindowCreate", currentWindow, windowData)
 
 		local success = currentWindow:OnCreate(windowData)
@@ -151,6 +153,13 @@ function Star_Trek.LCARS:PlayerButtonDown(ply, button)
 	for id, interface in pairs(Star_Trek.LCARS.ActiveInterfaces) do
 		if not interface.IVis then
 			continue
+		end
+
+		if not IsValid(interface.Ent) then
+			interface.Ent = ents.GetByIndex(id)
+			if not IsValid(interface.Ent) then
+				continue
+			end
 		end
 
 		if hook.Run("Star_Trek.LCARS.PreventRender", interface, true) then
@@ -189,7 +198,50 @@ function Star_Trek.LCARS:PlayerButtonDown(ply, button)
 			local pos = Star_Trek.LCARS:Get3D2DMousePos(window)
 			if pos[1] > -width / 2 and pos[1] < width / 2
 			and pos[2] > -height / 2 and pos[2] < height / 2 then
+				local worldPos = Vector(pos[1] / window.WScale, pos[2] / -window.WScale, 0)
+				worldPos = LocalToWorld(worldPos or Vector(), Angle(), window.WPosG, window.WAngG)
+
+				local eyePos = ply:EyePos()
+				local fullDistance = worldPos:Distance(eyePos)
+				if fullDistance > 80 then
+					continue
+				end
+
+				local forwardTrace = util.TraceLine({
+					start = eyePos,
+					endpos = worldPos,
+					filter = {
+						ply,
+						interface.Ent
+					},
+				})
+				local backwardsTrace = util.TraceLine({
+					start = worldPos,
+					endpos = eyePos,
+					filter = {
+						ply,
+						interface.Ent
+					},
+				})
+
+				-- debugoverlay.Line(eyePos, forwardTrace.HitPos, 10, Color(255, 0, 0), true)
+				-- debugoverlay.Line(worldPos, backwardsTrace.HitPos, 10, Color(255, 0, 0), true)
+
+				local forwardsDistance = eyePos:Distance(forwardTrace.HitPos)
+				local backwardsDistance = worldPos:Distance(backwardsTrace.HitPos)
+
+				if forwardTrace.HitWorld and backwardsTrace.HitWorld then
+					if fullDistance - 10 > forwardsDistance then
+						continue
+					end
+				else
+					if fullDistance > forwardsDistance + backwardsDistance + 1 then
+						continue
+					end
+				end
+
 				local buttonId = window:OnPress(pos, interface.AnimPos)
+
 				if buttonId then
 					net.Start("Star_Trek.LCARS.Pressed")
 						net.WriteInt(id, 32)
@@ -233,15 +285,18 @@ hook.Add("Think", "Star_Trek.LCARS.Think", function()
 
 	local removeInterfaces = {}
 	for id, interface in pairs(Star_Trek.LCARS.ActiveInterfaces) do
+		interface.IVis = false
+
 		if not IsValid(interface.Ent) then
 			interface.Ent = ents.GetByIndex(id)
+			if not IsValid(interface.Ent) then
+				continue
+			end
 		end
 
 		if hook.Run("Star_Trek.LCARS.PreventRender", interface, true) then
 			continue
 		end
-
-		interface.IVis = false
 
 		local pos, ang = Star_Trek.LCARS:GetInterfacePosAngle(interface.Ent, interface.IPos, interface.IAng)
 
@@ -292,14 +347,19 @@ hook.Add("PostDrawTranslucentRenderables", "Star_Trek.LCARS.Draw", function(isDr
 			continue
 		end
 
+		-- Only Check! Dont fix! (For Performance Reasons!)
+		if not IsValid(interface.Ent) then
+			continue
+		end
+
 		if hook.Run("Star_Trek.LCARS.PreventRender", interface) then
 			continue
 		end
-		
+
 		if not interface.Solid then
 			render.OverrideBlend(true, BLEND_SRC_ALPHA, BLEND_ONE, BLENDFUNC_ADD, BLEND_SRC_ALPHA, BLEND_ONE, BLENDFUNC_ADD)
 		end
-		
+
 		for _, window in pairs(interface.Windows) do
 			Star_Trek.LCARS:DrawWindow(window, interface.AnimPos)
 		end
