@@ -28,6 +28,7 @@ if SERVER then
 	include("modules/render_mode.lua")
 	include("modules/color.lua")
 	include("modules/movement.lua")
+	include("modules/position.lua")
 end
 
 if CLIENT then
