@@ -39,8 +39,8 @@ function SELF:Init()
 	for i, modelData in pairs(self.Models) do
 		local ent = ClientsideModel(modelData.Model, RENDERGROUP_BOTH)
 
-		ent:SetModelScale(modelData.Scale)
-		ent.Scale = modelData.Scale
+		ent.Scale = modelData.Scale or 1
+		ent:SetModelScale(ent.Scale)
 
 		ent:SetNoDraw(true)
 

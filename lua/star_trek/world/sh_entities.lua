@@ -56,6 +56,10 @@ end
 function Star_Trek.World:Think(deltaT)
 	for _, ent in pairs(self.Entities) do
 		ent:Think(deltaT)
+
+		if SERVER and ent.Updated then
+			ent:Update()
+		end
 	end
 end
 

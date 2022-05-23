@@ -92,6 +92,8 @@ function Star_Trek.World:DrawEntity(ent, camPos, relPos, relAng)
 		math.abs(relWorldPos[3])
 	)
 
+	local modelScale = ent.Scale or 1
+
 	if maxValue >= VECTOR_MAX then
 		local entDir = relWorldPos - camPos
 		local distance = entDir:Length()
@@ -102,12 +104,12 @@ function Star_Trek.World:DrawEntity(ent, camPos, relPos, relAng)
 		local projectedDistance = camPos:Distance(relWorldPos)
 
 		local factor = projectedDistance / distance
-		ent:SetModelScale(ent.Scale * factor)
+		ent:SetModelScale(modelScale * factor)
 
 		firstTime = false
 	else
-		if ent:GetModelScale() ~= ent.Scale then
-			ent:SetModelScale(ent.Scale)
+		if ent:GetModelScale() ~= modelScale then
+			ent:SetModelScale(modelScale)
 		end
 	end
 

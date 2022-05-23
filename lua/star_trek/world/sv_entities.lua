@@ -34,11 +34,11 @@ function Star_Trek.World:LoadEntity(id, class, ...)
 		return false, error
 	end
 
-	return true
+	return true, ent
 end
 
-function AddTestingShip(id, pos, ang, scale, temp)
-	local success, error = Star_Trek.World:LoadEntity(id, "ship",
+local function addTestingShip(id, pos, ang, scale, temp)
+	local success, ent = Star_Trek.World:LoadEntity(id, "ship",
 		WorldVector(0, 0, 0, pos.x, pos.y, pos.z),
 		ang,
 		{
@@ -48,27 +48,28 @@ function AddTestingShip(id, pos, ang, scale, temp)
 			},
 		}
 	)
+
 	if not success then
-		return false, error
-	end
-
-	local ent = Star_Trek.World:GetEntity(id)
-
-	if temp then
-		ent.Acc = temp
-
-		ent:Update()
+		return false, ent
 	end
 
 	return ent
 end
 
 timer.Simple(0, function()
-	AddTestingShip(1, Vector(), Angle(), 1)
+	local voyager = addTestingShip(1, Vector(), Angle(), 1)
+	voyager:SetAcceleration(Vector(-8, 0, 0))
+
+	local defiant = addTestingShip(2, Vector(-10, -4, -1), Angle(0, 0, 0), 2)
+	defiant:SetAcceleration(Vector(-10, 0, 0))
+
+	Star_Trek.World:LoadEntity(3, "planet", WorldVector(0, 0, 0, -500, 250, 150), Angle())
+	Star_Trek.World:LoadEntity(4, "planet", WorldVector(0, 0, 0, 700, 150, 150), Angle(0, 20, 34))
+	Star_Trek.World:LoadEntity(5, "planet", WorldVector(0, 0, 0, 0, 0, -110), Angle())
+	Star_Trek.World:LoadEntity(6, "planet", WorldVector(0, 0, 0, 0, -500, 0), Angle())
 end)
 
 timer.Simple(3, function()
-	AddTestingShip(2, Vector(-10, 2, -1), Angle(0, 0, 0), 2, Vector(-2, 0, 0))
 end)
 
 timer.Create("TestingSync", 1, 0, function()

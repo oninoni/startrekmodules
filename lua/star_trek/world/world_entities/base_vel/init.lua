@@ -40,3 +40,15 @@ function SELF:Init(pos, ang, models, vel, angVel)
 	self.Vel = vel or Vector()
 	self.AngVel = angVel or Angle()
 end
+
+function SELF:SetVelocity(vel)
+	self.Vel = vel
+
+	self.Updated = true
+end
+
+function SELF:SetAngularVelocity(angVel)
+	self.AngVel = angVel
+
+	self.Updated = true
+end

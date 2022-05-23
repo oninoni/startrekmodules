@@ -37,7 +37,7 @@ function SELF:Init(pos, ang, models)
 	self.Ang = ang or Angle()
 
 	self.Models = models or {
-		{Model = ""}
+		{Model = "models/hunter/blocks/cube4x4x4.mdl"}
 	}
 end
 
@@ -46,4 +46,18 @@ end
 
 function SELF:Update()
 	Star_Trek.World:NetworkUpdate(self)
+
+	self.Updated = nil
+end
+
+function SELF:SetPosition(pos)
+	self.Pos = pos
+
+	self.Updated = true
+end
+
+function SELF:SetAngle(ang)
+	self.Ang = ang
+
+	self.Updated = true
 end

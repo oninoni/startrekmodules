@@ -43,3 +43,15 @@ function SELF:Init(pos, ang, models, vel, angVel, acc, angAcc)
 	self.Acc = acc or Vector()
 	self.AngAcc = angAcc or Angle()
 end
+
+function SELF:SetAcceleration(acc)
+	self.Acc = acc
+
+	self.Updated = true
+end
+
+function SELF:SetAngularAcceleration(angAcc)
+	self.AngAcc = angAcc
+
+	self.Updated = true
+end
