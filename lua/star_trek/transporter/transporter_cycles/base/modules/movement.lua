@@ -27,7 +27,6 @@ function SELF:ApplyMovement(movementEnabled)
 	local ent = self.Entity
 
 	if ent:IsPlayer() then
-		--ent:Freeze(not movementEnabled)
 		if movementEnabled then
 			ent.PreventDrownSound = true
 			ent:UnLock()
@@ -58,7 +57,7 @@ function SELF:ApplyMovement(movementEnabled)
 	end
 end
 
-hook.Add("EntityEmitSound", "Test", function(soundData)
+hook.Add("EntityEmitSound", "Star_Trek.Transporter.PreventDrownSound", function(soundData)
 	local ent = soundData.Entity
 	if not ent.PreventDrownSound then
 		return
