@@ -27,7 +27,13 @@ function SELF:ApplyMovement(movementEnabled)
 	local ent = self.Entity
 
 	if ent:IsPlayer() then
-		ent:Freeze(not movementEnabled)
+		--ent:Freeze(not movementEnabled)
+		if movementEnabled then
+			ent.PreventDrownSound = true
+			ent:UnLock()
+		else
+			ent:Lock()
+		end
 	elseif ent:IsNPC() then
 		if movementEnabled then
 			ent:MoveStart()
@@ -35,19 +41,30 @@ function SELF:ApplyMovement(movementEnabled)
 			ent:MoveStop()
 		end
 	elseif ent:IsNextBot() then
-		return -- TODO
-	else
-		local phys = ent:GetPhysicsObject()
-		if IsValid(phys) then
-			phys:EnableMotion(movementEnabled)
-		end
+		-- TODO
+	end
 
-		local pCount = ent:GetPhysicsObjectCount()
-		if pCount > 1 then
-			for i = 1, pCount - 1 do
-				local subPhys = ent:GetPhysicsObjectNum(i)
-				subPhys:EnableMotion(movementEnabled)
-			end
+	local phys = ent:GetPhysicsObject()
+	if IsValid(phys) then
+		phys:EnableMotion(movementEnabled)
+	end
+
+	local pCount = ent:GetPhysicsObjectCount()
+	if pCount > 1 then
+		for i = 1, pCount - 1 do
+			local subPhys = ent:GetPhysicsObjectNum(i)
+			subPhys:EnableMotion(movementEnabled)
 		end
 	end
 end
+
+hook.Add("EntityEmitSound", "Test", function(soundData)
+	local ent = soundData.Entity
+	if not ent.PreventDrownSound then
+		return
+	end
+
+	ent.PreventDrownSound = nil
+
+	return false
+end)
