@@ -106,9 +106,18 @@ function Star_Trek.Turbolift:GetObjects(liftEntity)
 		local entities = ents.FindInBox(attachmentPoint1.Pos, attachmentPoint2.Pos)
 
 		for _, ent in pairs(entities or {}) do
-			if ent:MapCreationID() == -1 and not (ent:GetClass() == "phys_bone_follower" or ent:GetClass() == "predicted_viewmodel") then
-				table.insert(objects, ent)
+			if ent:MapCreationID() ~= -1 then
+				continue
 			end
+
+			local class = ent:GetClass()
+			if class == "phys_bone_follower"
+			or class == "predicted_viewmodel"
+			or class == "force_field" then
+				continue
+			end
+
+			table.insert(objects, ent)
 		end
 	end
 
@@ -133,6 +142,24 @@ function Star_Trek.Turbolift:Teleport(sourceLift, targetLift, objects)
 		end
 
 		local targetAngles = targetLift:LocalToWorldAngles(sourceAngles)
+
+		if ent:IsRagdoll() then
+			local entPos = ent:GetPos()
+			local entAng = ent:GetAngles()
+
+			local pCount = ent:GetPhysicsObjectCount()
+			for i = 0, pCount - 1 do
+				local phys = ent:GetPhysicsObjectNum(i)
+
+				local offPos, offAng = WorldToLocal(phys:GetPos(), phys:GetAngles(), entPos, entAng)
+				local newPos, newAng = LocalToWorld(offPos, offAng, targetPos, targetAngles)
+
+				phys:SetPos(newPos)
+				phys:SetAngles(newAng)
+
+				phys:Wake()
+			end
+		end
 
 		ent:SetPos(targetPos)
 		if ent:IsPlayer() then
