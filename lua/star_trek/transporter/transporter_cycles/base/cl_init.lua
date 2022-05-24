@@ -28,6 +28,10 @@ function SELF:Initialize()
 	if ent == LocalPlayer() then
 		Star_Trek.Transporter.LocalCycle = self
 
+		if self.BufferPos == Vector() then
+			self.OverrideBuffer = true
+		end
+
 		local offset = ent:WorldToLocal(ent:EyePos())
 		self.BufferEyePos = LocalToWorld(offset, Angle(), self.BufferPos, ent:GetAngles())
 
@@ -139,16 +143,27 @@ function SELF:RenderScreenspaceEffect()
 	local stateData = self:GetStateData()
 	if not istable(stateData) then return end
 
+	if self.OverrideBuffer and stateData.TPToBuffer then
+		local color = self.BufferColor or Color(255, 255, 255)
+		render.Clear(color.r, color.g, color.b, 255)
+	end
+
 	local colorFade = stateData.ColorFade
 	if colorFade == nil then return end
 
 	render.PushRenderTarget(self.RT1)
 		render.Clear(0,0,0,255)
 
-		render.RenderView( {
-			origin = self.BufferEyePos,
-			drawviewmodel = false,
-		})
+		if self.OverrideBuffer then
+			local color = self.BufferColor or Color(255, 255, 255)
+			render.Clear(color.r, color.g, color.b, 255)
+		else
+			render.RenderView( {
+				origin = self.BufferEyePos,
+				drawviewmodel = false,
+			})
+		end
+
 	render.PopRenderTarget()
 
 	local fade
