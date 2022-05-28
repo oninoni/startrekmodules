@@ -13,28 +13,14 @@
 ---------------------------------------
 
 ---------------------------------------
---          Holodeck | Index         --
+--      Holodeck Sounds | Shared     --
 ---------------------------------------
 
-Star_Trek:RequireModules("util", "lcars")
-
-Star_Trek.Holodeck = Star_Trek.Holodeck or {}
-
-if SERVER then
-	AddCSLuaFile("sh_sounds.lua")
-
-	AddCSLuaFile("cl_holomatter.lua")
-
-	include("sh_sounds.lua")
-
-	include("sv_holodeck.lua")
-	include("sv_logs.lua")
-
-	include("sv_holomatter.lua")
-end
-
-if CLIENT then
-	include("sh_sounds.lua")
-
-	include("cl_holomatter.lua")
-end
+sound.Add({
+	name = "star_trek.hologram_failure",
+	channel = CHAN_AUTO,
+	volume = .8,
+	level = 0,
+	pitch = 100,
+	sound = "oninoni/startrek/holodeck/hologram_failure.wav",
+})

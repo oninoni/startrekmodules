@@ -13,28 +13,31 @@
 ---------------------------------------
 
 ---------------------------------------
---          Holodeck | Index         --
+--        Holomatter | Client        --
 ---------------------------------------
 
-Star_Trek:RequireModules("util", "lcars")
+net.Receive("Star_Trek.Holodeck.Disintegrate", function()
+	local ent = net.ReadEntity()
 
-Star_Trek.Holodeck = Star_Trek.Holodeck or {}
+	if not IsValid(ent) then
+		return
+	end
 
-if SERVER then
-	AddCSLuaFile("sh_sounds.lua")
+	local time = 0
 
-	AddCSLuaFile("cl_holomatter.lua")
+	local timerName = "Star_Trek.Holodeck.Disintegrate." .. ent:EntIndex()
+	timer.Create(timerName, 0, 0, function()
+		time = time + FrameTime()
 
-	include("sh_sounds.lua")
+		if not IsValid(ent) or time > 1 then
+			ent:SetColor(Color(255, 255, 255, 0))
 
-	include("sv_holodeck.lua")
-	include("sv_logs.lua")
+			timer.Remove(timerName)
+		else
+			local alpha = (1 - time) * 512
+			alpha = alpha + math.random(-32, 32)
 
-	include("sv_holomatter.lua")
-end
-
-if CLIENT then
-	include("sh_sounds.lua")
-
-	include("cl_holomatter.lua")
-end
+			ent:SetColor(Color(255, 255, 255, alpha))
+		end
+	end)
+end)
