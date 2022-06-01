@@ -38,6 +38,11 @@ function Star_Trek.Transporter:ApplyPadEffect(transporterCycle, sourcePad, targe
 end
 
 function Star_Trek.Transporter:GetPadPosition(ent)
+	local overridePos = hook.Run("Star_Trek.Transporter.GetPadPosition", ent)
+	if isvector(overridePos) then
+		return overridePos
+	end
+
 	local pos = ent:GetPos()
 	local attachmentId = ent:LookupAttachment("teleportPoint")
 	if attachmentId > 0 then
