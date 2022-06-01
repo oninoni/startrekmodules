@@ -26,17 +26,19 @@ function Star_Trek.Holodeck:Disintegrate(ent)
 	end
 
 	net.Start("Star_Trek.Holodeck.Disintegrate")
-		net.WriteEntity(ent)
+		net.WriteInt(ent:EntIndex(), 32)
 	net.Broadcast()
 
 	ent:SetRenderMode(RENDERMODE_TRANSALPHA)
 	ent:EmitSound("star_trek.hologram_failure")
 
+	if hook.Run("Star_Trek.Holodeck.Disintegrate", ent) then
+		return
+	end
+
 	local timerName = "Star_Trek.Holodeck.Disintegrate." .. ent:EntIndex()
 	timer.Create(timerName, 1, 1, function()
-		if not hook.Run("Star_Trek.Holodeck.Disintegrate", ent) then
-			ent:Remove()
-		end
+		ent:Remove()
 	end)
 end
 
