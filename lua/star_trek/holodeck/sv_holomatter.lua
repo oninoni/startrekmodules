@@ -20,19 +20,26 @@
 --
 -- @param Entity ent
 util.AddNetworkString("Star_Trek.Holodeck.Disintegrate")
-function Star_Trek.Holodeck:Disintegrate(ent)
+function Star_Trek.Holodeck:Disintegrate(ent, inverted)
 	if not IsValid(ent) then
 		return
 	end
 
 	net.Start("Star_Trek.Holodeck.Disintegrate")
 		net.WriteInt(ent:EntIndex(), 32)
+		net.WriteBool(inverted)
 	net.Broadcast()
 
 	ent:SetRenderMode(RENDERMODE_TRANSALPHA)
 	ent:EmitSound("star_trek.hologram_failure")
 
-	if hook.Run("Star_Trek.Holodeck.Disintegrate", ent) then
+	if inverted then
+		ent:SetColor(ColorAlpha(ent:GetColor(), 0))
+
+		return
+	end
+
+	if hook.Run("Star_Trek.Holodeck.Disintegrate", ent, inverted) then
 		return
 	end
 
@@ -87,6 +94,8 @@ hook.Add("OnEntityCreated", "Star_Trek.Holodeck.DetectHolomatter", function(ent)
 
 		if Star_Trek.Holodeck:IsInHolodeckProgramm(pos) then
 			ent.HoloMatter = true
+
+			Star_Trek.Holodeck:Disintegrate(ent, true)
 		end
 	end)
 end)

@@ -19,6 +19,8 @@
 net.Receive("Star_Trek.Holodeck.Disintegrate", function()
 	local entIndex = net.ReadInt(32)
 
+	local inverted = net.ReadBool()
+
 	local time = 0
 	local timerName = "Star_Trek.Holodeck.Disintegrate." .. entIndex
 	timer.Create(timerName, 0, 0, function()
@@ -33,11 +35,15 @@ net.Receive("Star_Trek.Holodeck.Disintegrate", function()
 				alpha = alpha + math.random(-32, 32)
 			end
 
-			ent:SetColor(Color(255, 255, 255, alpha))
+			if inverted then
+				alpha = 255 - alpha
+			end
+
+			ent:SetColor(ColorAlpha(ent:GetColor(), alpha))
 
 			for _, child in pairs(ent:GetChildren()) do
 				child:SetRenderMode(RENDERMODE_TRANSALPHA)
-				child:SetColor(Color(255, 255, 255, alpha))
+				child:SetColor(ColorAlpha(child:GetColor(), alpha))
 			end
 		end
 
