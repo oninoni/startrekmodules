@@ -19,17 +19,15 @@
 if not istable(INTERFACE) then Star_Trek:LoadAllModules() return end
 local SELF = INTERFACE
 
-function SELF:GenerateButtons(ent, keyValues)
+function SELF:GenerateButtons(ent, name)
 	local buttons = {}
 
-	local name = ""
-	if ent.IsTurbolift then
-		name = keyValues["lcars_name"]
-	elseif ent.IsPod then
-		local podData = ent.Data
+	local data = ent.Data
+	local shipId = data.ShipId
 
+	if ent.IsPod then
 		local controlButton = {}
-		if podData.Stopped or podData.TravelTarget == nil then
+		if data.Stopped or data.TravelTarget == nil then
 			controlButton.Name = "Resume Lift"
 		else
 			controlButton.Name = "Stop Lift"
@@ -40,6 +38,10 @@ function SELF:GenerateButtons(ent, keyValues)
 	end
 
 	for i, turboliftData in SortedPairs(Star_Trek.Turbolift.Lifts) do
+		if shipId ~= turboliftData.ShipId then
+			continue
+		end
+
 		local button = {
 			Name = turboliftData.Name,
 			Disabled = turboliftData.Name == name,

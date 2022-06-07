@@ -45,7 +45,6 @@ hook.Add("AcceptInput", "Star_Trek.BlockDoorIfAlreadyDooring", function(ent, inp
 		value = string.lower(value)
 
 		if value == "idle" then
-			print("IDLE")
 			return
 		end
 

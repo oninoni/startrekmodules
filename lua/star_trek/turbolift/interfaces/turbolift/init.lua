@@ -30,8 +30,13 @@ SELF.Solid = true
 -- Opening a turbolift control menu.
 function SELF:Open(ent)
 	local keyValues = ent.LCARSKeyData
-	if not istable(keyValues) then
-		return false, "Invalid Key Values on OpenTLMenu"
+	if istable(keyValues) then
+		name = keyValues["lcars_name"]
+	end
+
+	local overrideName = hook.Run("Star_Trek.Turbolift.OverrideName", ent)
+	if isstring(overrideName) then
+		name = overrideName
 	end
 
 	local success, window = Star_Trek.LCARS:CreateWindow(
@@ -67,7 +72,7 @@ function SELF:Open(ent)
 				end
 			end
 		end,
-		self:GenerateButtons(ent, keyValues),
+		self:GenerateButtons(ent, name),
 		"TURBOLIFT",
 		"LIFT"
 	)

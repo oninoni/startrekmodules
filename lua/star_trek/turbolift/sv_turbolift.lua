@@ -38,6 +38,7 @@ local setupTurbolifts = function()
 
 					local turboliftData = {
 						Name = name,
+						ShipId = 0, -- TODO: Implement
 						Entity = ent,
 						InUse = false,
 						Queue = {},
@@ -55,6 +56,7 @@ local setupTurbolifts = function()
 
 			local podData = {
 				Entity = ent,
+				ShipId = 0, -- TODO: Implement
 				InUse = false,
 				Stopped = false,
 				TravelTime = 0,
@@ -106,6 +108,10 @@ function Star_Trek.Turbolift:GetObjects(liftEntity)
 		local entities = ents.FindInBox(attachmentPoint1.Pos, attachmentPoint2.Pos)
 
 		for _, ent in pairs(entities or {}) do
+			if ent == liftEntity then
+				continue
+			end
+
 			if ent:MapCreationID() ~= -1 then
 				continue
 			end
@@ -114,6 +120,10 @@ function Star_Trek.Turbolift:GetObjects(liftEntity)
 			if class == "phys_bone_follower"
 			or class == "predicted_viewmodel"
 			or class == "force_field" then
+				continue
+			end
+
+			if hook.Run("Star_Trek.Turbolift.ExcludeTeleport", liftEntity, ent) then
 				continue
 			end
 
@@ -177,6 +187,10 @@ function Star_Trek.Turbolift:StartLift(ply, sourceLift, targetLiftId)
 	local sourceLiftData = sourceLift.Data
 	local targetLiftData = self.Lifts[targetLiftId]
 	if targetLiftData then
+		if sourceLiftData.ShipId ~= targetLiftData.ShipId then
+			return
+		end
+
 		local podData = self:GetUnusedPod()
 		if podData then
 			local ent = podData.Entity
@@ -270,6 +284,10 @@ function Star_Trek.Turbolift:ReRoutePod(ply, pod, targetLiftId)
 
 	local targetLiftData = self.Lifts[targetLiftId]
 	if targetLiftData then
+		if podData.ShipId ~= targetLiftData.ShipId then
+			return
+		end
+
 		if not podData.Stopped and istable(Star_Trek.Logs) then
 			Star_Trek.Logs:AddEntry(podData.Entity, ply, "Turbolift halted!")
 		end
