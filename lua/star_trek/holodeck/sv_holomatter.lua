@@ -89,6 +89,8 @@ end
 hook.Add("OnEntityCreated", "Star_Trek.Holodeck.DetectHolomatter", function(ent)
 	timer.Simple(0, function()
 		if not IsValid(ent) then return end
+		if ent:MapCreationID() ~= -1 then return end
+		print(ent, ent:MapCreationID())
 
 		local pos = ent:GetPos()
 
