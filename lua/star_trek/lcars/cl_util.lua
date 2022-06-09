@@ -31,7 +31,7 @@ function Star_Trek.LCARS:Get3D2DMousePos(window)
 
 	local rayDir = gui.ScreenToVector(x, y)
 
-	local pos = util.IntersectRayWithPlane(self.EyePos, rayDir, window.WPosG, window.WAngG:Up())
+	local pos = util.IntersectRayWithPlane(self.EyePos or LocalPlayer():EyePos(), rayDir, window.WPosG, window.WAngG:Up())
 	pos = WorldToLocal(pos or Vector(), Angle(), window.WPosG, window.WAngG)
 	pos = Vector(pos[1] * window.WScale, pos[2] * -window.WScale, 0)
 

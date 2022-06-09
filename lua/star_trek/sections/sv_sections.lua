@@ -103,7 +103,7 @@ function Star_Trek.Sections:GetInSection(deck, sectionId, filterCallback, allowM
 			if not allowParent and IsValid(ent:GetParent()) then continue end
 			if isfunction(filterCallback) and filterCallback(objects, ent) then continue end
 
-			local entPos = ent.EyePos and ent:EyePos() or ent:GetPos()
+			local entPos = isfunction(ent.EyePos) and ent:EyePos() or ent:GetPos()
 			if self:IsInArea(areaData, entPos) then
 				table.insert(objects, ent)
 				ent.DetectedInSection = sectionId
@@ -217,7 +217,7 @@ function Star_Trek.Sections:SetupSections()
 				math.max(globalMax.y, pos.y + max.y, pos.y + min.y),
 				math.max(globalMax.z, pos.z + max.z, pos.z + min.z)
 			)
-			
+
 			globalMin = Vector(
 				math.min(globalMin.x, pos.x + max.x, pos.x + min.x),
 				math.min(globalMin.y, pos.y + max.y, pos.y + min.y),
@@ -229,7 +229,7 @@ function Star_Trek.Sections:SetupSections()
 	end
 
 	self.GlobalOffset = globalMin + (globalMax - globalMin) * 0.5
-	
+
 	hook.Run("Star_Trek.Sections.Loaded")
 end
 
