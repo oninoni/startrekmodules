@@ -112,6 +112,10 @@ function Star_Trek.Turbolift:GetObjects(liftEntity)
 				continue
 			end
 
+			if table.HasValue(liftEntity:GetChildren(), ent) then
+				continue
+			end
+
 			if ent:MapCreationID() ~= -1 then
 				continue
 			end
