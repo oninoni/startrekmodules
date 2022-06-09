@@ -90,13 +90,18 @@ hook.Add("OnEntityCreated", "Star_Trek.Holodeck.DetectHolomatter", function(ent)
 	timer.Simple(0, function()
 		if not IsValid(ent) then return end
 		if ent:MapCreationID() ~= -1 then return end
-		print(ent, ent:MapCreationID())
+
+		local phys = ent:GetPhysicsObject()
+		if not IsValid(phys) then
+			return
+		end
 
 		local pos = ent:GetPos()
 
 		if Star_Trek.Holodeck:IsInHolodeckProgramm(pos) then
 			ent.HoloMatter = true
 
+			print(ent)
 			Star_Trek.Holodeck:Disintegrate(ent, true)
 		end
 	end)
