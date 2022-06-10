@@ -98,6 +98,10 @@ hook.Add("AcceptInput", "Star_Trek.BlockDoorIfAlreadyDooring", function(ent, inp
 
 			local closeDuration = ent:SequenceDuration(ent:LookupSequence("close"))
 			timer.Simple(closeDuration * 2, function()
+				if ent:GetSequence() ~= ent:LookupSequence("close") then
+					return
+				end
+
 				ent:Fire("SetAnimation", "idle")
 			end)
 		end
