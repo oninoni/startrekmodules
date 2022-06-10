@@ -22,7 +22,7 @@ local SELF = INTERFACE
 function SELF:GenerateButtons(ent, name)
 	local buttons = {}
 
-	local data = ent.Data
+	local data = ent.TurboliftData
 	local shipId = data.ShipId
 
 	if ent.IsPod then

@@ -47,7 +47,7 @@ local setupTurbolifts = function()
 						CloseCallback = nil
 					}
 
-					ent.Data = turboliftData
+					ent.TurboliftData = turboliftData
 					lifts[number] = turboliftData
 				end
 			end
@@ -63,7 +63,7 @@ local setupTurbolifts = function()
 				TravelTarget = nil,
 			}
 
-			ent.Data = podData
+			ent.TurboliftData = podData
 			table.insert(Star_Trek.Turbolift.Pods, podData)
 		end
 	end
@@ -188,7 +188,7 @@ end
 --
 -- @return Boolean canStart
 function Star_Trek.Turbolift:StartLift(ply, sourceLift, targetLiftId)
-	local sourceLiftData = sourceLift.Data
+	local sourceLiftData = sourceLift.TurboliftData
 	local targetLiftData = self.Lifts[targetLiftId]
 	if targetLiftData then
 		if sourceLiftData.ShipId ~= targetLiftData.ShipId then
@@ -273,7 +273,7 @@ function Star_Trek.Turbolift:ResumePod(ply, podData)
 end
 
 function Star_Trek.Turbolift:TogglePos(ply, pod)
-	local podData = pod.Data
+	local podData = pod.TurboliftData
 	if podData.Stopped then
 		self:ResumePod(ply, podData)
 		return false
@@ -284,7 +284,7 @@ function Star_Trek.Turbolift:TogglePos(ply, pod)
 end
 
 function Star_Trek.Turbolift:ReRoutePod(ply, pod, targetLiftId)
-	local podData = pod.Data
+	local podData = pod.TurboliftData
 
 	local targetLiftData = self.Lifts[targetLiftId]
 	if targetLiftData then
