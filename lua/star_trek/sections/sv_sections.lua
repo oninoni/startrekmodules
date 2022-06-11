@@ -235,9 +235,9 @@ end
 
 -- Returns categoriy data for a category_list containing all ship sections.
 -- 
--- @param bool? needsLocations
+-- @param Number? locationMinimum
 -- @return Table categories
-function Star_Trek.Sections:GetSectionCategories(needsLocations)
+function Star_Trek.Sections:GetSectionCategories(locationMinimum)
 	local categories = {}
 	for deck, deckData in SortedPairs(self.Decks) do
 		local category = {
@@ -254,7 +254,8 @@ function Star_Trek.Sections:GetSectionCategories(needsLocations)
 					Data = sectionData.Id,
 				}
 
-				if needsLocations and table.Count(sectionData.BeamLocations) == 0 then
+				print(button.Name, table.Count(sectionData.BeamLocations))
+				if table.Count(sectionData.BeamLocations) < (locationMinimum or 0) then
 					button.Disabled = true
 				end
 
