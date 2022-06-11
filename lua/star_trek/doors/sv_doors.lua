@@ -44,6 +44,10 @@ hook.Add("AcceptInput", "Star_Trek.BlockDoorIfAlreadyDooring", function(ent, inp
 	if Star_Trek.Doors.Doors[ent] and string.lower(input) == "setanimation" then
 		value = string.lower(value)
 
+		if value == "idle" then
+			return
+		end
+
 		-- Prevent the same animation again.
 		local currentSequence = ent:GetSequence()
 		local sequence = ent:LookupSequence(value)
@@ -91,6 +95,15 @@ hook.Add("AcceptInput", "Star_Trek.BlockDoorIfAlreadyDooring", function(ent, inp
 
 			ent:SetCollisionGroup(COLLISION_GROUP_NONE)
 			ent:SetSolid(SOLID_VPHYSICS)
+
+			local closeDuration = ent:SequenceDuration(ent:LookupSequence("close"))
+			timer.Simple(closeDuration * 2, function()
+				if ent:GetSequence() ~= ent:LookupSequence("close") then
+					return
+				end
+
+				ent:Fire("SetAnimation", "idle")
+			end)
 		end
 
 		local partnerDoor = Star_Trek.Doors:GetPortalDoor(ent)

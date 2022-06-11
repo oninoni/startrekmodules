@@ -46,6 +46,10 @@ function Star_Trek.Transporter:CanBeamEntity(ent)
 		return false
 	end
 
+	if hook.Run("Star_Trek.Transporter.OverrideCanBeam", ent) == false then
+		return false
+	end
+
 	return true
 end
 

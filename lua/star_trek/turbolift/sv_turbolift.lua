@@ -38,6 +38,7 @@ local setupTurbolifts = function()
 
 					local turboliftData = {
 						Name = name,
+						ShipId = 0, -- TODO: Implement
 						Entity = ent,
 						InUse = false,
 						Queue = {},
@@ -46,7 +47,7 @@ local setupTurbolifts = function()
 						CloseCallback = nil
 					}
 
-					ent.Data = turboliftData
+					ent.TurboliftData = turboliftData
 					lifts[number] = turboliftData
 				end
 			end
@@ -55,13 +56,14 @@ local setupTurbolifts = function()
 
 			local podData = {
 				Entity = ent,
+				ShipId = 0, -- TODO: Implement
 				InUse = false,
 				Stopped = false,
 				TravelTime = 0,
 				TravelTarget = nil,
 			}
 
-			ent.Data = podData
+			ent.TurboliftData = podData
 			table.insert(Star_Trek.Turbolift.Pods, podData)
 		end
 	end
@@ -106,9 +108,30 @@ function Star_Trek.Turbolift:GetObjects(liftEntity)
 		local entities = ents.FindInBox(attachmentPoint1.Pos, attachmentPoint2.Pos)
 
 		for _, ent in pairs(entities or {}) do
-			if ent:MapCreationID() == -1 and not (ent:GetClass() == "phys_bone_follower" or ent:GetClass() == "predicted_viewmodel") then
-				table.insert(objects, ent)
+			if ent == liftEntity then
+				continue
 			end
+
+			if table.HasValue(liftEntity:GetChildren(), ent) then
+				continue
+			end
+
+			if ent:MapCreationID() ~= -1 then
+				continue
+			end
+
+			local class = ent:GetClass()
+			if class == "phys_bone_follower"
+			or class == "predicted_viewmodel"
+			or class == "force_field" then
+				continue
+			end
+
+			if hook.Run("Star_Trek.Turbolift.ExcludeTeleport", liftEntity, ent) then
+				continue
+			end
+
+			table.insert(objects, ent)
 		end
 	end
 
@@ -134,6 +157,24 @@ function Star_Trek.Turbolift:Teleport(sourceLift, targetLift, objects)
 
 		local targetAngles = targetLift:LocalToWorldAngles(sourceAngles)
 
+		if ent:IsRagdoll() then
+			local entPos = ent:GetPos()
+			local entAng = ent:GetAngles()
+
+			local pCount = ent:GetPhysicsObjectCount()
+			for i = 0, pCount - 1 do
+				local phys = ent:GetPhysicsObjectNum(i)
+
+				local offPos, offAng = WorldToLocal(phys:GetPos(), phys:GetAngles(), entPos, entAng)
+				local newPos, newAng = LocalToWorld(offPos, offAng, targetPos, targetAngles)
+
+				phys:SetPos(newPos)
+				phys:SetAngles(newAng)
+
+				phys:Wake()
+			end
+		end
+
 		ent:SetPos(targetPos)
 		if ent:IsPlayer() then
 			ent:SetEyeAngles(targetAngles)
@@ -147,9 +188,13 @@ end
 --
 -- @return Boolean canStart
 function Star_Trek.Turbolift:StartLift(ply, sourceLift, targetLiftId)
-	local sourceLiftData = sourceLift.Data
+	local sourceLiftData = sourceLift.TurboliftData
 	local targetLiftData = self.Lifts[targetLiftId]
 	if targetLiftData then
+		if sourceLiftData.ShipId ~= targetLiftData.ShipId then
+			return
+		end
+
 		local podData = self:GetUnusedPod()
 		if podData then
 			local ent = podData.Entity
@@ -228,7 +273,7 @@ function Star_Trek.Turbolift:ResumePod(ply, podData)
 end
 
 function Star_Trek.Turbolift:TogglePos(ply, pod)
-	local podData = pod.Data
+	local podData = pod.TurboliftData
 	if podData.Stopped then
 		self:ResumePod(ply, podData)
 		return false
@@ -239,10 +284,14 @@ function Star_Trek.Turbolift:TogglePos(ply, pod)
 end
 
 function Star_Trek.Turbolift:ReRoutePod(ply, pod, targetLiftId)
-	local podData = pod.Data
+	local podData = pod.TurboliftData
 
 	local targetLiftData = self.Lifts[targetLiftId]
 	if targetLiftData then
+		if podData.ShipId ~= targetLiftData.ShipId then
+			return
+		end
+
 		if not podData.Stopped and istable(Star_Trek.Logs) then
 			Star_Trek.Logs:AddEntry(podData.Entity, ply, "Turbolift halted!")
 		end

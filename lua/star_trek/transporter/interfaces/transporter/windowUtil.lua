@@ -237,7 +237,7 @@ function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip)
 			width,
 			height,
 			nil,
-			Star_Trek.Sections:GetSectionCategories(menuTable.Target),
+			Star_Trek.Sections:GetSectionCategories(menuTable.Target and 1),
 			"Sections",
 			"SECTNS",
 			hFlip,

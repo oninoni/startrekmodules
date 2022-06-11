@@ -103,7 +103,7 @@ function Star_Trek.Sections:GetInSection(deck, sectionId, filterCallback, allowM
 			if not allowParent and IsValid(ent:GetParent()) then continue end
 			if isfunction(filterCallback) and filterCallback(objects, ent) then continue end
 
-			local entPos = ent.EyePos and ent:EyePos() or ent:GetPos()
+			local entPos = isfunction(ent.EyePos) and ent:EyePos() or ent:GetPos()
 			if self:IsInArea(areaData, entPos) then
 				table.insert(objects, ent)
 				ent.DetectedInSection = sectionId
@@ -217,7 +217,7 @@ function Star_Trek.Sections:SetupSections()
 				math.max(globalMax.y, pos.y + max.y, pos.y + min.y),
 				math.max(globalMax.z, pos.z + max.z, pos.z + min.z)
 			)
-			
+
 			globalMin = Vector(
 				math.min(globalMin.x, pos.x + max.x, pos.x + min.x),
 				math.min(globalMin.y, pos.y + max.y, pos.y + min.y),
@@ -229,15 +229,15 @@ function Star_Trek.Sections:SetupSections()
 	end
 
 	self.GlobalOffset = globalMin + (globalMax - globalMin) * 0.5
-	
+
 	hook.Run("Star_Trek.Sections.Loaded")
 end
 
 -- Returns categoriy data for a category_list containing all ship sections.
 -- 
--- @param bool? needsLocations
+-- @param Number? locationMinimum
 -- @return Table categories
-function Star_Trek.Sections:GetSectionCategories(needsLocations)
+function Star_Trek.Sections:GetSectionCategories(locationMinimum)
 	local categories = {}
 	for deck, deckData in SortedPairs(self.Decks) do
 		local category = {
@@ -254,7 +254,8 @@ function Star_Trek.Sections:GetSectionCategories(needsLocations)
 					Data = sectionData.Id,
 				}
 
-				if needsLocations and table.Count(sectionData.BeamLocations) == 0 then
+				print(button.Name, table.Count(sectionData.BeamLocations))
+				if table.Count(sectionData.BeamLocations) < (locationMinimum or 0) then
 					button.Disabled = true
 				end
 

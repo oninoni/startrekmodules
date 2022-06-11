@@ -191,14 +191,15 @@ timer.Create("Star_Trek.Transporter.BufferThink", 1, 0, function()
 			table.insert(removeFromBuffer, ent)
 
 			if ent:IsPlayer() then
-				Star_Trek.Transporter:BeamObject(ent, Star_Trek.Transporter.Buffer.Pos, nil, nil)
 				ent:Kill()
 			else
 				SafeRemoveEntity(ent)
 			end
+
+			return
 		end
 
-		ent.BufferQuality = ent.BufferQuality - 1
+		ent.BufferQuality = ent.BufferQuality - 10
 
 		if ent.BufferQuality < 100 then
 			local maxHealth = ent:GetMaxHealth()

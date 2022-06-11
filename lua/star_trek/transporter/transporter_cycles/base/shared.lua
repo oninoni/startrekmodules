@@ -40,6 +40,8 @@ end
 -- Determines the parent transport cycles name for this one. (Like Deriving Classes)
 SELF.BaseCycle = nil
 
+SELF.BufferColor = Color(255, 255, 255)
+
 -- Data of the states being processed.
 SELF.States = {
 	[1] = { -- Demat

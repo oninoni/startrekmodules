@@ -29,7 +29,7 @@ if CLIENT then
 	return
 end
 
-if game.GetMap() ~= "rp_intrepid_v0_9" then return end
+if game.GetMap() ~= "rp_intrepid_v1" then return end
 
 local setupButton = function()
 	if IsValid(Star_Trek.Logs.Button) then
