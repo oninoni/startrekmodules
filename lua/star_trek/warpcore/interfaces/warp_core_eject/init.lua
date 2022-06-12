@@ -50,9 +50,6 @@ function SELF:Open(ent)
 
 				Star_Trek.Logs:AddEntry(coreBut1, ply, "")
 				Star_Trek.Logs:AddEntry(coreBut1, ply, "Invalid Security Code!")
-
-				Star_Trek.Logs:AddEntry(coreBut1, ply, "Code Used:")
-				Star_Trek.Logs:AddEntry(coreBut1, ply, code)
 			end
 		end,
 		"Enter Security Code",
