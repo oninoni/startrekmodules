@@ -13,31 +13,9 @@
 ---------------------------------------
 
 ---------------------------------------
---         Utilities | Index         --
+--         Warp Core | Config        --
 ---------------------------------------
 
-Star_Trek:RequireModules()
-
-Star_Trek.Util = Star_Trek.Util or {}
-
-if SERVER then
-	AddCSLuaFile("sh_stardate.lua")
-
-	--AddCSLuaFile("cl_rendermap.lua")
-
-	include("sh_stardate.lua")
-
-	include("sv_airlock.lua")
-
-	include("sv_positions.lua")
-	include("sv_keyvalues.lua")
-
-	include("luabsp.lua")
-	include("sv_luabsp.lua")
-end
-
-if CLIENT then
-	include("sh_stardate.lua")
-
-	--include("cl_rendermap.lua")
-end
+Star_Trek.WarpCore.ValidCodes = {
+	"420256"
+}
