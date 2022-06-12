@@ -39,10 +39,15 @@ function Star_Trek.Security:EnableForceField(forceFieldData, force)
 	ent:SetPos(forceFieldData.Pos)
 	ent:SetAngles(forceFieldData.Ang)
 
+	if forceFieldData.AlwaysOn then
+		ent.PreventToggleSound = true
+	end
+
 	ent:Spawn()
 	ent:Activate()
 
 	forceFieldData.Entity = ent
+	ent.ForceFieldData = forceFieldData
 
 	Star_Trek.Security:EnableForceField(forceFieldData.Partner)
 

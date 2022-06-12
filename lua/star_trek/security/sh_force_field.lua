@@ -13,30 +13,26 @@
 ---------------------------------------
 
 ---------------------------------------
---          Security | Index         --
+--   Security Force Fields | Shared  --
 ---------------------------------------
 
-Star_Trek:RequireModules("sections", "lcars", "doors")
+hook.Add("PhysgunPickup", "Star_Trek.Security.PreventForceFieldPickup", function(ply, ent)
+	if ent:GetClass() ~= "force_field" then
+		return
+	end
 
-Star_Trek.Security = Star_Trek.Security or {}
+	return false
+end)
 
-if SERVER then
-	AddCSLuaFile("sh_config.lua")
-	AddCSLuaFile("sh_sounds.lua")
-	AddCSLuaFile("sh_force_field.lua")
-	AddCSLuaFile("cl_force_field.lua")
+hook.Add("CanTool", "Star_Trek.Security.PreventCanTool", function(ply, tr, toolname, tool, button)
+	local ent = tr.Entity
+	if not IsValid(ent) then
+		return
+	end
 
-	include("sh_config.lua")
-	include("sh_sounds.lua")
-	include("sh_force_field.lua")
-	include("sv_force_field.lua")
+	if ent:GetClass() ~= "force_field" then
+		return
+	end
 
-	include("sv_sub_consoles.lua")
-end
-
-if CLIENT then
-	include("sh_config.lua")
-	include("sh_sounds.lua")
-	include("sh_force_field.lua")
-	include("cl_force_field.lua")
-end
+	return false
+end)
