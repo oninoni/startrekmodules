@@ -20,7 +20,7 @@
 --
 -- @param Vector pos
 -- @param Angle ang
--- @param Vector size
+-- @param String model
 -- @param Function callback(ent, ply)
 -- @param Boolean strict
 -- @return Boolean success
@@ -49,7 +49,7 @@ function Star_Trek.Button:CreateButton(pos, ang, model, callback, strict)
 			return
 		end
 
-		if type == USE_ON then
+		if type == USE_ON and isfunction(callback) then
 			callback(self, activator)
 		end
 	end
@@ -60,17 +60,17 @@ end
 -- Creates a button, that opens a given interface.
 -- @param Vector pos
 -- @param Angle ang
--- @param Vector size
+-- @param String model
 -- @param String interfaceName
 -- @param Boolean strict
 -- @return Boolean success
 -- @return? String error
-function Star_Trek.Button:CreateInterfaceButton(pos, ang, size, interfaceName, strict)
+function Star_Trek.Button:CreateInterfaceButton(pos, ang, model, interfaceName, strict)
 	if not isstring(interfaceName) then
 		return false, "Interface Type Invalid"
 	end
 
-	local success, ent = self:CreateButton(pos, ang, size, function(ent, ply)
+	local success, ent = self:CreateButton(pos, ang, model, function(ent, ply)
 		local success2, error2 = Star_Trek.LCARS:OpenInterface(ply, ent, interfaceName)
 		if not success2 then
 			print("Callback Error: ", error2)

@@ -13,11 +13,11 @@
 ---------------------------------------
 
 ---------------------------------------
---    LCARS Button Matrix | Shared   --
+--       LCARS Keypad | Shared       --
 ---------------------------------------
 
 if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
 local SELF = WINDOW
 
 -- Determines the parent windows name for this one. (Like Deriving Classes)
-SELF.BaseWindow = "frame"
+SELF.BaseWindow = "button_matrix"

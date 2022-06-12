@@ -19,36 +19,53 @@
 if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
 local SELF = WINDOW
 
-function SELF:OnCreate(mainButtons, title, titleShort, hFlip, secondaryButtons)
+function SELF:OnCreate(title, titleShort, hFlip)
 	local success = SELF.Base.OnCreate(self, title, titleShort, hFlip)
 	if not success then
 		return false
 	end
 
-	if not istable(buttons) then
-		return false
-	end
+	self.Buttons = {}
 
 	self.MainButtons = {}
 	self.SecondaryButtons = {}
 
+	self.ButtonId = 1
+
 	return true
 end
 
-function SELF:AddButton(secondary, name, color, activeColor, disabled, toggle, callback)
+function SELF:CreateButtonRow(buttonList, height)
+	local buttonRowData = {}
+
+	buttonRowData.Height = height
+
+	table.insert(buttonList, buttonRowData)
+	buttonRowData.ColorOffset = table.Count(buttonList) % 2
+
+	buttonRowData.Buttons = {}
+
+	return buttonRowData
+end
+
+function SELF:CreateMainButtonRow(height)
+	return self:CreateButtonRow(self.MainButtons, height)
+end
+
+function SELF:CreateSecondaryButtonRow(height)
+	return self:CreateButtonRow(self.SecondaryButtons, height)
+end
+
+function SELF:AddButtonToRow(buttonRowData, name, number, color, activeColor, disabled, toggle, callback)
 	local buttonData = {}
 
-	local buttonList = self.MainButtons
-	if secondary then
-		buttonList = self.SecondaryButtons
-	end
-
 	buttonData.Name = name or "MISSING"
+	buttonData.Number = number
 
 	if IsColor(color) then
 		buttonData.Color = color
 	else
-		if table.Count(buttonList) % 2 then
+		if table.Count(buttonRowData) % 2 == buttonRowData.ColorOffset then
 			buttonData.Color = Star_Trek.LCARS.ColorLightBlue
 		else
 			buttonData.Color = Star_Trek.LCARS.ColorBlue
@@ -61,43 +78,66 @@ function SELF:AddButton(secondary, name, color, activeColor, disabled, toggle, c
 	buttonData.Toggle = toggle
 	buttonData.Callback = callback
 
+	buttonData.ButtonId = self.ButtonId
+	self.Buttons[self.ButtonId] = buttonData
+	self.ButtonId = self.ButtonId + 1
 
-	table.insert(buttonList, buttonData)
-
-	return buttonData
+	table.insert(buttonRowData.Buttons, buttonData)
 end
 
-function SELF:AddMainButton(...)
-	return self:AddButton(true, ...)
-end
+function SELF:GetButtonClientData(buttonList)
+	local clientButtonList = {}
 
-function SELF:AddSecondaryButton(...)
-	return self:AddButton(true, ...)
-end
+	for _, buttonRowData in pairs(buttonList) do
+		local clientButtonRowData = {
+			Height = buttonRowData.Height,
 
---[[
-function SELF:CreateButtons(buttons)
-	local buttonTable = {}
-
-	for _, button in pairs(buttons) do
-		local buttonData = {
-			Height = button.Height or 35,
-			EndRow = button.EndRow or false,
-
-			Toggle = button.Toggle or false,
+			Buttons = {}
 		}
 
-		table.insert(buttonTable, buttonData)
+		for _, buttonData in pairs(buttonRowData.Buttons) do
+			local clientButtonData = {
+				ButtonId = buttonData.ButtonId,
+				Name = buttonData.Name,
+				Disabled = buttonData.Disabled,
+				Selected = buttonData.Selected,
+
+				Color = buttonData.Color,
+				ActiveColor = buttonData.ActiveColor,
+
+				Number = buttonData.Number,
+			}
+
+			table.insert(clientButtonRowData.Buttons, clientButtonData)
+		end
+
+		table.insert(clientButtonList, clientButtonRowData)
 	end
 
-	return buttonTable
+	return clientButtonList
 end
-]]
+
+function SELF:OnPress(interfaceData, ply, buttonId, callback)
+	local buttonData = self.Buttons[buttonId]
+	if not istable(buttonData) then return end
+
+	local overrideSound = false
+	if isfunction(buttonData.Callback) and buttonData.Callback() then
+		overrideSound = true
+	end
+
+	if not overrideSound then
+		interfaceData.Ent:EmitSound("star_trek.lcars_beep")
+	end
+
+	return true
+end
 
 function SELF:GetClientData()
 	local clientData = SELF.Base.GetClientData(self)
 
-	clientData.ButtonHeight = self.ButtonHeight
+	clientData.MainButtons = self:GetButtonClientData(self.MainButtons)
+	clientData.SecondaryButtons = self:GetButtonClientData(self.SecondaryButtons)
 
 	return clientData
 end

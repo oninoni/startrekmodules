@@ -33,6 +33,7 @@ Star_Trek.Modules["security"] = true
 Star_Trek.Modules["alert"] = true
 
 Star_Trek.Modules["holodeck"] = true
+Star_Trek.Modules["warpcore"] = true
 Star_Trek.Modules["sensors"] = true
 
 -- "Custom Consoles"

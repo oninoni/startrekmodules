@@ -13,10 +13,10 @@
 ---------------------------------------
 
 ---------------------------------------
---       Utilities | Warp Core       --
+--         Warp Core | Client        --
 ---------------------------------------
 
-net.Receive("Star_Trek.Util.SetWarpCore", function()
+net.Receive("Star_Trek.WarpCore.SetSpeed", function()
 	local speed = net.ReadFloat()
 	local brightness = net.ReadFloat()
 	local flashSpeed = net.ReadFloat()

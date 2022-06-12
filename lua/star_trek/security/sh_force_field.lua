@@ -13,11 +13,28 @@
 ---------------------------------------
 
 ---------------------------------------
---    LCARS Button Matrix | Shared   --
+--   Security Force Fields | Shared  --
 ---------------------------------------
 
-if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
-local SELF = WINDOW
+-- Prevent Forcefields from being picked up by a Physgun
+hook.Add("PhysgunPickup", "Star_Trek.Security.PreventForceFieldPickup", function(ply, ent)
+	if ent:GetClass() ~= "force_field" then
+		return
+	end
 
--- Determines the parent windows name for this one. (Like Deriving Classes)
-SELF.BaseWindow = "frame"
+	return false
+end)
+
+-- Prevent Forcefields from being modified by a Toolgun
+hook.Add("CanTool", "Star_Trek.Security.PreventCanTool", function(ply, tr, toolname, tool, button)
+	local ent = tr.Entity
+	if not IsValid(ent) then
+		return
+	end
+
+	if ent:GetClass() ~= "force_field" then
+		return
+	end
+
+	return false
+end)
