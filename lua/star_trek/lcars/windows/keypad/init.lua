@@ -21,7 +21,6 @@ local SELF = WINDOW
 
 function SELF:CreateKey(row, i)
 	self:AddButtonToRow(row, tostring(i), nil, nil, nil, false, false, function()
-		print("Key:", i)
 		table.insert(self.Values, i)
 	end)
 end
