@@ -17,5 +17,5 @@
 ---------------------------------------
 
 Star_Trek.WarpCore.ValidCodes = {
-	"420256"
+	["Default Code"] = "420256",
 }

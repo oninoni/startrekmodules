@@ -91,6 +91,7 @@ hook.Add("Star_Trek.LCARS.BasicPressed", "Star_Trek.WarpCore.BasicPressed", func
 		elseif buttonId == 3 then
 			Star_Trek.Logs:AddEntry(ent, ply, "Starting Warp Core Ejection...")
 
+			ent:EmitSound("star_trek.lcars_beep2")
 			Star_Trek.LCARS:OpenInterface(ply, Star_Trek.WarpCore.Button, "warp_core_eject")
 
 			return true

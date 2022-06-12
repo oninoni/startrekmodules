@@ -39,11 +39,19 @@ function SELF:Open(ent)
 				interfaceData:Close()
 
 				coreBut1:Fire("FireUser3")
+				Star_Trek.Logs:AddEntry(coreBut1, ply, "")
 				Star_Trek.Logs:AddEntry(coreBut1, ply, "Warp Core ejected!")
+
+				Star_Trek.Logs:AddEntry(coreBut1, ply, "Code Used:")
+				local codeName = table.KeyFromValue(Star_Trek.WarpCore.ValidCodes, code)
+				Star_Trek.Logs:AddEntry(coreBut1, ply, codeName)
 			else
 				interfaceData.Ent:EmitSound("star_trek.lcars_error")
 
+				Star_Trek.Logs:AddEntry(coreBut1, ply, "")
 				Star_Trek.Logs:AddEntry(coreBut1, ply, "Invalid Security Code!")
+
+				Star_Trek.Logs:AddEntry(coreBut1, ply, "Code Used:")
 				Star_Trek.Logs:AddEntry(coreBut1, ply, code)
 			end
 		end,
