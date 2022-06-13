@@ -145,9 +145,11 @@ end
 function SELF:ApplyListWindowCategories(categories, page, disableAll)
 	local pageCount = self.PageCount or 1
 
-	local mainCategory = categories[5]
 	local prevCategory = categories[1]
+	local newestLogTimeCategory = categories[2]
+	local oldestLogTimeCategory = categories[3]
 	local nextCategory = categories[4]
+	local mainCategory = categories[5]
 
 	self.Page = math.min(pageCount, math.max(page, 1))
 
@@ -166,6 +168,35 @@ function SELF:ApplyListWindowCategories(categories, page, disableAll)
 		prevCategory.Disabled = true
 		nextCategory.Disabled = true
 		mainCategory.Disabled = true
+	end
+
+	local buttons = mainCategory.Buttons
+	if istable(buttons) then
+		local firstButton = buttons[1]
+		if istable(firstButton) then
+			local firstButtonData = firstButton.Data
+			if istable(firstButtonData) then
+				local t = math.Round(Star_Trek.Util:GetStardate(firstButtonData.SessionStarted), 2)
+				if Star_Trek.Logs.ShowUTCTime then
+					t = os.date("!%B %d %Y", firstButtonData.SessionStarted)
+				end
+
+				newestLogTimeCategory.Name = t
+			end
+		end
+
+		local lastButton = buttons[table.Count(buttons) - 1]
+		if istable(lastButton) then
+			local lastButtonData = lastButton.Data
+			if istable(lastButtonData) then
+				local t = math.Round(Star_Trek.Util:GetStardate(lastButtonData.SessionStarted), 2)
+				if Star_Trek.Logs.ShowUTCTime then
+					t = os.date("!%B %d %Y", lastButtonData.SessionStarted)
+				end
+
+				oldestLogTimeCategory.Name = t
+			end
+		end
 	end
 end
 
@@ -234,12 +265,12 @@ function SELF:CreateListWindow(page)
 			},
 		},
 		{
-			Name = "01-02-2020",
+			Name = "",
 			Disabled = true,
 			Buttons = {},
 		},
 		{
-			Name = "05-03-2020",
+			Name = "",
 			Disabled = true,
 			Buttons = {},
 		},

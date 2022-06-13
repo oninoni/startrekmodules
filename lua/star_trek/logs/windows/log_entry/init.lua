@@ -49,12 +49,20 @@ function SELF:UpdateContent()
 	local startTime = "[MISSING]"
 	if isnumber(sessionData.SessionStarted) then
 		startTime = Star_Trek.Util:GetStardate(sessionData.SessionStarted)
+
+		if Star_Trek.Logs.ShowUTCTime then
+			startTime = tostring(startTime) .. "  -  (" .. os.date("!%B %d %Y - %H:%M:%S UTC", sessionData.SessionStarted) .. ")"
+		end
 	end
 	self:AddLine("Stardate Started: " .. startTime, Star_Trek.LCARS.ColorLightBlue) -- TODO: Stardate
 
 	local archiveTime = "[ACTIVE]"
 	if isnumber(sessionData.SessionArchived) then
 		archiveTime = Star_Trek.Util:GetStardate(sessionData.SessionArchived)
+
+		if Star_Trek.Logs.ShowUTCTime then
+			archiveTime = tostring(archiveTime) .. "  -  (" .. os.date("!%B %d %Y - %H:%M:%S UTC", sessionData.SessionArchived) .. ")"
+		end
 	end
 	self:AddLine("Stardate Archived: " .. archiveTime, Star_Trek.LCARS.ColorLightBlue) -- TODO: Stardate
 
