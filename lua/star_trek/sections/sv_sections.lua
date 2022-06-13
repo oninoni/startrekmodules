@@ -254,7 +254,6 @@ function Star_Trek.Sections:GetSectionCategories(locationMinimum)
 					Data = sectionData.Id,
 				}
 
-				print(button.Name, table.Count(sectionData.BeamLocations))
 				if table.Count(sectionData.BeamLocations) < (locationMinimum or 0) then
 					button.Disabled = true
 				end

@@ -66,6 +66,10 @@ hook.Add("PlayerInitialSpawn", "Star_Trek.WarpCore.Sync", function(ply)
 	end
 end)
 
+hook.Add("PostCleanupMap", "Star_Trek.WarpCore.ResetCore", function()
+	Star_Trek.WarpCore:SetWarp(0)
+end)
+
 hook.Add("Star_Trek.ModulesLoaded", "Star_Trek.WarpCore.LoadLogType", function()
 	if istable(Star_Trek.Logs) then
 		Star_Trek.Logs:RegisterType("Warp Core Control")
