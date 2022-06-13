@@ -101,10 +101,15 @@ hook.Add("OnEntityCreated", "Star_Trek.Holodeck.DetectHolomatter", function(ent)
 		if Star_Trek.Holodeck:IsInHolodeckProgramm(pos) then
 			ent.HoloMatter = true
 
-			print(ent)
 			Star_Trek.Holodeck:Disintegrate(ent, true)
 		end
 	end)
+end)
+
+hook.Add("Star_Trek.Transporter.OverrideCanBeam", "Star_Trek.Holodeck.OverrideCanBeam", function(ent)
+	if ent.HoloMatter then
+		return false
+	end
 end)
 
 hook.Add("wp-teleport", "Star_Trek.Holodeck.Disintegrate", function(self, ent)
