@@ -58,10 +58,8 @@ end
 function Star_Trek.Security:EnableForceFieldsInSections(deck, sectionIds)
 	local positions = {}
 
-	local deckData = Star_Trek.Sections.Decks[deck]
-	if not istable(deckData) then
-		return false
-	end
+	local success, deckData = Star_Trek.Sections:GetDeck(deck)
+	if not success then return false, deckData end
 
 	for _, sectionId in pairs(sectionIds or {}) do
 		local sectionData = deckData.Sections[sectionId]
@@ -71,8 +69,8 @@ function Star_Trek.Security:EnableForceFieldsInSections(deck, sectionIds)
 
 		for _, forceFieldId in pairs(sectionData.ForceFields or {}) do
 			local forceFieldData = self.ForceFields[forceFieldId]
-			local success, pos = self:EnableForceField(forceFieldData)
-			if success then
+			local success2, pos = self:EnableForceField(forceFieldData)
+			if success2 then
 				table.insert(positions, {
 					DetectedInSection = sectionId,
 					DetectedOndeck = deck,
@@ -128,10 +126,8 @@ end
 function Star_Trek.Security:DisableForceFieldsInSections(deck, sectionIds)
 	local positions = {}
 
-	local deckData = Star_Trek.Sections.Decks[deck]
-	if not istable(deckData) then
-		return false
-	end
+	local success, deckData = Star_Trek.Sections:GetDeck(deck)
+	if not success then return false, deckData end
 
 	for _, sectionId in pairs(sectionIds or {}) do
 		local sectionData = deckData.Sections[sectionId]
@@ -141,8 +137,8 @@ function Star_Trek.Security:DisableForceFieldsInSections(deck, sectionIds)
 
 		for _, forceFieldId in pairs(sectionData.ForceFields or {}) do
 			local forceFieldData = self.ForceFields[forceFieldId]
-			local success, pos = self:DisableForceField(forceFieldData)
-			if success then
+			local success2, pos = self:DisableForceField(forceFieldData)
+			if success2 then
 				table.insert(positions, {
 					DetectedInSection = sectionId,
 					DetectedOndeck = deck,

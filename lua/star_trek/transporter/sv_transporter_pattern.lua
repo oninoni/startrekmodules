@@ -173,8 +173,8 @@ function Star_Trek.Transporter:GetPatternFromSections(deck, sectionIds, isTarget
 		end
 	else -- Target
 		for _, sectionId in pairs(sectionIds) do
-			local sectionData = Star_Trek.Sections:GetSection(deck, sectionId)
-			if not sectionData then
+			local success, sectionData = Star_Trek.Sections:GetSection(deck, sectionId)
+			if not success then
 				continue
 			end
 

@@ -70,8 +70,8 @@ function Star_Trek.Logs:StartSession(ent, ply, type)
 
 	local sectionName = "DATA MISSING"
 	if IsValid(ply) and ply:IsPlayer() then
-		local deck, sectionId = Star_Trek.Sections:DetermineSection(ply:EyePos())
-		if deck then
+		local success, deck, sectionId = Star_Trek.Sections:DetermineSection(ply:EyePos())
+		if success then
 			sectionName = Star_Trek.Sections:GetSectionName(deck, sectionId)
 		end
 	end

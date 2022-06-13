@@ -16,27 +16,67 @@
 --         Sections | Server         --
 ---------------------------------------
 
-function Star_Trek.Sections:GetSection(deck, sectionId)
+-- Get the data of the given deck number.
+--
+-- @param Number deck
+-- @return Boolean success
+-- @return Table/String deckData/error
+function Star_Trek.Sections:GetDeck(deck)
 	local deckData = self.Decks[deck]
 	if istable(deckData) then
-		local sectionData = deckData.Sections[sectionId]
-		if istable(sectionData) then
-			return sectionData
-		end
-
-		return false, "Invalid Section Id!"
+		return true, deckData
 	end
 
 	return false, "Invalid Deck!"
 end
 
-function Star_Trek.Sections:IsInArea(areaData, entPos)
-	local pos = areaData.Pos
+-- Get the data of the given section.
+--
+-- @param Number deck
+-- @param Number sectionId
+-- @return Boolean success
+-- @return Table/String sectionData/error
+function Star_Trek.Sections:GetSection(deck, sectionId)
+	local success, deckData = Star_Trek.Sections:GetDeck(deck)
+	if not success then
+		return false, deckData
+	end
 
+	local sectionData = deckData.Sections[sectionId]
+	if istable(sectionData) then
+		return true, sectionData
+	end
+
+	return false, "Invalid Section Id!"
+end
+
+-- Get the full name of the given section.
+--
+-- @param Number deck
+-- @param Number sectionId
+function Star_Trek.Sections:GetSectionName(deck, sectionId)
+	local success, sectionData = self:GetSection(deck, sectionId)
+	if not success then
+		return false, sectionData
+	end
+
+	return "Section " .. sectionData.RealId .. " " .. sectionData.Name
+end
+
+------------------------
+--   Position Checks  --
+------------------------
+
+-- Determine if the given position is inside the given area.
+-- 
+-- @param Table areaData
+-- @param Vector pos
+-- @param Boolean isInside
+local function isInArea(areaData, pos)
 	local min = areaData.Min
 	local max = areaData.Max
 
-	local localPos = -WorldToLocal(pos, Angle(), entPos, Angle())
+	local localPos = areaData.Pos - pos
 
 	if  localPos[1] > min[1] and localPos[1] < max[1]
 	and localPos[2] > min[2] and localPos[2] < max[2]
@@ -47,40 +87,68 @@ function Star_Trek.Sections:IsInArea(areaData, entPos)
 	return false
 end
 
+-- Determine if the given position is inside the given section.
+-- 
+-- @param Number deck
+-- @param Number sectionId
+-- @param Vector pos
+-- @param Boolean isInside
 function Star_Trek.Sections:IsInSection(deck, sectionId, pos)
-	local sectionData, error = self:GetSection(deck, sectionId)
-	if not sectionData then
-		return false, error
+	local success, sectionData = self:GetSection(deck, sectionId)
+	if not success then
+		return false
 	end
 
 	for _, areaData in pairs(sectionData.Areas) do
-		if self:IsInArea(areaData, pos) then
+		if isInArea(areaData, pos) then
 			return true
 		end
 	end
 
-	return false, "Not in area."
+	return false
 end
 
-function Star_Trek.Sections:IsOnDeck(deck, pos)
-	local deckData = self.Decks[deck]
-	if istable(deckData) then
+-- Determine the section a given pos is in.
+-- @param Vector pos
+-- @return Boolean success
+-- @return? Number deck
+-- @return? Number sectionId
+function Star_Trek.Sections:DetermineSection(pos)
+	for deck, deckData in SortedPairs(Star_Trek.Sections.Decks) do
 		for sectionId, sectionData in pairs(deckData.Sections) do
 			if self:IsInSection(deck, sectionId, pos) then
-				return true
+				return true, deck, sectionId
 			end
 		end
-	else
-		return false, "Invalid Deck!"
 	end
 
-	return false, "Not on deck."
+	return false
+end
+
+-- Determine if the given position is inside the sections of the given deck.
+-- 
+-- @param Number deck
+-- @param Vector pos
+-- @param Boolean isInside
+function Star_Trek.Sections:IsOnDeck(deck, pos)
+	local success, deckData = self:GetDeck(deck)
+	if not success then
+		return false
+	end
+
+	for sectionId, sectionData in pairs(deckData.Sections) do
+		if self:IsInSection(deck, sectionId, pos) then
+			return true
+		end
+	end
+
+	return false
 end
 
 function Star_Trek.Sections:GetInSection(deck, sectionId, filterCallback, allowMap, allowParent)
-	local sectionData, error = self:GetSection(deck, sectionId)
-	if not sectionData then
-		return false, error
+	local success, sectionData = self:GetSection(deck, sectionId)
+	if not success then
+		return false, sectionData
 	end
 
 	local objects = {}
@@ -104,7 +172,7 @@ function Star_Trek.Sections:GetInSection(deck, sectionId, filterCallback, allowM
 			if isfunction(filterCallback) and filterCallback(objects, ent) then continue end
 
 			local entPos = isfunction(ent.EyePos) and ent:EyePos() or ent:GetPos()
-			if self:IsInArea(areaData, entPos) then
+			if isInArea(areaData, entPos) then
 				table.insert(objects, ent)
 				ent.DetectedInSection = sectionId
 				ent.DetectedOndeck = deck
@@ -130,52 +198,60 @@ function Star_Trek.Sections:GetInSections(deck, sectionIds, filterCallback, allo
 	return entities
 end
 
-function Star_Trek.Sections:GetSectionName(deck, sectionId)
-	local sectionData, error = self:GetSection(deck, sectionId)
-	if not sectionData then
-		return false, error
-	end
+-- Returns categoriy data for a category_list containing all ship sections.
+-- 
+-- @param Number? locationMinimum
+-- @return Table categories
+function Star_Trek.Sections:GetSectionCategories(locationMinimum)
+	local categories = {}
+	for deck = 1, 15 do
+		local category = {
+			Name = "DECK " .. deck,
+			Buttons = {},
+		}
 
-	return "Section " .. sectionData.RealId .. " " .. sectionData.Name
-end
+		local success, deckData = self:GetDeck(deck)
+		if success then
+			for sectionId, sectionData in SortedPairs(deckData.Sections) do
+				local button = {
+					Name = self:GetSectionName(deck, sectionId),
+					Data = sectionData.Id,
+				}
 
-function Star_Trek.Sections:DetermineSection(pos)
-	for deck, deckData in SortedPairs(Star_Trek.Sections.Decks) do
-		for sectionId, sectionData in pairs(deckData.Sections) do
-			if self:IsInSection(deck, sectionId, pos) then
-				return deck, sectionId
+				if table.Count(sectionData.BeamLocations) < (locationMinimum or 0) then
+					button.Disabled = true
+				end
+
+				table.insert(category.Buttons, button)
 			end
+		else
+			category.Disabled = true
 		end
+
+		table.insert(categories, category)
 	end
 
-	return false
+	return categories
 end
 
-function Star_Trek.Sections:SetupSections()
+function Star_Trek.Sections:Setup()
 	self.Decks = {}
 
 	local globalMin = Vector( math.huge,  math.huge,  math.huge)
 	local globalMax = Vector(-math.huge, -math.huge, -math.huge)
 
-	for i = 1, self.DeckCount do
-		self.Decks[i] = {
-			Sections = {},
-		}
-	end
-
 	for _, ent in pairs(ents.GetAll()) do
 		local name = ent:GetName()
 		if not isstring(name) then continue end
-
 		if not string.StartWith(name, "section") then continue end
 
 		local numberData = string.Split(string.sub(ent:GetName(), 8), "_")
 		if not istable(numberData) then continue end
-
 		if #numberData < 2 then continue end
 
 		local deck = tonumber(numberData[1])
-		if not deck or deck < 1 or deck > self.DeckCount then continue end
+		if not isnumber(deck) or deck < 1 then continue end
+		self.Decks[deck] = self.Decks[deck] or {Sections = {}}
 
 		local sectionId = tonumber(numberData[2])
 		if not isnumber(sectionId) then
@@ -189,20 +265,14 @@ function Star_Trek.Sections:SetupSections()
 
 		local keyValues = ent.LCARSKeyData
 		if istable(keyValues) then
-			local sectionName = keyValues["lcars_name"]
-
 			self.Decks[deck].Sections[sectionId] = self.Decks[deck].Sections[sectionId] or {
-				Name = sectionName,
+				Name = keyValues["lcars_name"],
 				Id = sectionId,
 				RealId = numberData[2],
 				Areas = {},
 			}
 
 			local pos = ent:GetPos()
-			if ent:GetAngles() ~= Angle() then
-				print("Section Non-Zero Angle Detected! Not implemented!")
-			end
-
 			local min, max = ent:GetCollisionBounds()
 
 			table.insert(self.Decks[deck].Sections[sectionId].Areas, {
@@ -223,6 +293,12 @@ function Star_Trek.Sections:SetupSections()
 				math.min(globalMin.y, pos.y + max.y, pos.y + min.y),
 				math.min(globalMin.z, pos.z + max.z, pos.z + min.z)
 			)
+
+			if ent:GetAngles() ~= Angle() then
+				print("Section Non-Zero Angle Detected! Not implemented!")
+			end
+		else
+			print("Invalid Section Key Values! Skipping Entity!")
 		end
 
 		ent:Remove()
@@ -233,44 +309,5 @@ function Star_Trek.Sections:SetupSections()
 	hook.Run("Star_Trek.Sections.Loaded")
 end
 
--- Returns categoriy data for a category_list containing all ship sections.
--- 
--- @param Number? locationMinimum
--- @return Table categories
-function Star_Trek.Sections:GetSectionCategories(locationMinimum)
-	local categories = {}
-	for deck, deckData in SortedPairs(self.Decks) do
-		local category = {
-			Name = "DECK " .. deck,
-			Buttons = {},
-		}
-
-		if table.Count(deckData.Sections) == 0 then
-			category.Disabled = true
-		else
-			for sectionId, sectionData in SortedPairs(deckData.Sections) do
-				local button = {
-					Name = self:GetSectionName(deck, sectionId),
-					Data = sectionData.Id,
-				}
-
-				if table.Count(sectionData.BeamLocations) < (locationMinimum or 0) then
-					button.Disabled = true
-				end
-
-				table.insert(category.Buttons, button)
-			end
-		end
-
-		table.insert(categories, category)
-	end
-
-	return categories
-end
-
-local function setupSections()
-	Star_Trek.Sections:SetupSections()
-end
-
-hook.Add("InitPostEntity", "Star_Trek.Sections.Setup", setupSections)
-hook.Add("PostCleanupMap", "Star_Trek.Sections.Setup", setupSections)
+hook.Add("InitPostEntity", "Star_Trek.Sections.Setup", function() Star_Trek.Sections:Setup() end)
+hook.Add("PostCleanupMap", "Star_Trek.Sections.Setup", function() Star_Trek.Sections:Setup() end)
