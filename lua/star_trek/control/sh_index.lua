@@ -13,7 +13,17 @@
 ---------------------------------------
 
 ---------------------------------------
---         Sections | Config         --
+--          Control | Index          --
 ---------------------------------------
 
-Star_Trek.Sections.DeckCount = 15
+Star_Trek:RequireModules("sections")
+
+Star_Trek.Control = Star_Trek.Control or {}
+
+if SERVER then
+	include("sv_control.lua")
+end
+
+if CLIENT then
+	return
+end
