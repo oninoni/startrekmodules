@@ -18,25 +18,25 @@
 
 Star_Trek.Doors.Doors = Star_Trek.Doors.Doors or {}
 
-function Star_Trek.Doors:GetPortalDoor(door)
-	local sourceEntities = ents.FindInSphere(door:GetPos(), 8)
-	for _, portal in pairs(sourceEntities) do
-		if portal:GetClass() ~= "linked_portal_door" then
-			continue
-		end
+Star_Trek.Control:Register("doors")
 
-		local targetPortal = portal:GetExit()
-		if not IsValid(targetPortal) then
-			continue
-		end
-
-		local targetEntities = ents.FindInSphere(targetPortal:GetPos(), 8)
-		for _, partnerDoor in pairs(targetEntities) do
-			if self:IsDoor(partnerDoor) then
-				return partnerDoor
-			end
-		end
+function Star_Trek.Doors:GetPortalDoor(ent)
+	local portal = ent.Portal
+	if not IsValid(portal) then
+		return
 	end
+
+	local targetPortal = portal:GetExit()
+	if not IsValid(targetPortal) then
+		return
+	end
+
+	local partnerDoor = targetPortal.Door
+	if not IsValid(partnerDoor) then
+		return
+	end
+
+	return partnerDoor
 end
 
 -- Block Doors aborting animations.
@@ -77,6 +77,18 @@ hook.Add("AcceptInput", "Star_Trek.BlockDoorIfAlreadyDooring", function(ent, inp
 			if isstring(locked) and locked == "1" then
 				return true
 			end
+		end
+
+		-- Prevent moving if broken / disabled.
+		if Star_Trek.Control:GetStatus("doors", ent.Deck, ent.SectionId) == Star_Trek.Control.INOPERATIVE then
+			return true
+		end
+
+		-- Prevent moving if partner Door is broken / disabled.
+		-- This changes dynamically in for example the holodeck, so its done on runtime.
+		local partnerDoor = Star_Trek.Doors:GetPortalDoor(ent)
+		if partnerDoor and Star_Trek.Control:GetStatus("doors", partnerDoor.Deck, partnerDoor.SectionId) == Star_Trek.Control.INOPERATIVE then
+			return true
 		end
 
 		if value == "open" then
@@ -197,7 +209,7 @@ hook.Add("Think", "Star_Trek.Doors.DoorThink", function()
 	for ent, _ in pairs(Star_Trek.Doors.Doors or {}) do
 		if ent.Open then
 			local partnerDoor = Star_Trek.Doors:GetPortalDoor(ent)
-			if checkPlayers(ent) or (IsValid(partnerDoor) and checkPlayers(partnerDoor)) then
+			if checkPlayers(ent) or (partnerDoor and checkPlayers(partnerDoor)) then
 				ent.CloseAt = nil
 			else
 				if not ent.CloseAt then
@@ -216,6 +228,18 @@ hook.Add("Think", "Star_Trek.Doors.DoorThink", function()
 		end
 
 		if ent.LCARSKeyData and ent.LCARSKeyData["lcars_autoopen"] == "1" and checkPlayers(ent) then
+			-- Prevent moving if broken / disabled.
+			if Star_Trek.Control:GetStatus("doors", ent.Deck, ent.SectionId) ~= Star_Trek.Control.ACTIVE then
+				continue
+			end
+
+			-- Prevent moving if partner Door is broken / disabled.
+			-- This changes dynamically in for example the holodeck, so its done on runtime.
+			local partnerDoor = Star_Trek.Doors:GetPortalDoor(ent)
+			if partnerDoor and Star_Trek.Control:GetStatus("doors", partnerDoor.Deck, partnerDoor.SectionId) ~= Star_Trek.Control.ACTIVE then
+				continue
+			end
+
 			ent:Fire("SetAnimation", "open")
 		end
 	end
@@ -225,17 +249,36 @@ end)
 --- Setup ---
 -------------
 
--- Setting up Doors.
-local setupDoors = function()
+hook.Add("Star_Trek.Sections.Loaded", "Star_Trek.Doors.Setup", function()
 	Star_Trek.Doors.Doors = {}
 
+	-- Handle regular doors.
 	for _, ent in pairs(ents.GetAll()) do
 		if Star_Trek.Doors:IsDoor(ent) then
 			ent.DoorLastSequenceStart = CurTime()
-
 			Star_Trek.Doors.Doors[ent] = true
+
+			if string.StartWith(ent:GetModel(), "models/kingpommes/startrek/intrepid/jef_") then
+				ent.JeffriesDoor = true
+			else
+				ent.NormalDoor = true
+			end
+
+			local success, deck, sectionId = Star_Trek.Sections:DetermineSection(ent:GetPos())
+			if success then
+				ent.Deck = deck
+				ent.SectionId = sectionId
+			end
+
+			local sourceEntities = ents.FindInSphere(ent:GetPos(), 8)
+			for _, portal in pairs(sourceEntities) do
+				if portal:GetClass() ~= "linked_portal_door" then
+					continue
+				end
+
+				ent.Portal = portal
+				portal.Door = ent
+			end
 		end
 	end
-end
-hook.Add("InitPostEntity", "Star_Trek.DoorInitPostEntity", setupDoors)
-hook.Add("PostCleanupMap", "Star_Trek.DoorPostCleanupMap", setupDoors)
+end)

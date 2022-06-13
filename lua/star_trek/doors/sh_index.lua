@@ -16,7 +16,7 @@
 --           Doors | Index           --
 ---------------------------------------
 
-Star_Trek:RequireModules()
+Star_Trek:RequireModules("sections", "control")
 
 Star_Trek.Doors = Star_Trek.Doors or {}
 

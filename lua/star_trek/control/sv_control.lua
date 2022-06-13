@@ -49,13 +49,13 @@ function Star_Trek.Control:SetStatus(name, value, deck, sectionId)
 	end
 
 	if isnumber(deck) then
-		local success, deckData = self:GetDeck(deck)
+		local success, deckData = Star_Trek.Sections:GetDeck(deck)
 		if not success then
 			return false, deckData
 		end
 
 		if isnumber(sectionId) then
-			local success2, sectionData = self:GetDeck(deck, sectionId)
+			local success2, sectionData = Star_Trek.Sections:GetDeck(deck, sectionId)
 			if not success2 then
 				return false, sectionData
 			end
@@ -85,7 +85,6 @@ end
 -- @param String name
 -- @param? Number deck
 -- @param? Number sectionId
--- @return Boolean success
 -- @return? String/Number error/value
 function Star_Trek.Control:GetStatus(name, deck, sectionId)
 	local controlType = Star_Trek.Control.Types[name]
@@ -103,13 +102,9 @@ function Star_Trek.Control:GetStatus(name, deck, sectionId)
 		if istable(deckData) then
 
 			if isnumber(sectionId) then
-				local sectionData = deckData[sectionId]
-				if istable(sectionData) then
-
-					local sectionValue = sectionData.Value
-					if isnumber(sectionValue) then
-						return sectionValue
-					end
+				local sectionValue = deckData[sectionId]
+				if isnumber(sectionValue) then
+					return sectionValue
 				end
 			end
 
