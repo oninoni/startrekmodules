@@ -18,8 +18,6 @@
 
 Star_Trek.Doors.Doors = Star_Trek.Doors.Doors or {}
 
-Star_Trek.Control:Register("doors")
-
 function Star_Trek.Doors:GetPortalDoor(ent)
 	local portal = ent.Portal
 	if not IsValid(portal) then
@@ -245,6 +243,10 @@ hook.Add("Think", "Star_Trek.Doors.DoorThink", function()
 	end
 end)
 
+-- Register Door Control Type.
+-- Callback opens doors when they are disabled and not locked.
+Star_Trek.Control:Register("doors")
+
 -------------
 --- Setup ---
 -------------
@@ -268,6 +270,12 @@ hook.Add("Star_Trek.Sections.Loaded", "Star_Trek.Doors.Setup", function()
 			if success then
 				ent.Deck = deck
 				ent.SectionId = sectionId
+
+				local success2, sectionData = Star_Trek.Sections:GetSection(deck, sectionId)
+				if success2 then
+					sectionData.Doors = sectionData.Doors or {}
+					table.insert(sectionData.Doors, ent)
+				end
 			end
 
 			local sourceEntities = ents.FindInSphere(ent:GetPos(), 8)
