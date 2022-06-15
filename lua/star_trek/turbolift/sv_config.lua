@@ -21,3 +21,6 @@ Star_Trek.Turbolift.MaxTime = 20
 
 -- Minimum time, that a turbolift can take, to reach its destination.
 Star_Trek.Turbolift.MinTime = 5
+
+-- Should you get stuck on a system failure?
+Star_Trek.Turbolift.GetStuck = false

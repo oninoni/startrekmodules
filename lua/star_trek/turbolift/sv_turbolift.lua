@@ -20,8 +20,7 @@ Star_Trek.Turbolift.NextThink = CurTime()
 Star_Trek.Turbolift.Lifts = Star_Trek.Turbolift.Lifts or {}
 Star_Trek.Turbolift.Pods  = Star_Trek.Turbolift.Pods  or {}
 
--- Setting up Turbolifts
-local setupTurbolifts = function()
+hook.Add("Star_Trek.Sections.Loaded", "Star_Trek.Turbolift.Setup", function()
 	Star_Trek.Turbolift.Lifts = {}
 	Star_Trek.Turbolift.Pods = {}
 
@@ -47,6 +46,12 @@ local setupTurbolifts = function()
 						CloseCallback = nil
 					}
 
+					local success, deck, sectionId = Star_Trek.Sections:DetermineSection(ent:GetPos())
+					if success then
+						ent.Deck = deck
+						ent.SectionId = sectionId
+					end
+
 					ent.TurboliftData = turboliftData
 					lifts[number] = turboliftData
 				end
@@ -71,10 +76,21 @@ local setupTurbolifts = function()
 	for i, liftData in SortedPairs(lifts) do
 		table.insert(Star_Trek.Turbolift.Lifts, liftData)
 	end
-end
+end)
 
-hook.Add("InitPostEntity", "Star_Trek.Turbolift.Setup", setupTurbolifts)
-hook.Add("PostCleanupMap", "Star_Trek.Turbolift.Setup", setupTurbolifts)
+Star_Trek.Control:Register("turbolift", function(value, deck, sectionId)
+	if value == Star_Trek.Control.ACTIVE then
+		return
+	end
+
+	if value == Star_Trek.Control.INOPERATIVE and Star_Trek.Turbolift.GetStuck then
+		for _, podData in pairs(Star_Trek.Turbolift.Pods) do
+			if not podData.InUse then continue end
+
+			Star_Trek.Turbolift:StopPod(nil, podData)
+		end
+	end
+end)
 
 -- Return an empty Pod and Reserve it.
 --
@@ -191,8 +207,17 @@ function Star_Trek.Turbolift:StartLift(ply, sourceLift, targetLiftId)
 	local sourceLiftData = sourceLift.TurboliftData
 	local targetLiftData = self.Lifts[targetLiftId]
 	if targetLiftData then
+		local targetLift = targetLiftData.Entity
+		if not IsValid(targetLift) then
+			return false
+		end
+
+		if Star_Trek.Control:GetStatus("turbolift", targetLift.Deck, targetLift.SectionId) ~= Star_Trek.Control.ACTIVE then
+			return false
+		end
+
 		if sourceLiftData.ShipId ~= targetLiftData.ShipId then
-			return
+			return false
 		end
 
 		local podData = self:GetUnusedPod()
@@ -288,8 +313,17 @@ function Star_Trek.Turbolift:ReRoutePod(ply, pod, targetLiftId)
 
 	local targetLiftData = self.Lifts[targetLiftId]
 	if targetLiftData then
+		local targetLift = targetLiftData.Entity
+		if not IsValid(targetLift) then
+			return false
+		end
+
+		if Star_Trek.Control:GetStatus("turbolift", targetLift.Deck, targetLift.SectionId) ~= Star_Trek.Control.ACTIVE then
+			return false
+		end
+
 		if podData.ShipId ~= targetLiftData.ShipId then
-			return
+			return false
 		end
 
 		if not podData.Stopped and istable(Star_Trek.Logs) then
@@ -314,7 +348,11 @@ function Star_Trek.Turbolift:ReRoutePod(ply, pod, targetLiftId)
 			Star_Trek.Logs:AddEntry(podData.Entity, ply, "Lift heading towards " .. targetLiftData.Name)
 			Star_Trek.Logs:AddEntry(podData.Entity, ply, "Estimated time of arrival: " .. podData.TravelTime .. "s")
 		end
+
+		return true
 	end
+
+	return false
 end
 
 -- Think for the Turbolift System.
