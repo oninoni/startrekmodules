@@ -128,6 +128,11 @@ end)
 -- Handle being locked. (Autoclose)
 hook.Add("Star_Trek.ChangedKeyValue", "Star_Trek.LockDoors", function(ent, key, value)
 	if key == "lcars_locked" and isstring(value) and Star_Trek.Doors.Doors[ent] then
+		-- Prevent locking if broken / disabled
+		if Star_Trek.Control:GetStatus("doors", ent.Deck, ent.SectionId) ~= Star_Trek.Control.ACTIVE then
+			return
+		end
+
 		if value == "1" and ent.Open then
 			ent:Fire("SetAnimation", "close")
 		end

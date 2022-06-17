@@ -68,12 +68,12 @@ function Star_Trek.Control:SetStatus(name, value, deck, sectionId)
 			return false, sectionData
 		end
 
-		controlType[deck] = controlType[deck] or {}
-		controlType[deck][sectionId] = value
-
 		if isfunction(controlType.Callback) then
 			controlType.Callback(value, deck, sectionId)
 		end
+
+		controlType[deck] = controlType[deck] or {}
+		controlType[deck][sectionId] = value
 
 		return true
 	end
@@ -84,17 +84,21 @@ function Star_Trek.Control:SetStatus(name, value, deck, sectionId)
 			return false, deckData
 		end
 
+		if isfunction(controlType.Callback) then
+			controlType.Callback(value, deck)
+		end
+
 		-- Clean up Sections Stuff.
 		cleanupDeck(deckData)
 
 		controlType[deck] = controlType[deck] or {}
 		controlType[deck].Value = value
 
-		if isfunction(controlType.Callback) then
-			controlType.Callback(value, deck)
-		end
-
 		return true
+	end
+
+	if isfunction(controlType.Callback) then
+		controlType.Callback(value)
 	end
 
 	controlType.Value = value
@@ -106,10 +110,6 @@ function Star_Trek.Control:SetStatus(name, value, deck, sectionId)
 
 		-- Clean up Sections Stuff.
 		cleanupDeck(deckData)
-	end
-
-	if isfunction(controlType.Callback) then
-		controlType.Callback(value)
 	end
 
 	return true
