@@ -97,6 +97,10 @@ hook.Add("OnEntityCreated", "Star_Trek.Holodeck.DetectHolomatter", function(ent)
 			return
 		end
 
+		if hook.Run("Star_Trek.Holodeck.DetectHolomatter", ent) then
+			return
+		end
+
 		local pos = ent:GetPos()
 
 		if Star_Trek.Holodeck:IsInHolodeckProgramm(pos) then
