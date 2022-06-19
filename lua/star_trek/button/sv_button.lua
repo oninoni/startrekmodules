@@ -27,6 +27,7 @@
 -- @return? String error
 function Star_Trek.Button:CreateButton(pos, ang, model, callback, strict)
 	local ent = ents.Create("gmod_button")
+	ent.StarTrekButton = true
 
 	ent:SetPos(pos)
 	ent:SetAngles(ang)
@@ -84,3 +85,10 @@ function Star_Trek.Button:CreateInterfaceButton(pos, ang, model, interfaceName, 
 
 	return true, ent
 end
+
+-- Prevent Viewscreen from being picked up by a Physgun
+hook.Add("PhysgunPickup", "Star_Trek.Button.PreventPickup", function(ply, ent)
+	if ent.StarTrekButton then
+		return false
+	end
+end)
