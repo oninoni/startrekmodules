@@ -94,7 +94,7 @@ hook.Add("AcceptInput", "Star_Trek.BlockDoorIfAlreadyDooring", function(ent, inp
 
 			ent:Fire("FireUser1")
 
-			timer.Simple(ent:SequenceDuration(value) / 2, function()
+			timer.Simple(ent:SequenceDuration(sequence) / 3, function()
 				ent:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
 				ent:SetSolid(SOLID_NONE)
 			end)
@@ -106,9 +106,9 @@ hook.Add("AcceptInput", "Star_Trek.BlockDoorIfAlreadyDooring", function(ent, inp
 			ent:SetCollisionGroup(COLLISION_GROUP_NONE)
 			ent:SetSolid(SOLID_VPHYSICS)
 
-			local closeDuration = ent:SequenceDuration(ent:LookupSequence("close"))
+			local closeDuration = ent:SequenceDuration(sequence)
 			timer.Simple(closeDuration * 2, function()
-				if ent:GetSequence() ~= ent:LookupSequence("close") then
+				if ent:GetSequence() ~= sequence then
 					return
 				end
 
@@ -116,7 +116,6 @@ hook.Add("AcceptInput", "Star_Trek.BlockDoorIfAlreadyDooring", function(ent, inp
 			end)
 		end
 
-		local partnerDoor = Star_Trek.Doors:GetPortalDoor(ent)
 		if IsValid(partnerDoor) then
 			partnerDoor:Fire("SetAnimation", value)
 		end
