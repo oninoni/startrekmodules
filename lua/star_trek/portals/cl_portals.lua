@@ -85,6 +85,11 @@ hook.Add( "RenderScene", "Star_Trek.RenderWindow", function( plyOrigin, plyAngle
 			local oldClip = render.EnableClipping( true )
 			render.PushCustomClipPlane( exitPortal:GetForward(), exitPortal:GetForward():Dot( exitPortal:GetPos() - exitPortal:GetForward() * 0.5 ) )
 
+			if not isfunction(exitPortal.GetExitPosOffset) then
+				exitPortal.GetExitPosOffset = function() return Vector() end
+				exitPortal.GetExitAngOffset = function() return Angle() end
+			end
+
 			local camOrigin = wp.TransformPortalPos( plyOrigin, window, exitPortal )
 			local camAngle = wp.TransformPortalAngle( plyAngle, window, exitPortal )
 
