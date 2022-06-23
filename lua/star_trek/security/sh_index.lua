@@ -16,7 +16,7 @@
 --          Security | Index         --
 ---------------------------------------
 
-Star_Trek:RequireModules("sections", "lcars", "doors")
+Star_Trek:RequireModules("sections", "lcars", "doors", "control")
 
 Star_Trek.Security = Star_Trek.Security or {}
 

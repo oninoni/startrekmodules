@@ -30,22 +30,23 @@ function Star_Trek.Holodeck:Disintegrate(ent, inverted)
 		net.WriteBool(inverted)
 	net.Broadcast()
 
+	local oldMode = ent:GetRenderMode()
 	ent:SetRenderMode(RENDERMODE_TRANSALPHA)
 	ent:EmitSound("star_trek.hologram_failure")
 
 	if inverted then
-		ent:SetColor(ColorAlpha(ent:GetColor(), 0))
-
-		return
-	end
-
-	if hook.Run("Star_Trek.Holodeck.Disintegrate", ent, inverted) then
-		return
+		local color = ent:GetColor()
+		ent:SetColor(ColorAlpha(color, 0))
 	end
 
 	local timerName = "Star_Trek.Holodeck.Disintegrate." .. ent:EntIndex()
 	timer.Create(timerName, 1, 1, function()
-		ent:Remove()
+		if inverted then
+			ent:SetRenderMode(oldMode)
+			ent:SetColor(color)
+		else
+			ent:Remove()
+		end
 	end)
 end
 
@@ -96,15 +97,24 @@ hook.Add("OnEntityCreated", "Star_Trek.Holodeck.DetectHolomatter", function(ent)
 			return
 		end
 
+		if hook.Run("Star_Trek.Holodeck.DetectHolomatter", ent) then
+			return
+		end
+
 		local pos = ent:GetPos()
 
 		if Star_Trek.Holodeck:IsInHolodeckProgramm(pos) then
 			ent.HoloMatter = true
 
-			print(ent)
 			Star_Trek.Holodeck:Disintegrate(ent, true)
 		end
 	end)
+end)
+
+hook.Add("Star_Trek.Transporter.OverrideCanBeam", "Star_Trek.Holodeck.OverrideCanBeam", function(ent)
+	if ent.HoloMatter then
+		return false
+	end
 end)
 
 hook.Add("wp-teleport", "Star_Trek.Holodeck.Disintegrate", function(self, ent)

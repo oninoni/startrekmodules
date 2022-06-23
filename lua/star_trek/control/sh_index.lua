@@ -13,13 +13,17 @@
 ---------------------------------------
 
 ---------------------------------------
---          Sections | Index         --
+--          Control | Index          --
 ---------------------------------------
 
-Star_Trek:RequireModules("util", "lcars")
+Star_Trek:RequireModules("sections")
 
-Star_Trek.Sections = Star_Trek.Sections or {}
+Star_Trek.Control = Star_Trek.Control or {}
 
 if SERVER then
-	include("sv_sections.lua")
+	include("sv_control.lua")
+end
+
+if CLIENT then
+	return
 end

@@ -43,7 +43,9 @@ end
 function SELF:SetDeck(deck, objects)
 	self.Sections = {}
 
-	local deckData = Star_Trek.Sections.Decks[deck]
+	local success, deckData = Star_Trek.Sections:GetDeck(deck)
+	if not success then return end
+
 	for sectionId, sectionData in pairs(deckData.Sections) do
 		local sectionButtonData = {
 			Id = sectionId,

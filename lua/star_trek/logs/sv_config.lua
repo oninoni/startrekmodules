@@ -13,7 +13,8 @@
 ---------------------------------------
 
 ---------------------------------------
---         Sections | Config         --
+--           Logs | Config           --
 ---------------------------------------
 
-Star_Trek.Sections.DeckCount = 15
+-- Also Show the UTC Time of the logs.
+Star_Trek.Logs.ShowUTCTime = true
