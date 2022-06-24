@@ -114,7 +114,7 @@ end
 -- @return? Number deck
 -- @return? Number sectionId
 function Star_Trek.Sections:DetermineSection(pos)
-	for deck, deckData in SortedPairs(Star_Trek.Sections.Decks) do
+	for deck, deckData in SortedPairs(self.Decks) do
 		for sectionId, sectionData in pairs(deckData.Sections) do
 			if self:IsInSection(deck, sectionId, pos) then
 				return true, deck, sectionId

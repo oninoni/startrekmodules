@@ -26,7 +26,7 @@ hook.Add("Star_Trek.Sections.Loaded", "Star_Trek.Turbolift.Setup", function()
 
 	local lifts = {}
 	for _, ent in pairs(ents.GetAll()) do
-		if string.StartWith(ent:GetName(), "tlBut") or string.StartWith(ent:GetName(), "TLBut") then
+		if string.StartWith(ent:GetName(), "tlBut") then
 			local number = tonumber(string.sub(ent:GetName(), 6))
 
 			local keyValues = ent.LCARSKeyData
@@ -56,7 +56,7 @@ hook.Add("Star_Trek.Sections.Loaded", "Star_Trek.Turbolift.Setup", function()
 					lifts[number] = turboliftData
 				end
 			end
-		elseif string.StartWith(ent:GetName(), "tlPodBut") or string.StartWith(ent:GetName(), "TLPodBut") then
+		elseif string.StartWith(ent:GetName(), "tlPodBut") then
 			ent.IsPod = true
 
 			local podData = {
