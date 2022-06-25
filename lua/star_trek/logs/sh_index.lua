@@ -21,6 +21,8 @@ Star_Trek:RequireModules("lcars", "button", "sections")
 Star_Trek.Logs = Star_Trek.Logs or {}
 
 if SERVER then
+	include("sv_config.lua")
+
 	include("sv_logs.lua")
 	include("sv_logs_archive.lua")
 end
@@ -29,7 +31,7 @@ if CLIENT then
 	return
 end
 
-if game.GetMap() ~= "rp_intrepid_v0_9" then return end
+if game.GetMap() ~= "rp_intrepid_v1" then return end
 
 local setupButton = function()
 	if IsValid(Star_Trek.Logs.Button) then

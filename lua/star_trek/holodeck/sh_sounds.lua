@@ -13,7 +13,14 @@
 ---------------------------------------
 
 ---------------------------------------
---         Sections | Config         --
+--      Holodeck Sounds | Shared     --
 ---------------------------------------
 
-Star_Trek.Sections.DeckCount = 15
+sound.Add({
+	name = "star_trek.hologram_failure",
+	channel = CHAN_AUTO,
+	volume = .8,
+	level = 0,
+	pitch = 100,
+	sound = "oninoni/startrek/holodeck/hologram_failure.wav",
+})

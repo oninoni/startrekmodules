@@ -21,5 +21,20 @@ Star_Trek:RequireModules("util", "lcars")
 Star_Trek.Holodeck = Star_Trek.Holodeck or {}
 
 if SERVER then
+	AddCSLuaFile("sh_sounds.lua")
+
+	AddCSLuaFile("cl_holomatter.lua")
+
+	include("sh_sounds.lua")
+
 	include("sv_holodeck.lua")
+	include("sv_logs.lua")
+
+	include("sv_holomatter.lua")
+end
+
+if CLIENT then
+	include("sh_sounds.lua")
+
+	include("cl_holomatter.lua")
 end

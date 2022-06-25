@@ -39,4 +39,7 @@ function ENT:SetupDataTables()
 	self:NetworkVar( "Int", 2, "Height" )
 	self:NetworkVar( "Int", 3, "DisappearDist" )
 	self:NetworkVar( "Int", 4, "Scale")
+
+	self:NetworkVar( "Vector", 0, "ExitPosOffset" )
+	self:NetworkVar( "Angle", 0, "ExitAngOffset" )
 end

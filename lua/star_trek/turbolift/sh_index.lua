@@ -16,7 +16,7 @@
 --         Turbolift | Index         --
 ---------------------------------------
 
-Star_Trek:RequireModules("util", "lcars")
+Star_Trek:RequireModules("util", "sections", "lcars", "control")
 
 Star_Trek.Turbolift = Star_Trek.Turbolift or {}
 

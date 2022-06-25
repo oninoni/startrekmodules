@@ -105,17 +105,25 @@ function SELF:DrawButton(x, y, color, borderColor, text, flatLeft, flatRight, nu
 
 	self:DrawButtonGraphic(x, y, width, height, color, borderColor, flatLeft, flatRight)
 
+	surface.SetFont("LCARSText")
+	local textWidth = surface.GetTextSize(text) + 4
+
 	-- Left Bar
 	local xTextPos = x + 4
+	local xTestPosWithLeftBar = xTextPos + height + barWidth
 	if not flatLeft then
-		xTextPos = xTextPos + height + barWidth
+		if (width - xTestPosWithLeftBar) <= textWidth then
+			xTextPos = xTextPos + height / 4
+		else
+			xTextPos = xTestPosWithLeftBar
 
-		draw.RoundedBoxEx(0,
-			x + height,
-			y + 1,
-			barWidth,
-			height - 2,
-		borderColor)
+			draw.RoundedBoxEx(0,
+				x + height,
+				y + 1,
+				barWidth,
+				height - 2,
+			borderColor)
+		end
 	end
 
 	draw.Text({
@@ -130,10 +138,13 @@ function SELF:DrawButton(x, y, color, borderColor, text, flatLeft, flatRight, nu
 		color = Star_Trek.LCARS.ColorBlack
 	})
 
+	local leftBarX = x + width - height - barWidth
+	local widthWithRightBar = leftBarX - xTextPos
+
 	-- Right Bar
-	if not flatRight then
+	if not flatRight and widthWithRightBar > textWidth then
 		draw.RoundedBoxEx(0,
-			x + width - height - barWidth,
+		leftBarX,
 			y + 1,
 			barWidth,
 			height - 2,
@@ -142,10 +153,10 @@ function SELF:DrawButton(x, y, color, borderColor, text, flatLeft, flatRight, nu
 
 	if number then
 		surface.SetFont("LCARSBig")
-		local textWidth = surface.GetTextSize(number)
+		local numberWidth = surface.GetTextSize(number)
 
 		-- Big Bar
-		local w = textWidth + 2
+		local w = numberWidth + 2
 		local xNumPos = x + width - height - w
 		draw.RoundedBoxEx(0,
 			xNumPos,

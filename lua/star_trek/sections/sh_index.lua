@@ -21,6 +21,5 @@ Star_Trek:RequireModules("util", "lcars")
 Star_Trek.Sections = Star_Trek.Sections or {}
 
 if SERVER then
-	include("sv_config.lua")
 	include("sv_sections.lua")
 end

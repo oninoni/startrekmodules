@@ -54,3 +54,12 @@ hook.Add("wp-trace", "doors-portals", function(portal)
 		return false
 	end
 end)
+
+-- Prevent Viewscreen from being picked up by a Physgun
+hook.Add("PhysgunPickup", "Star_Trek.Portals.PreventForceFieldPickup", function(ply, ent)
+	if ent:GetClass() ~= "linked_portal_window" then
+		return
+	end
+
+	return false
+end)

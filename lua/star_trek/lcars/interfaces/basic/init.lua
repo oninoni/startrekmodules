@@ -40,6 +40,11 @@ function SELF:Open(ent)
 		function(windowData, interfaceData, ply, buttonId)
 			local keyValues = ent.LCARSKeyData
 
+			local override = hook.Run("Star_Trek.LCARS.BasicPressed", ply, interfaceData, buttonId)
+			if override then
+				return
+			end
+
 			if buttonId <= 4 then
 				ent:Fire("FireUser" .. buttonId)
 			end
@@ -51,8 +56,6 @@ function SELF:Open(ent)
 					end
 				end
 			end
-
-			hook.Run("Star_Trek.LCARS.BasicPressed", ply, interfaceData, buttonId)
 
 			if istable(keyValues) and keyValues["lcars_keep_open"] then
 				ent:EmitSound("star_trek.lcars_beep")

@@ -30,8 +30,13 @@ SELF.Solid = true
 -- Opening a turbolift control menu.
 function SELF:Open(ent)
 	local keyValues = ent.LCARSKeyData
-	if not istable(keyValues) then
-		return false, "Invalid Key Values on OpenTLMenu"
+	if istable(keyValues) then
+		name = keyValues["lcars_name"]
+	end
+
+	local overrideName = hook.Run("Star_Trek.Turbolift.OverrideName", ent)
+	if isstring(overrideName) then
+		name = overrideName
 	end
 
 	local success, window = Star_Trek.LCARS:CreateWindow(
@@ -42,13 +47,17 @@ function SELF:Open(ent)
 		500,
 		400,
 		function(windowData, interfaceData, ply, buttonId)
+			if Star_Trek.Control:GetStatus("turbolift", ent.Deck, ent.SectionId) ~= Star_Trek.Control.ACTIVE then
+				ent:EmitSound("star_trek.lcars_error")
+				return
+			end
+
 			if ent.IsTurbolift then
-				local canStart = Star_Trek.Turbolift:StartLift(ply, ent, buttonId)
-				if canStart then
+				if Star_Trek.Turbolift:StartLift(ply, ent, buttonId) then
 					ent:EmitSound("star_trek.lcars_close")
 					Star_Trek.LCARS:CloseInterface(ent)
 				else
-					sourceLift:EmitSound("star_trek.lcars_error")
+					ent:EmitSound("star_trek.lcars_error")
 				end
 			elseif ent.IsPod then
 				if buttonId == 1 then
@@ -60,14 +69,17 @@ function SELF:Open(ent)
 
 					return true
 				else
-					Star_Trek.Turbolift:ReRoutePod(ply, ent, buttonId - 1)
+					if Star_Trek.Turbolift:ReRoutePod(ply, ent, buttonId - 1) then
+						ent:EmitSound("star_trek.lcars_close")
+						Star_Trek.LCARS:CloseInterface(ent)
+					else
+						ent:EmitSound("star_trek.lcars_error")
+					end
 
-					ent:EmitSound("star_trek.lcars_close")
-					Star_Trek.LCARS:CloseInterface(ent)
 				end
 			end
 		end,
-		self:GenerateButtons(ent, keyValues),
+		self:GenerateButtons(ent, name),
 		"TURBOLIFT",
 		"LIFT"
 	)

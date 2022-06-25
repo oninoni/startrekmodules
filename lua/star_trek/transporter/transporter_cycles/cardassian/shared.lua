@@ -22,6 +22,8 @@ local SELF = CYCLE
 -- Determines the parent transport cycles name for this one. (Like Deriving Classes)
 SELF.BaseCycle = "base"
 
+SELF.BufferColor = Color(255, 127, 63)
+
 -- Data of the states being processed.
 SELF.States = {
 	[1] = { -- Demat
