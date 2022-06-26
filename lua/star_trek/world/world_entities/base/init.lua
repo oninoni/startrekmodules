@@ -20,16 +20,14 @@
 if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
 
-function SELF:WriteDynData()
-end
-
 function SELF:WriteData()
 	net.WriteWorldVector(self.Pos)
 	net.WriteAngle(self.Ang)
 
 	net.WriteTable(self.Models)
+end
 
-	self:WriteDynData()
+function SELF:WriteDynData()
 end
 
 function SELF:Init(pos, ang, models)

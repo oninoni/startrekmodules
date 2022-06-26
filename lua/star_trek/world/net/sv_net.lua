@@ -27,6 +27,7 @@ function Star_Trek.World:NetworkLoad(ent)
 		net.WriteInt(ent.Id, 32)
 		net.WriteString(ent.Class)
 		ent:WriteData()
+		ent:WriteDynData()
 	net.Broadcast()
 
 	return true
@@ -39,7 +40,8 @@ function Star_Trek.World:NetworkLoaded(ply)
 			net.WriteInt(id, 32)
 			net.WriteString(ent.Class)
 			ent:WriteData()
-		net.Broadcast()
+			ent:WriteDynData()
+		net.Send(ply)
 	end
 
 	return true
@@ -59,6 +61,7 @@ function Star_Trek.World:NetworkUpdate(ent)
 	net.Start("Star_Trek.World.Update")
 		net.WriteInt(ent.Id, 32)
 		ent:WriteData()
+		ent:WriteDynData()
 	net.Broadcast()
 end
 

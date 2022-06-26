@@ -38,6 +38,7 @@ net.Receive("Star_Trek.World.Update", function()
 	local ent = Star_Trek.World.Entities[id]
 	if ent then
 		ent:ReadData()
+		ent:ReadDynData()
 	end
 end)
 

@@ -20,20 +20,19 @@
 if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
 
-function SELF:ReadDynData()
-end
-
 function SELF:ReadData()
 	self.Pos = net.ReadWorldVector()
 	self.Ang = net.ReadAngle()
 
 	self.Models = net.ReadTable()
+end
 
-	self:ReadDynData()
+function SELF:ReadDynData()
 end
 
 function SELF:Init()
 	self:ReadData()
+	self:ReadDynData()
 
 	self.ClientEntities = {}
 	for i, modelData in pairs(self.Models) do
@@ -56,8 +55,8 @@ function SELF:Terminate()
 	end
 end
 
-function SELF:Draw(camPos, relPos, relAng)
+function SELF:Draw(relPos, relAng)
 	for _, ent in pairs(self.ClientEntities) do
-		Star_Trek.World:DrawEntity(ent, camPos, relPos, relAng)
+		Star_Trek.World:DrawEntity(ent, relPos, relAng)
 	end
 end

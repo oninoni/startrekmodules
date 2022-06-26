@@ -280,21 +280,21 @@ function WorldToLocalBig(pos, ang, newSystemOrigin, newSystemAngles)
 end
 
 function net.ReadWorldVector()
-	local bx = net.ReadFloat()
-	local by = net.ReadFloat()
-	local bz = net.ReadFloat()
-	local sx = net.ReadFloat()
-	local sy = net.ReadFloat()
-	local sz = net.ReadFloat()
+	local bx = net.ReadDouble()
+	local by = net.ReadDouble()
+	local bz = net.ReadDouble()
+	local sx = net.ReadDouble()
+	local sy = net.ReadDouble()
+	local sz = net.ReadDouble()
 
 	return WorldVector(bx, by, bz, sx, sy, sz)
 end
 
 function net.WriteWorldVector(worldVector)
-	net.WriteFloat(worldVector[1])
-	net.WriteFloat(worldVector[2])
-	net.WriteFloat(worldVector[3])
-	net.WriteFloat(worldVector[4])
-	net.WriteFloat(worldVector[5])
-	net.WriteFloat(worldVector[6])
+	net.WriteDouble(worldVector[1])
+	net.WriteDouble(worldVector[2])
+	net.WriteDouble(worldVector[3])
+	net.WriteDouble(worldVector[4])
+	net.WriteDouble(worldVector[5])
+	net.WriteDouble(worldVector[6])
 end

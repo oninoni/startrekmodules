@@ -18,12 +18,8 @@
 
 -- Vector_Max in Skybox is  (2^17) 
 -- @ x1024 (2^10) Scale -> Visually at 134217728 (2^27)
-local VECTOR_MAX = 131071
+local VECTOR_MAX = 131071 -- TODO: Recheck
 
-
--- Sky Cam is not Readable Clientside, which is absurd...
--- TODO: Maybe I can network it? Config for now.
-local SKY_CAM_POS = Vector(0, 0, 15360)
 local SKY_CAM_SCALE = Star_Trek.World.Skybox_Scale
 
 -- Optimisation we pre-create the border Vectors.
@@ -54,17 +50,17 @@ local function IntersectWithBorder(pos, dir)
 	end
 
 	direction = 3
-	if dir[1] < 0 then
+	if dir[2] < 0 then
 		direction = 4
 	end
 
 	local yHit = IntersectPlaneAxis(pos, dir, direction)
-	if yHit and math.abs(yHit[1]) < VECTOR_MAX and math.abs(yHit[2]) < VECTOR_MAX then
+	if yHit and math.abs(yHit[1]) < VECTOR_MAX and math.abs(yHit[3]) < VECTOR_MAX then
 		return yHit
 	end
 
 	direction = 5
-	if dir[1] < 0 then
+	if dir[3] < 0 then
 		direction = 6
 	end
 
@@ -76,63 +72,67 @@ local function IntersectWithBorder(pos, dir)
 	return false
 end
 
+local zero_vec = Vector()
+
 -- Draws an object relative to you.
 --
 -- @param ClientsideEntity ent
--- @param Vector camPos
--- @param Vector relPos
--- @param Vector relAng
-function Star_Trek.World:DrawEntity(ent, camPos, relPos, relAng)
-	local relWorldPos = SKY_CAM_POS + relPos
-
-	-- Check if in within Vector_Max
+-- @param Vector pos
+-- @param Vector ang
+function Star_Trek.World:DrawEntity(ent, pos, ang)
 	local maxValue = math.max(
-		math.abs(relWorldPos[1]),
-		math.abs(relWorldPos[2]),
-		math.abs(relWorldPos[3])
+		math.abs(pos[1]),
+		math.abs(pos[2]),
+		math.abs(pos[3])
 	)
 
 	local modelScale = ent.Scale or 1
-
 	if maxValue >= VECTOR_MAX then
-		local entDir = relWorldPos - camPos
-		local distance = entDir:Length()
-		entDir:Normalize()
+		-- Outside of Maximum Regular Render Range.
+		local vec = Vector(pos)
 
-		relWorldPos = IntersectWithBorder(camPos, entDir)
-		if not relWorldPos then return end
-		local projectedDistance = camPos:Distance(relWorldPos)
+		local distance = vec:Length()
+		vec:Normalize()
+
+		pos = IntersectWithBorder(zero_vec, vec)
+		if not pos then return end
+		local projectedDistance = pos:Length()
 
 		local factor = projectedDistance / distance
 		ent:SetModelScale(modelScale * factor)
-
-		firstTime = false
 	else
+		-- Inside of Maximum Regular Render Range
 		if ent:GetModelScale() ~= modelScale then
 			ent:SetModelScale(modelScale)
 		end
 	end
 
-	ent:SetPos(relWorldPos)
-	ent:SetAngles(relAng)
+	ent:SetPos(pos)
+	ent:SetAngles(ang)
 	ent:DrawModel()
 end
+
+local eyePos
+hook.Add("PreDrawSkyBox", "Star_Trek.World.Draw", function()
+	eyePos = EyePos()
+end)
 
 function Star_Trek.World:Draw()
 	local shipPos, shipAng = Star_Trek.World:GetShipPos()
 	if not shipPos then return end
 
-	local eyePos = EyePos()
-	cam.Start3D(eyePos, EyeAngles(), nil, nil, nil, nil, nil, 0.0005, 10000000)
-		local camPos = SKY_CAM_POS + (eyePos * SKY_CAM_SCALE)
+	local skyEyePos = eyePos * SKY_CAM_SCALE
+	cam.Start3D(skyEyePos, EyeAngles(), nil, nil, nil, nil, nil, 0.0005, 10000000)
+		render.SuppressEngineLighting(true)
 
 		for i, ent in pairs(self.Entities) do
 			if i == 1 then continue end
 
 			local pos, ang = WorldToLocalBig(ent.Pos, ent.Ang, shipPos, shipAng)
-
-			ent:Draw(camPos, pos, ang)
+			ent:Draw(pos, ang)
 		end
+
+		render.SuppressEngineLighting(false)
 	cam.End3D()
 end
 

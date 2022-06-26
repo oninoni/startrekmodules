@@ -20,16 +20,16 @@
 if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
 
-function SELF:ReadDynData()
-	self.Pos = net.ReadWorldVector()
-	self.Ang = net.ReadAngle()
-end
-
 function SELF:ReadData()
 	self.Models = net.ReadTable()
 
-	self.Vel 	= net.ReadVector() -- TODO: Maybe need World Vector?
-	self.AngVel = net.ReadAngle()
+	local x, y, z = net.ReadFloat(), net.ReadFloat(), net.ReadFloat()
+	self.Vel = Vector(x, y, z)
 
-	self:ReadDynData()
+	self.AngVel = net.ReadAngle()
+end
+
+function SELF:ReadDynData()
+	self.Pos = net.ReadWorldVector()
+	self.Ang = net.ReadAngle()
 end
