@@ -25,7 +25,45 @@ function SELF:OnCreate(windowData)
 
 	self.CategoryButtonHeight = windowData.CategoryButtonHeight
 
-	local nRows = math.ceil(table.Count(windowData.Categories) / 4)
+	self.CategoryCount = #windowData.Categories
+
+	local smallCategories = false
+	if self.CategoryCount <= 4 then
+		smallCategories = true
+	end
+
+	local categories = {}
+	for i, categoryData in pairs(windowData.Categories) do
+		categoryData.Id = i
+		categories[i] = categoryData
+	end
+
+	self.SubCategories = {}
+	while true do
+		if smallCategories and #categories > 2 then
+			local subCategories = {
+				table.remove(categories, 1), -- 1st Entry in List
+				table.remove(categories, 1), -- 2nd Entry in List
+			}
+
+			table.insert(self.SubCategories, subCategories)
+		elseif #categories > 4 then
+			local subCategories = {
+				table.remove(categories, 1), -- 1st Entry in List
+				table.remove(categories, 1), -- 2nd Entry in List
+				table.remove(categories, 1), -- 3rd Entry in List
+				table.remove(categories, 1), -- 4th Entry in List
+			}
+
+			table.insert(self.SubCategories, subCategories)
+		else
+			table.insert(self.SubCategories, categories)
+
+			break
+		end
+	end
+
+	local nRows = #self.SubCategories
 	self.SubMenuHeight = nRows * (self.CategoryButtonHeight + self.Padding) + self.Padding
 
 	local success = SELF.Base.OnCreate(self, windowData)
@@ -34,30 +72,10 @@ function SELF:OnCreate(windowData)
 	end
 
 	self.Selected = windowData.Selected
-	self.Categories = windowData.Categories
-
-	local categories = {}
-	for i, categoryData in pairs(self.Categories) do
-		categoryData.Id = i
-		categories[i] = categoryData
-	end
 
 	self.CategoryRows = {}
-	while true do
-		if #categories > 4 then
-			local subCategories = {
-				table.remove(categories, 1), -- 1st Entry in List
-				table.remove(categories, 1), -- 2nd Entry in List
-				table.remove(categories, 1), -- 3rd Entry in List
-				table.remove(categories, 1), -- 4th Entry in List
-			}
-
-			table.insert(self.CategoryRows, self:SetupCategoryRow(subCategories))
-		else
-			table.insert(self.CategoryRows, self:SetupCategoryRow(categories))
-
-			break
-		end
+	for i, subCategories in pairs(self.SubCategories) do
+		self.CategoryRows[i] = self:SetupCategoryRow(subCategories)
 	end
 
 	for rowId, rowData in pairs(self.CategoryRows) do
@@ -132,7 +150,7 @@ function SELF:OnPress(pos, animPos)
 
 	local buttonId = SELF.Base.OnPress(self, pos, animPos)
 	if isnumber(buttonId) then
-		return #self.Categories + buttonId
+		return self.CategoryCount + buttonId
 	end
 end
 
