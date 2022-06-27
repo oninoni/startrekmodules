@@ -31,13 +31,13 @@ function ENT:Initialize()
 		phys:EnableMotion(false)
 	end
 
-	if not self.PreventToggleSound then
+	if not self:GetAlwaysOn() then
 		self:EmitSound("star_trek.force_field_on")
 	end
 end
 
 function ENT:OnRemove()
-	if not self.PreventToggleSound then
+	if not self:GetAlwaysOn() then
 		self:EmitSound("star_trek.force_field_off")
 	end
 end

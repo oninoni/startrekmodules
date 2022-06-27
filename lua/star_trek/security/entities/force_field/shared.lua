@@ -25,3 +25,7 @@ ENT.Author = "Oninoni"
 ENT.Category = "Star Trek"
 
 ENT.Spawnable = false
+
+function ENT:SetupDataTables()
+	self:NetworkVar("Bool", 0, "AlwaysOn")
+end

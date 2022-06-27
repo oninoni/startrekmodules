@@ -45,7 +45,7 @@ function Star_Trek.Security:EnableForceField(forceFieldData, force)
 	ent:SetAngles(forceFieldData.Ang)
 
 	if forceFieldData.AlwaysOn then
-		ent.PreventToggleSound = true
+		ent:SetAlwaysOn(true)
 	end
 
 	ent:Spawn()
