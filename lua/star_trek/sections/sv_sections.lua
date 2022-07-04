@@ -166,7 +166,6 @@ function Star_Trek.Sections:GetInSections(deck, sectionIds, filterCallback, allo
 
 		for _, areaData in pairs(sectionData.Areas) do
 			local entities = ents.FindInBox(areaData.Min, areaData.Max)
-			debugoverlay.Box(Vector(), areaData.Min, areaData.Max, 10, Color(255, 0, 0))
 
 			for _, ent in pairs(entities) do
 				if table.HasValue(objects, ent) then continue end
