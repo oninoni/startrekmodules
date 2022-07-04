@@ -13,17 +13,19 @@
 ---------------------------------------
 
 ---------------------------------------
---          Security | Index         --
+--    Force Field Entity | Shared    --
 ---------------------------------------
 
-Star_Trek:RequireModules("sections", "lcars", "doors", "force_field", "sensors")
+ENT.Type = "anim"
+ENT.Base = "base_gmodentity"
 
-Star_Trek.Security = Star_Trek.Security or {}
+ENT.PrintName = "Force Field"
+ENT.Author = "Oninoni"
 
-if SERVER then
-	include("sv_sub_consoles.lua")
-end
+ENT.Category = "Star Trek"
 
-if CLIENT then
-	return
+ENT.Spawnable = false
+
+function ENT:SetupDataTables()
+	self:NetworkVar("Bool", 0, "AlwaysOn")
 end

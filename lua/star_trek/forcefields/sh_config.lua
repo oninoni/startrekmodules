@@ -13,15 +13,14 @@
 ---------------------------------------
 
 ---------------------------------------
---    Force Field Entity | Shared    --
+--       Force Fields | Config       --
 ---------------------------------------
 
-ENT.Type = "anim"
-ENT.Base = "base_gmodentity"
+-- Delay between Force Field Damage Intervals in Seconds.
+Star_Trek.ForceFields.ForceFieldDelay = 1
 
-ENT.PrintName = "Force Field"
-ENT.Author = "Oninoni"
+-- Ammount of Damage applied in each Force Field Interval.
+Star_Trek.ForceFields.ForceFieldDamage = 5
 
-ENT.Category = "Star Trek"
-
-ENT.Spawnable = false
+-- Ammount of Knockback force applied in each Force Field Interval.
+Star_Trek.ForceFields.ForceFieldForce = 1

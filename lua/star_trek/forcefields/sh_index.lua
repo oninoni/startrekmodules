@@ -13,14 +13,28 @@
 ---------------------------------------
 
 ---------------------------------------
---         Security | Config         --
+--        Force Fields | Index       --
 ---------------------------------------
 
--- Delay between Force Field Damage Intervals in Seconds.
-Star_Trek.Security.ForceFieldDelay = 1
+Star_Trek:RequireModules("sections", "control")
 
--- Ammount of Damage applied in each Force Field Interval.
-Star_Trek.Security.ForceFieldDamage = 5
+Star_Trek.ForceFields = Star_Trek.ForceFields or {}
 
--- Ammount of Knockback force applied in each Force Field Interval.
-Star_Trek.Security.ForceFieldForce = 1
+if SERVER then
+	AddCSLuaFile("sh_config.lua")
+	AddCSLuaFile("sh_sounds.lua")
+	AddCSLuaFile("sh_forcefields.lua")
+	AddCSLuaFile("cl_forcefields.lua")
+
+	include("sh_config.lua")
+	include("sh_sounds.lua")
+	include("sh_forcefields.lua")
+	include("sv_forcefields.lua")
+end
+
+if CLIENT then
+	include("sh_config.lua")
+	include("sh_sounds.lua")
+	include("sh_forcefields.lua")
+	include("cl_forcefields.lua")
+end

@@ -57,19 +57,13 @@ function SELF:SetDeck(deck, objects)
 		for _, areaData in pairs(sectionData.Areas) do
 			local areaButtonData = {}
 
-			areaButtonData.Width = math.abs(areaData.Min[1]) + math.abs(areaData.Max[1])
-			areaButtonData.Height = math.abs(areaData.Min[2]) + math.abs(areaData.Max[2])
-
-			areaButtonData.Pos = areaData.Pos - Vector(areaData.Min[1] + areaData.Max[1], areaData.Min[2] + areaData.Max[2], 0)
-			areaButtonData.Pos = areaButtonData.Pos - Star_Trek.Sections.GlobalOffset
-			areaButtonData.Pos.y = -areaButtonData.Pos.y
-
-			areaButtonData.Pos = areaButtonData.Pos - Vector(areaButtonData.Width / 2, areaButtonData.Height / 2, 0)
+			areaButtonData.Pos = areaData.Min
+			areaButtonData.Size = areaData.Max - areaData.Min
 
 			table.insert(sectionButtonData.Areas, areaButtonData)
 		end
 
-		table.insert(self.Sections, sectionButtonData)
+		self.Sections[sectionId] = sectionButtonData
 	end
 
 	self:SetObjects(objects)
@@ -110,8 +104,8 @@ end
 function SELF:GetSelected()
 	local data = {}
 
-	for _, sectionData in pairs(self.Sections) do
-		data[sectionData.Id] = sectionData.Selected
+	for sectionId, sectionData in pairs(self.Sections) do
+		data[sectionId] = sectionData.Selected
 	end
 
 	return data
@@ -120,8 +114,8 @@ end
 function SELF:SetSelected(data)
 	self:SetObjects({})
 
-	for _, sectionData in pairs(self.Sections) do
-		if data[sectionData.Id] then
+	for sectionId, sectionData in pairs(self.Sections) do
+		if data[sectionId] then
 			sectionData.Selected = true
 		else
 			sectionData.Selected = false

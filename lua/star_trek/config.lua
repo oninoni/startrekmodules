@@ -19,6 +19,7 @@
 Star_Trek.Modules["util"] = true
 Star_Trek.Modules["chairs"] = true
 Star_Trek.Modules["doors"] = true
+Star_Trek.Modules["forcefields"] = true
 Star_Trek.Modules["portals"] = true
 
 Star_Trek.Modules["world"] = true
