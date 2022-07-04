@@ -51,7 +51,7 @@ function ENT:TouchSound()
 end
 
 function ENT:Touch(ent)
-	if not ent.LastTouch or ent.LastTouch + Star_Trek.Security.ForceFieldDelay < CurTime() then
+	if not ent.LastTouch or ent.LastTouch + Star_Trek.ForceFields.ForceFieldDelay < CurTime() then
 		ent.LastTouch = CurTime()
 
 		local normal = ent:GetPos() - self:GetPos()
@@ -65,9 +65,9 @@ function ENT:Touch(ent)
 			dmg:SetAttacker(self)
 			dmg:SetInflictor(self)
 
-			dmg:SetDamage(Star_Trek.Security.ForceFieldDamage)
+			dmg:SetDamage(Star_Trek.ForceFields.ForceFieldDamage)
 			dmg:SetDamageType(DMG_SHOCK)
-			dmg:SetDamageForce(normal * phys:GetMass() * Star_Trek.Security.ForceFieldForce)
+			dmg:SetDamageForce(normal * phys:GetMass() * Star_Trek.ForceFields.ForceFieldForce)
 
 			ent:TakeDamageInfo(dmg)
 		end

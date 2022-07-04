@@ -13,28 +13,28 @@
 ---------------------------------------
 
 ---------------------------------------
---   Security Force Fields | Shared  --
+--        Force Fields | Index       --
 ---------------------------------------
 
--- Prevent Forcefields from being picked up by a Physgun
-hook.Add("PhysgunPickup", "Star_Trek.Security.PreventForceFieldPickup", function(ply, ent)
-	if ent:GetClass() ~= "force_field" then
-		return
-	end
+Star_Trek:RequireModules("sections", "control")
 
-	return false
-end)
+Star_Trek.ForceFields = Star_Trek.ForceFields or {}
 
--- Prevent Forcefields from being modified by a Toolgun
-hook.Add("CanTool", "Star_Trek.Security.PreventCanTool", function(ply, tr, toolname, tool, button)
-	local ent = tr.Entity
-	if not IsValid(ent) then
-		return
-	end
+if SERVER then
+	AddCSLuaFile("sh_config.lua")
+	AddCSLuaFile("sh_sounds.lua")
+	AddCSLuaFile("sh_forcefields.lua")
+	AddCSLuaFile("cl_forcefields.lua")
 
-	if ent:GetClass() ~= "force_field" then
-		return
-	end
+	include("sh_config.lua")
+	include("sh_sounds.lua")
+	include("sh_forcefields.lua")
+	include("sv_forcefields.lua")
+end
 
-	return false
-end)
+if CLIENT then
+	include("sh_config.lua")
+	include("sh_sounds.lua")
+	include("sh_forcefields.lua")
+	include("cl_forcefields.lua")
+end

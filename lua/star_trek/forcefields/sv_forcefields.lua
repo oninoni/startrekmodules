@@ -13,7 +13,7 @@
 ---------------------------------------
 
 ---------------------------------------
---   Security Force Fields | Server  --
+--       Force Fields | Server       --
 ---------------------------------------
 
 -- Enables the given force field.
@@ -21,7 +21,7 @@
 -- @param Table forceFieldData
 -- @return Boolean success
 -- @return Vector pos
-function Star_Trek.Security:EnableForceField(forceFieldData, force)
+function Star_Trek.ForceFields:EnableForceField(forceFieldData, force)
 	if not istable(forceFieldData) then
 		return false
 	end
@@ -35,7 +35,7 @@ function Star_Trek.Security:EnableForceField(forceFieldData, force)
 	end
 
 	-- Prevent moving if broken / disabled.
-	if not force and Star_Trek.Control:GetStatus("force_field_emitter", forceFieldData.Deck, forceFieldData.SectionId) ~= Star_Trek.Control.ACTIVE then
+	if not force and Star_Trek.Control:GetStatus("force_fields", forceFieldData.Deck, forceFieldData.SectionId) ~= Star_Trek.Control.ACTIVE then
 		return false
 	end
 
@@ -54,13 +54,13 @@ function Star_Trek.Security:EnableForceField(forceFieldData, force)
 	forceFieldData.Entity = ent
 	ent.ForceFieldData = forceFieldData
 
-	Star_Trek.Security:EnableForceField(forceFieldData.Partner)
+	self:EnableForceField(forceFieldData.Partner)
 
 	return true, ent:GetPos()
 end
 
 -- Change use to use success.
-function Star_Trek.Security:EnableForceFieldsInSections(deck, sectionIds)
+function Star_Trek.ForceFields:EnableForceFieldsInSections(deck, sectionIds)
 	local positions = {}
 
 	local success, deckData = Star_Trek.Sections:GetDeck(deck)
@@ -91,7 +91,7 @@ end
 -- Enables the named force fields.
 --
 -- @param String name
-function Star_Trek.Security:EnableNamedForceField(name)
+function Star_Trek.ForceFields:EnableNamedForceField(name)
 	for _, forceFieldData in pairs(self.NamedForceFields[name] or {}) do
 		self:EnableForceField(forceFieldData)
 	end
@@ -102,7 +102,7 @@ end
 -- @param Table forceFieldData
 -- @return Boolean success
 -- @return Vector pos
-function Star_Trek.Security:DisableForceField(forceFieldData)
+function Star_Trek.ForceFields:DisableForceField(forceFieldData)
 	if not istable(forceFieldData) then
 		return false
 	end
@@ -121,13 +121,13 @@ function Star_Trek.Security:DisableForceField(forceFieldData)
 	SafeRemoveEntity(ent)
 	forceFieldData.Entity = nil
 
-	Star_Trek.Security:DisableForceField(forceFieldData.Partner)
+	self:DisableForceField(forceFieldData.Partner)
 
 	return true, pos
 end
 
 -- Change use to use success.
-function Star_Trek.Security:DisableForceFieldsInSections(deck, sectionIds)
+function Star_Trek.ForceFields:DisableForceFieldsInSections(deck, sectionIds)
 	local positions = {}
 
 	local success, deckData = Star_Trek.Sections:GetDeck(deck)
@@ -158,18 +158,18 @@ end
 -- Disables the named force fields.
 --
 -- @param String name
-function Star_Trek.Security:DisableNamedForceField(name)
+function Star_Trek.ForceFields:DisableNamedForceField(name)
 	for _, forceFieldData in pairs(self.NamedForceFields[name] or {}) do
 		self:DisableForceField(forceFieldData)
 	end
 end
 
-Star_Trek.Control:Register("force_field_emitter", function(value, deck, sectionId)
+Star_Trek.Control:Register("force_fields", function(value, deck, sectionId)
 	if value == Star_Trek.Control.ACTIVE then
 		return
 	end
 
-	for _, forceFieldData in pairs(Star_Trek.Security.ForceFields) do
+	for _, forceFieldData in pairs(Star_Trek.ForceFields.ForceFields) do
 		if (isnumber(deck) and isnumber(sectionId))
 		and (forceFieldData.Deck ~= deck or forceFieldData.SectionId ~= sectionId) then
 			continue
@@ -180,7 +180,7 @@ Star_Trek.Control:Register("force_field_emitter", function(value, deck, sectionI
 			continue
 		end
 
-		Star_Trek.Security:DisableForceField(forceFieldData)
+		Star_Trek.ForceFields:DisableForceField(forceFieldData)
 	end
 end)
 
@@ -188,7 +188,7 @@ end)
 --- Setup ---
 -------------
 
-function Star_Trek.Security:SetupForceField(ent, deck, sectionId)
+function Star_Trek.ForceFields:SetupForceField(ent, deck, sectionId)
 	local forceFieldData = {
 		Pos = ent:GetPos(),
 		Ang = ent:GetAngles(),
@@ -206,9 +206,9 @@ function Star_Trek.Security:SetupForceField(ent, deck, sectionId)
 		if isstring(name) and name ~= "" then
 			forceFieldData.Name = name
 
-			Star_Trek.Security.NamedForceFields[name] = Star_Trek.Security.NamedForceFields[name] or {}
+			self.NamedForceFields[name] = self.NamedForceFields[name] or {}
 
-			table.insert(Star_Trek.Security.NamedForceFields[name], forceFieldData)
+			table.insert(self.NamedForceFields[name], forceFieldData)
 		end
 
 		local alwaysOn = keyValues["lcars_forcefield_alwayson"]
@@ -223,7 +223,7 @@ function Star_Trek.Security:SetupForceField(ent, deck, sectionId)
 	return forceFieldData
 end
 
-function Star_Trek.Security:SetUpPortalForceField(forceField)
+function Star_Trek.ForceFields:SetUpPortalForceField(forceField)
 	local forceFieldData = forceField.ForceFieldData
 	if not istable(forceFieldData) then
 		return
@@ -257,9 +257,9 @@ function Star_Trek.Security:SetUpPortalForceField(forceField)
 	end
 end
 
-hook.Add("Star_Trek.Sections.Loaded", "Star_Trek.Security.DetectForceFields", function()
-	Star_Trek.Security.ForceFields = {}
-	Star_Trek.Security.NamedForceFields = {}
+hook.Add("Star_Trek.Sections.Loaded", "Star_Trek.ForceFields.DetectForceFields", function()
+	Star_Trek.ForceFields.ForceFields = {}
+	Star_Trek.ForceFields.NamedForceFields = {}
 
 	for deck, deckData in pairs(Star_Trek.Sections.Decks) do
 		for sectionId, sectionData in pairs(deckData.Sections) do
@@ -271,7 +271,7 @@ hook.Add("Star_Trek.Sections.Loaded", "Star_Trek.Security.DetectForceFields", fu
 			end, true)
 
 			for _, ent in pairs(entities) do
-				table.insert(sectionData.ForceFields, Star_Trek.Security:SetupForceField(ent, deck, sectionId))
+				table.insert(sectionData.ForceFields, Star_Trek.ForceFields:SetupForceField(ent, deck, sectionId))
 			end
 		end
 	end
@@ -281,13 +281,13 @@ hook.Add("Star_Trek.Sections.Loaded", "Star_Trek.Security.DetectForceFields", fu
 	-- Not currently needed for rp_intrepid_v1
 	for _, ent in pairs(forceFields) do
 		if not ent.ForceFieldData then
-			Star_Trek.Security:SetupForceField(ent)
+			Star_Trek.ForceFields:SetupForceField(ent)
 		end
 	end
 
 	-- Setup Portal Connections between force fields.
 	for _, ent in pairs(forceFields) do
-		Star_Trek.Security:SetUpPortalForceField(ent)
+		Star_Trek.ForceFields:SetUpPortalForceField(ent)
 	end
 
 	-- Delete all the map force field marker entities.
@@ -297,9 +297,9 @@ hook.Add("Star_Trek.Sections.Loaded", "Star_Trek.Security.DetectForceFields", fu
 	end
 
 	-- Enable Always On Forcefields
-	for _, forceFieldData in pairs(Star_Trek.Security.ForceFields) do
+	for _, forceFieldData in pairs(Star_Trek.ForceFields.ForceFields) do
 		if forceFieldData.AlwaysOn then
-			Star_Trek.Security:EnableForceField(forceFieldData, true)
+			Star_Trek.ForceFields:EnableForceField(forceFieldData, true)
 		end
 	end
 end)
