@@ -77,7 +77,7 @@ function Star_Trek.ForceFields:EnableForceFieldsInSections(deck, sectionIds)
 			if success2 then
 				table.insert(positions, {
 					DetectedInSection = sectionId,
-					DetectedOndeck = deck,
+					DetectedOnDeck = deck,
 
 					Pos = pos,
 				})
@@ -144,7 +144,7 @@ function Star_Trek.ForceFields:DisableForceFieldsInSections(deck, sectionIds)
 			if success2 then
 				table.insert(positions, {
 					DetectedInSection = sectionId,
-					DetectedOndeck = deck,
+					DetectedOnDeck = deck,
 
 					Pos = pos,
 				})
