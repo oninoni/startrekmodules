@@ -24,7 +24,8 @@ function SELF:ReadData()
 	self.Pos = net.ReadWorldVector()
 	self.Ang = net.ReadAngle()
 
-	self.Models = net.ReadTable()
+	self.Model = net.ReadString()
+	self.Scale = net.ReadFloat()
 end
 
 function SELF:ReadDynData()
@@ -34,29 +35,13 @@ function SELF:Init()
 	self:ReadData()
 	self:ReadDynData()
 
-	self.ClientEntities = {}
-	for i, modelData in pairs(self.Models) do
-		local ent = ClientsideModel(modelData.Model, RENDERGROUP_BOTH)
+	local ent = ClientsideModel(self.Model, RENDERGROUP_BOTH)
+	ent:SetModelScale(self.Scale or 1)
+	ent:SetNoDraw(true)
 
-		ent.Scale = modelData.Scale or 1
-		ent:SetModelScale(ent.Scale)
-
-		ent:SetNoDraw(true)
-
-		-- TODO: Add Support for Offset / Parenting (Parenting might be possible clientside improving performance?)
-
-		self.ClientEntities[i] = ent
-	end
+	self.ClientEntity = ent
 end
 
 function SELF:Terminate()
-	for i, ent in pairs(self.ClientEntities) do
-		SafeRemoveEntity(ent)
-	end
-end
-
-function SELF:Draw(relPos, relAng)
-	for _, ent in pairs(self.ClientEntities) do
-		Star_Trek.World:DrawEntity(ent, relPos, relAng)
-	end
+	SafeRemoveEntity(self.ClientEntity)
 end

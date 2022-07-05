@@ -21,7 +21,8 @@ if not istable(ENT) then Star_Trek:LoadAllModules() return end
 local SELF = ENT
 
 function SELF:ReadData()
-	self.Models = net.ReadTable()
+	self.Model = net.ReadString()
+	self.Scale = net.ReadFloat()
 
 	local x, y, z = net.ReadFloat(), net.ReadFloat(), net.ReadFloat()
 	self.Vel = Vector(x, y, z)

@@ -30,6 +30,7 @@ if SERVER then
 
 	AddCSLuaFile("net/cl_net.lua")
 	AddCSLuaFile("render/cl_render.lua")
+	AddCSLuaFile("render/cl_background.lua")
 	AddCSLuaFile("cl_entities.lua")
 
 	include("sh_config.lua")
@@ -55,6 +56,7 @@ if CLIENT then
 
 	include("net/cl_net.lua")
 	include("render/cl_render.lua")
+	include("render/cl_background.lua")
 	include("cl_entities.lua")
 end
 

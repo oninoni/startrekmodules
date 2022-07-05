@@ -24,19 +24,19 @@ function SELF:WriteData()
 	net.WriteWorldVector(self.Pos)
 	net.WriteAngle(self.Ang)
 
-	net.WriteTable(self.Models)
+	net.WriteString(self.Model)
+	net.WriteFloat(self.Scale)
 end
 
 function SELF:WriteDynData()
 end
 
-function SELF:Init(pos, ang, models)
+function SELF:Init(pos, ang, model, scale)
 	self.Pos = pos or WorldVector()
 	self.Ang = ang or Angle()
 
-	self.Models = models or {
-		{Model = "models/hunter/blocks/cube4x4x4.mdl"}
-	}
+	self.Scale = scale or (1 / 1024)
+	self.Model = model or "models/hunter/blocks/cube4x4x4.mdl"
 end
 
 function SELF:Terminate()
