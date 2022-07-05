@@ -22,10 +22,12 @@ Star_Trek.Util = Star_Trek.Util or {}
 
 if SERVER then
 	AddCSLuaFile("sh_stardate.lua")
+	--AddCSLuaFile("sh_benchmark.lua")
 
 	--AddCSLuaFile("cl_rendermap.lua")
 
 	include("sh_stardate.lua")
+	--include("sh_benchmark.lua")
 
 	include("sv_airlock.lua")
 
@@ -38,6 +40,7 @@ end
 
 if CLIENT then
 	include("sh_stardate.lua")
+	--include("sh_benchmark.lua")
 
 	--include("cl_rendermap.lua")
 end
