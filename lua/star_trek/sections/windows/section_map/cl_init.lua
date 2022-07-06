@@ -58,9 +58,9 @@ function SELF:OnDraw(pos, animPos)
 				object.SoundPlayed = true
 			end
 
-			local pos = object.Pos
-			local x = math.floor(pos[1] * self.MapScale + self.Area1X + self.Area1Width  / 2)
-			local y = math.floor(pos[2] * self.MapScale + self.Area1Y + self.Area1Height / 2)
+			local oPos = object.Pos
+			local x = math.floor(oPos[1] * self.MapScale + self.Area1X + self.Area1Width  / 2)
+			local y = math.floor(oPos[2] * self.MapScale + self.Area1Y + self.Area1Height / 2)
 
 			if timeOffset < MARK_TIME then
 				local markAlpha = math.min(1, MARK_TIME - timeOffset) * alpha

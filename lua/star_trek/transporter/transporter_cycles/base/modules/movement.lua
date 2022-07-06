@@ -41,6 +41,7 @@ function SELF:ApplyMovement(movementEnabled)
 		end
 	elseif ent:IsNextBot() then
 		-- TODO
+		print("Nextbot Transportation not implemented fully!")
 	end
 
 	local phys = ent:GetPhysicsObject()
