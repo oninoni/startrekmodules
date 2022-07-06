@@ -1,6 +1,6 @@
 ---------------------------------------
 ---------------------------------------
---        Star Trek Utilities        --
+--         Star Trek Modules         --
 --                                   --
 --            Created by             --
 --       Jan 'Oninoni' Ziegler       --
@@ -248,7 +248,6 @@ hook.Add("Think", "Star_Trek.Doors.DoorThink", function()
 end)
 
 -- Register Door Control Type.
--- Callback opens doors when they are disabled and not locked.
 Star_Trek.Control:Register("doors")
 
 -------------

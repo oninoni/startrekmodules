@@ -1,6 +1,6 @@
 ---------------------------------------
 ---------------------------------------
---        Star Trek Utilities        --
+--         Star Trek Modules         --
 --                                   --
 --            Created by             --
 --       Jan 'Oninoni' Ziegler       --
@@ -65,7 +65,7 @@ function SELF:GenerateTexture()
 		["$translucent"] = 1,
 		["$vertexalpha"] = 1
 	})
-	
+
 	self.U = width / self.Width
 	self.V1 = height / self.Height
 	self.V2 = (height - 1) / self.Height

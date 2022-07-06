@@ -1,6 +1,6 @@
 ---------------------------------------
 ---------------------------------------
---        Star Trek Utilities        --
+--         Star Trek Modules         --
 --                                   --
 --            Created by             --
 --       Jan 'Oninoni' Ziegler       --
@@ -69,18 +69,14 @@ end
 
 -- Determine if the given position is inside the given area.
 -- 
--- @param Table areaData
 -- @param Vector pos
+-- @param Vector min
+-- @param Vector max
 -- @param Boolean isInside
-local function isInArea(areaData, pos)
-	local min = areaData.Min
-	local max = areaData.Max
-
-	local localPos = areaData.Pos - pos
-
-	if  localPos[1] > min[1] and localPos[1] < max[1]
-	and localPos[2] > min[2] and localPos[2] < max[2]
-	and localPos[3] > min[3] and localPos[3] < max[3] then
+local function isInArea(pos, min, max)
+	if  pos[1] > min[1] and pos[1] < max[1]
+	and pos[2] > min[2] and pos[2] < max[2]
+	and pos[3] > min[3] and pos[3] < max[3] then
 		return true
 	end
 
@@ -100,12 +96,34 @@ function Star_Trek.Sections:IsInSection(deck, sectionId, pos)
 	end
 
 	for _, areaData in pairs(sectionData.Areas) do
-		if isInArea(areaData, pos) then
+		if isInArea(pos, areaData.Min, areaData.Max) then
 			return true
 		end
 	end
 
 	return false
+end
+
+-- Returns the decks using the bounds.
+-- If an overlap is detected it returns a list of possible decks.
+--
+-- @param Vector pos
+-- @param Table decks
+function Star_Trek.Sections:FindDecksFast(pos)
+	local decks = {}
+
+	for deck, deckData in ipairs(self.Decks) do
+		for _, boundData in pairs(deckData.Bounds) do
+			if isInArea(pos, boundData.Min, boundData.Max) then
+				table.insert(decks, deck)
+
+				-- Stop detection for this deck
+				break
+			end
+		end
+	end
+
+	return decks
 end
 
 -- Determine the section a given pos is in.
@@ -114,10 +132,17 @@ end
 -- @return? Number deck
 -- @return? Number sectionId
 function Star_Trek.Sections:DetermineSection(pos)
-	for deck, deckData in SortedPairs(Star_Trek.Sections.Decks) do
+	local decks = self:FindDecksFast(pos)
+
+	for _, deck in pairs(decks) do
+		local deckData = self.Decks[deck]
+		if not istable(deckData) then continue end
+
 		for sectionId, sectionData in pairs(deckData.Sections) do
-			if self:IsInSection(deck, sectionId, pos) then
-				return true, deck, sectionId
+			for _, areaData in pairs(sectionData.Areas) do
+				if isInArea(pos, areaData.Min, areaData.Max) then
+					return true, deck, sectionId
+				end
 			end
 		end
 	end
@@ -125,77 +150,51 @@ function Star_Trek.Sections:DetermineSection(pos)
 	return false
 end
 
--- Determine if the given position is inside the sections of the given deck.
--- 
--- @param Number deck
--- @param Vector pos
--- @param Boolean isInside
-function Star_Trek.Sections:IsOnDeck(deck, pos)
-	local success, deckData = self:GetDeck(deck)
-	if not success then
-		return false
-	end
-
-	for sectionId, sectionData in pairs(deckData.Sections) do
-		if self:IsInSection(deck, sectionId, pos) then
-			return true
-		end
-	end
-
-	return false
-end
-
-function Star_Trek.Sections:GetInSection(deck, sectionId, filterCallback, allowMap, allowParent)
-	local success, sectionData = self:GetSection(deck, sectionId)
-	if not success then
-		return false, sectionData
+function Star_Trek.Sections:GetInSections(deck, sectionIds, filterCallback, allowMap, allowParent)
+	local deckData = self.Decks[deck]
+	if not istable(deckData) then
+		return {}
 	end
 
 	local objects = {}
 
-	for _, areaData in pairs(sectionData.Areas) do
-		local pos = areaData.Pos
-		local min = areaData.Min
-		local max = areaData.Max
+	for _, sectionId in pairs(sectionIds) do
+		local sectionData = deckData.Sections[sectionId]
+		if not istable(sectionData) then
+			continue
+		end
 
-		local rotMin = LocalToWorld(pos, Angle(), min, Angle())
-		local rotMax = LocalToWorld(pos, Angle(), max, Angle())
+		for _, areaData in pairs(sectionData.Areas) do
+			local entities = ents.FindInBox(areaData.Min, areaData.Max)
 
-		local realMin = Vector(math.min(rotMin[1], rotMax[1]), math.min(rotMin[2], rotMax[2]), math.min(rotMin[3], rotMax[3]))
-		local realMax = Vector(math.max(rotMin[1], rotMax[1]), math.max(rotMin[2], rotMax[2]), math.max(rotMin[3], rotMax[3]))
+			for _, ent in pairs(entities) do
+				if table.HasValue(objects, ent) then continue end
+				if not allowMap and ent:MapCreationID() > -1 then continue end
+				if not allowParent and IsValid(ent:GetParent()) then continue end
+				if isfunction(filterCallback) and filterCallback(objects, ent) then continue end
 
-		local potentialEnts = ents.FindInBox(realMin, realMax)
-		for _, ent in pairs(potentialEnts) do
-			if table.HasValue(objects, ent) then continue end
-			if not allowMap and ent:MapCreationID() > -1 then continue end
-			if not allowParent and IsValid(ent:GetParent()) then continue end
-			if isfunction(filterCallback) and filterCallback(objects, ent) then continue end
-
-			local entPos = isfunction(ent.EyePos) and ent:EyePos() or ent:GetPos()
-			if isInArea(areaData, entPos) then
 				table.insert(objects, ent)
 				ent.DetectedInSection = sectionId
-				ent.DetectedOndeck = deck
+				ent.DetectedOnDeck = deck
 			end
 		end
 	end
 
+	PrintTable(objects)
+
 	return objects
 end
 
-function Star_Trek.Sections:GetInSections(deck, sectionIds, filterCallback, allowMap, allowParent)
-	local entities = {}
-
-	for _, sectionId in pairs(sectionIds) do
-		local sectionEntities = self:GetInSection(deck, sectionId, filterCallback, allowMap, allowParent)
-		for _, ent in pairs(sectionEntities) do
-			if table.HasValue(entities, ent) then continue end
-
-			table.insert(entities, ent)
-		end
-	end
-
-	return entities
+-- Get entities from the section.
+--
+-- @param Number deck
+-- @param Number sectionId
+-- @param function filterCallback
+-- @param? Boolean allowMap
+-- @param? Boolean allowParent
+-- @return Table objects
+function Star_Trek.Sections:GetInSection(deck, sectionId, filterCallback, allowMap, allowParent)
+	return Star_Trek.Sections:GetInSections(deck, {sectionId}, filterCallback, allowMap, allowParent)
 end
 
 -- Returns categoriy data for a category_list containing all ship sections.
@@ -215,7 +214,7 @@ function Star_Trek.Sections:GetSectionCategories(locationMinimum)
 			for sectionId, sectionData in SortedPairs(deckData.Sections) do
 				local button = {
 					Name = self:GetSectionName(deck, sectionId),
-					Data = sectionData.Id,
+					Data = sectionId,
 				}
 
 				if table.Count(sectionData.BeamLocations) < (locationMinimum or 0) then
@@ -234,6 +233,51 @@ function Star_Trek.Sections:GetSectionCategories(locationMinimum)
 	return categories
 end
 
+-- Add the given Bounds to the table for effiecient detection.
+-- Merges Bounds if nearby objects on the height axis.
+--
+-- @param table bounds
+-- @param Vector min
+-- @param Vector max
+local HEIGHT_THRESHOLD = 162
+local function generateBounds(bounds, min, max)
+	-- Find existing fitting bounds and ajust if found.
+	for _, boundData in pairs(bounds) do
+		if max.z - min.z > HEIGHT_THRESHOLD then
+			break
+		end
+		if boundData.Max.z - boundData.Min.z > HEIGHT_THRESHOLD then
+			continue
+		end
+
+		if not (
+		   (boundData.Max.z <= min.z
+		and boundData.Max.z <= max.z)
+		or (boundData.Min.z >= min.z
+		and boundData.Min.z >= max.z)) then
+			boundData.Min = Vector(
+				math.min(boundData.Min.x, min.x),
+				math.min(boundData.Min.y, min.y),
+				math.min(boundData.Min.z, min.z)
+			)
+
+			boundData.Max = Vector(
+				math.max(boundData.Max.x, max.x),
+				math.max(boundData.Max.y, max.y),
+				math.max(boundData.Max.z, max.z)
+			)
+
+			return
+		end
+	end
+
+	-- Add new bounds table if no fitting has been found.
+	local boundData = {}
+	boundData.Min = min
+	boundData.Max = max
+	table.insert(bounds, boundData)
+end
+
 function Star_Trek.Sections:Setup()
 	self.Decks = {}
 
@@ -241,21 +285,46 @@ function Star_Trek.Sections:Setup()
 	local globalMax = Vector(-math.huge, -math.huge, -math.huge)
 
 	for _, ent in pairs(ents.GetAll()) do
+		-- Get the name of the entity.
 		local name = ent:GetName()
 		if not isstring(name) then continue end
 		if not string.StartWith(name, "section") then continue end
 
+		local keyValues = ent.LCARSKeyData
+		if not istable(keyValues) then
+			Star_Trek:Message("Invalid Section Key Values! Skipping Entity!")
+			continue
+		end
+
+		if ent:GetAngles() ~= Angle() then
+			Star_Trek:Message("Section Non-Zero Angle Detected! Not implemented!")
+			continue
+		end
+
+		-- Get the part of the entity name, that determines the deck and sectionId
 		local numberData = string.Split(string.sub(ent:GetName(), 8), "_")
 		if not istable(numberData) then continue end
 		if #numberData < 2 then continue end
 
+		-- Generate the deck number from the name of the entity.
 		local deck = tonumber(numberData[1])
 		if not isnumber(deck) or deck < 1 then continue end
-		self.Decks[deck] = self.Decks[deck] or {Sections = {}}
 
-		local sectionId = tonumber(numberData[2])
+		-- Create the deckData table, if it doesnt exist yet.
+		local deckData = self.Decks[deck]
+		if not istable(deckData) then
+			deckData = {}
+			deckData.Sections = {}
+			deckData.Bounds = {}
+
+			self.Decks[deck] = deckData
+		end
+
+		-- Generate the section id from the name of the entity.
+		local realId = numberData[2]
+		local sectionId = tonumber(realId)
 		if not isnumber(sectionId) then
-			local number, letter = string.match(numberData[2], "(%d+)(%a)")
+			local number, letter = string.match(realId, "(%d+)(%a)")
 			letter = string.byte(letter) - 64
 
 			sectionId = number * 100 + letter
@@ -263,45 +332,91 @@ function Star_Trek.Sections:Setup()
 			sectionId = sectionId * 100
 		end
 
-		local keyValues = ent.LCARSKeyData
-		if istable(keyValues) then
-			self.Decks[deck].Sections[sectionId] = self.Decks[deck].Sections[sectionId] or {
-				Name = keyValues["lcars_name"],
-				Id = sectionId,
-				RealId = numberData[2],
-				Areas = {},
-			}
+		-- Create the sectionData table, if it doesnt exist yet.
+		local sectionData = deckData.Sections[sectionId]
+		if not istable(sectionData) then
+			sectionData = {}
+			sectionData.RealId = realId
+			sectionData.Name = keyValues["lcars_name"] or "Section " .. sectionId
 
-			local pos = ent:GetPos()
-			local min, max = ent:GetCollisionBounds()
+			sectionData.Areas = {}
 
-			table.insert(self.Decks[deck].Sections[sectionId].Areas, {
-				Pos = pos,
-
-				Min = min,
-				Max = max,
-			})
-
-			globalMax = Vector(
-				math.max(globalMax.x, pos.x + max.x, pos.x + min.x),
-				math.max(globalMax.y, pos.y + max.y, pos.y + min.y),
-				math.max(globalMax.z, pos.z + max.z, pos.z + min.z)
-			)
-
-			globalMin = Vector(
-				math.min(globalMin.x, pos.x + max.x, pos.x + min.x),
-				math.min(globalMin.y, pos.y + max.y, pos.y + min.y),
-				math.min(globalMin.z, pos.z + max.z, pos.z + min.z)
-			)
-
-			if ent:GetAngles() ~= Angle() then
-				print("Section Non-Zero Angle Detected! Not implemented!")
-			end
-		else
-			print("Invalid Section Key Values! Skipping Entity!")
+			deckData.Sections[sectionId] = sectionData
 		end
 
-		ent:Remove()
+		-- Generate the areaData table.
+		local pos = ent:GetPos()
+		local min, max = ent:GetCollisionBounds()
+		min = pos + min
+		max = pos + max
+
+		-- Rounding because one section is offset.
+		-- Can be removed if map is updated.
+		min = Vector(
+			math.Round(min.x, 0),
+			math.Round(min.y, 0),
+			math.Round(min.z, 0)
+		)
+		max = Vector(
+			math.Round(max.x, 0),
+			math.Round(max.y, 0),
+			math.Round(max.z, 0)
+		)
+
+		-- Fixing engineering overlapping with jeffries
+		local h = max.z - min.z
+		if deck == 11 and sectionId == 400 and h == 258 then
+			max.z = max.z - 64
+		end
+
+		local areaData = {}
+		areaData.Min = min
+		areaData.Max = max
+		table.insert(sectionData.Areas, areaData)
+
+		-- Generate the bounds of the deck
+		generateBounds(deckData.Bounds, min, max)
+
+		-- Generate global bounds for offset detection.
+		globalMin = Vector(
+			math.min(globalMin.x, min.x),
+			math.min(globalMin.y, min.y),
+			math.min(globalMin.z, min.z)
+		)
+		globalMax = Vector(
+			math.max(globalMax.x, max.x),
+			math.max(globalMax.y, max.y),
+			math.max(globalMax.z, max.z)
+		)
+
+		SafeRemoveEntity(ent)
+	end
+
+	-- Calculate offset for jeffries tubes bounds.
+	local deck11Data = self.Decks[11]
+	local deck11Z
+	for _, boundData in pairs(deck11Data.Bounds) do
+		local z = boundData.Min.z
+		local h = boundData.Max.z - z
+		if h == 162 and z > 1000 then
+			deck11Z = z
+
+			break
+		end
+	end
+
+	-- Add Bounds for jeffries tubes detection.
+	self.JBounds = {}
+	for deck = 1, 11 do
+		local jBounds = {
+			Min = Vector(globalMin),
+			Max = Vector(globalMax),
+		}
+
+		jBounds.Min.z = deck11Z + (11 - deck) * 162
+		jBounds.Max.z = jBounds.Min.z + 162
+
+		self.JBounds[deck] = jBounds
 	end
 
 	self.GlobalOffset = globalMin + (globalMax - globalMin) * 0.5

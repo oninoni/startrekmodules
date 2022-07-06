@@ -1,6 +1,6 @@
 ---------------------------------------
 ---------------------------------------
---        Star Trek Utilities        --
+--         Star Trek Modules         --
 --                                   --
 --            Created by             --
 --       Jan 'Oninoni' Ziegler       --
@@ -13,11 +13,11 @@
 ---------------------------------------
 
 ---------------------------------------
---   Security Force Fields | Shared  --
+--       Force Fields | Shared       --
 ---------------------------------------
 
 -- Prevent Forcefields from being picked up by a Physgun
-hook.Add("PhysgunPickup", "Star_Trek.Security.PreventForceFieldPickup", function(ply, ent)
+hook.Add("PhysgunPickup", "Star_Trek.ForceFields.PreventPickup", function(ply, ent)
 	if ent:GetClass() ~= "force_field" then
 		return
 	end
@@ -26,7 +26,7 @@ hook.Add("PhysgunPickup", "Star_Trek.Security.PreventForceFieldPickup", function
 end)
 
 -- Prevent Forcefields from being modified by a Toolgun
-hook.Add("CanTool", "Star_Trek.Security.PreventCanTool", function(ply, tr, toolname, tool, button)
+hook.Add("CanTool", "Star_Trek.ForceFields.PreventCanTool", function(ply, tr, toolname, tool, button)
 	local ent = tr.Entity
 	if not IsValid(ent) then
 		return

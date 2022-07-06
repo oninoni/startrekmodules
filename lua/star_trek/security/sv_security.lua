@@ -1,6 +1,6 @@
 ---------------------------------------
 ---------------------------------------
---        Star Trek Utilities        --
+--         Star Trek Modules         --
 --                                   --
 --            Created by             --
 --       Jan 'Oninoni' Ziegler       --
@@ -13,7 +13,7 @@
 ---------------------------------------
 
 ---------------------------------------
---   Security Sub Consoles | Server  --
+--         Security | Server         --
 ---------------------------------------
 
 local subConsoles = {

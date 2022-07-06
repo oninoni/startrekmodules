@@ -1,6 +1,6 @@
 ---------------------------------------
 ---------------------------------------
---        Star Trek Utilities        --
+--         Star Trek Modules         --
 --                                   --
 --            Created by             --
 --       Jan 'Oninoni' Ziegler       --
@@ -13,14 +13,14 @@
 ---------------------------------------
 
 ---------------------------------------
---         Security | Config         --
+--       Force Fields | Config       --
 ---------------------------------------
 
 -- Delay between Force Field Damage Intervals in Seconds.
-Star_Trek.Security.ForceFieldDelay = 1
+Star_Trek.ForceFields.ForceFieldDelay = 1
 
 -- Ammount of Damage applied in each Force Field Interval.
-Star_Trek.Security.ForceFieldDamage = 5
+Star_Trek.ForceFields.ForceFieldDamage = 5
 
 -- Ammount of Knockback force applied in each Force Field Interval.
-Star_Trek.Security.ForceFieldForce = 1
+Star_Trek.ForceFields.ForceFieldForce = 1

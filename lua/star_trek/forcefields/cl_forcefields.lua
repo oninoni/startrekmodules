@@ -1,6 +1,6 @@
 ---------------------------------------
 ---------------------------------------
---        Star Trek Utilities        --
+--         Star Trek Modules         --
 --                                   --
 --            Created by             --
 --       Jan 'Oninoni' Ziegler       --
@@ -13,13 +13,13 @@
 ---------------------------------------
 
 ---------------------------------------
---   Security Force Fields | Client  --
+--       Force Fields | Client       --
 ---------------------------------------
 
 local SOUND_CUTOFF = 500
 local cutOffSquared = SOUND_CUTOFF * SOUND_CUTOFF
 
-timer.Create("Star_Trek.Security.ForceFieldSound", 2, 0, function()
+timer.Create("Star_Trek.ForceFields.Sound", 2, 0, function()
 	local ply = LocalPlayer()
 	if not IsValid(ply) then return end
 

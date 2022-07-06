@@ -1,6 +1,6 @@
 ---------------------------------------
 ---------------------------------------
---        Star Trek Utilities        --
+--         Star Trek Modules         --
 --                                   --
 --            Created by             --
 --       Jan 'Oninoni' Ziegler       --
@@ -13,19 +13,14 @@
 ---------------------------------------
 
 ---------------------------------------
---    Force Field Entity | Shared    --
+--    Force Field Entity | Client    --
 ---------------------------------------
 
-ENT.Type = "anim"
-ENT.Base = "base_gmodentity"
+include("shared.lua")
 
-ENT.PrintName = "Force Field"
-ENT.Author = "Oninoni"
-
-ENT.Category = "Star Trek"
-
-ENT.Spawnable = false
-
-function ENT:SetupDataTables()
-	self:NetworkVar("Bool", 0, "AlwaysOn")
+function ENT:OnRemove()
+	if self.LoopSound then
+		self.LoopSound:Stop()
+		self.LoopSound = nil
+	end
 end

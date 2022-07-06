@@ -1,6 +1,6 @@
 ---------------------------------------
 ---------------------------------------
---        Star Trek Utilities        --
+--         Star Trek Modules         --
 --                                   --
 --            Created by             --
 --       Jan 'Oninoni' Ziegler       --
@@ -41,6 +41,7 @@ function SELF:ApplyMovement(movementEnabled)
 		end
 	elseif ent:IsNextBot() then
 		-- TODO
+		print("Nextbot Transportation not implemented fully!")
 	end
 
 	local phys = ent:GetPhysicsObject()

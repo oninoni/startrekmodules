@@ -13,15 +13,28 @@
 ---------------------------------------
 
 ---------------------------------------
---          Portals | Server         --
+--        Force Fields | Index       --
 ---------------------------------------
 
--- Add all portal visleafs to server's potentially visible set
-hook.Add("SetupPlayerVisibility", "WorldWindows_AddPVS", function(ply, ent)
-	for _, portal in ipairs(ents.FindByClass("linked_portal_window")) do
-		local exit = portal:GetExit()
-		if IsValid(exit) then
-			AddOriginToPVS(exit:GetPos())
-		end
-	end
-end)
+Star_Trek:RequireModules("sections", "control")
+
+Star_Trek.ForceFields = Star_Trek.ForceFields or {}
+
+if SERVER then
+	AddCSLuaFile("sh_config.lua")
+	AddCSLuaFile("sh_sounds.lua")
+	AddCSLuaFile("sh_forcefields.lua")
+	AddCSLuaFile("cl_forcefields.lua")
+
+	include("sh_config.lua")
+	include("sh_sounds.lua")
+	include("sh_forcefields.lua")
+	include("sv_forcefields.lua")
+end
+
+if CLIENT then
+	include("sh_config.lua")
+	include("sh_sounds.lua")
+	include("sh_forcefields.lua")
+	include("cl_forcefields.lua")
+end

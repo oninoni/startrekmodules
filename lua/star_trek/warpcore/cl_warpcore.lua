@@ -1,6 +1,6 @@
 ---------------------------------------
 ---------------------------------------
---        Star Trek Utilities        --
+--         Star Trek Modules         --
 --                                   --
 --            Created by             --
 --       Jan 'Oninoni' Ziegler       --
@@ -24,7 +24,7 @@ net.Receive("Star_Trek.WarpCore.SetSpeed", function()
 	local flashMax = net.ReadFloat()
 
 	local warpCoreMaterial = Material("models/kingpommes/startrek/intrepid/core_effect")
-	warpCoreMaterial:SetFloat("$speed", speed)	
+	warpCoreMaterial:SetFloat("$speed", speed)
 	warpCoreMaterial:SetFloat("$brightness", brightness)
 	warpCoreMaterial:SetFloat("$flashspeed", flashSpeed)
 	warpCoreMaterial:SetFloat("$flashminmul", flashMin)

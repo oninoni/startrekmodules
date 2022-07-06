@@ -1,6 +1,6 @@
 ---------------------------------------
 ---------------------------------------
---        Star Trek Utilities        --
+--         Star Trek Modules         --
 --                                   --
 --            Created by             --
 --       Jan 'Oninoni' Ziegler       --
@@ -262,7 +262,7 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 
 				return true
 			elseif buttonName == "Enable Forcefields" then
-				local success1, forceFieldPositions = Star_Trek.Security:EnableForceFieldsInSections(deck, sectionIds)
+				local success1, forceFieldPositions = Star_Trek.ForceFields:EnableForceFieldsInSections(deck, sectionIds)
 				if not success1 then
 					return
 				end
@@ -289,7 +289,7 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 
 				return true
 			elseif buttonName == "Disable Forcefields" then
-				local success1, forceFieldPositions = Star_Trek.Security:DisableForceFieldsInSections(deck, sectionIds)
+				local success1, forceFieldPositions = Star_Trek.ForceFields:DisableForceFieldsInSections(deck, sectionIds)
 				if not success1 then
 					return
 				end
@@ -332,7 +332,7 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 					return true
 				end, true)
 
-				local success1, forceFieldPositions = Star_Trek.Security:DisableForceFieldsInSections(deck, sectionIds)
+				local success1, forceFieldPositions = Star_Trek.ForceFields:DisableForceFieldsInSections(deck, sectionIds)
 				if not success1 then
 					return
 				end
