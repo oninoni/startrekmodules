@@ -106,7 +106,7 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 		end
 
 		-- On the final iteration add the log entry with all the player names that were transported
-		if iteration == table.Count(sourcePatterns) then
+		if iteration == table.Count(sourcePatterns) and  table.Count(player_names) ~= 0 then
 			local message = "Life Forms within Pattern Source: "
 			for key,value in pairs(player_names) do
 				if key == 1 then
