@@ -35,7 +35,7 @@ function SELF:Init(pos, ang, model, scale)
 	self.Pos = pos or WorldVector()
 	self.Ang = ang or Angle()
 
-	self.Scale = scale or (1 / 1024)
+	self.Scale = scale or Star_Trek.World.Skybox_Scale
 	self.Model = model or "models/hunter/blocks/cube4x4x4.mdl"
 end
 

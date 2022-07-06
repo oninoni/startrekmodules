@@ -16,12 +16,12 @@
 --           World | Server          --
 ---------------------------------------
 
-local function addTestingShip(id, pos)
+local function addTestingShip(id, pos, model)
 	local success, worldEnt = Star_Trek.World:LoadEntity(id, "ship",
 		WorldVector(0, 0, 0, pos.x, pos.y, pos.z),
 		Angle(),
-		"models/hunter/blocks/cube1x1x1.mdl",
-		1 / 1024
+		model or "models/hunter/blocks/cube1x1x1.mdl",
+		Star_Trek.World.Skybox_Scale
 	)
 
 	if not success then
@@ -45,8 +45,7 @@ end
 
 local ship
 timer.Simple(0, function()
-	ship = addTestingShip(1, Vector(), Angle(), 1)
-	--ship:SetAngularVelocity(Angle(10, 10, 10))
+	ship = addTestingShip(1, Vector())
 
 	local earthRadius = 6371000
 	local earthDistance = earthRadius + 42164000
@@ -62,14 +61,6 @@ timer.Simple(0, function()
 	local sunDistance = 150000000000
 	local sunPos = earthPos + Vector(-Star_Trek.World:MeterToSkybox(sunDistance), 0, 0)
 	local sun = addPlanet(4, sunPos, "models/planets/sun.mdl", Star_Trek.World:MeterToSkybox(sunRadius))
-
-	local n = 30
-	for x = 1, n do
-		for y = 1, n do
-			local m = addPlanet(4 + (x) + (y - 1) * n, moonPos + Vector(0, Star_Trek.World:MeterToSkybox((x - n / 2) * moonRadius * 4), Star_Trek.World:MeterToSkybox((y - n / 2) * moonRadius * 4)), "models/planets/luna_big.mdl", Star_Trek.World:MeterToSkybox(moonRadius))
-			m:SetVelocity(Vector(Star_Trek.World:KilometerToSkybox(math.random(20000, 40000))))
-		end
-	end
 end)
 
 hook.Add("Star_Trek.LCARS.BasicPressed", "WarpDrive.Weeee", function(ply, interfaceData, buttonId)
@@ -79,7 +70,7 @@ hook.Add("Star_Trek.LCARS.BasicPressed", "WarpDrive.Weeee", function(ply, interf
 	if name == "connBut4" then
 		if buttonId == 1 then
 			timer.Simple(5, function()
-				local c = Star_Trek.World:WarpToC(1)
+				local c = Star_Trek.World:WarpToC(9)
 				ship:SetVelocity(Vector(-Star_Trek.World:KilometerToSkybox(300000 * c), 0, 0))
 			end)
 		else

@@ -20,7 +20,7 @@ local UNIT_PER_FOOT  = 16
 local FOOT_PER_METER = 3.28084
 local UNIT_PER_METER = UNIT_PER_FOOT * FOOT_PER_METER
 
-local SKYBOX_SCALE = 1024
+local SKYBOX_SCALE = 1 / Star_Trek.World.Skybox_Scale
 
 function Star_Trek.World:GetModelDiameter(model)
 	local ent = ents.Create("prop_physics")
