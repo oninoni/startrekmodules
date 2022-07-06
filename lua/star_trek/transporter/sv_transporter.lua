@@ -82,13 +82,42 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 	Star_Trek.Logs:AddEntry(interfaceEnt, ply, "")
 	Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Initialising Transporter...")
 	Star_Trek.Logs:AddEntry(interfaceEnt, ply, table.Count(sourcePatterns) .. " Pattern Sources Detected.")
-	Star_Trek.Logs:AddEntry(interfaceEnt, ply, table.Count(sourcePatterns) .. " Pattern Targets Detected.")
+	Star_Trek.Logs:AddEntry(interfaceEnt, ply, table.Count(sourcePatterns) .. " Pattern Targets Detected.")	
+
+	local player_names = {}
+	local iteration = 0
 
 	for _, sourcePattern in pairs(sourcePatterns) do
 		local ent = sourcePattern.Ent
+		
+		iteration = iteration + 1
 
 		if IsEntity(ent) and not IsValid(ent) then
 			continue
+		end
+		
+		-- Get player name and store it in player_names
+		if IsValid(ent) and ent:IsPlayer() then
+			local name = hook.Run("Star_Trek.Logs.GetPlayerName", ent)
+			if not isstring(name) then
+				name = ent:Name()
+			end
+			table.insert(player_names, name)
+		end
+
+		-- On the final iteration add the log entry with all the player names that were transported
+		if iteration == table.Count(sourcePatterns) then
+			local message = "Life Forms within Pattern Source: "
+			for key,value in pairs(player_names) do
+				if key == 1 then
+					message = message .. value
+				elseif key ~= table.Count(player_names) then
+					message = message .. ", " .. value
+				else 
+					message = message .. " and " .. value
+				end
+			end
+			Star_Trek.Logs:AddEntry(interfaceEnt, ply, message)
 		end
 
 		local isBuffer = table.HasValue(Star_Trek.Transporter.Buffer.Entities, ent)
