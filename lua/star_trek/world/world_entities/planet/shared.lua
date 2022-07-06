@@ -1,6 +1,6 @@
 ---------------------------------------
 ---------------------------------------
---        Star Trek Utilities        --
+--         Star Trek Modules         --
 --                                   --
 --            Created by             --
 --       Jan 'Oninoni' Ziegler       --
