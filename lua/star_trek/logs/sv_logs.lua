@@ -214,8 +214,8 @@ function Star_Trek.Logs:EndSession(ent)
 		return false, error
 	end
 
-	local success2, error2 = self:ArchiveSession(sessionData, function(success)
-		if not success then
+	local success2, error2 = self:ArchiveSession(sessionData, function(success3)
+		if not success3 then
 			print("ERROR while storing session.")
 			PrintTable(sessionData)
 		end

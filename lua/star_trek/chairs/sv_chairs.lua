@@ -63,7 +63,7 @@ end)
 -- Set Position and View Angle after leaving a chair.
 hook.Add("PlayerLeaveVehicle", "Star_Trek.LeaveChair", function(ply, chair)
 	if not isStarTrekChair(chair) then
-		return 
+		return
 	end
 
 	ply:SetPos(chair:GetPos())
