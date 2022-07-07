@@ -61,3 +61,11 @@ hook.Add("Star_Trek.LCARS.BasicPressed", "Star_Trek.Security.BasicPressed", func
 		end
 	end
 end)
+
+function Star_Trek.Security:EnableNamedForceField(name)
+	Star_Trek.ForceFields:EnableNamedForceField(name)
+end
+
+function Star_Trek.Security:DisableNamedForceField(name)
+	Star_Trek.ForceFields:DisableNamedForceField(name)
+end
