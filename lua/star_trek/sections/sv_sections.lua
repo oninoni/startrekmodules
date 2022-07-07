@@ -180,8 +180,6 @@ function Star_Trek.Sections:GetInSections(deck, sectionIds, filterCallback, allo
 		end
 	end
 
-	PrintTable(objects)
-
 	return objects
 end
 
@@ -394,29 +392,31 @@ function Star_Trek.Sections:Setup()
 
 	-- Calculate offset for jeffries tubes bounds.
 	local deck11Data = self.Decks[11]
-	local deck11Z
-	for _, boundData in pairs(deck11Data.Bounds) do
-		local z = boundData.Min.z
-		local h = boundData.Max.z - z
-		if h == 162 and z > 1000 then
-			deck11Z = z
+	if istable(deck11Data) then
+		local deck11Z
+		for _, boundData in pairs(deck11Data.Bounds) do
+			local z = boundData.Min.z
+			local h = boundData.Max.z - z
+			if h == 162 and z > 1000 then
+				deck11Z = z
 
-			break
+				break
+			end
 		end
-	end
 
-	-- Add Bounds for jeffries tubes detection.
-	self.JBounds = {}
-	for deck = 1, 11 do
-		local jBounds = {
-			Min = Vector(globalMin),
-			Max = Vector(globalMax),
-		}
+		-- Add Bounds for jeffries tubes detection.
+		self.JBounds = {}
+		for deck = 1, 11 do
+			local jBounds = {
+				Min = Vector(globalMin),
+				Max = Vector(globalMax),
+			}
 
-		jBounds.Min.z = deck11Z + (11 - deck) * 162
-		jBounds.Max.z = jBounds.Min.z + 162
+			jBounds.Min.z = deck11Z + (11 - deck) * 162
+			jBounds.Max.z = jBounds.Min.z + 162
 
-		self.JBounds[deck] = jBounds
+			self.JBounds[deck] = jBounds
+		end
 	end
 
 	self.GlobalOffset = globalMin + (globalMax - globalMin) * 0.5

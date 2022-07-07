@@ -21,7 +21,7 @@ Star_Trek:RequireModules("sections", "lcars", "doors", "force_field", "sensors")
 Star_Trek.Security = Star_Trek.Security or {}
 
 if SERVER then
-	include("sv_sub_consoles.lua")
+	include("sv_security.lua")
 end
 
 if CLIENT then

@@ -132,6 +132,13 @@ hook.Add("PostDrawSkyBox", "Testing", function()
 	if wp and wp.drawing and IsValid(wp.drawingent) then
 		local ent = wp.drawingent
 		local exitPortal = ent:GetExit()
-		render.PushCustomClipPlane( exitPortal:GetForward(), exitPortal:GetForward():Dot( exitPortal:GetPos() - exitPortal:GetForward() * 0.5 ) )
+		local fwd = exitPortal:GetForward()
+		fwd:Rotate(exitPortal:GetExitAngOffset())
+		local posOffset =  exitPortal:GetExitPosOffset()
+		if IsValid(exitPortal:GetParent()) then
+			posOffset:Rotate(exitPortal:GetParent():GetAngles())
+		end
+		local pos = exitPortal:GetPos() + posOffset
+		render.PushCustomClipPlane( fwd, fwd:Dot( pos - fwd * 0.5 ) )
 	end
 end)

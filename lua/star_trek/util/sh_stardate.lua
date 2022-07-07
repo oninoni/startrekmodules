@@ -45,7 +45,14 @@ function Star_Trek.Util:GetStardate(unixTime)
 	-- Time Offset
 	local y = dateTable.year + START_YEAR_RP - START_YEAR_REAL
 
-	local n = 365 -- TODO: Detect Leap Year
+	-- Check if current year is a leap year
+	local n
+	if dateTable.year % 400 == 0 or (dateTable.year % 4 == 0 and dateTable.year % 100 ~= 0) then
+		n = 366
+	else
+		n = 365
+	end
+
 	local monthOffset = MONTHTABLE[dateTable.month]
 
 	return STARDATE_START_YEAR
