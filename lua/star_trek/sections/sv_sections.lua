@@ -180,8 +180,6 @@ function Star_Trek.Sections:GetInSections(deck, sectionIds, filterCallback, allo
 		end
 	end
 
-	PrintTable(objects)
-
 	return objects
 end
 
