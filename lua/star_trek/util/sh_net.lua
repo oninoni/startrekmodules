@@ -1,3 +1,4 @@
+
 ---------------------------------------
 ---------------------------------------
 --         Star Trek Modules         --
@@ -13,37 +14,21 @@
 ---------------------------------------
 
 ---------------------------------------
---         Utilities | Index         --
+--   Utilities Networking | Shared   --
 ---------------------------------------
 
-Star_Trek:RequireModules()
+function Star_Trek.Util:ReadNetTable()
+	local size = net.ReadUInt(32)
+	local compressedData = net.ReadData(size)
 
-Star_Trek.Util = Star_Trek.Util or {}
-
-if SERVER then
-	AddCSLuaFile("sh_net.lua")
-	AddCSLuaFile("sh_stardate.lua")
-	--AddCSLuaFile("sh_benchmark.lua")
-
-	--AddCSLuaFile("cl_rendermap.lua")
-
-	include("sh_net.lua")
-	include("sh_stardate.lua")
-	--include("sh_benchmark.lua")
-
-	include("sv_airlock.lua")
-
-	include("sv_positions.lua")
-	include("sv_keyvalues.lua")
-
-	include("luabsp.lua")
-	include("sv_luabsp.lua")
+	return util.JSONToTable(util.Decompress(compressedData))
 end
 
-if CLIENT then
-	include("sh_net.lua")
-	include("sh_stardate.lua")
-	--include("sh_benchmark.lua")
+function Star_Trek.Util:WriteNetTable(data)
+	local compressedData = util.Compress(util.TableToJSON(data))
 
-	--include("cl_rendermap.lua")
+	local size = #compressedData
+
+	net.WriteUInt(size, 32)
+	net.WriteData(compressedData, size)
 end

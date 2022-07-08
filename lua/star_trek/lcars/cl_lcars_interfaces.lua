@@ -68,7 +68,7 @@ end
 -- Receive the network message, to open an interface.
 net.Receive("Star_Trek.LCARS.Open", function()
 	local id = net.ReadInt(32)
-	local interfaceData = Star_Trek.LCARS:ReadNetTable()
+	local interfaceData = Star_Trek.Util:ReadNetTable()
 
 	Star_Trek.LCARS:OpenInterface(id, interfaceData)
 end)
@@ -118,7 +118,7 @@ net.Receive("Star_Trek.LCARS.Update", function()
 	local currentWindow = interface.Windows[windowId]
 	local oldVis = currentWindow.WVis
 
-	local windowData = Star_Trek.LCARS:ReadNetTable()
+	local windowData = Star_Trek.Util:ReadNetTable()
 	if currentWindow.WType ~= windowData.WType then
 		local pos, ang = Star_Trek.LCARS:GetInterfacePosAngle(interface.Ent, interface.IPos, interface.IAng)
 
