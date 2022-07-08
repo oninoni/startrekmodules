@@ -112,8 +112,8 @@ end
 function Star_Trek.Sections:FindDecksFast(pos)
 	local decks = {}
 
-	for deck, deckData in ipairs(self.Decks) do
-		for _, boundData in pairs(deckData.Bounds) do
+	for deck, deckData in pairs(self.Decks) do
+		for _, boundData in ipairs(deckData.Bounds) do
 			if isInArea(pos, boundData.Min, boundData.Max) then
 				table.insert(decks, deck)
 
