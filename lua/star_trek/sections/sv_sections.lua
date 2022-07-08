@@ -112,8 +112,8 @@ end
 function Star_Trek.Sections:FindDecksFast(pos)
 	local decks = {}
 
-	for deck, deckData in ipairs(self.Decks) do
-		for _, boundData in pairs(deckData.Bounds) do
+	for deck, deckData in pairs(self.Decks) do
+		for _, boundData in ipairs(deckData.Bounds) do
 			if isInArea(pos, boundData.Min, boundData.Max) then
 				table.insert(decks, deck)
 
@@ -422,6 +422,8 @@ function Star_Trek.Sections:Setup()
 	self.GlobalOffset = globalMin + (globalMax - globalMin) * 0.5
 
 	hook.Run("Star_Trek.Sections.Loaded")
+
+	Star_Trek.Sections:Sync()
 end
 
 hook.Add("InitPostEntity", "Star_Trek.Sections.Setup", function() Star_Trek.Sections:Setup() end)

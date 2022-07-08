@@ -58,10 +58,6 @@ function Star_Trek.Sections:Sync()
 
 end
 
-hook.Add("Star_Trek.Sections.Loaded", "Star_Trek.Sections.Sync", function()
-	Star_Trek.Sections:Sync()
-end)
-
 hook.Add("PlayerInitialSpawn", "Star_Trek.Sections.Sync", function(ply)
 	Star_Trek.Sections:Sync(ply)
 end)
