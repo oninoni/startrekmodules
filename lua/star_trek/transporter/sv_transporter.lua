@@ -84,47 +84,6 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 	Star_Trek.Logs:AddEntry(interfaceEnt, ply, table.Count(sourcePatterns) .. " Pattern Sources Detected.")
 	Star_Trek.Logs:AddEntry(interfaceEnt, ply, table.Count(sourcePatterns) .. " Pattern Targets Detected.")	
 
-	local player_names = {}
-
-	-- Log all players in logs
-	for i, sourcePattern in pairs(sourcePatterns) do
-		local ent = sourcePattern.Ent
-
-		if IsEntity(ent) and not IsValid(ent) then
-			continue
-		end
-		
-		-- Get player name and store it in player_names
-		if IsValid(ent) and ent:IsPlayer() then
-			local name = hook.Run("Star_Trek.Logs.GetPlayerName", ent)
-			if not isstring(name) then
-				name = ent:Name()
-			end
-			table.insert(player_names, name)
-		end
-
-		-- On the final iteration add the log entry with all the player names that were transported
-		if i == table.Count(sourcePatterns) and  table.Count(player_names) ~= 0 then
-			local message
-			if table.Count(player_names) == 1 then
-				message = table.Count(player_names) .. " Life Form Detected: "
-			else
-				message = table.Count(player_names) .. " Life Forms Detected: "
-			end
-			
-			for key,value in pairs(player_names) do
-				if key == 1 then
-					message = message .. value
-				elseif key ~= table.Count(player_names) then
-					message = message .. ", " .. value
-				else 
-					message = message .. " and " .. value
-				end
-			end
-			Star_Trek.Logs:AddEntry(interfaceEnt, ply, message)
-		end
-	end
-
 	for _, sourcePattern in pairs(sourcePatterns) do
 		local ent = sourcePattern.Ent
 
@@ -144,14 +103,20 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 			if isBuffer then
 				table.RemoveByValue(Star_Trek.Transporter.Buffer.Entities, ent)
 			end
-
-			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Dematerialising Object...")
+			
+			local success, scanData = Star_Trek.Sensors:ScanEntity(ent)
+			if success then
+				Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Dematerialising " .. scanData.Name .. "...")
+			end
+			
 			Star_Trek.Transporter:TransportObject(cycleClass or "base", ent, pos, isBuffer, false, function(transporterCycle)
 				Star_Trek.Transporter:ApplyPadEffect(transporterCycle, sourcePattern.Pad, targetPattern.Pad)
 
 				local state = transporterCycle.State
 				if state == 2 then
-					Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Rematerialising Object...")
+					if success then
+						Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Rematerialising ".. scanData.Name .. "...")
+					end
 				end
 			end)
 
@@ -178,31 +143,34 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 		-- Beam into Buffer
 		table.insert(Star_Trek.Transporter.Buffer.Entities, ent)
 		ent.BufferQuality = 160
-
 		if istable(ent) then
 			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Warning: Remote Transporter Request has no target. Aborting!")
 			continue
 		end
-
-		Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Dematerialising Object...")
+		local success, scanData = Star_Trek.Sensors:ScanEntity(ent)
+		if success then
+			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Dematerialising " .. scanData.Name .. "...")
+		end
 		Star_Trek.Transporter:TransportObject(cycleClass or "base", ent, Vector(), false, true, function(transporterCycle)
 			Star_Trek.Transporter:ApplyPadEffect(transporterCycle, sourcePattern.Pad)
 		end)
 
 		Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Warning: No Free Target Position Available! Storing in Buffer!")
-		if ent:IsPlayer() or ent:IsNPC() then
-			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Warning: Organic Pattern in Buffer detected!")
+		
+		if success then
+			if scanData.Alive then
+				Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Warning: ".. scanData.Name .. " has been transported to the Buffer!")
+				local timerName = "Star_Trek.Transporter.BufferAlert." .. interfaceEnt:EntIndex()
 
-			local timerName = "Star_Trek.Transporter.BufferAlert." .. interfaceEnt:EntIndex()
+				if timer.Exists(timerName) then
+					continue
+				end
 
-			if timer.Exists(timerName) then
-				continue
+				-- 5x Alert Sound
+				timer.Create(timerName, 1, 5, function()
+					interfaceEnt:EmitSound("star_trek.lcars_alert14")
+				end)
 			end
-
-			-- 5x Alert Sound
-			timer.Create(timerName, 1, 5, function()
-				interfaceEnt:EmitSound("star_trek.lcars_alert14")
-			end)
 		end
 	end
 end
