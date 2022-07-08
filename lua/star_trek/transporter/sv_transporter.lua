@@ -85,12 +85,10 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 	Star_Trek.Logs:AddEntry(interfaceEnt, ply, table.Count(sourcePatterns) .. " Pattern Targets Detected.")	
 
 	local player_names = {}
-	local iteration = 0
 
-	for _, sourcePattern in pairs(sourcePatterns) do
+	-- Log all players in logs
+	for i, sourcePattern in pairs(sourcePatterns) do
 		local ent = sourcePattern.Ent
-		
-		iteration = iteration + 1
 
 		if IsEntity(ent) and not IsValid(ent) then
 			continue
@@ -106,8 +104,14 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 		end
 
 		-- On the final iteration add the log entry with all the player names that were transported
-		if iteration == table.Count(sourcePatterns) and  table.Count(player_names) ~= 0 then
-			local message = "Life Forms within Pattern Source: "
+		if i == table.Count(sourcePatterns) and  table.Count(player_names) ~= 0 then
+			local message
+			if table.Count(player_names) == 1 then
+				message = table.Count(player_names) .. " Life Form Detected: "
+			else
+				message = table.Count(player_names) .. " Life Forms Detected: "
+			end
+			
 			for key,value in pairs(player_names) do
 				if key == 1 then
 					message = message .. value
@@ -119,6 +123,10 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 			end
 			Star_Trek.Logs:AddEntry(interfaceEnt, ply, message)
 		end
+	end
+
+	for _, sourcePattern in pairs(sourcePatterns) do
+		local ent = sourcePattern.Ent
 
 		local isBuffer = table.HasValue(Star_Trek.Transporter.Buffer.Entities, ent)
 
