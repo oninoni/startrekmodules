@@ -1,3 +1,4 @@
+
 ---------------------------------------
 ---------------------------------------
 --         Star Trek Modules         --
@@ -13,20 +14,21 @@
 ---------------------------------------
 
 ---------------------------------------
---          Sections | Index         --
+--   Utilities Networking | Shared   --
 ---------------------------------------
 
-Star_Trek:RequireModules("util", "lcars")
+function Star_Trek.Util:ReadNetTable()
+	local size = net.ReadUInt(32)
+	local compressedData = net.ReadData(size)
 
-Star_Trek.Sections = Star_Trek.Sections or {}
-
-if SERVER then
-	AddCSLuaFile("cl_net.lua")
-
-	include("sv_sections.lua")
-	include("sv_net.lua")
+	return util.JSONToTable(util.Decompress(compressedData))
 end
 
-if CLIENT then
-	include("cl_net.lua")
+function Star_Trek.Util:WriteNetTable(data)
+	local compressedData = util.Compress(util.TableToJSON(data))
+
+	local size = #compressedData
+
+	net.WriteUInt(size, 32)
+	net.WriteData(compressedData, size)
 end

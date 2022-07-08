@@ -21,11 +21,13 @@ Star_Trek:RequireModules()
 Star_Trek.Util = Star_Trek.Util or {}
 
 if SERVER then
+	AddCSLuaFile("sh_net.lua")
 	AddCSLuaFile("sh_stardate.lua")
 	--AddCSLuaFile("sh_benchmark.lua")
 
 	--AddCSLuaFile("cl_rendermap.lua")
 
+	include("sh_net.lua")
 	include("sh_stardate.lua")
 	--include("sh_benchmark.lua")
 
@@ -39,6 +41,7 @@ if SERVER then
 end
 
 if CLIENT then
+	include("sh_net.lua")
 	include("sh_stardate.lua")
 	--include("sh_benchmark.lua")
 

@@ -126,7 +126,7 @@ function Star_Trek.LCARS:UpdateWindow(ent, windowId, windowData)
 	net.Start("Star_Trek.LCARS.Update")
 		net.WriteInt(ent:EntIndex(), 32)
 		net.WriteInt(windowId, 32)
-		Star_Trek.LCARS:WriteNetTable(clientWindowData)
+		Star_Trek.Util:WriteNetTable(clientWindowData)
 	net.Broadcast()
 
 	-- Recursive Delayed Spam Protection

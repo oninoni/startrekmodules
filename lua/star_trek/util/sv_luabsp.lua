@@ -62,5 +62,4 @@ local function loadMap()
 	Star_Trek.Util:LoadCurrentMap()
 end
 
-hook.Add("InitPostEntity", "Star_Trek.Map.Setup", loadMap)
-hook.Add("PostCleanupMap", "Star_Trek.Map.Setup", loadMap)
+hook.Add("Star_Trek.Sections.Loaded", "Star_Trek.Map.Setup", loadMap)

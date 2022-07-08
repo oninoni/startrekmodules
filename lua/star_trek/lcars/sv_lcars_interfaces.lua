@@ -88,7 +88,7 @@ function Star_Trek.LCARS:OpenInterface(ply, triggerEntity, interfaceName, ...)
 
 	net.Start("Star_Trek.LCARS.Open")
 		net.WriteInt(ent:EntIndex(), 32)
-		Star_Trek.LCARS:WriteNetTable(clientInterfaceData)
+		Star_Trek.Util:WriteNetTable(clientInterfaceData)
 	net.Broadcast()
 
 	self.ActiveInterfaces[ent] = interfaceData
@@ -106,7 +106,7 @@ net.Receive("Star_Trek.LCARS.Sync", function(len, ply)
 
 		net.Start("Star_Trek.LCARS.Open")
 			net.WriteInt(ent:EntIndex(), 32)
-			Star_Trek.LCARS:WriteNetTable(clientInterfaceData)
+			Star_Trek.Util:WriteNetTable(clientInterfaceData)
 		net.Send(ply)
 	end
 end)

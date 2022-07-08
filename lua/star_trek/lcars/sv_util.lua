@@ -138,16 +138,3 @@ hook.Add("PlayerLeaveVehicle", "", function(ply, veh)
 	net.Start("Star_Trek.LCARS.EnableEButton")
 	net.Send(ply)
 end)
-
-------------------------
---     Networking     --
-------------------------
-
-function Star_Trek.LCARS:WriteNetTable(data)
-	local compressedData = util.Compress(util.TableToJSON(data))
-
-	local size = #compressedData
-
-	net.WriteUInt(size, 32)
-	net.WriteData(compressedData, size)
-end
