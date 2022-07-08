@@ -86,6 +86,10 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 
 	for _, sourcePattern in pairs(sourcePatterns) do
 		local ent = sourcePattern.Ent
+		
+		if IsEntity(ent) and not IsValid(ent) then
+			continue
+		end
 
 		local isBuffer = table.HasValue(Star_Trek.Transporter.Buffer.Entities, ent)
 
