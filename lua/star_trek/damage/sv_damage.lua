@@ -16,6 +16,66 @@
 --          Damage | Server          --
 ---------------------------------------
 
+function Star_Trek.Damage:Setup()
+	self.StaticPropModels = {}
+	self.ModelToDamageType = {}
+
+	-- Create the list of relevant models.
+	for damageType, damageTypeData in pairs(self.DamageTypes or {}) do
+		for model, _ in pairs(damageTypeData.StaticProps) do
+			if not table.HasValue(self.StaticPropModels, model) then
+				table.insert(self.StaticPropModels, model)
+			end
+
+			self.ModelToDamageType[model] = self.ModelToDamageType[model] or {}
+			table.insert(self.ModelToDamageType[model], damageType)
+		end
+	end
+
+	-- Initialise a list of static props for every section.
+	local staticProps = Star_Trek.Util:GetStaticPropsByModelList(self.StaticPropModels)
+	for _, staticProp in pairs(staticProps) do
+		local pos = staticProp.Origin
+		local ang = staticProp.Angles
+		local model = staticProp.PropType
+
+		local success, deck, sectionId = Star_Trek.Sections:DetermineSection(pos)
+		if success then
+			local success2, sectionData = Star_Trek.Sections:GetSection(deck, sectionId)
+			if not success2 then
+				continue
+			end
+
+			--[[
+			sectionData.DamageStaticProps = sectionData.DamageStaticProps or {}
+			sectionData.DamageStaticProps[model] = sectionData.DamageStaticProps[model] or {}
+			local damageStaticProp = {}
+
+			damageStaticProp.Pos = pos
+			damageStaticProp.Ang = ang
+
+			table.insert(sectionData.DamageStaticProps[model], damageStaticProp)
+			]]
+
+			sectionData.DamageTypes = sectionData.DamageTypes or {}
+			for _, damageType in pairs(self.ModelToDamageType[model] or {}) do
+				local damageTypeData = self.DamageTypes[damageType]
+
+				for _, location in pairs(damageTypeData.StaticProps[model].Locations) do
+					local lPos, lAng = LocalToWorld(location.Pos, location.Ang, pos, ang)
+					debugoverlay.Axis(lPos, lAng, 10, 10, true)
+				end
+			end
+		end
+	end
+end
+
+hook.Add("Star_Trek.Util.MapLoaded", "Star_Trek.Damage.Initialize", function()
+	Star_Trek.Damage:Setup()
+end)
+
+--[[
+
 function Star_Trek.Damage:DamageSection(deck, sectionId, damageType)
 	local damageTypeData = Star_Trek.Damage.DamageTypes[damageType]
 	if not (istable(damageTypeData) and istable(damageTypeData.StaticProps)) then
@@ -81,4 +141,8 @@ hook.Add("Star_Trek.Util.MapLoaded", "Star_Trek.Damage.Initialize", function()
 			entry.Damaged = {}
 		end
 	end
+
+	timer.Simple(0, function()
+	end)
 end)
+]]

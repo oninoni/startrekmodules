@@ -39,6 +39,8 @@ Star_Trek.Modules["holodeck"] = true
 Star_Trek.Modules["warpcore"] = true
 Star_Trek.Modules["sensors"] = true
 
+Star_Trek.Modules["damage"] = true
+
 --[[
 Name Pun Ideas:
 
