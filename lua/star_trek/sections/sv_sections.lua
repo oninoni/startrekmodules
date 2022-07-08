@@ -422,6 +422,8 @@ function Star_Trek.Sections:Setup()
 	self.GlobalOffset = globalMin + (globalMax - globalMin) * 0.5
 
 	hook.Run("Star_Trek.Sections.Loaded")
+
+	Star_Trek.Sections:Sync()
 end
 
 hook.Add("InitPostEntity", "Star_Trek.Sections.Setup", function() Star_Trek.Sections:Setup() end)
