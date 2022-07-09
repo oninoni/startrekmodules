@@ -79,6 +79,7 @@ function Star_Trek.Sensors:ScanEntity(ent)
 
 		scanData.Name = name
 		scanData.Alive = false
+		scanData.IsWeapon = true
 
 		hook.Run("Star_Trek.Sensors.ScanWeapon", ent, scanData)
 	end

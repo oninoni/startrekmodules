@@ -32,14 +32,17 @@ hook.Add("Star_Trek.Sections.Loaded", "Star_Trek.Transporter.DetectLocations", f
 		for sectionId, sectionData in pairs(deckData.Sections) do
 			sectionData.BeamLocations = {}
 
-			local beamLocationEntities = Star_Trek.Sections:GetInSection(deck, sectionId, function(objects, ent)
+			local objects = Star_Trek.Sections:GetInSection(deck, sectionId, function(object)
+				local ent = object.Entity
 				if ent:GetName() ~= "beamLocation" then
 					return true
 				end
 			end, true)
 
-			for _, ent in pairs(beamLocationEntities) do
+			for _, object in pairs(objects) do
+				local ent = object.Entity
 				table.insert(sectionData.BeamLocations, ent:GetPos())
+
 				ent:Remove()
 			end
 		end

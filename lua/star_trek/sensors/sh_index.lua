@@ -16,7 +16,7 @@
 --          Sensors | Index          --
 ---------------------------------------
 
-Star_Trek:RequireModules()
+Star_Trek:RequireModules("control")
 
 Star_Trek.Sensors = Star_Trek.Sensors or {}
 
