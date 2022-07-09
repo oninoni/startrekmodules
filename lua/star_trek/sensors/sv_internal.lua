@@ -17,7 +17,7 @@
 ---------------------------------------
 
 -- Register Internal Sensors Control Type.
-Star_Trek.Control:Register("internal_sensors")
+Star_Trek.Control:Register("internal_sensors", "Internal sensors")
 
 -- Scan some internal sections of the ship.
 --

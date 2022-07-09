@@ -23,13 +23,16 @@ Star_Trek.Control.INOPERATIVE = 2
 -- Register a Control Type.
 --
 -- @param String name
-function Star_Trek.Control:Register(name, callback)
-	Star_Trek.Control.Types = Star_Trek.Control.Types or {}
+-- @param String realName
+-- @param function callback
+function Star_Trek.Control:Register(name, realName, callback)
+	self.Types = self.Types or {}
 
 	local controlType = {}
 	controlType.Callback = callback
+	controlType.RealName = realName
 
-	Star_Trek.Control.Types[name] = controlType
+	self.Types[name] = controlType
 end
 
 -- Clean up all Sections on a deck, that are not broken.

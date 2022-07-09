@@ -28,12 +28,12 @@ SELF.BaseInterface = "bridge_security"
 -- @return? Table windows
 function SELF:Open(ent)
 	local success, windows = self:OpenInternal(
-		Vector(-12, -8.1, -14.25),
+		Vector(-15.5, -8.1, -14.25),
 		Angle(0, 0, 0),
-		580,
-		Vector(-12, 4.1, -14.25),
+		400,
+		Vector(-15.5, 4.1, -14.25),
 		Angle(0, 0, 0),
-		580,
+		400,
 		false,
 		Vector(10, -26.25, 2.5),
 		Angle(0, 0, -76.5),
@@ -43,16 +43,17 @@ function SELF:Open(ent)
 		Angle(0, 0, -76.5),
 		400,
 		600,
-		Vector(12, -2, -14.25),
+		Vector(8.5, -2, -14.25),
 		Angle(0, 0, 0),
-		570,
-		570
+		20,
+		625,
+		478
 	)
 	if not success then
 		return false, windows
 	end
 
-	return true, windows, Vector(0, 0, 0), Angle(0, 0, 0)
+	return true, windows
 end
 
 -- Wrap for use in Map.

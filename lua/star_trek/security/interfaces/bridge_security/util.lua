@@ -90,11 +90,182 @@ hook.Add("Star_Trek.Util.IsLifeForm", "CheckDefault", function(ent)
 	end
 end)
 
-local classBlacklist = {
-	"spotlight_end",
-	"beam",
-	"force_field"
-}
+function SELF:ActionButtonPressed(windowData, ply, buttonId)
+	local buttonName = windowData.Buttons[buttonId].Name
+	local sectionWindow = self.Windows[2]
+	local mapWindow = self.Windows[3]
+
+	local deck = sectionWindow.Selected
+	local sectionIds = {}
+	for _, buttonData in pairs(sectionWindow.Buttons) do
+		if buttonData.Selected then
+			table.insert(sectionIds, buttonData.Data)
+		end
+	end
+
+	if windowData.Mode == MODE_SCAN then
+		Star_Trek.Logs:AddEntry(self.Ent, ply, "")
+		Star_Trek.Logs:AddEntry(self.Ent, ply, "Starting internal scan!")
+
+		local scanLife
+		if buttonName == "Scan Lifeforms"
+		or buttonName == "Scan All" then
+			Star_Trek.Logs:AddEntry(self.Ent, ply, "Scanning for Lifeforms...")
+
+			scanLife = true
+		end
+
+		local scanObjects
+		if buttonName == "Scan Objects"
+		or buttonName == "Scan All" then
+			Star_Trek.Logs:AddEntry(self.Ent, ply, "Scanning for Objects...")
+
+			scanObjects = true
+		end
+
+		local scanWeapons
+		if buttonName == "Scan Weapons"
+		or buttonName == "Scan All" then
+			Star_Trek.Logs:AddEntry(self.Ent, ply, "Scanning for Weapons...")
+
+			scanWeapons = true
+		end
+
+		Star_Trek.Logs:AddEntry(self.Ent, ply, "")
+
+		local success2, objects = Star_Trek.Sensors:ScanInternal(deck, sectionIds, scanLife, scanObjects, scanWeapons)
+		if not success2 then
+			Star_Trek.Logs:AddEntry(self.Ent, ply, objects)
+			self.Ent:EmitSound("star_trek.lcars_error")
+
+			return
+		end
+
+		mapWindow:SetObjects(objects)
+		mapWindow:Update()
+
+		for _, object in pairs(objects) do
+			local scanData = object.ScanData
+			Star_Trek.Logs:AddEntry(self.Ent, ply, scanData.Name .. " found in " .. object.SectionName)
+		end
+
+		Star_Trek.Logs:AddEntry(self.Ent, ply, "Total Count: " .. table.Count(objects))
+
+		return true
+	elseif windowData.Mode == MODE_BLOCK then
+		Star_Trek.Logs:AddEntry(self.Ent, ply, "")
+
+		local objects = {}
+
+		if buttonName == "Lock Doors"
+		or buttonName == "Unlock Doors"
+		or buttonName == "Unlock All" then
+			local doors = Star_Trek.Sections:GetInSections(deck, sectionIds, function(object)
+				local ent = object.Entity
+				if not Star_Trek.Doors.Doors[ent] then
+					return true
+				end
+
+				if ent.JeffriesDoor then
+					return true
+				end
+
+				if ent.LCARSKeyData and ent.LCARSKeyData["lcars_ignore_security"] then
+					return true
+				end
+			end, true)
+
+			for _, object in pairs(doors) do
+				local ent = object.Entity
+				local sectionName = Star_Trek.Sections:GetSectionName(ent.Deck, ent.SectionId)
+
+				table.insert(objects, ent)
+
+				if buttonName == "Lock Doors" then
+					ent:Fire("AddOutput", "lcars_locked 1")
+					Star_Trek.Logs:AddEntry(self.Ent, ply, "Door #" .. ent:MapCreationID() .. " in " .. sectionName .. " has been locked.")
+				else
+					ent:Fire("AddOutput", "lcars_locked 0")
+					Star_Trek.Logs:AddEntry(self.Ent, ply, "Door #" .. ent:MapCreationID() .. " in " .. sectionName .. " has been unlocked.")
+				end
+			end
+
+			if buttonName == "Lock Doors" then
+				Star_Trek.Logs:AddEntry(self.Ent, ply, "Total: " .. table.Count(doors) .. " doors locked!")
+			else
+				Star_Trek.Logs:AddEntry(self.Ent, ply, "Total: " .. table.Count(doors) .. " doors unlocked!")
+			end
+		end
+
+		if buttonName == "Enable Forcefields"
+		or buttonName == "Disable Forcefields"
+		or buttonName == "Unlock All" then
+			if buttonName == "Enable Forcefields" then
+				local success2, forceFieldPositions = Star_Trek.ForceFields:EnableForceFieldsInSections(deck, sectionIds)
+				if not success2 then
+					return
+				end
+
+				for _, posData in pairs(forceFieldPositions) do
+					local sectionName = Star_Trek.Sections:GetSectionName(posData.Deck, posData.SectionId)
+					Star_Trek.Logs:AddEntry(self.Ent, ply, "Force Field in " .. sectionName .. " has been enabled.")
+
+					table.insert(objects, {Pos = posData.Pos})
+				end
+
+				Star_Trek.Logs:AddEntry(self.Ent, ply, "Total: " .. table.Count(forceFieldPositions) .. " forcefields enabled.")
+			else
+				local success2, forceFieldPositions = Star_Trek.ForceFields:DisableForceFieldsInSections(deck, sectionIds)
+				if not success2 then
+					return
+				end
+
+				for _, posData in pairs(forceFieldPositions) do
+					local sectionName = Star_Trek.Sections:GetSectionName(posData.Deck, posData.SectionId)
+					Star_Trek.Logs:AddEntry(self.Ent, ply, "Force Field in " .. sectionName .. " has been disabled.")
+
+					table.insert(objects, {Pos = posData.Pos})
+				end
+
+				Star_Trek.Logs:AddEntry(self.Ent, ply, "Total: " .. table.Count(forceFieldPositions) .. " forcefields disabled.")
+			end
+		end
+
+		mapWindow:SetObjects(objects)
+		mapWindow:Update()
+
+		return true
+	elseif windowData.Mode == MODE_ALERT then
+		if buttonName == "Red Alert" then
+			Star_Trek.Alert:Enable("red")
+
+			Star_Trek.Logs:AddEntry(self.Ent, ply, "")
+			Star_Trek.Logs:AddEntry(self.Ent, ply, "RED ALERT!")
+		elseif buttonName == "Yellow Alert" then
+			Star_Trek.Alert:Enable("yellow")
+
+			Star_Trek.Logs:AddEntry(self.Ent, ply, "")
+			Star_Trek.Logs:AddEntry(self.Ent, ply, "YELLOW ALERT!")
+		elseif buttonName == "Intruder Alert" then
+			Star_Trek.Alert:Enable("intruder")
+
+			Star_Trek.Logs:AddEntry(self.Ent, ply, "")
+			Star_Trek.Logs:AddEntry(self.Ent, ply, "INTRUDER ALERT!")
+		elseif buttonName == "Blue Alert" then
+			Star_Trek.Alert:Enable("blue")
+
+			Star_Trek.Logs:AddEntry(self.Ent, ply, "")
+			Star_Trek.Logs:AddEntry(self.Ent, ply, "BLUE ALERT!")
+		elseif buttonName == "Disable Alert" then
+			Star_Trek.Alert:Disable()
+
+			Star_Trek.Logs:AddEntry(self.Ent, ply, "")
+			Star_Trek.Logs:AddEntry(self.Ent, ply, "Alerts Disabled!")
+		end
+
+		return true
+	end
+end
 
 function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 	local buttons = self:GetModeButtons(mode)
@@ -107,180 +278,7 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 		width,
 		height,
 		function(windowData, interfaceData, ply, buttonId)
-			local buttonName = windowData.Buttons[buttonId].Name
-			local sectionWindow = interfaceData.Windows[2]
-			local mapWindow = interfaceData.Windows[3]
-			local sectionIds = {}
-			for _, buttonData in pairs(sectionWindow.Buttons) do
-				if buttonData.Selected then
-					table.insert(sectionIds, buttonData.Data)
-				end
-			end
-
-			local deck = sectionWindow.Selected
-
-			if windowData.Mode == MODE_SCAN then
-				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "")
-				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Starting internal scan!")
-
-				local scanLife
-				if buttonName == "Scan Lifeforms"
-				or buttonName == "Scan All" then
-					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Scanning for Lifeforms...")
-
-					scanLife = true
-				end
-
-				local scanObjects
-				if buttonName == "Scan Objects"
-				or buttonName == "Scan All" then
-					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Scanning for Objects...")
-
-					scanObjects = true
-				end
-
-				local scanWeapons
-				if buttonName == "Scan Weapons"
-				or buttonName == "Scan All" then
-					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Scanning for Weapons...")
-
-					scanWeapons = true
-				end
-
-				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "")
-
-				local success2, objects = Star_Trek.Sensors:ScanInternal(deck, sectionIds, scanLife, scanObjects, scanWeapons)
-				if not success2 then
-					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, objects)
-					interfaceData.Ent:EmitSound("star_trek.lcars_error")
-
-					return
-				end
-
-				mapWindow:SetObjects(objects)
-				mapWindow:Update()
-
-				for _, object in pairs(objects) do
-					local scanData = object.ScanData
-					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, scanData.Name .. " found in " .. object.SectionName)
-				end
-
-				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Total Count: " .. table.Count(objects))
-
-				return true
-			elseif windowData.Mode == MODE_BLOCK then
-				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "")
-
-				local objects = {}
-
-				if buttonName == "Lock Doors"
-				or buttonName == "Unlock Doors"
-				or buttonName == "Unlock All" then
-					local doors = Star_Trek.Sections:GetInSections(deck, sectionIds, function(object)
-						local ent = object.Entity
-						if not Star_Trek.Doors.Doors[ent] then
-							return true
-						end
-
-						if ent.JeffriesDoor then
-							return true
-						end
-
-						if ent.LCARSKeyData and ent.LCARSKeyData["lcars_ignore_security"] then
-							return true
-						end
-					end, true)
-
-					for _, object in pairs(doors) do
-						local ent = object.Entity
-						local sectionName = Star_Trek.Sections:GetSectionName(ent.Deck, ent.SectionId)
-
-						table.insert(objects, ent)
-
-						if buttonName == "Lock Doors" then
-							ent:Fire("AddOutput", "lcars_locked 1")
-							Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Door #" .. ent:MapCreationID() .. " in " .. sectionName .. " has been locked.")
-						else
-							ent:Fire("AddOutput", "lcars_locked 0")
-							Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Door #" .. ent:MapCreationID() .. " in " .. sectionName .. " has been unlocked.")
-						end
-					end
-
-					if buttonName == "Lock Doors" then
-						Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Total: " .. table.Count(doors) .. " doors locked!")
-					else
-						Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Total: " .. table.Count(doors) .. " doors unlocked!")
-					end
-				end
-
-				if buttonName == "Enable Forcefields"
-				or buttonName == "Disable Forcefields"
-				or buttonName == "Unlock All" then
-					if buttonName == "Enable Forcefields" then
-						local success2, forceFieldPositions = Star_Trek.ForceFields:EnableForceFieldsInSections(deck, sectionIds)
-						if not success2 then
-							return
-						end
-
-						for _, posData in pairs(forceFieldPositions) do
-							local sectionName = Star_Trek.Sections:GetSectionName(posData.Deck, posData.SectionId)
-							Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Force Field in " .. sectionName .. " has been enabled.")
-
-							table.insert(objects, {Pos = posData.Pos})
-						end
-
-						Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Total: " .. table.Count(forceFieldPositions) .. " forcefields enabled.")
-					else
-						local success2, forceFieldPositions = Star_Trek.ForceFields:DisableForceFieldsInSections(deck, sectionIds)
-						if not success2 then
-							return
-						end
-
-						for _, posData in pairs(forceFieldPositions) do
-							local sectionName = Star_Trek.Sections:GetSectionName(posData.Deck, posData.SectionId)
-							Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Force Field in " .. sectionName .. " has been disabled.")
-
-							table.insert(objects, {Pos = posData.Pos})
-						end
-
-						Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Total: " .. table.Count(forceFieldPositions) .. " forcefields disabled.")
-					end
-				end
-
-				mapWindow:SetObjects(objects)
-				mapWindow:Update()
-
-				return true
-			elseif windowData.Mode == MODE_ALERT then
-				if buttonName == "Red Alert" then
-					Star_Trek.Alert:Enable("red")
-
-					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "")
-					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "RED ALERT!")
-				elseif buttonName == "Yellow Alert" then
-					Star_Trek.Alert:Enable("yellow")
-
-					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "")
-					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "YELLOW ALERT!")
-				elseif buttonName == "Intruder Alert" then
-					Star_Trek.Alert:Enable("intruder")
-
-					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "")
-					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "INTRUDER ALERT!")
-				elseif buttonName == "Blue Alert" then
-					Star_Trek.Alert:Enable("blue")
-
-					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "")
-					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "BLUE ALERT!")
-				elseif buttonName == "Disable Alert" then
-					Star_Trek.Alert:Disable()
-
-					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "")
-					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Alerts Disabled!")
-				end
-
-				return true
-			end
+			return self:ActionButtonPressed(windowData, ply, buttonId)
 		end,
 		buttons,
 		"Actions",
@@ -302,7 +300,7 @@ function SELF:CreateMenuWindow(pos, ang, width, actionPos, actionAng, actionWidt
 		return false, actionWindow
 	end
 
-	local modes = {
+	local modes = self.Modes or {
 		"Internal Scanners",
 		"Security Measures",
 		"Alerts",
@@ -327,7 +325,7 @@ function SELF:CreateMenuWindow(pos, ang, width, actionPos, actionAng, actionWidt
 		Name = "Disable Console",
 		Color = Star_Trek.LCARS.ColorRed,
 	}
-	buttons[modeCount + 3] = utilButtonData
+	buttons[6] = utilButtonData
 
 	local height = table.maxn(buttons) * 35 + 80
 	local success2, menuWindow = Star_Trek.LCARS:CreateWindow(

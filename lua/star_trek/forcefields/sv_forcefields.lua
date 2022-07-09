@@ -164,7 +164,7 @@ function Star_Trek.ForceFields:DisableNamedForceField(name)
 	end
 end
 
-Star_Trek.Control:Register("force_fields", function(value, deck, sectionId)
+Star_Trek.Control:Register("force_fields", "Forcefields", function(value, deck, sectionId)
 	if value == Star_Trek.Control.ACTIVE then
 		return
 	end

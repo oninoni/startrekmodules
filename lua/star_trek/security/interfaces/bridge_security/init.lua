@@ -25,7 +25,7 @@ SELF.BaseInterface = "base"
 
 SELF.LogType = "Security Console"
 
-function SELF:OpenInternal(menuPos, menuAng, menuWidth, actionPos, actionAng, actionWidth, actionFlip, mapPos, mapAng, mapWidth, mapHeight, sectionPos, sectionAng, sectionWidth, sectionHeight, textPos, textAng, textWidth, textHeight)
+function SELF:OpenInternal(menuPos, menuAng, menuWidth, actionPos, actionAng, actionWidth, actionFlip, mapPos, mapAng, mapWidth, mapHeight, sectionPos, sectionAng, sectionWidth, sectionHeight, textPos, textAng, textScale, textWidth, textHeight)
 	local success2, menuWindow, actionWindow = self:CreateMenuWindow(menuPos, menuAng, menuWidth, actionPos, actionAng, actionWidth, actionFlip)
 	if not success2 then
 		return false, menuWindow
@@ -61,14 +61,14 @@ function SELF:OpenInternal(menuPos, menuAng, menuWidth, actionPos, actionAng, ac
 		true
 	)
 	if not success4 then
-		return false, menuWindow
+		return false, sectionWindow
 	end
 
 	local success5, textWindow = Star_Trek.LCARS:CreateWindow(
 		"log_entry",
 		textPos,
 		textAng,
-		24,
+		textScale,
 		textWidth,
 		textHeight,
 		function(windowData, interfaceData, ply, categoryId, buttonId)
@@ -106,6 +106,7 @@ function SELF:Open(ent)
 		700,
 		Vector(0, -34, 8.2),
 		Angle(0, 0, -90),
+		24,
 		500,
 		280
 	)
