@@ -26,8 +26,21 @@ Star_Trek.Control:Register("internal_sensors")
 -- @param? Boolean scanLife
 -- @param? Boolean scanObjects
 -- @param? Boolean scanWeapons
--- @return Table objects
+-- @return Boolean success
+-- @return Table/String objects/error
 function Star_Trek.Sensors:ScanInternal(deck, sectionIds, scanLife, scanObjects, scanWeapons)
+	if Star_Trek.Control:GetStatus("internal_sensors", deck) ~= Star_Trek.Control.ACTIVE then
+		return false, "Internal scanners unavailable on Deck " .. deck .. "!"
+	end
+
+	for _, sectionId in pairs(sectionIds) do
+		if Star_Trek.Control:GetStatus("internal_sensors", deck, sectionId) ~= Star_Trek.Control.ACTIVE then
+			local sectionName = Star_Trek.Sections:GetSectionName(deck, sectionId)
+
+			return false, "Internal scanners unavailable in " .. sectionName .. " on Deck " .. deck .. "!"
+		end
+	end
+
 	local objects = Star_Trek.Sections:GetInSections(deck, sectionIds, function(object)
 		local ent = object.Entity
 		local success, scanData = Star_Trek.Sensors:ScanEntity(ent)
@@ -52,5 +65,5 @@ function Star_Trek.Sensors:ScanInternal(deck, sectionIds, scanLife, scanObjects,
 		if not scanObjects then return true end
 	end, false, scanWeapons)
 
-	return objects
+	return true, objects
 end

@@ -149,7 +149,14 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 
 				Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "")
 
-				local objects = Star_Trek.Sensors:ScanInternal(deck, sectionIds, scanLife, scanObjects, scanWeapons)
+				local success2, objects = Star_Trek.Sensors:ScanInternal(deck, sectionIds, scanLife, scanObjects, scanWeapons)
+				if not success2 then
+					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, objects)
+					interfaceData.Ent:EmitSound("star_trek.lcars_error")
+
+					return
+				end
+
 				mapWindow:SetObjects(objects)
 				mapWindow:Update()
 
@@ -250,37 +257,29 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 
 					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "")
 					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "RED ALERT!")
-
-					return true
 				elseif buttonName == "Yellow Alert" then
 					Star_Trek.Alert:Enable("yellow")
 
 					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "")
 					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "YELLOW ALERT!")
-
-					return true
 				elseif buttonName == "Intruder Alert" then
 					Star_Trek.Alert:Enable("intruder")
 
 					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "")
 					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "INTRUDER ALERT!")
-
-					return true
 				elseif buttonName == "Blue Alert" then
 					Star_Trek.Alert:Enable("blue")
 
 					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "")
 					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "BLUE ALERT!")
-
-					return true
 				elseif buttonName == "Disable Alert" then
 					Star_Trek.Alert:Disable()
 
 					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "")
 					Star_Trek.Logs:AddEntry(interfaceData.Ent, ply, "Alerts Disabled!")
-
-					return true
 				end
+
+				return true
 			end
 		end,
 		buttons,
