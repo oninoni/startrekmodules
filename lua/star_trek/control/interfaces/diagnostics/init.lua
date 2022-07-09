@@ -13,7 +13,7 @@
 ---------------------------------------
 
 ---------------------------------------
---    LCARS Logs Console | Server    --
+--    LCARS Disagnostics | Server    --
 ---------------------------------------
 
 include("util.lua")
@@ -21,42 +21,43 @@ include("util.lua")
 if not istable(INTERFACE) then Star_Trek:LoadAllModules() return end
 local SELF = INTERFACE
 
-SELF.BaseInterface = "base"
+SELF.BaseInterface = "bridge_security"
 
-SELF.LogType = "Logs Console"
+SELF.LogType = "Diagnostics Console"
 
 function SELF:Open(ent)
-	local success1, categorySelection = self:CreateCategorySelectionWindow()
-	if not success1 then
-		return false, categorySelection
-	end
+	self.Modes = {
+		"Diagnostics",
+		"Control",
+	}
 
-	local success2, controlWindow = self:CreateControlMenu()
-	if not success2 then
-		return false, controlWindow
-	end
-
-	local success3, listWindow = self:CreateListWindow(1)
-	if not success3 then
-		return false, listWindow
-	end
-
-	local success4, logWindow = Star_Trek.LCARS:CreateWindow(
-		"log_entry",
-		Vector(0, -2, -14.25),
+	local success, windows = self:OpenInternal(
+		Vector(-15.5, -8.1, -14.25),
 		Angle(0, 0, 0),
-		16,
-		770,
-		380,
-		function(windowData, interfaceData, ply, buttonId)
-		end,
-		true
+		400,
+		Vector(-15.5, 4.1, -14.25),
+		Angle(0, 0, 0),
+		400,
+		false,
+		Vector(10, -26.25, 2.5),
+		Angle(0, 0, -76.5),
+		800,
+		600,
+		Vector(-20, -26.25, 2.5),
+		Angle(0, 0, -76.5),
+		400,
+		600,
+		Vector(8.5, -2, -14.25),
+		Angle(0, 0, 0),
+		20,
+		625,
+		478
 	)
-	if not success4 then
-		return false, logWindow
+	if not success then
+		return false, windows
 	end
 
-	return true, {categorySelection, controlWindow, listWindow, logWindow}
+	return true, windows
 end
 
 function SELF:GetData()

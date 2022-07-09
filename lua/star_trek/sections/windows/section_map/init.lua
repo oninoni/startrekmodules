@@ -74,12 +74,20 @@ function SELF:SetObjects(objects)
 
 	for _, object in pairs(objects or {}) do
 		if istable(object) then
-			local objectTable = table.Copy(object)
-			objectTable.Pos = objectTable.Pos - Star_Trek.Sections.GlobalOffset
-			objectTable.Pos[2] = -objectTable.Pos[2]
+			if isvector(object.Pos) then
+				local objectTable = table.Copy(object)
+				objectTable.Pos = objectTable.Pos - Star_Trek.Sections.GlobalOffset
+				objectTable.Pos[2] = -objectTable.Pos[2]
 
-			table.insert(self.Objects, objectTable)
-			continue
+				objectTable.Color = objectTable.Color or Star_Trek.LCARS.ColorBlue
+
+				table.insert(self.Objects, objectTable)
+				continue
+			end
+
+			if IsEntity(object.Entity) then
+				object = object.Entity
+			end
 		end
 
 		if IsEntity(object) then

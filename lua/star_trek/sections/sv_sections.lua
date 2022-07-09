@@ -171,11 +171,16 @@ function Star_Trek.Sections:GetInSections(deck, sectionIds, filterCallback, allo
 				if table.HasValue(objects, ent) then continue end
 				if not allowMap and ent:MapCreationID() > -1 then continue end
 				if not allowParent and IsValid(ent:GetParent()) then continue end
-				if isfunction(filterCallback) and filterCallback(objects, ent) then continue end
 
-				table.insert(objects, ent)
-				ent.DetectedInSection = sectionId
-				ent.DetectedOnDeck = deck
+				local object = {}
+				object.Entity = ent
+
+				object.Deck = deck
+				object.SectionId = sectionId
+
+				if isfunction(filterCallback) and filterCallback(object) then continue end
+
+				table.insert(objects, object)
 			end
 		end
 	end

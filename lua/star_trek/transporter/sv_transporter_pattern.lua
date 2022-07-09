@@ -162,13 +162,14 @@ function Star_Trek.Transporter:GetPatternFromSections(deck, sectionIds, isTarget
 
 	if not isTarget then -- Source
 		for _, sectionId in pairs(sectionIds) do
-			local entities = Star_Trek.Sections:GetInSection(deck, sectionId, function(objects, ent)
+			local objects = Star_Trek.Sections:GetInSection(deck, sectionId, function(object)
+				local ent = object.Entity
 				if not Star_Trek.Transporter:CanBeamEntity(ent) then
 					return true
 				end
 			end)
-			for i, foundEnt in pairs(entities) do
-				table.insert(pattern, {Ent = foundEnt})
+			for i, object in pairs(objects) do
+				table.insert(pattern, {Ent = object.Entity})
 			end
 		end
 	else -- Target
