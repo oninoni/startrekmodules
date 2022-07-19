@@ -59,6 +59,3 @@ function SELF:Open(ent)
 
 	return true, windows
 end
-
-function SELF:GetData()
-end

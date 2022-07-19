@@ -117,18 +117,6 @@ function SELF:Open(ent)
 	return true, windows, Vector(0, 11.5, -4), Angle(0, 0, -8)
 end
 
--- Read out any Data, that can be retrieved externally.
---
--- @return? Table data
-function SELF:GetData()
-	local data = {}
-
-	data.LogData = self.Windows[5].Lines
-	data.LogTitle = "Security"
-
-	return data
-end
-
 -- Wrap for use in Map.
 function Star_Trek.LCARS:OpenSecurityMenu()
 	Star_Trek.LCARS:OpenInterface(TRIGGER_PLAYER, CALLER, "bridge_security")

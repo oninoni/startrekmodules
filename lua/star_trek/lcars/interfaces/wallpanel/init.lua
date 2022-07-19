@@ -77,7 +77,7 @@ function SELF:Open(ent)
 
 	local w2 = width - w - 1
 	local success2, mainWindow = Star_Trek.LCARS:CreateWindow(
-		"text_entry",
+		"log_entry",
 		Vector((width - w2) / 2, 0, 0),
 		Angle(),
 		scale,
@@ -85,36 +85,14 @@ function SELF:Open(ent)
 		h * scale,
 		function(windowData, interfaceData, ply, buttonId)
 		end,
-		nil,
-		"Logs",
-		"LOGS"
+		true,
+		Color(255, 255, 255)
 	)
 	if not success2 then
 		return false, mainWindow
 	end
 
 	return true, {window, mainWindow}, Vector(0, 0.5, 0.6)
-end
-
--- Read out any Data, that can be retrieved externally.
---
--- @return? Table data
-function SELF:GetData()
-	local data = {}
-
-	local window = self.Windows[2]
-	data.LogData = window.Lines
-	data.LogTitle = window.Title
-
-	return data
-end
-
-function SELF:SetData(logType, lines)
-	local window = self.Windows[2]
-	window.Title = logType
-	window.Lines = lines
-
-	window:Update()
 end
 
 -- Wrap for use in Map.

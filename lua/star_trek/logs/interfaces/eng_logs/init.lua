@@ -58,6 +58,3 @@ function SELF:Open(ent)
 
 	return true, {categorySelection, controlWindow, listWindow, logWindow}
 end
-
-function SELF:GetData()
-end
