@@ -24,6 +24,8 @@ function SELF:OnCreate(windowData)
 
 	self.CurrentStyle = windowData.InitialStyle or "LCARS"
 
+	self.Solid = windowData.Solid
+
 	return true
 end
 
