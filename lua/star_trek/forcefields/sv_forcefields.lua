@@ -76,8 +76,8 @@ function Star_Trek.ForceFields:EnableForceFieldsInSections(deck, sectionIds)
 			local success2, pos = self:EnableForceField(forceFieldData)
 			if success2 then
 				table.insert(positions, {
-					DetectedInSection = sectionId,
-					DetectedOnDeck = deck,
+					SectionId = sectionId,
+					Deck = deck,
 
 					Pos = pos,
 				})
@@ -143,8 +143,8 @@ function Star_Trek.ForceFields:DisableForceFieldsInSections(deck, sectionIds)
 			local success2, pos = self:DisableForceField(forceFieldData)
 			if success2 then
 				table.insert(positions, {
-					DetectedInSection = sectionId,
-					DetectedOnDeck = deck,
+					SectionId = sectionId,
+					Deck = deck,
 
 					Pos = pos,
 				})
@@ -164,7 +164,7 @@ function Star_Trek.ForceFields:DisableNamedForceField(name)
 	end
 end
 
-Star_Trek.Control:Register("force_fields", function(value, deck, sectionId)
+Star_Trek.Control:Register("force_fields", "Forcefields", function(value, deck, sectionId)
 	if value == Star_Trek.Control.ACTIVE then
 		return
 	end
@@ -264,13 +264,15 @@ hook.Add("Star_Trek.Sections.Loaded", "Star_Trek.ForceFields.DetectForceFields",
 	for deck, deckData in pairs(Star_Trek.Sections.Decks) do
 		for sectionId, sectionData in pairs(deckData.Sections) do
 			sectionData.ForceFields = {}
-			local entities = Star_Trek.Sections:GetInSection(deck, sectionId, function(objects, ent)
+			local objects = Star_Trek.Sections:GetInSection(deck, sectionId, function(object)
+				local ent = object.Entity
 				if ent:GetName() ~= "lcars_forcefield" then
 					return true
 				end
 			end, true)
 
-			for _, ent in pairs(entities) do
+			for _, object in pairs(objects) do
+				local ent = object.Entity
 				table.insert(sectionData.ForceFields, Star_Trek.ForceFields:SetupForceField(ent, deck, sectionId))
 			end
 		end

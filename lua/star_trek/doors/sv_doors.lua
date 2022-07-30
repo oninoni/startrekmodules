@@ -248,7 +248,7 @@ hook.Add("Think", "Star_Trek.Doors.DoorThink", function()
 end)
 
 -- Register Door Control Type.
-Star_Trek.Control:Register("doors")
+Star_Trek.Control:Register("doors", "Doors")
 
 -------------
 --- Setup ---

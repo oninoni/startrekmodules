@@ -78,7 +78,7 @@ hook.Add("Star_Trek.Sections.Loaded", "Star_Trek.Turbolift.Setup", function()
 	end
 end)
 
-Star_Trek.Control:Register("turbolift", function(value, deck, sectionId)
+Star_Trek.Control:Register("turbolift", "Turbolifts", function(value, deck, sectionId)
 	if value == Star_Trek.Control.ACTIVE then
 		return
 	end

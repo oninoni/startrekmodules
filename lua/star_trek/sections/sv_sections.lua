@@ -88,7 +88,7 @@ end
 -- @param Number deck
 -- @param Number sectionId
 -- @param Vector pos
--- @param Boolean isInside
+-- @return Boolean isInside
 function Star_Trek.Sections:IsInSection(deck, sectionId, pos)
 	local success, sectionData = self:GetSection(deck, sectionId)
 	if not success then
@@ -102,6 +102,21 @@ function Star_Trek.Sections:IsInSection(deck, sectionId, pos)
 	end
 
 	return false
+end
+
+-- Determine if the given position on the given deck.
+-- 
+-- @param Number deck
+-- @param Vector pos
+-- @return Boolean isInside
+function Star_Trek.Sections:IsOnDeck(deck, pos)
+	local decks = self:FindDecksFast(pos)
+
+	if not table.HasValue(decks, deck) then
+		return false
+	end
+
+	return true
 end
 
 -- Returns the decks using the bounds.
@@ -171,11 +186,16 @@ function Star_Trek.Sections:GetInSections(deck, sectionIds, filterCallback, allo
 				if table.HasValue(objects, ent) then continue end
 				if not allowMap and ent:MapCreationID() > -1 then continue end
 				if not allowParent and IsValid(ent:GetParent()) then continue end
-				if isfunction(filterCallback) and filterCallback(objects, ent) then continue end
 
-				table.insert(objects, ent)
-				ent.DetectedInSection = sectionId
-				ent.DetectedOnDeck = deck
+				local object = {}
+				object.Entity = ent
+
+				object.Deck = deck
+				object.SectionId = sectionId
+
+				if isfunction(filterCallback) and filterCallback(object) then continue end
+
+				table.insert(objects, object)
 			end
 		end
 	end

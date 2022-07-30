@@ -27,7 +27,7 @@
 -- @return Boolean success
 -- @return? Table interface
 function Star_Trek.LCARS:OpenInterface(id, interfaceData)
-	local ent = interfaceData.Ent
+	local ent = ents.GetByIndex(id)
 
 	local interface = {
 		Ent = ent,

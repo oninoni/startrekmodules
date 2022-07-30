@@ -23,13 +23,16 @@ Star_Trek.Control.INOPERATIVE = 2
 -- Register a Control Type.
 --
 -- @param String name
-function Star_Trek.Control:Register(name, callback)
-	Star_Trek.Control.Types = Star_Trek.Control.Types or {}
+-- @param String realName
+-- @param function callback
+function Star_Trek.Control:Register(name, realName, callback)
+	self.Types = self.Types or {}
 
 	local controlType = {}
 	controlType.Callback = callback
+	controlType.RealName = realName
 
-	Star_Trek.Control.Types[name] = controlType
+	self.Types[name] = controlType
 end
 
 -- Clean up all Sections on a deck, that are not broken.
@@ -60,6 +63,10 @@ function Star_Trek.Control:SetStatus(name, value, deck, sectionId)
 	local controlType = Star_Trek.Control.Types[name]
 	if not istable(controlType) then
 		return false, "Invalid Control Type"
+	end
+
+	if value ~= Star_Trek.Control.INACTIVE and value ~= Star_Trek.Control.ACTIVE and value ~= Star_Trek.Control.INOPERATIVE then
+		return false, "Invalid Value"
 	end
 
 	if isnumber(deck) and isnumber(sectionId) then

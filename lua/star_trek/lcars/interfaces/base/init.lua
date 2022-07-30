@@ -45,10 +45,3 @@ function SELF:Close(callback)
 	self.Ent:EmitSound("star_trek.lcars_close")
 	Star_Trek.LCARS:CloseInterface(self.Ent, callback)
 end
-
--- Read out any Data, that can be retrieved externally.
---
--- @return? Table data
-function SELF:GetData()
-	return false
-end
