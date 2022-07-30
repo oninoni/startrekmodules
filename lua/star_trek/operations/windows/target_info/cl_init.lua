@@ -30,8 +30,6 @@ function SELF:OnCreate(windowData)
 
 	self.Simple = windowData.Simple
 	self.TargetId = windowData.TargetId
-	print("---")
-	print(self.TargetId)
 
 	return true
 end
@@ -70,8 +68,8 @@ function SELF:OnDraw(pos, animPos)
 	local c2 = ColorAlpha(Star_Trek.LCARS.ColorOrange, animPos * 255)
 	local c3 = ColorAlpha(Star_Trek.LCARS.ColorRed, animPos * 255)
 
-	local x1 = self.Area1X
-	local x2 = self.Area1X - 2 + self.Area1Width / 2
+	local x1 = self.Area1X + 4
+	local x2 = self.Area1X + self.Area1Width / 2
 	local x3 = self.Area1XEnd - 4
 
 	local targetInformation = self:GetTargetInformation()
