@@ -67,7 +67,7 @@ function SELF:UpdateContent()
 	self:AddLine("Stardate Archived: " .. archiveTime, Star_Trek.LCARS.ColorLightBlue) -- TODO: Stardate
 
 	local currentName = nil
-	for _, entry in pairs(sessionData.Entries) do
+	for _, entry in pairs(sessionData.Entries or {}) do
 		local name = entry.Name
 		if name ~= currentName then
 			self:AddLine("")
