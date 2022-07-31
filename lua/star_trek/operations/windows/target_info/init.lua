@@ -19,14 +19,15 @@
 if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
 local SELF = WINDOW
 
-function SELF:OnCreate(targetId, simple, hFlip)
+function SELF:OnCreate(targetId, simple, selector, hFlip)
 	local success = SELF.Base.OnCreate(self, "Target Information", "TARGET", hFlip)
 	if not success then
 		return false
 	end
 
-	self.Simple = simple
 	self.TargetId = targetId
+	self.Simple = simple
+	self.Selector = selector
 
 	return true
 end
@@ -34,16 +35,30 @@ end
 function SELF:GetClientData()
 	local clientData = SELF.Base.GetClientData(self)
 
-	clientData.Simple = self.Simple
 	clientData.TargetId = self.TargetId
+	clientData.Simple = self.Simple
+	clientData.Selector = self.Selector
 
 	return clientData
 end
 
 function SELF:OnPress(interfaceData, ply, buttonId, callback)
-	local shouldUpdate = false
+	if not self.Selector then
+		return
+	end
 
-	-- TODO
+	local shouldUpdate = false
+	if buttonId == 1 or buttonId == 2 then
+		shouldUpdate = true
+	end
+
+	if isfunction(callback) then
+		callback(self, interfaceData, ply, buttonId)
+	end
+
+	if shouldUpdate then
+		interfaceData.Ent:EmitSound("star_trek.lcars_beep")
+	end
 
 	return shouldUpdate
 end

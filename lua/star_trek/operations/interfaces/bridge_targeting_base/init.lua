@@ -31,7 +31,7 @@ function SELF:Open(ent, flipped)
 	local targetInfoWindowAng = Angle(0, 71.5, 27)
 	local targetSelectionWindowPos = Vector(-26, -1, 3.5)
 	local targetSelectionWindowAng = Angle(0, 0, 11)
-	local shipInfoWindowPos = Vector(-27.25, -4.3, 2.8)
+	local shipInfoWindowPos = Vector(-27.25, -3.5, 3)
 	local shipInfoWindowAng = Angle(0, 0, 11)
 	if self.Flipped then
 		mapWindowPos = Vector(45, -10, 30)
@@ -40,7 +40,7 @@ function SELF:Open(ent, flipped)
 		targetInfoWindowAng = Angle(0, -71.5, 27)
 		targetSelectionWindowPos = Vector(26, -1, 3.5)
 		--targetSelectionWindowAng = Angle(0, 0, 11)
-		shipInfoWindowPos = Vector(27.25, -4.3, 2.8)
+		shipInfoWindowPos = Vector(27.25, -3.5, 3)
 		--shipInfoWindowAng = Angle(0, 0, 11)
 	end
 
@@ -55,50 +55,28 @@ function SELF:Open(ent, flipped)
 	local success2, targetInfoWindow = Star_Trek.LCARS:CreateWindow("target_info", targetInfoWindowPos, targetInfoWindowAng, nil, 420, 140,
 	function(windowData, interfaceData, ply, buttonId)
 		-- No Interactivity here yet.
-	end, 1, false, self.Flipped)
+	end, 2, false, true, self.Flipped)
 	if not success2 then
 		return false, targetInfoWindow
 	end
 
-	local buttons = {
-		[1] = {
-			Name = "Lock Tractor Beam",
-			Disabled = true,
-		},
-		[5] = {
-			Name = "Close Menu",
-			Color = Star_Trek.LCARS.ColorRed
-		},
-	}
-
-	local categories = {
-		{
-			Name = "Previous Target",
-			Buttons = buttons
-		},
-		{
-			Name = "Next Target",
-			Buttons = buttons
-		},
-		{
-			Name = "De-Select Target",
-			Buttons = buttons
-		},
-	}
-
-	local success3, targetSelectionWindow = Star_Trek.LCARS:CreateWindow("category_list", targetSelectionWindowPos, targetSelectionWindowAng, nil, 360, 350,
+	local success3, targetSelectionWindow = Star_Trek.LCARS:CreateWindow("button_matrix", targetSelectionWindowPos, targetSelectionWindowAng, nil, 360, 350,
 	function(windowData, interfaceData, ply, categoryId, buttonId)
-		if buttonId == 5 then
-			interfaceData:Close()
-		end
-
 		-- No Interactivity here yet.
-	end, categories, "Target Selection", "TARGET", not self.Flipped)
+	end, "Target Selection", "TARGET", not self.Flipped)
 	if not success3 then
 		return false, mapWindow
 	end
 
-	local success4, shipInfoWindow = Star_Trek.LCARS:CreateWindow("ship_info", shipInfoWindowPos, shipInfoWindowAng, 22, 340, 120,
+	local sRow1 = targetSelectionWindow:CreateSecondaryButtonRow(32)
+	targetSelectionWindow:AddButtonToRow(sRow1, "Previous Target", number, color, activeColor, disabled, toggle, callback)
+	targetSelectionWindow:AddButtonToRow(sRow1, "Next Target", number, color, activeColor, disabled, toggle, callback)
+	local sRow2 = targetSelectionWindow:CreateSecondaryButtonRow(32)
+
+	local mRow1 = targetSelectionWindow:CreateMainButtonRow(32)
+	targetSelectionWindow:AddButtonToRow(mRow1, "Test", number, color, activeColor, disabled, toggle, callback)
+
+	local success4, shipInfoWindow = Star_Trek.LCARS:CreateWindow("ship_info", shipInfoWindowPos, shipInfoWindowAng, 22, 340, 100,
 	function(windowData, interfaceData, ply, buttonId)
 		-- No Interactivity here yet.
 	end, self.Flipped)
