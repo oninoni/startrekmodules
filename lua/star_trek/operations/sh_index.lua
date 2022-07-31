@@ -16,7 +16,7 @@
 --         Operations | Index        --
 ---------------------------------------
 
-Star_Trek:RequireModules("lcars", "button")
+Star_Trek:RequireModules("lcars", "button", "alert")
 
 Star_Trek.Operations = Star_Trek.Operations or {}
 

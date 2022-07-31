@@ -63,15 +63,37 @@ function SELF:Open(ent, flipped)
 	local success3, targetSelectionWindow = Star_Trek.LCARS:CreateWindow("button_matrix", targetSelectionWindowPos, targetSelectionWindowAng, nil, 360, 350,
 	function(windowData, interfaceData, ply, categoryId, buttonId)
 		-- No Interactivity here yet.
-	end, "Target Selection", "TARGET", not self.Flipped)
+	end, "Ship Control", "ALERT", not self.Flipped)
 	if not success3 then
 		return false, mapWindow
 	end
 
 	local sRow1 = targetSelectionWindow:CreateSecondaryButtonRow(32)
-	targetSelectionWindow:AddButtonToRow(sRow1, "Previous Target", number, color, activeColor, disabled, toggle, callback)
-	targetSelectionWindow:AddButtonToRow(sRow1, "Next Target", number, color, activeColor, disabled, toggle, callback)
+	targetSelectionWindow:AddButtonToRow(sRow1, "Red Alert", number, Star_Trek.LCARS.ColorRed, nil, false, false, function()
+		Star_Trek.Alert:Enable("red")
+
+		Star_Trek.Logs:AddEntry(self.Ent, ply, "")
+		Star_Trek.Logs:AddEntry(self.Ent, ply, "RED ALERT!")
+	end)
+	targetSelectionWindow:AddButtonToRow(sRow1, "Yellow Alert", number, Star_Trek.LCARS.ColorOrange, nil, false, false, function()
+		Star_Trek.Alert:Enable("yellow")
+
+		Star_Trek.Logs:AddEntry(self.Ent, ply, "")
+		Star_Trek.Logs:AddEntry(self.Ent, ply, "YELLOW ALERT!")
+	end)
 	local sRow2 = targetSelectionWindow:CreateSecondaryButtonRow(32)
+	targetSelectionWindow:AddButtonToRow(sRow2, "Blue Alert", number, Star_Trek.LCARS.ColorLightBlue, nil, false, false, function()
+		Star_Trek.Alert:Enable("blue")
+
+		Star_Trek.Logs:AddEntry(self.Ent, ply, "")
+		Star_Trek.Logs:AddEntry(self.Ent, ply, "BLUE ALERT!")
+	end)
+	targetSelectionWindow:AddButtonToRow(sRow2, "Disable Alert", number, Star_Trek.LCARS.ColorOrange, nil, false, false, function()
+		Star_Trek.Alert:Disable()
+
+		Star_Trek.Logs:AddEntry(self.Ent, ply, "")
+		Star_Trek.Logs:AddEntry(self.Ent, ply, "Alert Disabled!")
+	end)
 
 	local mRow1 = targetSelectionWindow:CreateMainButtonRow(32)
 	targetSelectionWindow:AddButtonToRow(mRow1, "Test", number, color, activeColor, disabled, toggle, callback)

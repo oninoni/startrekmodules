@@ -260,7 +260,7 @@ function SELF:ActionButtonPressed(windowData, ply, buttonId)
 			Star_Trek.Alert:Disable()
 
 			Star_Trek.Logs:AddEntry(self.Ent, ply, "")
-			Star_Trek.Logs:AddEntry(self.Ent, ply, "Alerts Disabled!")
+			Star_Trek.Logs:AddEntry(self.Ent, ply, "Alert Disabled!")
 		end
 
 		return true
