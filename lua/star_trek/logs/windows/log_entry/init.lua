@@ -43,28 +43,29 @@ function SELF:UpdateContent()
 	self:ClearLines()
 
 	-- Initial Information
-	self:AddLine("Type: " .. (sessionData.Type or "[MISSING]"), Star_Trek.LCARS.ColorRed)
-	self:AddLine("Location: " .. (sessionData.SectionName or "[MISSING]"), Star_Trek.LCARS.ColorOrange)
+	self:AddLine(sessionData.Type or "[MISSING]", Star_Trek.LCARS.ColorRed, TEXT_ALIGN_CENTER)
+	self:AddLine(sessionData.SectionName or "[MISSING]", Star_Trek.LCARS.ColorOrange, TEXT_ALIGN_CENTER)
+	self:AddLine("")
 
 	local startTime = "[MISSING]"
 	if isnumber(sessionData.SessionStarted) then
 		startTime = Star_Trek.Util:GetStardate(sessionData.SessionStarted)
-
-		if Star_Trek.Logs.ShowUTCTime then
-			startTime = tostring(startTime) .. "  -  (" .. os.date("!%B %d %Y - %H:%M:%S UTC", sessionData.SessionStarted) .. ")"
-		end
 	end
-	self:AddLine("Stardate Started: " .. startTime, Star_Trek.LCARS.ColorLightBlue) -- TODO: Stardate
+	self:AddLine("Stardate Started: " .. startTime, Star_Trek.LCARS.ColorLightBlue)
+
+	if Star_Trek.Logs.ShowUTCTime then
+		self:AddLine("(" .. os.date("!%B %d %Y - %H:%M:%S UTC", sessionData.SessionStarted) .. ")", Star_Trek.LCARS.ColorLightBlue, TEXT_ALIGN_RIGHT)
+	end
 
 	local archiveTime = "[ACTIVE]"
 	if isnumber(sessionData.SessionArchived) then
 		archiveTime = Star_Trek.Util:GetStardate(sessionData.SessionArchived)
-
-		if Star_Trek.Logs.ShowUTCTime then
-			archiveTime = tostring(archiveTime) .. "  -  (" .. os.date("!%B %d %Y - %H:%M:%S UTC", sessionData.SessionArchived) .. ")"
-		end
 	end
-	self:AddLine("Stardate Archived: " .. archiveTime, Star_Trek.LCARS.ColorLightBlue) -- TODO: Stardate
+	self:AddLine("Stardate Archived: " .. archiveTime, Star_Trek.LCARS.ColorLightBlue)
+
+	if Star_Trek.Logs.ShowUTCTime then
+		self:AddLine("(" .. os.date("!%B %d %Y - %H:%M:%S UTC", sessionData.SessionArchived) .. ")", Star_Trek.LCARS.ColorLightBlue, TEXT_ALIGN_RIGHT)
+	end
 
 	local currentName = nil
 	for _, entry in pairs(sessionData.Entries or {}) do
