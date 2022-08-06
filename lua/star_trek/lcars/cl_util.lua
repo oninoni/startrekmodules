@@ -29,11 +29,33 @@ function Star_Trek.LCARS:Get3D2DMousePos(window)
 		y = y + yOffset
 	end
 
+	local ply = LocalPlayer()
+	local rayPos = self.EyePos or ply:EyePos()
 	local rayDir = gui.ScreenToVector(x, y)
 
-	local pos = util.IntersectRayWithPlane(self.EyePos or LocalPlayer():EyePos(), rayDir, window.WPosG, window.WAngG:Up())
-	pos = WorldToLocal(pos or Vector(), Angle(), window.WPosG, window.WAngG)
-	pos = Vector(pos[1] * window.WScale, pos[2] * -window.WScale, 0)
+	local wPosG = window.WPosG
+
+	if vrmod and  vrmod.IsPlayerInVR(ply) then
+		local lHaPos = vrmod.GetLeftHandPos(ply)
+		local rHaPos = vrmod.GetRightHandPos(ply)
+
+		local lHaDis = lHaPos:Distance(wPosG)
+		local rHaDis = rHaPos:Distance(wPosG)
+		if lHaDis < rHaDis then
+			rayPos = lHaPos
+			rayDir = vrmod.GetLeftHandAng(ply):Forward()
+		else
+			rayPos = rHaPos
+			rayDir = vrmod.GetRightHandAng(ply):Forward()
+		end
+	end
+
+	local wAngG = window.WAngG
+	local wScale = window.WScale
+
+	local pos = util.IntersectRayWithPlane(rayPos, rayDir, wPosG, wAngG:Up())
+	pos = WorldToLocal(pos or Vector(), Angle(), wPosG, wAngG)
+	pos = Vector(pos[1] * wScale, pos[2] * -wScale, 0)
 
 	local overriddenPos = hook.Run("Star_Trek.LCARS.Get3D2DMousePos", window, pos)
 	if isvector(overriddenPos) then

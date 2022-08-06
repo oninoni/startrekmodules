@@ -266,6 +266,12 @@ net.Receive("Star_Trek.LCARS.PlayerButtonDown", function()
 	Star_Trek.LCARS:PlayerButtonDown(LocalPlayer(), button)
 end)
 
+hook.Add("VRMod_Input", "Star_Trek.LCARS.VRMod_Input", function(actionName, state)
+	if actionName == "boolean_use" and state then
+		Star_Trek.LCARS:PlayerButtonDown(LocalPlayer(), KEY_E)
+	end
+end)
+
 -- Save EyePos on Regular Intervals.
 hook.Add("PreDrawTranslucentRenderables", "Star_Trek.LCARS.PreDraw", function(isDrawingDepth, isDrawingSkybox)
 	if isDrawingSkybox then return end
