@@ -39,7 +39,7 @@ end
 hook.Add("Star_Trek.ModulesLoaded", "Star_Trek.Logs.LoadTypes", function()
 	for interfaceName, interface in pairs(Star_Trek.LCARS.Interfaces) do
 		local type = interface.LogType
-		if isstring(type) then
+		if isstring(type) and not interface.LogMobile then
 			Star_Trek.Logs:RegisterType(type)
 		end
 	end
@@ -51,8 +51,9 @@ end)
 -- @param Player ply
 -- @param String type
 -- @return Boolean success
+-- @return Boolean mobile
 -- @return? String error
-function Star_Trek.Logs:StartSession(ent, ply, type)
+function Star_Trek.Logs:StartSession(ent, ply, type, mobile)
 	if not IsValid(ent) then
 		return false, "Invalid Entity"
 	end
@@ -69,7 +70,7 @@ function Star_Trek.Logs:StartSession(ent, ply, type)
 	end
 
 	local sectionName = "DATA MISSING"
-	if IsValid(ply) and ply:IsPlayer() then
+	if IsValid(ply) and ply:IsPlayer() and not mobile then
 		local success, deck, sectionId = Star_Trek.Sections:DetermineSection(ply:EyePos())
 		if success then
 			sectionName = Star_Trek.Sections:GetSectionName(deck, sectionId)
@@ -78,6 +79,7 @@ function Star_Trek.Logs:StartSession(ent, ply, type)
 
 	local sessionData = {
 		Type = type,
+		Mobile = mobile,
 		Status = ST_LOGS_ACTIVE,
 		SessionStarted = os.time(),
 		SectionName = sectionName,
@@ -111,13 +113,15 @@ hook.Add("Star_Trek.LCARS.OpenInterface", "Star_Trek.Logs.StartSession", functio
 		ent = interfaceData.Ent
 	end
 
-	local success, error = Star_Trek.Logs:StartSession(ent, ply, logType)
+	local success, error = Star_Trek.Logs:StartSession(ent, ply, logType, interfaceData.LogMobile)
 	if not success then
 		print(error) -- TODO
 	end
 
 	for _, window in pairs(interfaceData.Windows) do
 		if isfunction(window.SetSessionData) then
+			print("Session Started")
+
 			local sessionData = Star_Trek.Logs:GetSession(ent)
 
 			if not window.PreventAutoLink then
@@ -145,9 +149,11 @@ end
 -- @param Table sessionData
 -- @param Player ply
 -- @param String text
+-- @param Color color
+-- @param Number align
 -- @return Boolean success
 -- @return? String error
-function Star_Trek.Logs:AddEntryToSession(sessionData, ply, text)
+function Star_Trek.Logs:AddEntryToSession(sessionData, ply, text, color, align)
 	local name = "[INTERNAL]"
 	if IsValid(ply) and ply:IsPlayer() then
 		name = hook.Run("Star_Trek.Logs.GetPlayerName", ply)
@@ -163,6 +169,8 @@ function Star_Trek.Logs:AddEntryToSession(sessionData, ply, text)
 	local entryData = {
 		Name = name,
 		Text = text,
+		Color = color,
+		Align = align,
 	}
 
 	table.insert(sessionData.Entries, entryData)
@@ -182,15 +190,17 @@ end
 -- @param Entity ent
 -- @param Player ply
 -- @param String text
+-- @param Color color
+-- @param Number align
 -- @return Boolean success
 -- @return? String error
-function Star_Trek.Logs:AddEntry(ent, ply, text)
+function Star_Trek.Logs:AddEntry(ent, ply, text, color, align)
 	local sessionData = self:GetSession(ent)
 	if not sessionData then
 		return false, "Entity does not have an active session"
 	end
 
-	local success, error = self:AddEntryToSession(sessionData, ply, text)
+	local success, error = self:AddEntryToSession(sessionData, ply, text, color, align)
 	if not success then
 		return false, error
 	end
