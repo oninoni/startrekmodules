@@ -62,6 +62,3 @@ function SELF:Open(ent)
 
 	return true, {codeWindow}
 end
-
-function SELF:GetData()
-end

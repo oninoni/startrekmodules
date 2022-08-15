@@ -43,31 +43,35 @@ function SELF:UpdateContent()
 	self:ClearLines()
 
 	-- Initial Information
-	self:AddLine("Type: " .. (sessionData.Type or "[MISSING]"), Star_Trek.LCARS.ColorRed)
-	self:AddLine("Location: " .. (sessionData.SectionName or "[MISSING]"), Star_Trek.LCARS.ColorOrange)
+	self:AddLine(sessionData.Type or "[MISSING]", Star_Trek.LCARS.ColorRed, TEXT_ALIGN_CENTER)
+
+	if not sessionData.Mobile then
+	self:AddLine(sessionData.SectionName or "[MISSING]", Star_Trek.LCARS.ColorOrange, TEXT_ALIGN_CENTER)
+	end
+
+	self:AddLine("")
 
 	local startTime = "[MISSING]"
 	if isnumber(sessionData.SessionStarted) then
 		startTime = Star_Trek.Util:GetStardate(sessionData.SessionStarted)
-
-		if Star_Trek.Logs.ShowUTCTime then
-			startTime = tostring(startTime) .. "  -  (" .. os.date("!%B %d %Y - %H:%M:%S UTC", sessionData.SessionStarted) .. ")"
-		end
 	end
-	self:AddLine("Stardate Started: " .. startTime, Star_Trek.LCARS.ColorLightBlue) -- TODO: Stardate
+	self:AddLine("Stardate Started: " .. startTime, Star_Trek.LCARS.ColorLightBlue)
 
-	local archiveTime = "[ACTIVE]"
+	if Star_Trek.Logs.ShowUTCTime then
+		self:AddLine("(" .. os.date("!%B %d %Y - %H:%M:%S UTC", sessionData.SessionStarted) .. ")", Star_Trek.LCARS.ColorLightBlue, TEXT_ALIGN_RIGHT)
+	end
+
 	if isnumber(sessionData.SessionArchived) then
-		archiveTime = Star_Trek.Util:GetStardate(sessionData.SessionArchived)
+		local archiveTime = Star_Trek.Util:GetStardate(sessionData.SessionArchived)
+		self:AddLine("Stardate Archived: " .. archiveTime, Star_Trek.LCARS.ColorLightBlue)
 
 		if Star_Trek.Logs.ShowUTCTime then
-			archiveTime = tostring(archiveTime) .. "  -  (" .. os.date("!%B %d %Y - %H:%M:%S UTC", sessionData.SessionArchived) .. ")"
+			self:AddLine("(" .. os.date("!%B %d %Y - %H:%M:%S UTC", sessionData.SessionArchived) .. ")", Star_Trek.LCARS.ColorLightBlue, TEXT_ALIGN_RIGHT)
 		end
 	end
-	self:AddLine("Stardate Archived: " .. archiveTime, Star_Trek.LCARS.ColorLightBlue) -- TODO: Stardate
 
 	local currentName = nil
-	for _, entry in pairs(sessionData.Entries) do
+	for _, entry in pairs(sessionData.Entries or {}) do
 		local name = entry.Name
 		if name ~= currentName then
 			self:AddLine("")
@@ -76,7 +80,7 @@ function SELF:UpdateContent()
 			currentName = name
 		end
 
-		self:AddLine(entry.Text, Star_Trek.LCARS.ColorLightBlue)
+		self:AddLine(entry.Text, entry.Color, entry.Align)
 	end
 
 	return true

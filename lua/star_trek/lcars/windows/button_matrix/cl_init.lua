@@ -27,6 +27,10 @@ function SELF:CreateButtons(id, buttonList)
 	local buttons = {}
 
 	local y = self.Area1Y
+	if id == 2 then
+		y = self.Area2Y
+	end
+
 	for i, buttonRowData in pairs(buttonList) do
 		local buttonRowButtons = buttonRowData.Buttons
 		local nButtons = table.Count(buttonRowButtons)
@@ -61,12 +65,18 @@ end
 function SELF:OnCreate(windowData)
 	self.Padding = self.Padding or 1
 
-	local targetFrameTime = "frame_double"
+	local targetFrameType = "frame_double"
 	if table.Count(windowData.SecondaryButtons) > 0 then
-		targetFrameTime = "frame_triple"
+		targetFrameType = "frame_triple"
+
+		self.SubMenuHeight = 0
+		for _, buttonRowData in pairs(windowData.SecondaryButtons) do
+			local height = buttonRowData.Height - self.Padding
+			self.SubMenuHeight = self.SubMenuHeight + height + self.Padding
+		end
 	end
 
-	self.FrameType = self.FrameType or targetFrameTime
+	self.FrameType = self.FrameType or targetFrameType
 
 	local success = SELF.Base.OnCreate(self, windowData)
 	if not success then
@@ -112,6 +122,9 @@ function SELF:OnDraw(pos, animPos)
 	end
 
 	for _, button in pairs(self.SecondaryButtons or {}) do
+		local x = button.X
+		local y = button.Y
+		button.Hovered = self:IsButtonHovered(x, y, x + button.ElementWidth, y + button.ElementHeight, pos)
 		button:Render(button.X, button.Y)
 	end
 

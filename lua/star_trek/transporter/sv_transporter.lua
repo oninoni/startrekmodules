@@ -85,11 +85,11 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 	Star_Trek.Logs:AddEntry(interfaceEnt, ply, "")
 	Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Initialising Transporter...")
 	Star_Trek.Logs:AddEntry(interfaceEnt, ply, table.Count(sourcePatterns) .. " Pattern Sources Detected.")
-	Star_Trek.Logs:AddEntry(interfaceEnt, ply, table.Count(sourcePatterns) .. " Pattern Targets Detected.")
+	Star_Trek.Logs:AddEntry(interfaceEnt, ply, table.Count(sourcePatterns) .. " Pattern Targets Detected.")	
 
 	for _, sourcePattern in pairs(sourcePatterns) do
 		local ent = sourcePattern.Ent
-
+		
 		if IsEntity(ent) and not IsValid(ent) then
 			continue
 		end
@@ -110,14 +110,20 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 			if isBuffer then
 				table.RemoveByValue(Star_Trek.Transporter.Buffer.Entities, ent)
 			end
-
-			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Dematerialising Object...")
+			
+			local success, scanData = Star_Trek.Sensors:ScanEntity(ent)
+			if success then
+				Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Dematerialising " .. scanData.Name .. "...")
+			end
+			
 			Star_Trek.Transporter:TransportObject(cycleClass or "base", ent, pos, isBuffer, false, function(transporterCycle)
 				Star_Trek.Transporter:ApplyPadEffect(transporterCycle, sourcePattern.Pad, targetPattern.Pad)
 
 				local state = transporterCycle.State
 				if state == 2 then
-					Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Rematerialising Object...")
+					if success then
+						Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Rematerialising ".. scanData.Name .. "...")
+					end
 				end
 			end)
 
@@ -144,31 +150,34 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 		-- Beam into Buffer
 		table.insert(Star_Trek.Transporter.Buffer.Entities, ent)
 		ent.BufferQuality = 160
-
 		if istable(ent) then
 			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Warning: Remote Transporter Request has no target. Aborting!")
 			continue
 		end
-
-		Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Dematerialising Object...")
+		local success, scanData = Star_Trek.Sensors:ScanEntity(ent)
+		if success then
+			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Dematerialising " .. scanData.Name .. "...")
+		end
 		Star_Trek.Transporter:TransportObject(cycleClass or "base", ent, Vector(), false, true, function(transporterCycle)
 			Star_Trek.Transporter:ApplyPadEffect(transporterCycle, sourcePattern.Pad)
 		end)
 
 		Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Warning: No Free Target Position Available! Storing in Buffer!")
-		if ent:IsPlayer() or ent:IsNPC() then
-			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Warning: Organic Pattern in Buffer detected!")
+		
+		if success then
+			if scanData.Alive then
+				Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Warning: ".. scanData.Name .. " has been transported to the Buffer!")
+				local timerName = "Star_Trek.Transporter.BufferAlert." .. interfaceEnt:EntIndex()
 
-			local timerName = "Star_Trek.Transporter.BufferAlert." .. interfaceEnt:EntIndex()
+				if timer.Exists(timerName) then
+					continue
+				end
 
-			if timer.Exists(timerName) then
-				continue
+				-- 5x Alert Sound
+				timer.Create(timerName, 1, 5, function()
+					interfaceEnt:EmitSound("star_trek.lcars_alert14")
+				end)
 			end
-
-			-- 5x Alert Sound
-			timer.Create(timerName, 1, 5, function()
-				interfaceEnt:EmitSound("star_trek.lcars_alert14")
-			end)
 		end
 	end
 end

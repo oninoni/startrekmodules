@@ -33,6 +33,8 @@ function SELF:GetClientData()
 		WScale = self.WindowScale,
 		WWidth = self.WindowWidth,
 		WHeight = self.WindowHeight,
+
+		Solid = self.Solid,
 	}
 
 	return clientData

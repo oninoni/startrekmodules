@@ -65,6 +65,10 @@ function Star_Trek.Control:SetStatus(name, value, deck, sectionId)
 		return false, "Invalid Control Type"
 	end
 
+	if value ~= Star_Trek.Control.INACTIVE and value ~= Star_Trek.Control.ACTIVE and value ~= Star_Trek.Control.INOPERATIVE then
+		return false, "Invalid Value"
+	end
+
 	if isnumber(deck) and isnumber(sectionId) then
 		local success, sectionData = Star_Trek.Sections:GetDeck(deck, sectionId)
 		if not success then

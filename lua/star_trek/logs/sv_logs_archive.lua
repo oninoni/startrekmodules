@@ -43,7 +43,7 @@ function Star_Trek.Logs:ArchiveSession(sessionData, callback)
 	sessionData.Status = ST_LOGS_ARCHIVED
 	sessionData.RandomSeed = math.random(0, 2^16)
 
-	local preventDefault = hook.Run("Star_Trek.Logs.ArchiveSession", sessionData, callback) -- TODO: Gamemode Database Inplementation. Callback Rewrite
+	local preventDefault = hook.Run("Star_Trek.Logs.ArchiveSession", sessionData, callback)
 	if not preventDefault then
 		table.insert(Star_Trek.Logs.Archive, sessionData)
 
@@ -90,7 +90,7 @@ function Star_Trek.Logs:GetPageCount(types, callback, pageSize)
 		return true
 	end
 
-	local preventDefault = hook.Run("Star_Trek.Logs.GetPageCount", types, callback, pageSize) -- TODO: Gamemode Database Inplementation. Callback Rewrite
+	local preventDefault = hook.Run("Star_Trek.Logs.GetPageCount", types, callback, pageSize)
 	if not preventDefault then
 		local filteredData = {}
 
@@ -146,7 +146,7 @@ function Star_Trek.Logs:LoadSessionArchive(types, callback, pageSize, page)
 		return true
 	end
 
-	local preventDefault = hook.Run("Star_Trek.Logs.LoadSessionArchive", types, callback, pageSize, page) -- TODO: Gamemode Database Inplementation. Callback Rewrite
+	local preventDefault = hook.Run("Star_Trek.Logs.LoadSessionArchive", types, callback, pageSize, page)
 	if not preventDefault then
 		local archiveData = {}
 		local filteredData = {}

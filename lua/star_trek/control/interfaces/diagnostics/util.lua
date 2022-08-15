@@ -64,6 +64,7 @@ function SELF:GetModeButtons(mode)
 		buttons[i] = {
 			Name = name,
 			Color = color,
+			Disabled = mode == MODE_CONTROL,
 		}
 	end
 

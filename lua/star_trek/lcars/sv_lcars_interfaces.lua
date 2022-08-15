@@ -142,12 +142,6 @@ function Star_Trek.LCARS:CloseInterface(ent, callback)
 			net.WriteInt(ent:EntIndex(), 32)
 		net.Broadcast()
 
-		interfaceData.Closing = true
-		ent.LastData = interfaceData:GetData()
-		if istable(ent.LastDat) and table.Count(ent.LastData) == 0 then
-			ent.LastData = false
-		end
-
 		timer.Create("Star_Trek.LCARS." .. ent:EntIndex(), 0.5, 1, function()
 			Star_Trek.LCARS.ActiveInterfaces[ent] = nil
 			ent.Interface = nil
