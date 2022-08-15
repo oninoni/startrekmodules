@@ -18,7 +18,7 @@
 
 -- Time Offset Configuration
 local START_YEAR_REAL = 2022
-local START_YEAR_RP = 2380
+local START_YEAR_RP = 2382
 
 -- Stardate Configuration.
 local STARDATE_STANDARD_YEAR = 2323
