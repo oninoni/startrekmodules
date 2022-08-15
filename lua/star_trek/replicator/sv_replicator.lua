@@ -116,7 +116,7 @@ function Star_Trek.Replicator:RecycleObject(ent)
 end
 
 -- Scan Replicated Matter
-hook.Add("Star_Trek.Sensors.PostScanEntity", "Sensors.CheckReplicated", function(ent, scanData)
+hook.Add("Star_Trek.Sensors.ScanEntity", "Sensors.CheckReplicated", function(ent, scanData)
 	if ent.Replicated then
 		scanData.Replicated = true
 	end
