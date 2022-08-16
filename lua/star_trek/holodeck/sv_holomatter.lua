@@ -69,19 +69,23 @@ function Star_Trek.Holodeck:IsInArea(ent, pos)
 	return false
 end
 
-function Star_Trek.Holodeck:IsInHolodeckProgramm(pos)
+function Star_Trek.Holodeck:IsInHolodeckProgramm(ent)
+	local pos = ent:GetPos()
 	local e2 = ents.FindByName("holoProgrammCompress2")[1]
 	if Star_Trek.Holodeck:IsInArea(e2, pos) then
+		hook.Run("Star_Trek.Holodeck.Add_prop", ent, 2)
 		return true
 	end
 
 	local e3 = ents.FindByName("holoProgrammCompress3")[1]
 	if Star_Trek.Holodeck:IsInArea(e3, pos) then
+		hook.Run("Star_Trek.Holodeck.Add_prop", ent, 3)
 		return true
 	end
 
 	local e4 = ents.FindByName("holoProgrammCompress4")[1]
 	if Star_Trek.Holodeck:IsInArea(e4, pos) then
+		hook.Run("Star_Trek.Holodeck.Add_prop", ent, 1)
 		return true
 	end
 
@@ -102,9 +106,7 @@ hook.Add("OnEntityCreated", "Star_Trek.Holodeck.DetectHolomatter", function(ent)
 			return
 		end
 
-		local pos = ent:GetPos()
-
-		if Star_Trek.Holodeck:IsInHolodeckProgramm(pos) then
+		if Star_Trek.Holodeck:IsInHolodeckProgramm(ent) then
 			ent.HoloMatter = true
 
 			Star_Trek.Holodeck:Disintegrate(ent, true)

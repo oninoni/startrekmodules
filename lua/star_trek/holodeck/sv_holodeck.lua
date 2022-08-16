@@ -18,6 +18,8 @@
 
 Star_Trek.Holodeck.Active = Star_Trek.Holodeck.Active or {}
 
+local props_in_programs = {The_Void = {}, Wasteland_Canyon = {}, Holo_Lab = {} }
+
 -- Activate the Holodeck Programm and intialise the custom features.
 --
 -- @param Number holodeckId
@@ -51,6 +53,7 @@ function Star_Trek.Holodeck:Deactivate(programmId)
 	for _, holodeckId in pairs(disablingIds) do
 		self.Active[holodeckId] = nil
 	end
+	hook.Run("Star_Trek.Holodeck.Remove_props", programmId)
 end
 
 hook.Add("Star_Trek.LCARS.BasicPressed", "Test", function(ply, interfaceData, buttonId)
@@ -136,3 +139,45 @@ function Star_Trek.Util:CompressPlayers(outerName, innerName)
 		Star_Trek:Message("Unmatching Holodeck Compression Names:", outerName, innerName)
 	end
 end
+
+hook.Add("Star_Trek.Holodeck.Add_prop", "Star_Trek.Holodeck.Add_prop", function(ent, programID)
+	if programID == 1 then program = "The_Void"
+	elseif programID == 2 then program = "Wasteland_Canyon"
+	elseif programID == 3 then program = "Holo_Lab"
+	else print("ERROR in sv_holodeck.lua: Uknown holodeck program") end
+	table.insert(props_in_programs[program], ent)
+end)
+
+hook.Add("Star_Trek.Holodeck.Remove_props", "Star_Trek.Holodeck.Remove_props", function(programID)
+	if programID == 1 then program = "The_Void"
+	elseif programID == 2 then program = "Wasteland_Canyon"
+	elseif programID == 3 then program = "Holo_Lab"
+	else print("ERROR in sv_holodeck.lua: Uknown holodeck program") end
+	local props =  props_in_programs[program]
+	for i = 1, table.Count(props) do
+		local ent = table.remove(props, 1)
+		if not IsValid(ent) then continue end
+		Star_Trek.Holodeck:Disintegrate(ent)
+	end
+end)
+
+hook.Add("PreUndo", "Star_Trek.Holodeck.Remove_before_undo", function(undo_table)
+	for key, ent in ipairs(undo_table.Entities) do
+		local prop_found = false
+		for i = 1, table.Count(props_in_programs) do
+			if prop_found then break end
+			if i == 1 then program = "The_Void"
+			elseif i == 2 then program = "Wasteland_Canyon"
+			elseif i == 3 then program = "Holo_Lab"
+			else print("ERROR in sv_holodeck.lua: Uknown holodeck program") end
+			local props = props_in_programs[program]
+			for key, prop in ipairs(props) do
+				if ent == prop then 
+					table.remove(props, key)
+					prop_found = true
+					break
+				end
+			end
+		end
+	end
+end)
