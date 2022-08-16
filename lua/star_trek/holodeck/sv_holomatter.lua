@@ -41,6 +41,7 @@ function Star_Trek.Holodeck:Disintegrate(ent, inverted)
 
 	local timerName = "Star_Trek.Holodeck.Disintegrate." .. ent:EntIndex()
 	timer.Create(timerName, 1, 1, function()
+		if not IsValid(ent) then return end
 		if inverted then
 			ent:SetRenderMode(oldMode)
 			ent:SetColor(color)
