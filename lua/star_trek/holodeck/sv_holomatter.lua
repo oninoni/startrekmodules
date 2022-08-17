@@ -137,3 +137,14 @@ hook.Add("Star_Trek.Tricorder.AnalyseScanData", "Holodeck.Output", function(ent,
 		Star_Trek.Logs:AddEntry(ent, owner, "Holographic Matter", Star_Trek.LCARS.ColorRed, TEXT_ALIGN_LEFT)
 	end
 end)
+
+hook.Add("PreUndo", "Star_Trek.Holodeck.Holomatter_undo", function(undo_table)
+	local has_holomatter = false
+	for key, ent in ipairs(undo_table.Entities) do
+		if ent.HoloMatter then 
+			Star_Trek.Holodeck:Disintegrate(ent)
+			has_holomatter = true
+		end
+	end
+	if has_holomatter then return false end
+end)
