@@ -163,6 +163,7 @@ end)
 
 hook.Add("PreUndo", "Star_Trek.Holodeck.Remove_before_undo", function(undo_table)
 	for key, ent in ipairs(undo_table.Entities) do
+		if not ent.HoloMatter then continue end
 		local prop_found = false
 		for i = 1, table.Count(props_in_programs) do
 			if prop_found then break end
