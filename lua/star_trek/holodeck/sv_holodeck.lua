@@ -162,8 +162,10 @@ hook.Add("Star_Trek.Holodeck.Remove_props", "Star_Trek.Holodeck.Remove_props", f
 end)
 
 hook.Add("PreUndo", "Star_Trek.Holodeck.Remove_before_undo", function(undo_table)
+	local has_holomatter = false
 	for key, ent in ipairs(undo_table.Entities) do
 		if not ent.HoloMatter then continue end
+		has_holomatter = true
 		local prop_found = false
 		for i = 1, table.Count(props_in_programs) do
 			if prop_found then break end
@@ -180,5 +182,7 @@ hook.Add("PreUndo", "Star_Trek.Holodeck.Remove_before_undo", function(undo_table
 				end
 			end
 		end
+		Star_Trek.Holodeck:Disintegrate(ent)
 	end
+	if has_holomatter then return false end
 end)
