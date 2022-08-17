@@ -293,3 +293,29 @@ hook.Add("Star_Trek.Sections.Loaded", "Star_Trek.Doors.Setup", function()
 		end
 	end
 end)
+
+-- Record entity door data.
+hook.Add("Star_Trek.Sensors.ScanEntity", "Doors.Check", function(ent, scanData)
+	if Star_Trek.Doors:IsDoor(ent) and ent.LCARSKeyData then
+		local locked = ent.LCARSKeyData["lcars_locked"]
+		if isstring(locked) and locked == 1 then
+			scanData.DoorLocked = true
+		end
+
+		local autoopen = ent.LCARSKeyData["lcars_autoopen"]
+		if isstring(autoopen) and autoopen == "1" then
+			scanData.DoorAutoOpen = true
+		end
+	end
+end)
+
+-- Output the door data on a tricorder
+hook.Add("Star_Trek.Tricorder.AnalyseScanData", "Doors.Output", function(ent, owner, scanData)
+	if scanData.DoorLocked then
+		Star_Trek.Logs:AddEntry(ent, owner, "Door Locked", Star_Trek.LCARS.ColorRed, TEXT_ALIGN_LEFT)
+	end
+
+	if scanData.DoorAutoOpen then
+		Star_Trek.Logs:AddEntry(ent, owner, "Door Auto Opens", Star_Trek.LCARS.ColorOrange, TEXT_ALIGN_LEFT)
+	end
+end)

@@ -116,7 +116,7 @@ function Star_Trek.Replicator:RecycleObject(ent)
 end
 
 -- Scan Replicated Matter
-hook.Add("Star_Trek.Sensors.PostScanEntity", "Sensors.CheckReplicated", function(ent, scanData)
+hook.Add("Star_Trek.Sensors.ScanEntity", "Sensors.CheckReplicated", function(ent, scanData)
 	if ent.Replicated then
 		scanData.Replicated = true
 	end
@@ -131,5 +131,19 @@ end)
 hook.Add("PlayerCanPickupItem", "Star_Trek.Replicator.PreventPickup", function(ply, ent)
 	if ent.Replicated and not (ply:KeyDown(IN_USE) and ply:GetEyeTrace().Entity == ent) then
 		return false
+	end
+end)
+
+-- Record entity door data.
+hook.Add("Star_Trek.Sensors.ScanEntity", "Replicator.Check", function(ent, scanData)
+	if ent.Replicated then
+		scanData.Replicated = true
+	end
+end)
+
+-- Output the door data on a tricorder
+hook.Add("Star_Trek.Tricorder.AnalyseScanData", "Replicator.Output", function(ent, owner, scanData)
+	if scanData.Replicated then
+		Star_Trek.Logs:AddEntry(ent, owner, "Replicated Matter", Star_Trek.LCARS.ColorRed, TEXT_ALIGN_LEFT)
 	end
 end)

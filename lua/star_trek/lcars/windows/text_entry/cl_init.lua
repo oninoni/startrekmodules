@@ -86,7 +86,8 @@ function SELF:ProcessText(lines)
 		for _, subLine in pairs(subLines) do
 			table.insert(self.Lines, {
 				Text = subLine,
-				Color = line.Color or self.FallbackColor
+				Color = line.Color or self.FallbackColor,
+				Align = line.Align or TEXT_ALIGN_LEFT
 			})
 		end
 	end
@@ -128,7 +129,14 @@ function SELF:OnDraw(pos, animPos)
 		end
 		textAlpha = math.min(textAlpha, 255 * animPos)
 
-		draw.SimpleText(line.Text, "LCARSText", self.Area1X + 8, y, ColorAlpha(line.Color or Star_Trek.LCARS.ColorLightBlue, textAlpha), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+		local align = line.Align
+		if align == TEXT_ALIGN_LEFT then
+			draw.SimpleText(line.Text, "LCARSText", self.Area1X + 4, y, ColorAlpha(line.Color or Star_Trek.LCARS.ColorLightBlue, textAlpha), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+		elseif align == TEXT_ALIGN_RIGHT then
+			draw.SimpleText(line.Text, "LCARSText", self.Area1XEnd - 4, y, ColorAlpha(line.Color or Star_Trek.LCARS.ColorLightBlue, textAlpha), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+		elseif align == TEXT_ALIGN_CENTER then
+			draw.SimpleText(line.Text, "LCARSText", self.Area1X + self.Area1Width / 2, y, ColorAlpha(line.Color or Star_Trek.LCARS.ColorLightBlue, textAlpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+		end
 	end
 
 	SELF.Base.OnDraw(self, pos, animPos)

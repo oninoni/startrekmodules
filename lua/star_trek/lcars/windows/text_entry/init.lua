@@ -52,10 +52,11 @@ function SELF:ClearLines()
 	self.Lines = {}
 end
 
-function SELF:AddLine(text, color)
+function SELF:AddLine(text, color, align)
 	table.insert(self.Lines, {
 		Text = text,
 		Color = color,
+		Align = align,
 	})
 end
 
