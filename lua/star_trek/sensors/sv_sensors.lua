@@ -121,5 +121,4 @@ hook.Add("Star_Trek.Sensors.ScanEntity", "Sensors.CheckMass", function(ent, scan
 			end
 		end
 	end
-
 end)
