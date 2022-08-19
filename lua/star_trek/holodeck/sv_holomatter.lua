@@ -138,13 +138,11 @@ hook.Add("Star_Trek.Tricorder.AnalyseScanData", "Holodeck.Output", function(ent,
 	end
 end)
 
+
 hook.Add("PreUndo", "Star_Trek.Holodeck.Holomatter_undo", function(undo_table)
-	local has_holomatter = false
+	if not undo_table.Entities[1].HoloMatter then return end // It should be impossible to have normal and hollomatter at the same time in a dupe.
 	for key, ent in ipairs(undo_table.Entities) do
-		if ent.HoloMatter then 
-			Star_Trek.Holodeck:Disintegrate(ent)
-			has_holomatter = true
-		end
+		Star_Trek.Holodeck:Disintegrate(ent)
 	end
-	if has_holomatter then return false end
+	return false
 end)
