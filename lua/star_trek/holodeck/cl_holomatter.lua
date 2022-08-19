@@ -55,5 +55,5 @@ end)
 
 net.Receive("Star_Trek.Holomatter.Undo_message", function()
 	surface.PlaySound( "buttons/button15.wav" )
-	notification.AddLegacy("Undone hollomatter", 2, 2)
+	notification.AddLegacy("Undone holomatter", 2, 2)
 end)
