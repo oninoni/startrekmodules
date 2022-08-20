@@ -34,10 +34,31 @@ function Star_Trek.Sensors:ScanEntity(ent)
 		scanData.Health = math.Round(percentage * 100, 0)
 	end
 
+	-- Check name for base class of the entities.
+	local bClass = baseclass.Get(ent)
+	if istable(bClass) then
+		local name = bClass.PrintName
+		if isstring(name) and name ~= "" then
+			scanData.Name = name
+		end
+	end
+
 	-- Check for Scripted Entities
-	if ent:IsScripted() and isstring(ent.PrintName) then
-		scanData.Name = ent.PrintName
+	if ent:IsScripted() then
+		local name = ent.PrintName
+		if isstring(name) and name ~= "" then
+			scanData.Name = name
+		end
+
 		hook.Run("Star_Trek.Sensors.ScanScriptedEntity", ent, scanData)
+	end
+
+	-- Check for named entities.
+	if ent:MapCreationID() == -1 then
+		local name = ent:GetName()
+		if isstring(name) and name ~= "" then
+			scanData.Name = name
+		end
 	end
 
 	-- Check Players.
@@ -62,14 +83,6 @@ function Star_Trek.Sensors:ScanEntity(ent)
 	if ent:IsWeapon() then
 		scanData.IsWeapon = true
 		hook.Run("Star_Trek.Sensors.ScanWeapon", ent, scanData)
-	end
-
-	-- Check for named entities.
-	if ent:MapCreationID() == -1 then
-		local name = ent:GetName()
-		if isstring(name) and name ~= "" then
-			scanData.Name = name
-		end
 	end
 
 	hook.Run("Star_Trek.Sensors.ScanEntity", ent, scanData)
