@@ -34,17 +34,97 @@ function Star_Trek.Sensors:ScanEntity(ent)
 		scanData.Health = math.Round(percentage * 100, 0)
 	end
 
-	-- Check name for base class of the entities.
-	local bClass = baseclass.Get(ent)
-	if istable(bClass) then
-		local name = bClass.PrintName
-		if isstring(name) and name ~= "" then
-			scanData.Name = name
+	-- Check Players.
+	if ent:IsPlayer() then
+		scanData.Name = ent:GetName()
+
+		scanData.Alive = true
+		hook.Run("Star_Trek.Sensors.ScanPlayer", ent, scanData)
+	end
+
+	-- Check NPCs
+	if ent:IsNPC() then
+		local npcTables = list.Get("NPC")
+		if istable(npcTables) then
+			local npcTable = npcTables[ent:GetClass()]
+			if istable(npcTable) then
+				local name = npcTable.Name
+				if isstring(name) and name ~= "" then
+					scanData.Name = name
+				end
+			end
+		end
+
+		scanData.Alive = true
+		hook.Run("Star_Trek.Sensors.ScanNPC", ent, scanData)
+	end
+
+	-- Check Nextbots
+	if ent:IsNextBot() then
+		local npcTables = list.Get("NPC")
+		if istable(npcTables) then
+			local npcTable = npcTables[ent:GetClass()]
+			if istable(npcTable) then
+				local name = npcTable.Name
+				if isstring(name) and name ~= "" then
+					scanData.Name = name
+				end
+			end
+		end
+
+		scanData.Alive = true
+		hook.Run("Star_Trek.Sensors.ScanNextBot", ent, scanData)
+	end
+
+	-- Check Weapons
+	if ent:IsWeapon() then
+		local weaponTables = list.Get("Weapon")
+		if istable(weaponTables) then
+			local weaponTable = weaponTables[ent:GetClass()]
+			if istable(weaponTable) then
+				local name = weaponTable.PrintName
+				if isstring(name) and name ~= "" then
+					scanData.Name = name
+				end
+			end
+		end
+
+		scanData.IsWeapon = true
+		hook.Run("Star_Trek.Sensors.ScanWeapon", ent, scanData)
+	end
+
+	if ent:IsVehicle() then
+		local vehicleTables = list.Get("Vehicles")
+		if istable(vehicleTables) then
+			local vehicleTable = vehicleTables[ent:GetClass()]
+			if istable(vehicleTable) then
+				local name = vehicleTable.PrintName
+				if isstring(name) and name ~= "" then
+					scanData.Name = name
+				end
+			end
+		end
+
+		scanData.IsVehicle = true
+		hook.Run("Star_Trek.Sensors.ScanVehicle", ent, scanData)
+	end
+
+	-- Check entity name.
+	local entityTables = list.Get("SpawnableEntities")
+	if istable(entityTables) then
+		local entityTable = entityTables[ent:GetClass()]
+		if istable(entityTable) then
+			local name = entityTable.PrintName
+			if isstring(name) and name ~= "" then
+				scanData.Name = name
+			end
 		end
 	end
 
 	-- Check for Scripted Entities
 	if ent:IsScripted() then
+		print("Scripted!")
+
 		local name = ent.PrintName
 		if isstring(name) and name ~= "" then
 			scanData.Name = name
@@ -59,30 +139,6 @@ function Star_Trek.Sensors:ScanEntity(ent)
 		if isstring(name) and name ~= "" then
 			scanData.Name = name
 		end
-	end
-
-	-- Check Players.
-	if ent:IsPlayer() then
-		scanData.Alive = true
-		hook.Run("Star_Trek.Sensors.ScanPlayer", ent, scanData)
-	end
-
-	-- Check NPCs
-	if ent:IsNPC() then
-		scanData.Alive = true
-		hook.Run("Star_Trek.Sensors.ScanNPC", ent, scanData)
-	end
-
-	-- Check Nextbots
-	if ent:IsNextBot() then
-		scanData.Alive = true
-		hook.Run("Star_Trek.Sensors.ScanNextBot", ent, scanData)
-	end
-
-	-- Check Weapons
-	if ent:IsWeapon() then
-		scanData.IsWeapon = true
-		hook.Run("Star_Trek.Sensors.ScanWeapon", ent, scanData)
 	end
 
 	hook.Run("Star_Trek.Sensors.ScanEntity", ent, scanData)
