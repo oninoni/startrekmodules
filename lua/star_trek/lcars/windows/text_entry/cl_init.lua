@@ -37,6 +37,9 @@ function SELF:OnCreate(windowData)
 	self.FallbackColor = windowData.FallbackColor
 	self.Active = windowData.Active
 
+	self.TextHeight = self.TextHeight or 20
+	self.TextFont = self.TextFont or "LCARSText"
+
 	self:ProcessText(windowData.Lines)
 
 	return true
@@ -76,10 +79,11 @@ function SELF:ProcessText(lines)
 	self.Lines = {}
 
 	-- Prep Font for recursion.
-	surface.SetFont("LCARSText")
+	surface.SetFont(self.TextFont)
 
 	for _, line in pairs(lines or {}) do
-		local words = string.Split(line.Text, " ")
+		local text = line.Text
+		local words = string.Split(text, " ")
 
 		local subLines = self:CheckLine(words)
 
@@ -93,7 +97,7 @@ function SELF:ProcessText(lines)
 	end
 
 	self.MaxN = table.maxn(self.Lines)
-	self.MaxOffset = -((self.MaxN + 1) * 16) + self.HD2
+	self.MaxOffset = -((self.MaxN + 1) * self.TextHeight) + self.HD2
 end
 
 function SELF:OnPress(pos, animPos)
@@ -115,7 +119,7 @@ function SELF:OnDraw(pos, animPos)
 	--draw.RoundedBox(0, 0, self.Area1Y, 10, self.Area1Height, Color(255, 0, 0))
 
 	for i, line in pairs(self.Lines) do
-		local y = self.Offset + i * 20
+		local y = self.Offset + i * self.TextHeight
 
 		local textAlpha = 255
 		if y < self.TextTopAlpha or y > self.TextBotAlpha then
@@ -131,11 +135,11 @@ function SELF:OnDraw(pos, animPos)
 
 		local align = line.Align
 		if align == TEXT_ALIGN_LEFT then
-			draw.SimpleText(line.Text, "LCARSText", self.Area1X + 4, y, ColorAlpha(line.Color or Star_Trek.LCARS.ColorLightBlue, textAlpha), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+			draw.SimpleText(line.Text, self.TextFont, self.Area1X + 4, y, ColorAlpha(line.Color or Star_Trek.LCARS.ColorLightBlue, textAlpha), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
 		elseif align == TEXT_ALIGN_RIGHT then
-			draw.SimpleText(line.Text, "LCARSText", self.Area1XEnd - 4, y, ColorAlpha(line.Color or Star_Trek.LCARS.ColorLightBlue, textAlpha), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+			draw.SimpleText(line.Text, self.TextFont, self.Area1XEnd - 4, y, ColorAlpha(line.Color or Star_Trek.LCARS.ColorLightBlue, textAlpha), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
 		elseif align == TEXT_ALIGN_CENTER then
-			draw.SimpleText(line.Text, "LCARSText", self.Area1X + self.Area1Width / 2, y, ColorAlpha(line.Color or Star_Trek.LCARS.ColorLightBlue, textAlpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+			draw.SimpleText(line.Text, self.TextFont, self.Area1X + self.Area1Width / 2, y, ColorAlpha(line.Color or Star_Trek.LCARS.ColorLightBlue, textAlpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
 		end
 	end
 
