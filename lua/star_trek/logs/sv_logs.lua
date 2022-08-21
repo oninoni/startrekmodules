@@ -153,7 +153,7 @@ end
 -- @param Number align
 -- @return Boolean success
 -- @return? String error
-function Star_Trek.Logs:AddEntryToSession(sessionData, ply, text, color, align)
+function Star_Trek.Logs:AddEntryToSessionInternal(sessionData, ply, text, color, align)
 	local name = "[INTERNAL]"
 	if IsValid(ply) and ply:IsPlayer() then
 		name = hook.Run("Star_Trek.Logs.GetPlayerName", ply)
@@ -174,6 +174,24 @@ function Star_Trek.Logs:AddEntryToSession(sessionData, ply, text, color, align)
 	}
 
 	table.insert(sessionData.Entries, entryData)
+
+	return true
+end
+
+-- Adds an entry to the session.
+--
+-- @param Table sessionData
+-- @param Player ply
+-- @param String text
+-- @param Color color
+-- @param Number align
+-- @return Boolean success
+-- @return? String error
+function Star_Trek.Logs:AddEntryToSession(sessionData, ply, text, color, align)
+	local success, error = self:AddEntryToSessionInternal(sessionData, ply, text, color, align)
+	if not success then
+		return false, error
+	end
 
 	for _, watcherWindow in pairs(sessionData.Watchers or {}) do
 		-- TODO: Check if window still open! If not Remove from list!
