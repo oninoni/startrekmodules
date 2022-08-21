@@ -29,6 +29,9 @@ function SELF:OnCreate(windowData)
 	return true
 end
 
+function SELF:OnClose()
+end
+
 function SELF:OnPress(pos, animPos)
 end
 

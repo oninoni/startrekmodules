@@ -23,6 +23,9 @@ function SELF:OnCreate()
 	return true
 end
 
+function SELF:OnClose()
+end
+
 function SELF:GetClientData()
 	local clientData = {
 		WType = self.WindowType,

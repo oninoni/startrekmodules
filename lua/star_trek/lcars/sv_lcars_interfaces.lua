@@ -138,6 +138,10 @@ function Star_Trek.LCARS:CloseInterface(ent, callback)
 	if interfaceData then
 		hook.Run("Star_Trek.LCARS.PreCloseInterface", interfaceData)
 
+		for _, windowData in pairs(interfaceData.Windows) do
+			windowData:OnClose()
+		end
+
 		net.Start("Star_Trek.LCARS.Close")
 			net.WriteInt(ent:EntIndex(), 32)
 		net.Broadcast()

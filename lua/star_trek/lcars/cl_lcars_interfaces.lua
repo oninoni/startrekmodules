@@ -91,6 +91,10 @@ function Star_Trek.LCARS:CloseInterface(id)
 	local interface = self.ActiveInterfaces[id]
 	if interface then
 		interface.Closing = true
+
+		for _, window in pairs(interface.Windows) do
+			window:OnClose()
+		end
 	end
 end
 
