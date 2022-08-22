@@ -66,7 +66,7 @@ function SELF:CheckLine(words, subLines)
 	if newLinePrev ~= newLine then
 		table.insert(words, lastWord)
 	end
-	table.insert(subLines, newLinePrev)
+	table.insert(subLines, string.sub(newLinePrev, 1, #newLinePrev - 1))
 
 	if table.Count(words) > 0 then
 		self:CheckLine(words, subLines)
