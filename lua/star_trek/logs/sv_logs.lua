@@ -120,8 +120,6 @@ hook.Add("Star_Trek.LCARS.OpenInterface", "Star_Trek.Logs.StartSession", functio
 
 	for _, window in pairs(interfaceData.Windows) do
 		if isfunction(window.SetSessionData) then
-			print("Session Started")
-
 			local sessionData = Star_Trek.Logs:GetSession(ent)
 
 			if not window.PreventAutoLink then
