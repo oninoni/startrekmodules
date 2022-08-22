@@ -87,6 +87,8 @@ function SELF:UpdateContent()
 end
 
 function SELF:SetSessionData(sessionData)
+	if not istable(sessionData) then return end
+
 	local oldSessionData = self.SessionData
 	if istable(oldSessionData) and istable(oldSessionData.Watchers) and table.HasValue(oldSessionData.Watchers, v) then
 		table.RemoveByValue(oldSessionData.Watchers, self)
