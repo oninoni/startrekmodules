@@ -1,3 +1,23 @@
+---------------------------------------
+---------------------------------------
+--         Star Trek Modules         --
+--                                   --
+--            Created by             --
+--       Jan 'Oninoni' Ziegler       --
+--                                   --
+-- This software can be used freely, --
+--    but only distributed by me.    --
+--                                   --
+--    Copyright © 2022 Jan Ziegler   --
+---------------------------------------
+---------------------------------------
+
+---------------------------------------
+--   Linked Portal Window | Client   --
+---------------------------------------
+
+if not istable(ENT) then Star_Trek:LoadAllModules() return end
+
 ENT.Type				= "anim"
 ENT.RenderGroup			= RENDERGROUP_BOTH -- fixes translucent stuff rendering behind the portal
 ENT.Spawnable			= false
