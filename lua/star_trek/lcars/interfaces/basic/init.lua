@@ -23,6 +23,8 @@ include("util.lua")
 
 SELF.BaseInterface = "base"
 
+SELF.LogType = false
+
 -- Opening general purpose menus.
 function SELF:Open(ent)
 	local success2, buttons, scale, width, height, title, titleShort, flip = self:GetButtonData(ent)
