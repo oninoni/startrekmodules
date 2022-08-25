@@ -52,3 +52,8 @@ net.Receive("Star_Trek.Holodeck.Disintegrate", function()
 		end
 	end)
 end)
+
+net.Receive("Star_Trek.Holomatter.Undo_message", function()
+	surface.PlaySound( "buttons/button15.wav" )
+	notification.AddLegacy("Undone holomatter", 2, 2)
+end)
