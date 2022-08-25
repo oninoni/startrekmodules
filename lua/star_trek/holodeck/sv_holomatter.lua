@@ -138,13 +138,23 @@ hook.Add("Star_Trek.Tricorder.AnalyseScanData", "Holodeck.Output", function(ent,
 	end
 end)
 
-util.AddNetworkString("Star_Trek.Holomatter.Undo_message")
-hook.Add("PreUndo", "Star_Trek.Holodeck.Holomatter_undo", function(undo_table)
-	if not undo_table.Entities[1].HoloMatter then return end // It should be impossible to have normal and hollomatter at the same time in a dupe.
-	for key, ent in ipairs(undo_table.Entities) do
-		Star_Trek.Holodeck:Disintegrate(ent)
+hook.Add("PreUndo", "Star_Trek.Holodeck.PreUndo", function(undoTable)
+	local undoEntites = undoTable.Entities
+
+	local toBeRemoved = {}
+	for _, ent in ipairs(undoEntites) do
+		if ent.HoloMatter then
+			Star_Trek.Holodeck:Disintegrate(ent)
+			table.insert(toBeRemoved, ent)
+		end
 	end
-	net.Start("Star_Trek.Holomatter.Undo_message")
-	net.Send(undo_table.Owner)
-	return false
+
+	for _, ent in ipairs(toBeRemoved) do
+		table.RemoveByValue(undoEntites, ent)
+	end
+
+	-- Add Sacrificial Entity.
+	if table.Count(undoEntites) == 0 then
+		table.insert(undoEntites, ents.Create("prop_dynamic"))
+	end
 end)
