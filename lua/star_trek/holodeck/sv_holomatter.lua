@@ -142,6 +142,12 @@ hook.Add("wp-teleport", "Star_Trek.Holodeck.Disintegrate", function(self, ent)
 		return
 	end
 	if ent:IsPlayer() then
+		local PortalName = self:GetName()
+		-- If the portal is on the bridge return
+		if PortalName == "portal12A" or PortalName == "portal12B" or PortalName == "portal11A" or PortalName == "portal11B" then
+			return 
+		end
+		print(self:GetName())
 		hook.Run("Star_Trek.Holodeck.HoloweaponRemove", ent)
 	end
 end)
