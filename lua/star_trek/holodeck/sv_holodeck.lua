@@ -101,27 +101,45 @@ function Star_Trek.Holodeck:CompressPlayers(programmId)
 		else
 			Star_Trek:Message(ent .. " is inside the holodeck, but not outside! WTF?")
 		end
+
+		if ent.HoloMatter then
+			Star_Trek.Holodeck:Disintegrate(ent)
+			continue
+		end
+
 		if ent:IsPlayer() then
-			hook.Run("Star_Trek.Holodeck.HoloweaponRemove", ent)
+			Star_Trek.Holodeck:RemoveHoloWeapons(ent)
+			continue
 		end
 	end
 
 	for _, ent in pairs(outerEnts) do
+		if ent.HoloMatter then
+			continue
+		end
+		if ent:MapCreationID() ~= -1 then
+			continue
+		end
+
+		local xPos = math.random(innerBoundsLow[1], innerBoundsHigh[1])
+		local yPos = math.random(innerBoundsLow[2], innerBoundsHigh[2])
+
+		local pos = Vector(xPos, yPos, innerBoundsLow[3])
+		local emptyPos = Star_Trek.Util:FindEmptyPosWithin(pos, innerBoundsLow, innerBoundsHigh)
+
+		if isvector(emptyPos) then
+			pos = emptyPos
+		else
+			Star_Trek:Message("No Empty Pos Found, Dumping into other Player/Object")
+		end
+
+		local lowerBounds = ent:GetRotatedAABB(ent:OBBMins(), ent:OBBMaxs())
+		local zOffset = -lowerBounds.Z + 2 -- Offset to prevent stucking in floor
+		ent:SetPos(pos + Vector(0, 0, zOffset))
+
 		if ent:IsPlayer() then
-			local xPos = math.random(innerBoundsLow[1], innerBoundsHigh[1])
-			local yPos = math.random(innerBoundsLow[2], innerBoundsHigh[2])
-
-			local pos = Vector(xPos, yPos, innerBoundsLow[3])
-			local emptyPos = Star_Trek.Util:FindEmptyPosWithin(pos, innerBoundsLow, innerBoundsHigh)
-
-			if emptyPos then
-				ent:SetPos(emptyPos)
-			else
-				ent:SetPos(pos)
-
-				Star_Trek:Message("No Empty Pos Found, Dumping into other Player/Object")
-			end
-			hook.Run("Star_Trek.Holodeck.HoloweaponRemove", ent)
+			Star_Trek.Holodeck:RemoveHoloWeapons(ent)
+			continue
 		end
 	end
 end
