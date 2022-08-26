@@ -16,6 +16,8 @@
 --     Server | Transporter STool    --
 ---------------------------------------
 
+if not istable(TOOL) then Star_Trek:LoadAllModules() return end
+
 TOOL.Category = "ST:RP"
 TOOL.Name = "External Transporter Location-Tool"
 TOOL.ConfigName = ""

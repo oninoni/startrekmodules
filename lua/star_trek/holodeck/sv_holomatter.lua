@@ -166,6 +166,7 @@ hook.Add("Star_Trek.Tricorder.AnalyseScanData", "Holodeck.Output", function(ent,
 	end
 end)
 
+
 -- Remove all holo weapons from player
 -- @param Player ply
 hook.Add("Star_Trek.Holodeck.HoloweaponRemove", "Star_Trek.Holodeck.HoloweaponRemove", function(ply)
@@ -177,5 +178,25 @@ hook.Add("Star_Trek.Holodeck.HoloweaponRemove", "Star_Trek.Holodeck.HoloweaponRe
 			weapon:Remove()
 			ply:EmitSound("star_trek.hologram_failure")
 		end
+	end
+
+hook.Add("PreUndo", "Star_Trek.Holodeck.PreUndo", function(undoTable)
+	local undoEntites = undoTable.Entities
+
+	local toBeRemoved = {}
+	for _, ent in ipairs(undoEntites) do
+		if ent.HoloMatter then
+			Star_Trek.Holodeck:Disintegrate(ent)
+			table.insert(toBeRemoved, ent)
+		end
+	end
+
+	for _, ent in ipairs(toBeRemoved) do
+		table.RemoveByValue(undoEntites, ent)
+	end
+
+	-- Add Sacrificial Entity.
+	if table.Count(undoEntites) == 0 then
+		table.insert(undoEntites, ents.Create("prop_dynamic"))
 	end
 end)
