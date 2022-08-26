@@ -88,24 +88,6 @@ function Star_Trek.Holodeck:IsInHolodeckProgramm(pos)
 	return false
 end
 
--- timer.Create("Check players in holoprogram for holoweapons", 1, 0, function()
--- 	local players = player.GetAll()
--- 	for i = 1, #players do
--- 		local ply = players[i]
--- 		local pos = ply:GetPos()
--- 		if not Star_Trek.Holodeck:IsInHolodeckProgramm(pos) then
--- 			local ply_weapons = ply:GetWeapons()
--- 			for i = 1, #ply_weapons do
--- 				local weapon = ply_weapons[i]
--- 				if weapon.HoloMatter then
--- 					weapon:Remove()
--- 					ply:EmitSound("star_trek.hologram_failure")
--- 				end 
--- 			end
--- 		end
--- 	end
--- end)
-
 hook.Add("OnEntityCreated", "Star_Trek.Holodeck.DetectHolomatter", function(ent)
 	timer.Simple(0, function()
 		if not IsValid(ent) then return end
