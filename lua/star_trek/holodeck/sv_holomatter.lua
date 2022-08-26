@@ -88,23 +88,23 @@ function Star_Trek.Holodeck:IsInHolodeckProgramm(pos)
 	return false
 end
 
-timer.Create("Check players in holoprogram for holoweapons", 1, 0, function()
-	local players = player.GetAll()
-	for i = 1, #players do
-		local ply = players[i]
-		local pos = ply:GetPos()
-		if not Star_Trek.Holodeck:IsInHolodeckProgramm(pos) then
-			local ply_weapons = ply:GetWeapons()
-			for i = 1, #ply_weapons do
-				local weapon = ply_weapons[i]
-				if weapon.HoloMatter then
-					weapon:Remove()
-					ply:EmitSound("star_trek.hologram_failure")
-				end 
-			end
-		end
-	end
-end)
+-- timer.Create("Check players in holoprogram for holoweapons", 1, 0, function()
+-- 	local players = player.GetAll()
+-- 	for i = 1, #players do
+-- 		local ply = players[i]
+-- 		local pos = ply:GetPos()
+-- 		if not Star_Trek.Holodeck:IsInHolodeckProgramm(pos) then
+-- 			local ply_weapons = ply:GetWeapons()
+-- 			for i = 1, #ply_weapons do
+-- 				local weapon = ply_weapons[i]
+-- 				if weapon.HoloMatter then
+-- 					weapon:Remove()
+-- 					ply:EmitSound("star_trek.hologram_failure")
+-- 				end 
+-- 			end
+-- 		end
+-- 	end
+-- end)
 
 hook.Add("OnEntityCreated", "Star_Trek.Holodeck.DetectHolomatter", function(ent)
 	timer.Simple(0, function()
@@ -142,15 +142,7 @@ hook.Add("wp-teleport", "Star_Trek.Holodeck.Disintegrate", function(self, ent)
 		return
 	end
 	if ent:IsPlayer() then
-		local ply_weapons = ent:GetWeapons()
-		for i = 1, #ply_weapons do
-			local weapon = ply_weapons[i]
-			if weapon.HoloMatter then
-				-- Not using Star_Trek.Holodeck:Disintegrate, because it does not work correctly. No sound plays and there is a delay before it removes the weapon.
-				weapon:Remove()
-				ent:EmitSound("star_trek.hologram_failure")
-			end
-		end
+		hook.Run("Star_Trek.Holodeck.HoloweaponRemove", ent)
 	end
 end)
 
@@ -165,5 +157,19 @@ end)
 hook.Add("Star_Trek.Tricorder.AnalyseScanData", "Holodeck.Output", function(ent, owner, scanData)
 	if scanData.HoloMatter then
 		Star_Trek.Logs:AddEntry(ent, owner, "Holographic Matter", Star_Trek.LCARS.ColorRed, TEXT_ALIGN_LEFT)
+	end
+end)
+
+-- Remove all holo weapons from player
+-- @param Player ply
+hook.Add("Star_Trek.Holodeck.HoloweaponRemove", "Star_Trek.Holodeck.HoloweaponRemove", function(ply)
+	local ply_weapons = ply:GetWeapons()
+	for i = 1, #ply_weapons do
+		local weapon = ply_weapons[i]
+		if weapon.HoloMatter then
+			-- Not using Star_Trek.Holodeck:Disintegrate, because it does not work correctly. No sound plays and there is a delay before it removes the weapon.
+			weapon:Remove()
+			ply:EmitSound("star_trek.hologram_failure")
+		end
 	end
 end)
