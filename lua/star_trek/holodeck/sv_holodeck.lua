@@ -101,6 +101,9 @@ function Star_Trek.Holodeck:CompressPlayers(programmId)
 		else
 			Star_Trek:Message(ent .. " is inside the holodeck, but not outside! WTF?")
 		end
+		if ent:IsPlayer() then
+			hook.Run("Star_Trek.Holodeck.HoloweaponRemove", ent)
+		end
 	end
 
 	for _, ent in pairs(outerEnts) do
@@ -118,6 +121,7 @@ function Star_Trek.Holodeck:CompressPlayers(programmId)
 
 				Star_Trek:Message("No Empty Pos Found, Dumping into other Player/Object")
 			end
+			hook.Run("Star_Trek.Holodeck.HoloweaponRemove", ent)
 		end
 	end
 end
