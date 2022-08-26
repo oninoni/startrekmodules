@@ -94,7 +94,7 @@ hook.Add("OnEntityCreated", "Star_Trek.Holodeck.DetectHolomatter", function(ent)
 		if ent:MapCreationID() ~= -1 then return end
 
 		local phys = ent:GetPhysicsObject()
-		if not IsValid(phys) then
+		if not IsValid(phys) and not ent:IsWeapon()then
 			return
 		end
 
@@ -108,7 +108,7 @@ hook.Add("OnEntityCreated", "Star_Trek.Holodeck.DetectHolomatter", function(ent)
 			ent.HoloMatter = true
 
 			Star_Trek.Holodeck:Disintegrate(ent, true)
-		end
+		end 
 	end)
 end)
 
@@ -121,6 +121,16 @@ end)
 hook.Add("wp-teleport", "Star_Trek.Holodeck.Disintegrate", function(self, ent)
 	if ent.HoloMatter then
 		Star_Trek.Holodeck:Disintegrate(ent)
+		return
+	end
+	if ent:IsPlayer() then
+		local PortalName = self:GetName()
+		-- If the portal is on the bridge return
+		if PortalName == "portal12A" or PortalName == "portal12B" or PortalName == "portal11A" or PortalName == "portal11B" then
+			return 
+		end
+		print(self:GetName())
+		hook.Run("Star_Trek.Holodeck.HoloweaponRemove", ent)
 	end
 end)
 
@@ -137,6 +147,20 @@ hook.Add("Star_Trek.Tricorder.AnalyseScanData", "Holodeck.Output", function(ent,
 		Star_Trek.Logs:AddEntry(ent, owner, "Holographic Matter", Star_Trek.LCARS.ColorRed, TEXT_ALIGN_LEFT)
 	end
 end)
+
+
+-- Remove all holo weapons from player
+-- @param Player ply
+hook.Add("Star_Trek.Holodeck.HoloweaponRemove", "Star_Trek.Holodeck.HoloweaponRemove", function(ply)
+	local ply_weapons = ply:GetWeapons()
+	for i = 1, #ply_weapons do
+		local weapon = ply_weapons[i]
+		if weapon.HoloMatter then
+			-- Not using Star_Trek.Holodeck:Disintegrate, because it does not work correctly. No sound plays and there is a delay before it removes the weapon.
+			weapon:Remove()
+			ply:EmitSound("star_trek.hologram_failure")
+		end
+	end
 
 hook.Add("PreUndo", "Star_Trek.Holodeck.PreUndo", function(undoTable)
 	local undoEntites = undoTable.Entities
