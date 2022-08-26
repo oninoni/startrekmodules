@@ -16,11 +16,11 @@
 --     LCARS Transporter | Server    --
 ---------------------------------------
 
-include("util.lua")
-include("windowUtil.lua")
-
 if not istable(INTERFACE) then Star_Trek:LoadAllModules() return end
 local SELF = INTERFACE
+
+include("util.lua")
+include("windowUtil.lua")
 
 SELF.BaseInterface = "base"
 

@@ -16,12 +16,14 @@
 --   LCARS Basic Interface | Server  --
 ---------------------------------------
 
-include("util.lua")
-
 if not istable(INTERFACE) then Star_Trek:LoadAllModules() return end
 local SELF = INTERFACE
 
+include("util.lua")
+
 SELF.BaseInterface = "base"
+
+SELF.LogType = false
 
 -- Opening general purpose menus.
 function SELF:Open(ent)
