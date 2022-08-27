@@ -23,6 +23,7 @@ Star_Trek.Modules["forcefields"] = true
 Star_Trek.Modules["portals"] = true
 
 Star_Trek.Modules["lcars"] = true
+Star_Trek.Modules["wall_interface"] = true
 
 Star_Trek.Modules["button"] = true
 Star_Trek.Modules["logs"] = true

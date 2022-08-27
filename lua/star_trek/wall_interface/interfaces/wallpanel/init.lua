@@ -21,24 +21,6 @@ local SELF = INTERFACE
 
 SELF.BaseInterface = "base"
 
-local buttons = {
-	[1] = {
-		Name = "Display Data",
-	},
-	[2] = {
-		Name = "Forcefields",
-		Disabled = true,
-	},
-	[3] = {
-		Name = "Communicator",
-		Disabled = true,
-	},
-	[12] = {
-		Name = "Close",
-		Color = Star_Trek.LCARS.ColorRed,
-	},
-}
-
 function SELF:Open(ent)
 	local keyValues = ent.LCARSKeyData
 
@@ -48,31 +30,56 @@ function SELF:Open(ent)
 	local title = keyValues["lcars_title"] or "Select Mode"
 	title = string.Replace(title, "@", " ")
 
-	local w = 16
+	local w = 24
 	local h = height
 	local x = -width / 2 + w / 2 + 0.5
 	local success, window = Star_Trek.LCARS:CreateWindow(
-		"button_list",
+		"button_matrix",
 		Vector(x, 0, 0),
 		Angle(),
 		scale,
 		w * scale,
 		h * scale,
 		function(windowData, interfaceData, ply, buttonId)
-			if buttonId == 12 then
-				ent:EmitSound("star_trek.lcars_close")
-				interfaceData:Close()
-
-				return
-			end
 		end,
-		buttons,
 		title,
-		"MODE",
+		nil,
 		true
 	)
 	if not success then
 		return false, window
+	end
+
+	local sRow1 = window:CreateSecondaryButtonRow(32)
+	window:AddButtonToRow(sRow1, "Data Display", nil, Star_Trek.LCARS.ColorOrange, Star_Trek.LCARS.ColorOrange, false, false, function()
+	end)
+	window:AddButtonToRow(sRow1, "Personal Database", nil, Star_Trek.LCARS.ColorLightBlue, Star_Trek.LCARS.ColorOrange, true, false, function()
+	end)
+
+	local sRow2 = window:CreateSecondaryButtonRow(32)
+	window:AddButtonToRow(sRow2, "Comms System", nil, Star_Trek.LCARS.ColorBlue, Star_Trek.LCARS.ColorOrange, true, false, function()
+	end)
+	window:AddButtonToRow(sRow2, "Force Fields", nil, Star_Trek.LCARS.ColorLightBlue, Star_Trek.LCARS.ColorOrange, true, false, function()
+	end)
+
+	local sRow3 = window:CreateSecondaryButtonRow(32)
+	window:AddButtonToRow(sRow3, "Close Menu", nil, Star_Trek.LCARS.ColorRed, nil, false, false, function()
+		ent:EmitSound("star_trek.lcars_close")
+		self:Close()
+	end)
+
+	for i = 1, 16 do
+		local row
+		if i % 2 == 0 then
+			row = window:CreateMainButtonRow(32)
+		else
+			row = window:CreateMainButtonRow(64)
+		end
+		window:AddButtonToRow(row, "Testing " .. i)
+
+		if i % 2 == 0 then
+			window:AddButtonToRow(row, "Testing " .. i)
+		end
 	end
 
 	local w2 = width - w - 1
