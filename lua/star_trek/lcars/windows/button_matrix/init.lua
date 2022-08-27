@@ -105,6 +105,55 @@ function SELF:AddButtonToRow(buttonRowData, name, number, color, activeColor, di
 	return buttonData
 end
 
+function SELF:AddSelectorToRow(buttonRowData, name, values, defaultId, callback)
+	if not istable(values) then return end
+
+	function buttonRowData:SetValue(valueId)
+		if valueId == 1 then
+			buttonRowData.PrevButton.Disabled = true
+		else
+			buttonRowData.PrevButton.Disabled = false
+		end
+
+		if valueId == #values then
+			buttonRowData.NextButton.Disabled = true
+		else
+			buttonRowData.NextButton.Disabled = false
+		end
+
+		local valueData = values[valueId]
+		buttonRowData.ValueButton.Name = valueData.Name or "MISSING"
+		buttonRowData.ValueButton.Data = valueData.Data
+
+		buttonRowData.Selected = valueId
+	end
+
+	buttonRowData.PrevButton = self:AddButtonToRow(buttonRowData, "<", nil, nil, nil, false, false, function(buttonData)
+		buttonRowData:SetValue(buttonRowData.Selected - 1)
+
+		if isfunction(callback) then
+			callback(buttonData, valueData.Data)
+		end
+	end)
+
+	self:AddButtonToRow(buttonRowData, name .. ":", nil, nil, nil, true)
+	buttonRowData.ValueButton = self:AddButtonToRow(buttonRowData, "", nil, nil, nil, true)
+
+	buttonRowData.NextButton = self:AddButtonToRow(buttonRowData, ">"     , nil, nil, nil, false, false, function(buttonData)
+		buttonRowData:SetValue(buttonRowData.Selected + 1)
+
+		if isfunction(callback) then
+			callback(buttonData, valueData.Data)
+		end
+	end)
+
+	local defaultValueData = values[defaultId]
+	if not istable(defaultValueData) then
+		defaultId = 1
+	end
+	buttonRowData:SetValue(defaultId)
+end
+
 function SELF:GetButtonClientData(buttonList)
 	local clientButtonList = {}
 
@@ -143,8 +192,12 @@ function SELF:OnPress(interfaceData, ply, buttonId, callback)
 
 	if buttonData.Disabled then return end
 
+	if buttonData.Toggle then
+		buttonData.Selected = not buttonData.Selected
+	end
+
 	local overrideSound = false
-	if isfunction(buttonData.Callback) and buttonData.Callback() then
+	if isfunction(buttonData.Callback) and buttonData.Callback(buttonData) then
 		overrideSound = true
 	end
 
