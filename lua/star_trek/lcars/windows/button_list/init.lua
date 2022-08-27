@@ -29,96 +29,49 @@ function SELF:OnCreate(buttons, title, titleShort, hFlip, toggle, buttonHeight)
 		return false
 	end
 
-	self:SetButtons(buttons)
-
-	self.Toggle = toggle or false
-	self.ButtonHeight = buttonHeight or 35
+	self:SetButtons(buttons, toggle, buttonHeight)
 
 	return true
 end
 
-function SELF:GetClientData()
-	local clientData = SELF.Base.GetClientData(self)
-
-	clientData.Buttons = {}
-	for i, buttonData in pairs(self.Buttons) do
-		local clientButtonData = {
-			Name = buttonData.Name,
-			Disabled = buttonData.Disabled,
-			Selected = buttonData.Selected,
-
-			Color = buttonData.Color,
-			ActiveColor = buttonData.ActiveColor,
-
-			RandomNumber = buttonData.RandomNumber,
-		}
-
-		clientData.Buttons[i] = clientButtonData
-	end
-
-	clientData.ButtonHeight = self.ButtonHeight
-
-	return clientData
-end
-
-function SELF:SetButtons(buttons)
-	self.Buttons = {}
+function SELF:SetButtons(buttons, toggle, buttonHeight)
+	self:ClearMainButtons()
 
 	local containsRandomNumber = false
 	for i, button in pairs(buttons) do
 		if not istable(button) then continue end
 
-		local buttonData = {
-			Name = button.Name or "MISSING",
-			Disabled = button.Disabled or false,
-			Data = button.Data,
-		}
-
-		if IsColor(button.Color) then
-			buttonData.Color = button.Color
-		else
-			if i % 2 == 0 then
-				buttonData.Color = Star_Trek.LCARS.ColorLightBlue
-			else
-				buttonData.Color = Star_Trek.LCARS.ColorBlue
-			end
-		end
-
-		buttonData.ActiveColor = button.ActiveColor or Star_Trek.LCARS.ColorOrange
-
-		buttonData.RandomNumber = button.RandomNumber
-		if isnumber(buttonData.RandomNumber) then
+		if isnumber(button.RandomNumber) then
 			containsRandomNumber = true
 		end
 
-		self.Buttons[i] = buttonData
+		local color = button.Color
+		if not IsColor(color) then
+			if i % 2 == 0 then
+				color = Star_Trek.LCARS.ColorLightBlue
+			else
+				color = Star_Trek.LCARS.ColorBlue
+			end
+		end
+
+		local row = self:CreateMainButtonRow(buttonHeight or 35)
+		local buttonData = self:AddButtonToRow(row,
+			button.Name or "MISSING",
+			button.RandomNumber,
+			color, button.ActiveColor or Star_Trek.LCARS.ColorOrange,
+			button.Disabled or false, toggle)
+
+		buttonData.Data = button.Data
 	end
 
 	if not containsRandomNumber then
-		for _, buttonData in pairs(self.Buttons) do
+		for _, buttonRowData in pairs(self.MainButtons) do
+			local buttonData = buttonRowData.Buttons[1]
+			if not istable(buttonData) then continue end
+
 			if math.random(0, 1) > 0 then
-				buttonData.RandomNumber = math.random(0, 99)
+				buttonData.Number = math.random(0, 99)
 			end
-		end
-	end
-end
-
-function SELF:GetSelected()
-	local data = {}
-
-	for _, buttonData in pairs(self.Buttons) do
-		data[buttonData.Name] = buttonData.Selected
-	end
-
-	return data
-end
-
-function SELF:SetSelected(data)
-	for _, buttonData in pairs(self.Buttons) do
-		if data[buttonData.Name] then
-			buttonData.Selected = true
-		else
-			buttonData.Selected = false
 		end
 	end
 end
@@ -126,12 +79,10 @@ end
 function SELF:OnPress(interfaceData, ply, buttonId, callback)
 	local shouldUpdate = false
 
-	if self.Toggle then
-		local buttonData = self.Buttons[buttonId]
-		if istable(buttonData) then
-			buttonData.Selected = not (buttonData.Selected or false)
-			shouldUpdate = true
-		end
+	local buttonData = self.Buttons[buttonId]
+	if istable(buttonData) and buttonData.Toggle then
+		buttonData.Selected = not (buttonData.Selected or false)
+		shouldUpdate = true
 	end
 
 	if isfunction(callback) and callback(self, interfaceData, ply, buttonId) then
@@ -143,4 +94,24 @@ function SELF:OnPress(interfaceData, ply, buttonId, callback)
 	end
 
 	return shouldUpdate
+end
+
+function SELF:GetSelected()
+	local data = {}
+
+	for i, buttonData in pairs(self.Buttons) do
+		data[buttonData.Name] = buttonData.Selected
+	end
+
+	return data
+end
+
+function SELF:SetSelected(data)
+	for i, buttonData in pairs(self.Buttons) do
+		if data[buttonData.Name] then
+			buttonData.Selected = true
+		else
+			buttonData.Selected = false
+		end
+	end
 end

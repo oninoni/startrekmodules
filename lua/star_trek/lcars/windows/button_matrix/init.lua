@@ -30,9 +30,29 @@ function SELF:OnCreate(title, titleShort, hFlip)
 	self.MainButtons = {}
 	self.SecondaryButtons = {}
 
-	self.ButtonId = 1
-
 	return true
+end
+
+function SELF:ClearButtonsInternal(buttonList)
+	for _, buttonRowData in pairs(buttonList or {}) do
+		for _, buttonData in pairs(buttonRowData.Buttons or {}) do
+			table.RemoveByValue(self.Buttons, buttonData)
+		end
+	end
+
+	for i, buttonData in pairs(self.Buttons) do
+		buttonData.ButtonId = i
+	end
+end
+
+function SELF:ClearMainButtons()
+	self:ClearButtonsInternal(self.MainButtons)
+	self.MainButtons = {}
+end
+
+function SELF:ClearSecondaryButtons()
+	self:ClearButtonsInternal(self.SecondaryButtons)
+	self.SecondaryButtons = {}
 end
 
 function SELF:CreateButtonRow(buttonList, height)
@@ -78,11 +98,11 @@ function SELF:AddButtonToRow(buttonRowData, name, number, color, activeColor, di
 	buttonData.Toggle = toggle
 	buttonData.Callback = callback
 
-	buttonData.ButtonId = self.ButtonId
-	self.Buttons[self.ButtonId] = buttonData
-	self.ButtonId = self.ButtonId + 1
+	buttonData.ButtonId = table.insert(self.Buttons, buttonData)
 
 	table.insert(buttonRowData.Buttons, buttonData)
+
+	return buttonData
 end
 
 function SELF:GetButtonClientData(buttonList)

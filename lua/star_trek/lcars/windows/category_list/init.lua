@@ -29,85 +29,95 @@ function SELF:OnCreate(categories, title, titleShort, hFlip, toggle, buttonHeigh
 		return false
 	end
 
-	self:SetCategories(categories)
-
-	self.CategoryButtonHeight = categoryButtonHeight or 32
+	self:SetCategories(categories, categoryButtonHeight)
+	self:SetCategory(1)
 
 	return true
 end
 
-function SELF:GetClientData()
-	local clientData = SELF.Base.GetClientData(self)
+function SELF:SetupCategoryRow(categories)
+	local categoryRows = {}
 
-	clientData.Categories = {}
-	for i, categoryData in pairs(self.Categories) do
-		local clientCategoryData = {
-			Name = categoryData.Name,
-			Disabled = categoryData.Disabled,
+	local categoryCopy = table.Copy(categories)
+	while true do
+		local rowData = {}
+		table.insert(categoryRows, rowData)
 
-			Color = categoryData.Color,
-		}
-
-		clientData.Categories[i] = clientCategoryData
-	end
-
-	clientData.Selected = self.Selected
-	clientData.CategoryButtonHeight = self.CategoryButtonHeight
-
-	return clientData
-end
-
-function SELF:SetCategories(categories, default)
-	self.Categories = {}
-	for i, category in pairs(categories) do
-		if not istable(category) or not istable(category.Buttons) then continue end
-
-		local categoryData = {
-			Name = category.Name or "MISSING",
-			Disabled = category.Disabled or false,
-			Data = category.Data,
-			Buttons = {}
-		}
-
-		if IsColor(category.Color) then
-			categoryData.Color = category.Color
-		else
-			if i % 2 == 0 then
-				categoryData.Color = Star_Trek.LCARS.ColorLightBlue
-			else
-				categoryData.Color = Star_Trek.LCARS.ColorBlue
-			end
+		if #categoryCopy >= 4 then
+			table.insert(rowData, table.remove(categoryCopy, 1))
+			table.insert(rowData, table.remove(categoryCopy, 1))
+			table.insert(rowData, table.remove(categoryCopy, 1))
+			table.insert(rowData, table.remove(categoryCopy, 1))
+		elseif #categoryCopy == 3 then
+			table.insert(rowData, table.remove(categoryCopy, 1))
+			table.insert(rowData, table.remove(categoryCopy, 1))
+			table.insert(rowData, table.remove(categoryCopy, 1))
+			table.insert(rowData, {
+				Name = "",
+				Color = Star_Trek.LCARS.ColorGrey,
+				Disabled = true,
+			})
+		elseif #categoryCopy == 2 then
+			table.insert(rowData, table.remove(categoryCopy, 1))
+			table.insert(rowData, table.remove(categoryCopy, 1))
+		elseif #categoryCopy == 1 then
+			table.insert(rowData, table.remove(categoryCopy, 1))
 		end
 
-		categoryData.Buttons = category.Buttons
-
-		table.insert(self.Categories, categoryData)
+		if #categoryCopy <= 0 then
+			break
+		end
 	end
 
-	self:SetCategory(default or 1)
+	return categoryRows
 end
 
-function SELF:GetSelected()
-	local data = {}
+function SELF:SetCategories(categories, categoryButtonHeight)
+	self:ClearSecondaryButtons()
 
-	data.Buttons = SELF.Base.GetSelected(self)
-	data.Selected = self.Selected
+	local categoryRows = self:SetupCategoryRow(categories)
 
-	return data
+	self.Categories = {}
+
+	local i = 1
+	for _, rowData in pairs(categoryRows) do
+		local row = self:CreateSecondaryButtonRow(categoryButtonHeight or 35)
+
+		for _, category in pairs(rowData) do
+			if not istable(category) then continue end
+
+			local color = category.Color
+			if not IsColor(color) then
+				if i % 2 == 0 then
+					color = Star_Trek.LCARS.ColorLightBlue
+				else
+					color = Star_Trek.LCARS.ColorBlue
+				end
+			end
+
+			local categoryButtonData = self:AddButtonToRow(row,
+				category.Name or "MISSING",
+				nil,
+				color, category.ActiveColor or Star_Trek.LCARS.ColorOrange,
+				category.Disabled or false, toggle)
+
+			categoryButtonData.Data = category.Data
+			categoryButtonData.Buttons = category.Buttons
+
+			table.insert(self.Categories, categoryButtonData)
+
+			i = i + 1
+		end
+	end
 end
 
 function SELF:SetCategory(category)
 	self.Selected = category
 
-	local categoryData = self.Categories[self.Selected]
-	if categoryData then
-		self:SetButtons(categoryData.Buttons)
+	local categoryButtonData = self.Categories[self.Selected]
+	if istable(categoryButtonData) then
+		self:SetButtons(categoryButtonData.Buttons)
 	end
-end
-
-function SELF:SetSelected(data)
-	self:SetCategory(data.Selected)
-	self.Base.SetSelected(self, data.Buttons)
 end
 
 function SELF:OnPress(interfaceData, ply, buttonId, callback)
@@ -144,4 +154,18 @@ function SELF:OnPress(interfaceData, ply, buttonId, callback)
 	end
 
 	return shouldUpdate
+end
+
+function SELF:GetSelected()
+	local data = {}
+
+	data.Buttons = SELF.Base.GetSelected(self)
+	data.Selected = self.Selected
+
+	return data
+end
+
+function SELF:SetSelected(data)
+	self:SetCategory(data.Selected)
+	SELF.Base.SetSelected(self, data.Buttons)
 end
