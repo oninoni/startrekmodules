@@ -141,6 +141,8 @@ function SELF:OnPress(interfaceData, ply, buttonId, callback)
 	local buttonData = self.Buttons[buttonId]
 	if not istable(buttonData) then return end
 
+	if buttonData.Disabled then return end
+
 	local overrideSound = false
 	if isfunction(buttonData.Callback) and buttonData.Callback() then
 		overrideSound = true

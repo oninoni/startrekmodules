@@ -80,7 +80,11 @@ function SELF:OnPress(interfaceData, ply, buttonId, callback)
 	local shouldUpdate = false
 
 	local buttonData = self.Buttons[buttonId]
-	if istable(buttonData) and buttonData.Toggle then
+	if not istable(buttonData) then return end
+
+	if buttonData.Disabled then return end
+
+	if buttonData.Toggle then
 		buttonData.Selected = not (buttonData.Selected or false)
 		shouldUpdate = true
 	end

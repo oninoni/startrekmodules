@@ -129,6 +129,8 @@ function SELF:OnPressButtonList(pos, buttons)
 
 	local yOffset = SELF:GetListOffset(pos.Y, buttons)
 	for _, button in ipairs(buttons) do
+		if button.Disabled then continue end
+
 		local x = button.X
 		local y = button.Y + yOffset
 
