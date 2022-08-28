@@ -120,6 +120,10 @@ function Star_Trek.Holodeck:CompressPlayers(programmId)
 		if ent:MapCreationID() ~= -1 then
 			continue
 		end
+		local phys = ent:GetPhysicsObject()
+		if not IsValid(phys) then
+			continue
+		end
 
 		local xPos = math.random(innerBoundsLow[1], innerBoundsHigh[1])
 		local yPos = math.random(innerBoundsLow[2], innerBoundsHigh[2])

@@ -119,7 +119,6 @@ function Star_Trek.Holodeck:RemoveHoloWeapons(ply)
 	local playSound = false
 
 	for _, weapon in pairs(ply:GetWeapons()) do
-
 		if weapon.HoloMatter then
 			-- Not using Star_Trek.Holodeck:Disintegrate, because it does not work correctly.
 			-- No sound plays and there is a delay before it removes the weapon.
