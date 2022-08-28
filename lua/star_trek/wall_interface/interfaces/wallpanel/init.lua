@@ -68,20 +68,6 @@ function SELF:Open(ent)
 		self:Close()
 	end)
 
-	for i = 1, 16 do
-		local row
-		if i % 2 == 0 then
-			row = window:CreateMainButtonRow(32)
-		else
-			row = window:CreateMainButtonRow(64)
-		end
-		window:AddButtonToRow(row, "Testing " .. i)
-
-		if i % 2 == 0 then
-			window:AddButtonToRow(row, "Testing " .. i)
-		end
-	end
-
 	local w2 = width - w - 1
 	local success2, mainWindow = Star_Trek.LCARS:CreateWindow(
 		"log_entry",
