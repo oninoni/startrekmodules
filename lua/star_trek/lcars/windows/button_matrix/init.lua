@@ -114,7 +114,6 @@ function SELF:AddSelectorToRow(buttonRowData, name, values, defaultId, callback)
 		else
 			buttonRowData.PrevButton.Disabled = false
 		end
-
 		if valueId == #values then
 			buttonRowData.NextButton.Disabled = true
 		else
@@ -127,23 +126,41 @@ function SELF:AddSelectorToRow(buttonRowData, name, values, defaultId, callback)
 
 		buttonRowData.Selected = valueId
 	end
+	function buttonRowData:SetDisabled(disabled)
+		if disabled then
+			buttonRowData.PrevButton.Disabled = true
+			buttonRowData.NextButton.Disabled = true
+		else
+			local valueId = buttonRowData.Selected
+			if valueId == 1 then
+				buttonRowData.PrevButton.Disabled = true
+			else
+				buttonRowData.PrevButton.Disabled = false
+			end
+			if valueId == #values then
+				buttonRowData.NextButton.Disabled = true
+			else
+				buttonRowData.NextButton.Disabled = false
+			end
+		end
+	end
 
-	buttonRowData.PrevButton = self:AddButtonToRow(buttonRowData, "<", nil, nil, nil, false, false, function(buttonData)
+	buttonRowData.PrevButton = self:AddButtonToRow(buttonRowData, "<", nil, nil, nil, false, false, function(ply, buttonData)
 		buttonRowData:SetValue(buttonRowData.Selected - 1)
 
 		if isfunction(callback) then
-			callback(buttonData, valueData.Data)
+			callback(ply, buttonData, valueData.Data)
 		end
 	end)
 
 	self:AddButtonToRow(buttonRowData, name .. ":", nil, nil, nil, true)
 	buttonRowData.ValueButton = self:AddButtonToRow(buttonRowData, "", nil, nil, nil, true)
 
-	buttonRowData.NextButton = self:AddButtonToRow(buttonRowData, ">"     , nil, nil, nil, false, false, function(buttonData)
+	buttonRowData.NextButton = self:AddButtonToRow(buttonRowData, ">"     , nil, nil, nil, false, false, function(ply, buttonData)
 		buttonRowData:SetValue(buttonRowData.Selected + 1)
 
 		if isfunction(callback) then
-			callback(buttonData, valueData.Data)
+			callback(ply, buttonData, valueData.Data)
 		end
 	end)
 
@@ -197,7 +214,7 @@ function SELF:OnPress(interfaceData, ply, buttonId, callback)
 	end
 
 	local overrideSound = false
-	if isfunction(buttonData.Callback) and buttonData.Callback(buttonData) then
+	if isfunction(buttonData.Callback) and buttonData.Callback(ply, buttonData) then
 		overrideSound = true
 	end
 
