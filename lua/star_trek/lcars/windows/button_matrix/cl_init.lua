@@ -69,10 +69,12 @@ function SELF:CreateButtons(id, buttonList)
 
 	buttons.TotalHeight = totalHeight - self.Padding
 
-	local firstHeight = buttons[1].ElementHeight
-	local finalHeight = buttons[#buttons].ElementHeight
-	buttons.AreaYScroll = buttons.AreaY + firstHeight
-	buttons.AreaHeightScroll = yHeight - firstHeight - finalHeight
+	if #buttons > 0 then
+		local firstHeight = buttons[1].ElementHeight
+		local finalHeight = buttons[#buttons].ElementHeight
+		buttons.AreaYScroll = buttons.AreaY + firstHeight
+		buttons.AreaHeightScroll = yHeight - firstHeight - finalHeight
+	end
 
 	return buttons
 end

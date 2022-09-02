@@ -149,7 +149,7 @@ function SELF:AddSelectorToRow(buttonRowData, name, values, defaultId, callback)
 		buttonRowData:SetValue(buttonRowData.Selected - 1)
 
 		if isfunction(callback) then
-			callback(ply, buttonData, valueData.Data)
+			callback(ply, buttonData, values[buttonRowData.Selected])
 		end
 	end)
 
@@ -160,7 +160,7 @@ function SELF:AddSelectorToRow(buttonRowData, name, values, defaultId, callback)
 		buttonRowData:SetValue(buttonRowData.Selected + 1)
 
 		if isfunction(callback) then
-			callback(ply, buttonData, valueData.Data)
+			callback(ply, buttonData, values[buttonRowData.Selected])
 		end
 	end)
 
