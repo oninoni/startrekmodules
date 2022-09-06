@@ -31,18 +31,14 @@ hook.Add("Star_Trek.Logs.GetSessionName", "Star_Trek.Holodeck.GetSessionName", f
 	end
 end)
 
-hook.Add("Star_Trek.LCARS.BasicPressed", "Star_Trek.Holodeck.BasicPressed", function(ply, interfaceData, buttonId)
+hook.Add("Star_Trek.LCARS.BasicPressed", "Star_Trek.Holodeck.BasicPressed", function(ply, interfaceData, buttonId, buttonData)
 	local ent = interfaceData.Ent
 	if istable(Star_Trek.Logs) then
 
 		local name = ent:GetName()
 		if string.StartWith(name, "holoDeckButton") then
 			Star_Trek.Logs:StartSession(ent, ply, "Holodeck")
-
-			local buttonData = interfaceData.Windows[1].Buttons[buttonId]
-			if buttonData then
-				Star_Trek.Logs:AddEntry(ent, ply, "Loading: " .. buttonData.Name)
-			end
+			Star_Trek.Logs:AddEntry(ent, ply, "Loading: " .. buttonData.Name)
 		end
 	end
 end)

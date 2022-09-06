@@ -29,19 +29,17 @@ hook.Add("Star_Trek.Logs.GetSessionName", "Star_Trek.Airlock.GetSessionName", fu
 	end
 end)
 
-hook.Add("Star_Trek.LCARS.BasicPressed", "Star_Trek.Airlock.BasicPressed", function(ply, interfaceData, buttonId)
+hook.Add("Star_Trek.LCARS.BasicPressed", "Star_Trek.Airlock.BasicPressed", function(ply, interfaceData, buttonId, buttonData)
 	local ent = interfaceData.Ent
 	if istable(Star_Trek.Logs) then
 		if ent:GetName() == "airlockButInner" then
 			if buttonId == 1 then
-				local buttonData = interfaceData.Windows[1].Buttons[buttonId]
 				if buttonData.Name == "Unlock inner Door" then
 					Star_Trek.Logs:AddEntry(ent, ply, "Inner Door unlocked!")
 				elseif buttonData.Name == "Lock inner Door" then
 					Star_Trek.Logs:AddEntry(ent, ply, "Inner Door locked!")
 				end
 			elseif buttonId == 2 then
-				local buttonData = interfaceData.Windows[1].Buttons[buttonId]
 				if buttonData.Name == "Open outher Door" then
 					Star_Trek.Logs:AddEntry(ent, ply, "Outer Door opened!")
 					local pressureButtonData = interfaceData.Windows[1].Buttons[3]
@@ -62,14 +60,12 @@ hook.Add("Star_Trek.LCARS.BasicPressed", "Star_Trek.Airlock.BasicPressed", funct
 			end
 		elseif ent:GetName() == "airlockButOuther" then
 			if buttonId == 1 then
-				local buttonData = interfaceData.Windows[1].Buttons[buttonId]
 				if buttonData.Name == "Unlock inner Door" then
 					Star_Trek.Logs:AddEntry(ent, ply, "Inner Door unlocked!")
 				elseif buttonData.Name == "Lock inner Door" then
 					Star_Trek.Logs:AddEntry(ent, ply, "Inner Door locked!")
 				end
 			elseif buttonId == 2 then
-				local buttonData = interfaceData.Windows[1].Buttons[buttonId]
 				if buttonData.Name == "Unlock outher Door" then
 					Star_Trek.Logs:AddEntry(ent, ply, "Outer Door unlocked!")
 				elseif buttonData.Name == "Lock outher Door" then

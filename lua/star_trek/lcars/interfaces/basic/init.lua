@@ -39,10 +39,10 @@ function SELF:Open(ent)
 		scale,
 		width,
 		height,
-		function(windowData, interfaceData, ply, buttonId)
+		function(windowData, interfaceData, ply, buttonId, buttonData)
 			local keyValues = ent.LCARSKeyData
 
-			local override = hook.Run("Star_Trek.LCARS.BasicPressed", ply, interfaceData, buttonId)
+			local override = hook.Run("Star_Trek.LCARS.BasicPressed", ply, interfaceData, buttonId, buttonData)
 			if override then
 				return
 			end

@@ -36,24 +36,20 @@ function SELF:Open(ent)
 		nil,
 		500,
 		500,
-		function(windowData, interfaceData, ply, categoryId, buttonId)
+		function(windowData, interfaceData, ply, categoryId, buttonId, buttonData)
 			if buttonId then
 				local selected = windowData.Selected
 				local categoryData = windowData.Categories[selected]
 				if istable(categoryData) then
-					local buttonData = categoryData.Buttons[buttonId]
+					local pos, angle = Star_Trek.LCARS:GetInterfacePosAngleGlobal(ent)
+					pos = pos + angle:Up() * -7
+					pos = pos + angle:Right() * 6
 
-					if istable(buttonData) then
-						local pos, angle = Star_Trek.LCARS:GetInterfacePosAngleGlobal(ent)
-						pos = pos + angle:Up() * -7
-						pos = pos + angle:Right() * 6
-
-						if istable(Star_Trek.Logs) then
-							Star_Trek.Logs:AddEntry(ent, ply, "Replicating " .. buttonData.Name)
-						end
-
-						Star_Trek.Replicator:CreateObject(buttonData.Data, pos, ent:GetAngles())
+					if istable(Star_Trek.Logs) then
+						Star_Trek.Logs:AddEntry(ent, ply, "Replicating " .. buttonData.Name)
 					end
+
+					Star_Trek.Replicator:CreateObject(buttonData.Data, pos, ent:GetAngles())
 				end
 
 				interfaceData:Close()

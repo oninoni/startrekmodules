@@ -33,10 +33,10 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip)
 
 	local n = 0
 	for i, menuType in pairs(menuTable.MenuTypes) do
-		n = n + 1
-
 		local name = self:GetMenuType(menuType, menuTable.Target)
 		if not name then continue end
+
+		n = n + 1
 
 		local color = Star_Trek.LCARS.ColorBlue
 		if i % 2 == 0 then
@@ -66,7 +66,7 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip)
 		n = n + 1
 
 		function menuTable:GetUtilButtonState()
-			return self.MenuWindow.Buttons[self.UtilButtonId].SelectedCustom or false
+			return self.MenuWindow.Buttons[#self.MenuWindow.Buttons - 1].SelectedCustom or false
 		end
 	end
 
@@ -91,50 +91,51 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip)
 		24,
 		width,
 		height,
-		function(windowData, interfaceData, ply, buttonId)
-			if buttonId > n then -- Custom Buttons
-				local button = windowData.Buttons[buttonId]
-				if button.Name == "Wide Beam" or button.Name == "Narrow Beam" then
-					button.SelectedCustom = not (button.SelectedCustom or false)
-					if button.SelectedCustom then
-						button.Color = Star_Trek.LCARS.ColorRed
+		function(windowData, interfaceData, ply, buttonId, buttonData)
+			print(buttonId, n)
+
+			if buttonId >= n then -- Custom Buttons
+				if buttonData.Name == "Wide Beam" or buttonData.Name == "Narrow Beam" then
+					buttonData.SelectedCustom = not (buttonData.SelectedCustom or false)
+					if buttonData.SelectedCustom then
+						buttonData.Color = Star_Trek.LCARS.ColorRed
 					else
-						button.Color = Star_Trek.LCARS.ColorOrange
+						buttonData.Color = Star_Trek.LCARS.ColorOrange
 					end
 
-					if button.SelectedCustom then
-						button.Name = "Wide Beam"
+					if buttonData.SelectedCustom then
+						buttonData.Name = "Wide Beam"
 					else
-						button.Name = "Narrow Beam"
-					end
-
-					return true
-				end
-
-				if button.Name == "Instant Dematerialisation" or button.Name == "Delayed Dematerialisation" then
-					button.SelectedCustom = not (button.SelectedCustom or false)
-					if button.SelectedCustom then
-						button.Color = Star_Trek.LCARS.ColorRed
-					else
-						button.Color = Star_Trek.LCARS.ColorOrange
-					end
-
-					if button.SelectedCustom then
-						button.Name = "Delayed Dematerialisation"
-					else
-						button.Name = "Instant Dematerialisation"
+						buttonData.Name = "Narrow Beam"
 					end
 
 					return true
 				end
 
-				if button.Name == "Disable Console" then
+				if buttonData.Name == "Instant Dematerialisation" or buttonData.Name == "Delayed Dematerialisation" then
+					buttonData.SelectedCustom = not (buttonData.SelectedCustom or false)
+					if buttonData.SelectedCustom then
+						buttonData.Color = Star_Trek.LCARS.ColorRed
+					else
+						buttonData.Color = Star_Trek.LCARS.ColorOrange
+					end
+
+					if buttonData.SelectedCustom then
+						buttonData.Name = "Delayed Dematerialisation"
+					else
+						buttonData.Name = "Instant Dematerialisation"
+					end
+
+					return true
+				end
+
+				if buttonData.Name == "Disable Console" then
 					windowData:Close()
 
 					return false
 				end
 
-				if button.Name == "Swap Sides" then
+				if buttonData.Name == "Swap Sides" then
 					local targetMenuTable = menuTable.TargetMenuTable
 					local sourceMenuSelectionName = self:GetSelectedMenuType(menuTable)
 					local targetMenuSelectionName = self:GetSelectedMenuType(targetMenuTable)
@@ -367,8 +368,7 @@ function SELF:CreateWindowTable(menuPos, menuAngle, menuWidth, mainPos, mainAngl
 	end
 
 	if self.AdvancedMode then
-		table.insert(menuTypes, {"Buffer", false})
-
+		table.insert(menuTypes, {"Buffer", nil})
 	end
 
 	local menuTable = {

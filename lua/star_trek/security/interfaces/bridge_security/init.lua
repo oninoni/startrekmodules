@@ -43,10 +43,8 @@ function SELF:OpenInternal(menuPos, menuAng, menuWidth, actionPos, actionAng, ac
 		nil,
 		sectionWidth,
 		sectionHeight,
-		function(windowData, interfaceData, ply, categoryId, buttonId)
+		function(windowData, interfaceData, ply, categoryId, buttonId, buttonData)
 			if isnumber(buttonId) then
-				local buttonData = windowData.Buttons[buttonId]
-
 				mapWindow:SetSectionActive(buttonData.Data, buttonData.Selected)
 				mapWindow:Update()
 			else

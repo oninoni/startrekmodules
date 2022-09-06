@@ -39,7 +39,7 @@ hook.Add("Star_Trek.Logs.GetSessionName", "Star_Trek.Security.GetSessionName", f
 	end
 end)
 
-hook.Add("Star_Trek.LCARS.BasicPressed", "Star_Trek.Security.BasicPressed", function(ply, interfaceData, buttonId)
+hook.Add("Star_Trek.LCARS.BasicPressed", "Star_Trek.Security.BasicPressed", function(ply, interfaceData, buttonId, buttonData)
 	local ent = interfaceData.Ent
 	if table.HasValue(subConsoles, ent:GetName()) and istable(Star_Trek.Logs) then
 		if ent:GetName() == "securityButton" then

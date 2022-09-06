@@ -79,6 +79,8 @@ end
 function SELF:AddButtonToRow(buttonRowData, name, number, color, activeColor, disabled, toggle, callback)
 	local buttonData = {}
 
+	print("E", name, toggle)
+
 	buttonData.Name = name or "MISSING"
 	buttonData.Number = number
 
@@ -203,14 +205,15 @@ function SELF:GetButtonClientData(buttonList)
 	return clientButtonList
 end
 
-function SELF:OnPress(interfaceData, ply, buttonId, callback)
+function SELF:OnPress(interfaceData, ply, buttonId)
 	local buttonData = self.Buttons[buttonId]
 	if not istable(buttonData) then return end
 
 	if buttonData.Disabled then return end
 
+	PrintTable(buttonData)
 	if buttonData.Toggle then
-		buttonData.Selected = not buttonData.Selected
+		buttonData.Selected = not (buttonData.Selected or false)
 	end
 
 	local overrideSound = false

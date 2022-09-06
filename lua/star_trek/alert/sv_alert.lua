@@ -118,7 +118,7 @@ hook.Add("Star_Trek.Logs.GetSessionName", "Star_Trek.Alert.GetSessionName", func
 	end
 end)
 
-hook.Add("Star_Trek.LCARS.BasicPressed", "Star_Trek.Alert.BasicPressed", function(ply, interfaceData, buttonId)
+hook.Add("Star_Trek.LCARS.BasicPressed", "Star_Trek.Alert.BasicPressed", function(ply, interfaceData, buttonId, buttonData)
 	local ent = interfaceData.Ent
 	if ent:GetName() == "bridgeBut1" and istable(Star_Trek.Logs) then
 		if buttonId == 1 then

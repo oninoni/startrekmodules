@@ -29,15 +29,18 @@ function SELF:OnCreate(buttons, title, titleShort, hFlip, toggle, buttonHeight)
 		return false
 	end
 
-	self:SetButtons(buttons, toggle, buttonHeight)
+	self.Toggle = toggle or false
+
+	self:SetButtons(buttons, buttonHeight)
 
 	return true
 end
 
-function SELF:SetButtons(buttons, toggle, buttonHeight)
+function SELF:SetButtons(buttons, buttonHeight)
 	self:ClearMainButtons()
 
 	local containsRandomNumber = false
+	local lastI = 0
 	for i, button in pairs(buttons) do
 		if not istable(button) then continue end
 
@@ -54,14 +57,24 @@ function SELF:SetButtons(buttons, toggle, buttonHeight)
 			end
 		end
 
+		-- Create Spacer Rows
+		local diff = i - lastI
+		if diff > 1 then
+			for j = 2, diff do
+				self:CreateMainButtonRow(buttonHeight or 35)
+			end
+		end
+
 		local row = self:CreateMainButtonRow(buttonHeight or 35)
 		local buttonData = self:AddButtonToRow(row,
 			button.Name or "MISSING",
 			button.RandomNumber,
 			color, button.ActiveColor or Star_Trek.LCARS.ColorOrange,
-			button.Disabled or false, toggle)
+			button.Disabled or false, self.Toggle or false)
 
 		buttonData.Data = button.Data
+
+		lastI = i
 	end
 
 	if not containsRandomNumber then
@@ -74,6 +87,7 @@ function SELF:SetButtons(buttons, toggle, buttonHeight)
 			end
 		end
 	end
+
 end
 
 function SELF:OnPress(interfaceData, ply, buttonId, callback)
@@ -84,17 +98,12 @@ function SELF:OnPress(interfaceData, ply, buttonId, callback)
 
 	if buttonData.Disabled then return end
 
-	if buttonData.Toggle then
-		buttonData.Selected = not (buttonData.Selected or false)
+	if SELF.Base.OnPress(self, interfaceData, ply, buttonId) then
 		shouldUpdate = true
 	end
 
-	if isfunction(callback) and callback(self, interfaceData, ply, buttonId) then
+	if isfunction(callback) and callback(self, interfaceData, ply, buttonId, buttonData) then
 		shouldUpdate = true
-	end
-
-	if shouldUpdate then
-		interfaceData.Ent:EmitSound("star_trek.lcars_beep")
 	end
 
 	return shouldUpdate

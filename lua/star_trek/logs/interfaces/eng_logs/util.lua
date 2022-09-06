@@ -303,7 +303,7 @@ function SELF:CreateListWindow(page)
 		nil,
 		600,
 		600,
-		function(windowData, interfaceData, ply, categoryId, buttonId)
+		function(windowData, interfaceData, ply, categoryId, buttonId, buttonData)
 			if not buttonId then
 				if categoryId == 1 then
 					self:ApplyListWindowPage(windowData.Categories, self.Page - 1)
@@ -313,9 +313,6 @@ function SELF:CreateListWindow(page)
 
 				return
 			end
-
-			local buttonData = windowData.Buttons[buttonId]
-			if not buttonData then return end
 
 			local archivedSession = buttonData.Data
 			self:SelectLogFile(archivedSession)

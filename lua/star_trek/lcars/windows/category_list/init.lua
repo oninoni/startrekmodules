@@ -139,21 +139,20 @@ function SELF:OnPress(interfaceData, ply, buttonId, callback)
 		self:SetCategory(buttonId)
 		shouldUpdate = true
 
-		if isfunction(callback) and callback(self, interfaceData, ply, buttonId, nil) == false then
+		if isfunction(callback) and callback(self, interfaceData, ply, buttonId, nil, categoryButtonData) == false then
 			shouldUpdate = false
 		end
 	else
-		buttonId = buttonId - categoryCount
 		local buttonData = self.Buttons[buttonId]
 		if not istable(buttonData) then return end
 
 		if buttonData.Disabled then return end
 
-		if SELF.Base.OnPress(self, interfaceData, ply, buttonId, nil) then
+		if SELF.Base.OnPress(self, interfaceData, ply, buttonId) then
 			shouldUpdate = true
 		end
 
-		if isfunction(callback) and callback(self, interfaceData, ply, categoryId, buttonId) then
+		if isfunction(callback) and callback(self, interfaceData, ply, categoryId, buttonId - categoryCount, buttonData) then
 			shouldUpdate = true
 		end
 	end

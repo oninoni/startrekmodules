@@ -90,16 +90,16 @@ hook.Add("Star_Trek.Util.IsLifeForm", "CheckDefault", function(ent)
 	end
 end)
 
-function SELF:ActionButtonPressed(windowData, ply, buttonId)
-	local buttonName = windowData.Buttons[buttonId].Name
+function SELF:ActionButtonPressed(windowData, ply, buttonId, buttonData)
+	local buttonName = buttonData.Name
 	local sectionWindow = self.Windows[2]
 	local mapWindow = self.Windows[3]
 
 	local deck = sectionWindow.Selected
 	local sectionIds = {}
-	for _, buttonData in pairs(sectionWindow.Buttons) do
-		if buttonData.Selected then
-			table.insert(sectionIds, buttonData.Data)
+	for _, sectionButtonData in pairs(sectionWindow.Buttons) do
+		if sectionButtonData.Selected then
+			table.insert(sectionIds, sectionButtonData.Data)
 		end
 	end
 
@@ -277,8 +277,8 @@ function SELF:CreateActionWindow(pos, ang, width, flip, mode)
 		24,
 		width,
 		height,
-		function(windowData, interfaceData, ply, buttonId)
-			return self:ActionButtonPressed(windowData, ply, buttonId)
+		function(windowData, interfaceData, ply, buttonId, buttonData)
+			return self:ActionButtonPressed(windowData, ply, buttonId, buttonData)
 		end,
 		buttons,
 		"Actions",
@@ -335,11 +335,11 @@ function SELF:CreateMenuWindow(pos, ang, width, actionPos, actionAng, actionWidt
 		24,
 		width,
 		height,
-		function(windowData, interfaceData, ply, buttonId)
+		function(windowData, interfaceData, ply, buttonId, buttonData)
 			if buttonId > modeCount then
 				windowData:Close()
 			else
-				local buttonName = windowData.Buttons[buttonId].Name
+				local buttonName = buttonData.Name
 				windowData:SetSelected({
 					[buttonName] = true
 				})

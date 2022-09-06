@@ -117,16 +117,16 @@ function SELF:StartDiagnostics(ply, deck, sectionIds)
 	end
 end
 
-function SELF:ActionButtonPressed(windowData, ply, buttonId)
-	local buttonName = windowData.Buttons[buttonId].Name
+function SELF:ActionButtonPressed(windowData, ply, buttonId, buttonData)
+	local buttonName = buttonData.Name
 	local sectionWindow = self.Windows[2]
 	--local mapWindow = self.Windows[3]
 
 	local deck = sectionWindow.Selected
 	local sectionIds = {}
-	for _, buttonData in pairs(sectionWindow.Buttons) do
-		if buttonData.Selected then
-			table.insert(sectionIds, buttonData.Data)
+	for _, sectionButtonData in pairs(sectionWindow.Buttons) do
+		if sectionButtonData.Selected then
+			table.insert(sectionIds, sectionButtonData.Data)
 		end
 	end
 
