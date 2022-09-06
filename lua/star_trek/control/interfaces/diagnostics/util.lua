@@ -101,9 +101,7 @@ function SELF:StartDiagnostics(ply, deck, sectionIds)
 				if not isnumber(controlSectionId) then continue end
 				if istable(sectionIds) and not table.HasValue(sectionIds, controlSectionId) then continue end
 
-				print(controlDeck, controlSectionId)
-				local sectionName, error = Star_Trek.Sections:GetSectionName(controlDeck, controlSectionId)
-				print(sectionName, error)
+				local sectionName, _ = Star_Trek.Sections:GetSectionName(controlDeck, controlSectionId)
 
 				if sectionValue == Star_Trek.Control.INACTIVE then
 					Star_Trek.Logs:AddEntry(self.Ent, ply, realName .. " are deactivated on Deck " .. controlDeck .. " " .. sectionName .. ".")
