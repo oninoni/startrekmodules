@@ -122,7 +122,7 @@ function Star_Trek.Sensors:ScanEntity(ent)
 	end
 
 	-- Check for Scripted Entities
-	if ent:IsScripted() then
+	if ent:IsScripted() and not ent:IsWeapon() then
 		local name = ent.PrintName
 		if isstring(name) and name ~= "" then
 			scanData.Name = name
