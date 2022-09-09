@@ -64,7 +64,7 @@ function SELF:CheckLine(words, subLines)
 	end
 
 	if newLinePrev ~= newLine then
-		table.insert(words, lastWord)
+		table.insert(words, 1, lastWord)
 	end
 	table.insert(subLines, string.sub(newLinePrev, 1, #newLinePrev - 1))
 
