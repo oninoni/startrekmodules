@@ -199,7 +199,7 @@ timer.Create("Star_Trek.Transporter.BufferThink", 1, 0, function()
 			return
 		end
 
-		ent.BufferQuality = ent.BufferQuality - 10
+		ent.BufferQuality = ent.BufferQuality - 1
 
 		if ent.BufferQuality < 100 then
 			local maxHealth = ent:GetMaxHealth()
