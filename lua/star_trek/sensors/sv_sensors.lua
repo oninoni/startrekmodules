@@ -169,32 +169,20 @@ end)
 
 hook.Add("Star_Trek.Sensors.ScanPlayer", "Sensors.CheckWeapons", function(ent, scanData)
 	scanData.Weapons = {}
-	local blacklist = {"Physgun", "ToolGun", "GravityGun"}
+	local blacklist = {"Physics Gun", "#GMOD_ToolGun", "Gravity Gun"}
 	for _, weapon in pairs(ent:GetWeapons()) do
-		local skip = false
-		local name = weapon:GetPrintName()
-		if string.StartWith(name, "#HL2_") then name = name:sub(6) end
-		if string.StartWith(name, "#GMOD_") then name = name:sub(7) end
-
-		-- Check if weapon is in the blacklist
-		for _, value in ipairs(blacklist) do
-			if name == value then
-				skip = true
-				break
+		local success, wepScanData = Star_Trek.Sensors:ScanEntity(weapon)
+		if success then
+			-- Check if weapon is in the blacklist
+			local skip = false
+			for _, value in ipairs(blacklist) do
+				if wepScanData.Name == value then
+					skip = true
+					break
+				end
 			end
-		end
-		if skip then continue end
 
-		local curWeapon = scanData.Weapons[table.insert(scanData.Weapons, {})]
-		if weapon:IsScripted() and name == "Scripted Weapon" or name == "" then
-			curWeapon.Name = "Unknown Weapon"
-		else
-			curWeapon.Name = name
-		end
-		if weapon.HoloMatter then
-			curWeapon.Holomatter = true
-		else
-			curWeapon.Holomatter = false
+			if not skip then table.insert(scanData.Weapons, wepScanData) end
 		end
 	end
 end)
