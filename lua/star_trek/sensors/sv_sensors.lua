@@ -167,6 +167,38 @@ hook.Add("Star_Trek.Sensors.ScanPlayer", "Sensors.CheckArmor", function(ent, sca
 	end
 end)
 
+hook.Add("Star_Trek.Sensors.ScanPlayer", "Sensors.CheckWeapons", function(ent, scanData)
+	scanData.Weapons = {}
+	local blacklist = {"Physgun", "ToolGun", "GravityGun"}
+	for _, weapon in pairs(ent:GetWeapons()) do
+		local skip = false
+		local name = weapon:GetPrintName()
+		if string.StartWith(name, "#HL2_") then name = name:sub(6) end
+		if string.StartWith(name, "#GMOD_") then name = name:sub(7) end
+
+		-- Check if weapon is in the blacklist
+		for _, value in ipairs(blacklist) do
+			if name == value then
+				skip = true
+				break
+			end
+		end
+		if skip then continue end
+
+		local curWeapon = scanData.Weapons[table.insert(scanData.Weapons, {})]
+		if weapon:IsScripted() and name == "Scripted Weapon" or name == "" then
+			curWeapon.Name = "Unknown Weapon"
+		else
+			curWeapon.Name = name
+		end
+		if weapon.HoloMatter then
+			curWeapon.Holomatter = true
+		else
+			curWeapon.Holomatter = false
+		end
+	end
+end)
+
 -- Record Entity Physics Object.
 hook.Add("Star_Trek.Sensors.ScanEntity", "Sensors.CheckMass", function(ent, scanData)
 	local physCount = ent:GetPhysicsObjectCount()
