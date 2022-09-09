@@ -41,7 +41,7 @@ function SELF:SetButtons(buttons, buttonHeight)
 
 	local containsRandomNumber = false
 	local lastI = 0
-	for i, button in pairs(buttons) do
+	for i, button in SortedPairs(buttons) do
 		if not istable(button) then continue end
 
 		if isnumber(button.RandomNumber) then
