@@ -43,6 +43,10 @@ function Star_Trek.Sensors:ScanInternal(deck, sectionIds, scanLife, scanObjects,
 
 	local objects = Star_Trek.Sections:GetInSections(deck, sectionIds, function(object)
 		local ent = object.Entity
+
+		local removeEntity = hook.Run("Star_Trek.Sensors.FilterEntity", ent)
+		if removeEntity then return true end
+
 		local success, scanData = Star_Trek.Sensors:ScanEntity(ent)
 		if not success then return true end
 

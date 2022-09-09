@@ -16,6 +16,13 @@
 --          Button | Server          --
 ---------------------------------------
 
+-- Hides Custom Buttons from internal scanners.
+hook.Add("Star_Trek.Sensors.FilterEntity", "Star_Trek.Button.FilterButtons", function(ent)
+	if ent.StarTrekButton then
+		return true
+	end
+end)
+
 -- Creates a button with a given callback.
 --
 -- @param Vector pos
