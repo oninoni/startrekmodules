@@ -29,7 +29,7 @@ function Star_Trek.Transporter:GetExternalMarkers(interface, skipNetworked)
 	-- Tool Placed Externals
 	for id, externalData in pairs(self.Externals) do
 		local name = "Transporter Location " .. id
-		if isstring(externalData.Name) then
+		if isstring(externalData.Name) and externalData.Name ~= "" then
 			name = externalData.Name
 		end
 

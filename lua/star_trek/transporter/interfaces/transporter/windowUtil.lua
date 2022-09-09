@@ -50,6 +50,7 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip)
 
 		table.insert(buttons, button)
 	end
+	local realN = n
 
 	if self.AdvancedMode then
 		local utilButtonData = {}
@@ -92,7 +93,7 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip)
 		width,
 		height,
 		function(windowData, interfaceData, ply, buttonId, buttonData)
-			if buttonId >= n then -- Custom Buttons
+			if buttonId > realN then -- Custom Buttons
 				if buttonData.Name == "Wide Beam" or buttonData.Name == "Narrow Beam" then
 					buttonData.SelectedCustom = not (buttonData.SelectedCustom or false)
 					if buttonData.SelectedCustom then
