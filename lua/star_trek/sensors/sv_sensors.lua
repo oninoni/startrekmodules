@@ -122,7 +122,7 @@ function Star_Trek.Sensors:ScanEntity(ent)
 	end
 
 	-- Check for Scripted Entities
-	if ent:IsScripted() then
+	if ent:IsScripted() and not ent:IsWeapon() then
 		local name = ent.PrintName
 		if isstring(name) and name ~= "" then
 			scanData.Name = name
@@ -164,6 +164,26 @@ hook.Add("Star_Trek.Sensors.ScanPlayer", "Sensors.CheckArmor", function(ent, sca
 	if maxArmor > 0 or armor > 0 then
 		local percentage = (armor or 0) / (maxArmor or 1)
 		scanData.Armor = math.Round(percentage * 100, 0)
+	end
+end)
+
+hook.Add("Star_Trek.Sensors.ScanPlayer", "Sensors.CheckWeapons", function(ent, scanData)
+	scanData.Weapons = {}
+	local blacklist = {"Physics Gun", "#GMOD_ToolGun", "Gravity Gun"}
+	for _, weapon in pairs(ent:GetWeapons()) do
+		local success, wepScanData = Star_Trek.Sensors:ScanEntity(weapon)
+		if success then
+			-- Check if weapon is in the blacklist
+			local skip = false
+			for _, value in ipairs(blacklist) do
+				if wepScanData.Name == value then
+					skip = true
+					break
+				end
+			end
+
+			if not skip then table.insert(scanData.Weapons, wepScanData) end
+		end
 	end
 end)
 
