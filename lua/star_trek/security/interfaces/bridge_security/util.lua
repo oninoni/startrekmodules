@@ -152,15 +152,15 @@ function SELF:ActionButtonPressed(windowData, ply, buttonId, buttonData)
 			if istable(scanData.Weapons) then
 				Star_Trek.Logs:AddEntry(self.Ent, ply, scanData.Name .. "'s equipment: ")
 
-				local finalStringNormal = ""
+				local finalString = ""
 				for i, weapon in ipairs(scanData.Weapons) do
 					if i == #scanData.Weapons then
-						finalStringNormal = finalStringNormal .. weapon.Name
+						finalString = finalString .. weapon.Name
 					else
-						finalStringNormal = finalStringNormal .. weapon.Name .. ", "
+						finalString = finalString .. weapon.Name .. ", "
 					end
 				end
-				Star_Trek.Logs:AddEntry(self.Ent, ply, finalStringNormal)
+				Star_Trek.Logs:AddEntry(self.Ent, ply, finalString)
 				Star_Trek.Logs:AddEntry(self.Ent, ply, "")
 			end
 		end
