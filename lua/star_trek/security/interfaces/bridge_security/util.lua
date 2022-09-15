@@ -161,6 +161,7 @@ function SELF:ActionButtonPressed(windowData, ply, buttonId, buttonData)
 					end
 				end
 				Star_Trek.Logs:AddEntry(self.Ent, ply, finalStringNormal)
+				Star_Trek.Logs:AddEntry(self.Ent, ply, "")
 			end
 		end
 
