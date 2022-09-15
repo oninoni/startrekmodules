@@ -147,6 +147,21 @@ function SELF:ActionButtonPressed(windowData, ply, buttonId, buttonData)
 		for _, object in pairs(objects) do
 			local scanData = object.ScanData
 			Star_Trek.Logs:AddEntry(self.Ent, ply, scanData.Name .. " found in " .. object.SectionName)
+
+			-- Print all the weapons the player has equiped in the log
+			if istable(scanData.Weapons) then
+				Star_Trek.Logs:AddEntry(self.Ent, ply, scanData.Name .. "'s equipment: ")
+
+				local finalStringNormal = ""
+				for i, weapon in ipairs(scanData.Weapons) do
+					if i == #scanData.Weapons then
+						finalStringNormal = finalStringNormal .. weapon.Name
+					else
+						finalStringNormal = finalStringNormal .. weapon.Name .. ", "
+					end
+				end
+				Star_Trek.Logs:AddEntry(self.Ent, ply, finalStringNormal)
+			end
 		end
 
 		Star_Trek.Logs:AddEntry(self.Ent, ply, "Total Count: " .. table.Count(objects))
