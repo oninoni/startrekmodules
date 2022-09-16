@@ -141,6 +141,10 @@ function Star_Trek.Sensors:ScanEntity(ent)
 
 	hook.Run("Star_Trek.Sensors.ScanEntity", ent, scanData)
 
+	if isstring(ent.OverrideName) and ent.OverrideName ~= "" then
+		scanData.Name = ent.OverrideName
+	end
+
 	-- Set name placeholders when no name is registered
 	if not isstring(scanData.Name) then
 		if scanData.Alive then
