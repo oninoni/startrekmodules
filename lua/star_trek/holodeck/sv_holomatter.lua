@@ -100,9 +100,15 @@ hook.Add("OnEntityCreated", "Star_Trek.Holodeck.DetectHolomatter", function(ent)
 
 		local pos = ent:GetPos()
 		if Star_Trek.Holodeck:IsInHolodeckProgramm(pos) then
-			ent.HoloMatter = true
-
-			Star_Trek.Holodeck:Disintegrate(ent, true)
+			if ent:IsWeapon() then
+				local ply = ent:GetOwner()
+				if isnumber(ply.TimeRespawn) and (CurTime() - ply.TimeRespawn >= 0.15) then
+					ent.HoloMatter = true
+				end
+			else
+				ent.HoloMatter = true
+				Star_Trek.Holodeck:Disintegrate(ent, true)
+			end
 		end
 	end)
 end)
@@ -193,4 +199,14 @@ hook.Add("PreUndo", "Star_Trek.Holodeck.PreUndo", function(undoTable)
 	if table.Count(undoEntites) == 0 then
 		table.insert(undoEntites, ents.Create("prop_dynamic"))
 	end
+end)
+
+hook.Add("PlayerSpawn", "Star_Trek.Holodeck.PostPlayerSpawn", function(ply)
+	if Star_Trek.Holodeck:IsInHolodeckProgramm(ply.LastPos) then
+		ply.TimeRespawn = CurTime()
+	end
+end)
+
+hook.Add("PlayerDeath", "Star_Trek.Holodeck.PostPlayerDeath", function(ply)
+	ply.LastPos = ply:GetPos()
 end)
