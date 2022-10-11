@@ -93,6 +93,11 @@ hook.Add("OnEntityCreated", "Star_Trek.Holodeck.DetectHolomatter", function(ent)
 		if not IsValid(ent) then return end
 		if ent:MapCreationID() ~= -1 then return end
 
+		local owner = ent:GetOwner()
+		if IsValid(owner) then
+			return
+		end
+
 		local phys = ent:GetPhysicsObject()
 		if not IsValid(phys) and not ent:IsWeapon() then
 			return
