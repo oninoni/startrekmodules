@@ -58,7 +58,7 @@ function SELF:UpdateContent()
 	self:AddLine("Stardate Started: " .. startTime, Star_Trek.LCARS.ColorLightBlue)
 
 	if Star_Trek.Logs.ShowUTCTime then
-		self:AddLine("(" .. os.date("!%B %d %Y - %H:%M:%S UTC", sessionData.SessionStarted) .. ")", Star_Trek.LCARS.ColorLightBlue, TEXT_ALIGN_RIGHT)
+		self:AddLine(Star_Trek.Util:GetTime(sessionData.SessionStarted) .. " UTC", Star_Trek.LCARS.ColorLightBlue, TEXT_ALIGN_RIGHT)
 	end
 
 	if isnumber(sessionData.SessionArchived) then
@@ -66,7 +66,7 @@ function SELF:UpdateContent()
 		self:AddLine("Stardate Archived: " .. archiveTime, Star_Trek.LCARS.ColorLightBlue)
 
 		if Star_Trek.Logs.ShowUTCTime then
-			self:AddLine("(" .. os.date("!%B %d %Y - %H:%M:%S UTC", sessionData.SessionArchived) .. ")", Star_Trek.LCARS.ColorLightBlue, TEXT_ALIGN_RIGHT)
+			self:AddLine(Star_Trek.Util:GetTime(sessionData.SessionArchived) .. " UTC", Star_Trek.LCARS.ColorLightBlue, TEXT_ALIGN_RIGHT)
 		end
 	end
 

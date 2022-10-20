@@ -39,6 +39,24 @@ local MONTHTABLE = {
 	334,
 }
 
+function Star_Trek.Util:GetDate(unixTime)
+	local dateTable = os.date("*t", unixTime)
+
+	local y = dateTable.year + START_YEAR_RP - START_YEAR_REAL
+
+	local date = os.date("!%B %d", unixTime)
+
+	return date .. " " .. tostring(y)
+end
+
+function Star_Trek.Util:GetTime(unixTime)
+	local date = self:GetDate(unixTime)
+
+	local time = os.date("%H:%M:%S", unixTime)
+
+	return date .. " - " .. time
+end
+
 function Star_Trek.Util:GetStardate(unixTime)
 	local dateTable = os.date("*t", unixTime)
 
