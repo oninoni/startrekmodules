@@ -178,7 +178,7 @@ function SELF:ApplyListWindowCategories(categories, page, disableAll)
 			if istable(firstButtonData) then
 				local t = math.Round(Star_Trek.Util:GetStardate(firstButtonData.SessionStarted), 2)
 				if Star_Trek.Logs.ShowUTCTime then
-					t = os.date("!%B %d %Y", firstButtonData.SessionStarted)
+					t = Star_Trek.Util:GetDate(firstButtonData.SessionStarted)
 				end
 
 				newestLogTimeCategory.Name = t
@@ -191,7 +191,7 @@ function SELF:ApplyListWindowCategories(categories, page, disableAll)
 			if istable(lastButtonData) then
 				local t = math.Round(Star_Trek.Util:GetStardate(lastButtonData.SessionStarted), 2)
 				if Star_Trek.Logs.ShowUTCTime then
-					t = os.date("!%B %d %Y", lastButtonData.SessionStarted)
+					t = Star_Trek.Util:GetDate(lastButtonData.SessionStarted)
 				end
 
 				oldestLogTimeCategory.Name = t
