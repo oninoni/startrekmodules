@@ -8,6 +8,7 @@ Additional Modules:
 - https://github.com/oninoni/startrekmodules_transporter
 - https://github.com/oninoni/startrekmodules_turbolift
 - https://github.com/oninoni/startrekmodules_world
+- https://github.com/oninoni/startrekmodules_engineering
 
 Trello Board:
 - https://trello.com/b/OXe7kwID/star-trek-modules
