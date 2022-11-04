@@ -86,7 +86,7 @@ hook.Add("Star_Trek.ChangedKeyValue", "Star_Trek.LCARS.BasicInterface", function
 		if istable(keyValues) then
 			local interfaceData = Star_Trek.LCARS.ActiveInterfaces[ent]
 			if istable(interfaceData) then
-				interfaceData.Windows[1]:SetButtons(interfaceData:GenerateButtons(ent.LCARSKeyData))
+				interfaceData.Windows[1]:SetButtons(interfaceData:GenerateButtons(ent))
 				interfaceData:UpdateWindow(1)
 			end
 		end

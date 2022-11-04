@@ -20,7 +20,9 @@ if not istable(INTERFACE) then Star_Trek:LoadAllModules() return end
 local SELF = INTERFACE
 
 -- Generate the buttons for a general purpose menu.
-function SELF:GenerateButtons(keyValues)
+function SELF:GenerateButtons(ent)
+	local keyValues = ent.LCARSKeyData
+
 	local buttons = {}
 
 	for key, value in pairs(keyValues) do
@@ -45,6 +47,8 @@ function SELF:GenerateButtons(keyValues)
 			Color = Star_Trek.LCARS.Colors[colorName]
 		}
 	end
+
+	hook.Run("Star_Trek.LCARS.BasicButtonOverride", ent, buttons)
 
 	return buttons
 end
@@ -77,11 +81,12 @@ end
 
 function SELF:GetButtonData(ent)
 	local keyValues = ent.LCARSKeyData
+
 	if not istable(keyValues) then
 		return false, "Invalid Key Values on OpenMenu"
 	end
 
-	local buttons = self:GenerateButtons(keyValues)
+	local buttons = self:GenerateButtons(ent)
 	local scale, width, height, title, titleShort, flip = self:GetKeyValues(keyValues, buttons)
 
 	return true, buttons, scale, width, height, title, titleShort, flip
