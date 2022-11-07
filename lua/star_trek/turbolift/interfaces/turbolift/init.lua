@@ -53,7 +53,8 @@ function SELF:Open(ent)
 			end
 
 			if ent.IsTurbolift then
-				if Star_Trek.Turbolift:StartLift(ply, ent, buttonId) then
+				local button = windowData.Buttons[buttonId]
+				if Star_Trek.Turbolift:StartLift(ply, ent, button.Data) then
 					ent:EmitSound("star_trek.lcars_close")
 					Star_Trek.LCARS:CloseInterface(ent)
 				else

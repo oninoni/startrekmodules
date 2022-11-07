@@ -45,6 +45,7 @@ function SELF:GenerateButtons(ent, name)
 		local button = {
 			Name = turboliftData.Name,
 			Disabled = turboliftData.Name == name,
+			Data = i,
 		}
 
 		buttons[#buttons + 1] = button
