@@ -211,3 +211,10 @@ hook.Add("Star_Trek.Sensors.ScanEntity", "Sensors.CheckMass", function(ent, scan
 		end
 	end
 end)
+
+hook.Add("Star_Trek.Sensors.ScanScriptedEntity", "Sensors.CheckVFire", function(ent, scanData)
+	local className = ent:GetClass()
+	if string.StartWith(className, "vfire") then
+		scanData.Name = "Fire"
+	end
+end)
