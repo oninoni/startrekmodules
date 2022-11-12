@@ -141,6 +141,24 @@ function SELF:ActionButtonPressed(windowData, ply, buttonId, buttonData)
 			return
 		end
 
+		-- Check for Fires
+		local fireLocations = {}
+		local toBeRemoved = {}
+		for _, object in pairs(objects) do
+			local scanData = object.ScanData
+
+			if scanData.IsFire then
+				fireLocations[object.SectionName] = true
+				table.insert(toBeRemoved, object)
+				continue
+			end
+		end
+
+		-- Remove fire objects, to avoid spam on the mapWindow
+		for _, ent in ipairs(toBeRemoved) do
+			table.RemoveByValue(objects, ent)
+		end
+
 		mapWindow:SetObjects(objects)
 		mapWindow:Update()
 
@@ -163,6 +181,14 @@ function SELF:ActionButtonPressed(windowData, ply, buttonId, buttonData)
 				Star_Trek.Logs:AddEntry(self.Ent, ply, finalString)
 				Star_Trek.Logs:AddEntry(self.Ent, ply, "")
 			end
+		end
+
+		-- Report the fires and where they are
+		if not table.IsEmpty(fireLocations) then
+			for location, _ in pairs(fireLocations) do
+				Star_Trek.Logs:AddEntry(self.Ent, ply, "WARNING: Fire detected in " .. location, Star_Trek.LCARS.ColorRed)
+			end
+			self.Ent:EmitSound("star_trek.lcars_alert14")
 		end
 
 		Star_Trek.Logs:AddEntry(self.Ent, ply, "Total Count: " .. table.Count(objects))
