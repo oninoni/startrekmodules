@@ -266,3 +266,10 @@ function Star_Trek.Transporter:GetPatterns(patternObjects, isTarget, wideField)
 
 	return unWrappedPatterns
 end
+
+hook.Add("Star_Trek.Transporter.OverrideCanBeam", "Star_Trek.VFire.OverrideCanBeam", function(ent)
+	local className = ent:GetClass()
+	if string.StartWith(className, "vfire") then
+		return false
+	end
+end)
