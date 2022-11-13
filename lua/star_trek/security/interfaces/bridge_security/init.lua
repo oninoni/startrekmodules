@@ -25,13 +25,13 @@ SELF.BaseInterface = "base"
 
 SELF.LogType = "Security Console"
 
-function SELF:OpenInternal(menuPos, menuAng, menuWidth, actionPos, actionAng, actionWidth, actionFlip, mapPos, mapAng, mapWidth, mapHeight, sectionPos, sectionAng, sectionWidth, sectionHeight, textPos, textAng, textScale, textWidth, textHeight)
+function SELF:OpenInternal(menuPos, menuAng, menuWidth, actionPos, actionAng, actionWidth, actionFlip, mapPos, mapAng, mapScale, mapWidth, mapHeight, sectionPos, sectionAng, sectionWidth, sectionHeight, textPos, textAng, textScale, textWidth, textHeight)
 	local success2, menuWindow, actionWindow = self:CreateMenuWindow(menuPos, menuAng, menuWidth, actionPos, actionAng, actionWidth, actionFlip)
 	if not success2 then
 		return false, menuWindow
 	end
 
-	local success3, mapWindow = self:CreateMapWindow(mapPos, mapAng, mapWidth, mapHeight, 1)
+	local success3, mapWindow = self:CreateMapWindow(mapPos, mapAng, mapScale, mapWidth, mapHeight, 1)
 	if not success3 then
 		return false, mapWindow
 	end
@@ -96,8 +96,9 @@ function SELF:Open(ent)
 		true,
 		Vector(12.5, -2, -2),
 		Angle(0, 0, 0),
-		1100,
-		680,
+		30,
+		1600,
+		1000,
 		Vector(-28, -5, -2),
 		Angle(0, 0, 0),
 		500,

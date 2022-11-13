@@ -141,9 +141,7 @@ function SELF:ActionButtonPressed(windowData, ply, buttonId, buttonData)
 			return
 		end
 
-		mapWindow:SetObjects(objects)
-		mapWindow:Update()
-
+		local mapObjects = {}
 		for _, object in pairs(objects) do
 			local scanData = object.ScanData
 			Star_Trek.Logs:AddEntry(self.Ent, ply, scanData.Name .. " found in " .. object.SectionName)
@@ -163,7 +161,26 @@ function SELF:ActionButtonPressed(windowData, ply, buttonId, buttonData)
 				Star_Trek.Logs:AddEntry(self.Ent, ply, finalString)
 				Star_Trek.Logs:AddEntry(self.Ent, ply, "")
 			end
+
+			local ent = object.Entity
+			if IsValid(ent) then
+				local mapObject = {Pos = ent:GetPos()}
+
+				if scanData.Alive then
+					mapObject.Color = Color(0, 255, 127)
+					mapObject.Big = true
+				else
+					mapObject.HideCross = true
+				end
+
+				hook.Run("Star_Trek.Security.CustomMapObject", scanData, ent, mapObject)
+
+				table.insert(mapObjects, mapObject)
+			end
 		end
+
+		mapWindow:SetObjects(mapObjects)
+		mapWindow:Update()
 
 		Star_Trek.Logs:AddEntry(self.Ent, ply, "Total Count: " .. table.Count(objects))
 
@@ -195,7 +212,7 @@ function SELF:ActionButtonPressed(windowData, ply, buttonId, buttonData)
 				local ent = object.Entity
 				local sectionName = Star_Trek.Sections:GetSectionName(ent.Deck, ent.SectionId)
 
-				table.insert(objects, ent)
+				table.insert(objects, {Pos = ent:GetPos(), Color = Star_Trek.LCARS.ColorGrey})
 
 				if buttonName == "Lock Doors" then
 					ent:Fire("AddOutput", "lcars_locked 1")
@@ -226,7 +243,7 @@ function SELF:ActionButtonPressed(windowData, ply, buttonId, buttonData)
 					local sectionName = Star_Trek.Sections:GetSectionName(posData.Deck, posData.SectionId)
 					Star_Trek.Logs:AddEntry(self.Ent, ply, "Force Field in " .. sectionName .. " has been enabled.")
 
-					table.insert(objects, {Pos = posData.Pos})
+					table.insert(objects, {Pos = posData.Pos, Color = Star_Trek.LCARS.ColorLightBlue})
 				end
 
 				Star_Trek.Logs:AddEntry(self.Ent, ply, "Total: " .. table.Count(forceFieldPositions) .. " forcefields enabled.")
@@ -240,7 +257,7 @@ function SELF:ActionButtonPressed(windowData, ply, buttonId, buttonData)
 					local sectionName = Star_Trek.Sections:GetSectionName(posData.Deck, posData.SectionId)
 					Star_Trek.Logs:AddEntry(self.Ent, ply, "Force Field in " .. sectionName .. " has been disabled.")
 
-					table.insert(objects, {Pos = posData.Pos})
+					table.insert(objects, {Pos = posData.Pos, Color = Star_Trek.LCARS.ColorLightBlue})
 				end
 
 				Star_Trek.Logs:AddEntry(self.Ent, ply, "Total: " .. table.Count(forceFieldPositions) .. " forcefields disabled.")
@@ -383,8 +400,8 @@ function SELF:CreateMenuWindow(pos, ang, width, actionPos, actionAng, actionWidt
 end
 
 -- Generates the map view.
-function SELF:CreateMapWindow(pos, ang, width, height, deck)
-	local success, mapWindow = Star_Trek.LCARS:CreateWindow("section_map", pos, ang, nil, width, height, function(windowData, interfaceData, ply, buttonId)
+function SELF:CreateMapWindow(pos, ang, scale, width, height, deck)
+	local success, mapWindow = Star_Trek.LCARS:CreateWindow("section_map", pos, ang, scale, width, height, function(windowData, interfaceData, ply, buttonId)
 		-- No Interactivity here yet.
 	end, deck)
 	if not success then
