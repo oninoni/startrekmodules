@@ -46,7 +46,9 @@ function Star_Trek.LCARS:LoadWindowData(id, windowData, pos, ang)
 	}
 
 	local rtName = "LCARS_W_" .. window.Id .. "_" .. window.WWidth .. "_" .. window.WHeight
-	window.RT = GetRenderTarget(rtName, window.WWidth, window.WHeight)
+	window.RT = GetRenderTargetEx(rtName, window.WWidth, window.WHeight,
+	RT_SIZE_DEFAULT, MATERIAL_RT_DEPTH_SHARED, 1, 0, IMAGE_FORMAT_DEFAULT)
+
 	window.RTMaterial = CreateMaterial(rtName, "UnlitGeneric", {
 		["$basetexture"] = window.RT:GetName(),
 		["$translucent"] = 1,

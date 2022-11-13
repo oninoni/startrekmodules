@@ -59,7 +59,9 @@ function SELF:GenerateTexture()
 	self.Height = self:FilterSize(height * self.Variants)
 
 	self.Name = "LCARS_E_" .. self.Id .. "_" .. self.Width .. "_" .. self.Height
-	self.Texture = GetRenderTarget(self.Name, self.Width, self.Height)
+	self.Texture = GetRenderTargetEx(self.Name, self.Width, self.Height,
+	RT_SIZE_DEFAULT, MATERIAL_RT_DEPTH_SHARED, 1, 0, IMAGE_FORMAT_DEFAULT)
+
 	self.Material = CreateMaterial(self.Name, "UnlitGeneric", {
 		["$basetexture"] = self.Texture:GetName(),
 		["$translucent"] = 1,
