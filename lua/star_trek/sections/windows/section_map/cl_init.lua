@@ -47,6 +47,27 @@ function SELF:OnCreate(windowData)
 	return self
 end
 
+function SELF:DrawObject(timeOffset, alpha, pos, color, cross, big)
+	local x = math.floor(pos[1] * self.MapScale + self.Area1X + self.Area1Width  / 2)
+	local y = math.floor(pos[2] * self.MapScale + self.Area1Y + self.Area1Height / 2)
+
+	if timeOffset < MARK_TIME and cross then
+		local markAlpha = math.max(0, math.min(1, MARK_TIME - timeOffset)) * alpha
+
+		draw.RoundedBox(0, self.Area1X, y - 1, self.Area1Width, 2, ColorAlpha(Star_Trek.LCARS.ColorLightBlue, markAlpha))
+		draw.RoundedBox(0, x - 1, self.Area1Y, 2, self.Area1Height, ColorAlpha(Star_Trek.LCARS.ColorLightBlue, markAlpha))
+	end
+
+	local objectAlpha = math.max(0, math.min(1, MAP_TIME - timeOffset)) * alpha
+	if big then
+		draw.RoundedBox(12, x - 12, y - 12, 24, 24, ColorAlpha(color, objectAlpha))
+		draw.RoundedBox(8, x - 8, y - 8, 16, 16, ColorAlpha(Star_Trek.LCARS.ColorOrange, objectAlpha))
+		draw.RoundedBox(6, x - 6, y - 6, 12, 12, ColorAlpha(color, objectAlpha))
+	else
+		draw.RoundedBox(8, x - 8, y - 8, 16, 16, ColorAlpha(color, objectAlpha))
+	end
+end
+
 function SELF:OnDraw(pos, animPos)
 	local alpha = 255 * animPos
 	surface.SetDrawColor(255, 255, 255, alpha)
@@ -62,23 +83,12 @@ function SELF:OnDraw(pos, animPos)
 			end
 
 			local oPos = object.Pos
-			local x = math.floor(oPos[1] * self.MapScale + self.Area1X + self.Area1Width  / 2)
-			local y = math.floor(oPos[2] * self.MapScale + self.Area1Y + self.Area1Height / 2)
-
-			if timeOffset < MARK_TIME and not object.HideCross then
-				local markAlpha = math.max(0, math.min(1, MARK_TIME - timeOffset)) * alpha
-
-				draw.RoundedBox(0, self.Area1X, y - 1, self.Area1Width, 2, ColorAlpha(Star_Trek.LCARS.ColorLightBlue, markAlpha))
-				draw.RoundedBox(0, x - 1, self.Area1Y, 2, self.Area1Height, ColorAlpha(Star_Trek.LCARS.ColorLightBlue, markAlpha))
-			end
-
-			local objectAlpha = math.max(0, math.min(1, MAP_TIME - timeOffset)) * alpha
-			if object.Big then
-				draw.RoundedBox(12, x - 12, y - 12, 24, 24, ColorAlpha(object.Color, objectAlpha))
-				draw.RoundedBox(8, x - 8, y - 8, 16, 16, ColorAlpha(Star_Trek.LCARS.ColorOrange, objectAlpha))
-				draw.RoundedBox(6, x - 6, y - 6, 12, 12, ColorAlpha(object.Color, objectAlpha))
+			if isvector(oPos) then
+				self:DrawObject(timeOffset, alpha, oPos, object.Color, not object.HideCross, object.Big)
 			else
-				draw.RoundedBox(8, x - 8, y - 8, 16, 16, ColorAlpha(object.Color, objectAlpha))
+				for _, groupPos in pairs(object.Group or {}) do
+					self:DrawObject(timeOffset, alpha, groupPos, object.Color, not object.HideCross, object.Big)
+				end
 			end
 
 		end

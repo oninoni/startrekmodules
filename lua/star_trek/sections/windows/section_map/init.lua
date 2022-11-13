@@ -84,6 +84,18 @@ function SELF:SetObjects(objects)
 				table.insert(self.Objects, objectTable)
 				continue
 			end
+			if istable(object.Group) then
+				local objectTable = table.Copy(object)
+				for i = 1, #objectTable.Group do
+					objectTable.Group[i] = objectTable.Group[i] - Star_Trek.Sections.GlobalOffset
+					objectTable.Group[i][2] = -objectTable.Group[i][2]
+				end
+
+				objectTable.Color = objectTable.Color or Star_Trek.LCARS.ColorBlue
+
+				table.insert(self.Objects, objectTable)
+				continue
+			end
 
 			if IsEntity(object.Entity) then
 				object = object.Entity

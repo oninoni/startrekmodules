@@ -69,5 +69,29 @@ function Star_Trek.Sensors:ScanInternal(deck, sectionIds, scanLife, scanObjects,
 		if not scanObjects then return true end
 	end, false, scanWeapons)
 
-	return true, objects
+	local objectsGrouped = {}
+	for _, object in pairs(objects) do
+		local scanData = object.ScanData
+		local groupName = scanData.GroupName
+		if isstring(groupName) then
+			local groupObject = objectsGrouped[groupName .. "_" .. object.SectionName] or {
+				Deck = object.Deck,
+				SectionId = object.SectionId,
+				SectionName = object.SectionName,
+
+				ScanData = scanData,
+				Entities = {},
+
+				GroupObject = true,
+			}
+
+			table.insert(groupObject.Entities, object.Entity)
+
+			objectsGrouped[groupName .. "_" .. object.SectionName] = groupObject
+		else
+			table.insert(objectsGrouped, object)
+		end
+	end
+
+	return true, objectsGrouped
 end

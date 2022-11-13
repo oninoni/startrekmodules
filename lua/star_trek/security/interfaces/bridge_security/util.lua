@@ -144,45 +144,53 @@ function SELF:ActionButtonPressed(windowData, ply, buttonId, buttonData)
 		local mapObjects = {}
 		for _, object in pairs(objects) do
 			local scanData = object.ScanData
-			Star_Trek.Logs:AddEntry(self.Ent, ply, scanData.Name .. " found in " .. object.SectionName)
 
-			-- Print all the weapons the player has equiped in the log
-			if istable(scanData.Weapons) then
-				Star_Trek.Logs:AddEntry(self.Ent, ply, scanData.Name .. "'s equipment: ")
+			local overrideEntry = hook.Run("Star_Trek.Security.OverrideScanEntry", self, ply, object, scanData)
+			if not overrideEntry then
+				Star_Trek.Logs:AddEntry(self.Ent, ply, scanData.Name .. " found in " .. object.SectionName)
 
-				local finalString = ""
-				for i, weapon in ipairs(scanData.Weapons) do
-					if i == #scanData.Weapons then
-						finalString = finalString .. weapon.Name
-					else
-						finalString = finalString .. weapon.Name .. ", "
+				-- Print all the weapons the player has equiped in the log
+				if istable(scanData.Weapons) then
+					Star_Trek.Logs:AddEntry(self.Ent, ply, scanData.Name .. "'s equipment: ")
+
+					local finalString = ""
+					for i, weapon in ipairs(scanData.Weapons) do
+						if i == #scanData.Weapons then
+							finalString = finalString .. weapon.Name
+						else
+							finalString = finalString .. weapon.Name .. ", "
+						end
 					end
+					Star_Trek.Logs:AddEntry(self.Ent, ply, finalString)
+					Star_Trek.Logs:AddEntry(self.Ent, ply, "")
 				end
-				Star_Trek.Logs:AddEntry(self.Ent, ply, finalString)
-				Star_Trek.Logs:AddEntry(self.Ent, ply, "")
 			end
 
+			local mapObject = {}
 			local ent = object.Entity
 			if IsValid(ent) then
-				local mapObject = {Pos = ent:GetPos()}
-
-				if scanData.Alive then
-					mapObject.Color = Color(0, 255, 127)
-					mapObject.Big = true
-				else
-					mapObject.HideCross = true
+				mapObject.Pos = ent:GetPos()
+			elseif object.GroupObject then
+				mapObject.Group = {}
+				for _, groupEnt in pairs(object.Entities) do
+					table.insert(mapObject.Group, groupEnt:GetPos())
 				end
-
-				hook.Run("Star_Trek.Security.CustomMapObject", scanData, ent, mapObject)
-
-				table.insert(mapObjects, mapObject)
 			end
+
+			if scanData.Alive then
+				mapObject.Color = Color(0, 255, 127)
+				mapObject.Big = true
+			else
+				mapObject.HideCross = true
+			end
+
+			hook.Run("Star_Trek.Security.CustomMapObject", scanData, mapObject)
+
+			table.insert(mapObjects, mapObject)
 		end
 
 		mapWindow:SetObjects(mapObjects)
 		mapWindow:Update()
-
-		Star_Trek.Logs:AddEntry(self.Ent, ply, "Total Count: " .. table.Count(objects))
 
 		return true
 	elseif windowData.Mode == MODE_BLOCK then
