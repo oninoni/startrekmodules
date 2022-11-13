@@ -58,7 +58,7 @@ function SELF:GenerateTexture()
 	self.Width = self:FilterSize(width)
 	self.Height = self:FilterSize(height * self.Variants)
 
-	self.Name = "LCARS_" .. self.Id .. "_" .. self.Width .. "_" .. self.Height
+	self.Name = "LCARS_E_" .. self.Id .. "_" .. self.Width .. "_" .. self.Height
 	self.Texture = GetRenderTarget(self.Name, self.Width, self.Height)
 	self.Material = CreateMaterial(self.Name, "UnlitGeneric", {
 		["$basetexture"] = self.Texture:GetName(),

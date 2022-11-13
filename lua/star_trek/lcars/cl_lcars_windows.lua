@@ -45,6 +45,14 @@ function Star_Trek.LCARS:LoadWindowData(id, windowData, pos, ang)
 		HD2 = windowData.WHeight / 2,
 	}
 
+	local rtName = "LCARS_W_" .. window.Id .. "_" .. window.WWidth .. "_" .. window.WHeight
+	window.RT = GetRenderTarget(rtName, window.WWidth, window.WHeight)
+	window.RTMaterial = CreateMaterial(rtName, "UnlitGeneric", {
+		["$basetexture"] = window.RT:GetName(),
+		["$translucent"] = 1,
+		["$vertexalpha"] = 1
+	})
+
 	window.WPosG, window.WAngG = LocalToWorld(window.WPos, window.WAng, pos, ang)
 
 	local windowFunctions = self.Windows[windowData.WType]
@@ -67,6 +75,32 @@ end
 --       Drawing      --
 ------------------------
 
+function Star_Trek.LCARS:RTDrawWindow(window, animPos)
+	if not window.WVis then
+		return
+	end
+
+	local width = window.WWidth
+	local height = window.WHeight
+	local pos = Star_Trek.LCARS:Get3D2DMousePos(window)
+	if pos[1] > 0 and pos[1] < width
+	and pos[2] > 0 and pos[2] < height then
+		window.LastPos = pos
+		window.MouseActive = true
+	else
+		window.MouseActive = false
+	end
+
+	local mousePos = window.LastPos
+
+	render.PushRenderTarget(window.RT)
+	cam.Start2D()
+		render.Clear(0, 0, 0, 255, true, true)
+		window:OnDraw(mousePos or Vector(-width / 2, -height / 2), animPos)
+	cam.End2D()
+	render.PopRenderTarget()
+end
+
 -- Draw the given window.
 --
 -- @param Table window
@@ -79,14 +113,6 @@ function Star_Trek.LCARS:DrawWindow(window, animPos, drawCursor)
 
 	local width = window.WWidth
 	local height = window.WHeight
-	local pos = Star_Trek.LCARS:Get3D2DMousePos(window)
-	if pos[1] > -width * 0.6 and pos[1] < width * 0.6
-	and pos[2] > -height * 0.6 and pos[2] < height * 0.6 then
-		window.LastPos = pos
-		window.MouseActive = true
-	else
-		window.MouseActive = false
-	end
 
 	local wPos, wAng, wScale = hook.Run("Star_Trek.LCARS.OverrideWindowPosAngScale", window)
 	if not (wPos and wAng and wScale) then
@@ -94,15 +120,17 @@ function Star_Trek.LCARS:DrawWindow(window, animPos, drawCursor)
 	end
 
 	cam.Start3D2D(wPos, wAng, 1 / wScale)
-		local mousePos = window.LastPos
 
-		window:OnDraw(mousePos or Vector(-width / 2, -height / 2), animPos)
+		surface.SetMaterial(window.RTMaterial)
+		surface.DrawTexturedRectUV(-width / 2, -height / 2, width, height, 0, 0, 1, 1)
 
-		if drawCursor and window.MouseActive then
-			surface.SetDrawColor(255, 255, 255, 255)
-			surface.SetMaterial(Material("sprites/arrow"))
-			surface.DrawTexturedRect(mousePos[1] - 15, mousePos[2] - 15, 30, 30)
-		end
+--		if drawCursor and window.MouseActive then
+--			local mousePos = window.LastPos
+--
+--			surface.SetDrawColor(255, 255, 255, 255)
+--			surface.SetMaterial(Material("sprites/arrow"))
+--			surface.DrawTexturedRect(mousePos[1] - 15, mousePos[2] - 15, 30, 30)
+--		end
 	cam.End3D2D()
 
 	if isfunction(window.OnDraw3D) then

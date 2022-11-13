@@ -200,8 +200,8 @@ function Star_Trek.LCARS:PlayerButtonDown(ply, button)
 			local width = window.WWidth
 			local height = window.WHeight
 			local pos = Star_Trek.LCARS:Get3D2DMousePos(window)
-			if pos[1] > -width / 2 and pos[1] < width / 2
-			and pos[2] > -height / 2 and pos[2] < height / 2 then
+			if pos[1] > 0 and pos[1] < width
+			and pos[2] > 0 and pos[2] < height then
 				local worldPos = Vector(pos[1] / window.WScale, pos[2] / -window.WScale, 0)
 				worldPos = LocalToWorld(worldPos or Vector(), Angle(), window.WPosG, window.WAngG)
 
@@ -361,10 +361,12 @@ hook.Add("PostDrawTranslucentRenderables", "Star_Trek.LCARS.Draw", function(isDr
 		end
 
 		for _, window in pairs(interface.Windows) do
+			render.OverrideBlend(false)
+
+			Star_Trek.LCARS:RTDrawWindow(window, interface.AnimPos)
+
 			if not interface.Solid and not window.Solid then
 				render.OverrideBlend(true, BLEND_SRC_ALPHA, BLEND_ONE, BLENDFUNC_ADD, BLEND_SRC_ALPHA, BLEND_ONE, BLENDFUNC_ADD)
-			else
-				render.OverrideBlend(false)
 			end
 
 			Star_Trek.LCARS:DrawWindow(window, interface.AnimPos)
