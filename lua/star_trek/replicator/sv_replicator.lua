@@ -52,8 +52,12 @@ function Star_Trek.Replicator:CreateObject(data, pos, angle)
 
 	local ent = ents.Create(class)
 	if IsValid(ent) then
-		if model then
+		if isstring(model) then
 			ent:SetModel(model)
+		end
+
+		if isstring(data.BodyGroups) then
+			ent:SetBodyGroups(data.BodyGroups)
 		end
 
 		ent:SetPos(pos)
