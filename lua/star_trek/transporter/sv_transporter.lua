@@ -116,6 +116,22 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 				Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Dematerialising " .. scanData.Name .. "...")
 			end
 
+			--[[WEAPONS SCANNING CODE]]--
+			local whitelist = table.Copy(Star_Trek.Transporter.WeaponsWhitelist)
+
+			value, scanData = Star_Trek.Sensors:ScanEntity(ent)
+			weapons = scanData.Weapons
+			hasWeapons = false
+			entWeapons = {}
+			for _, weapon in pairs(weapons) do
+				-- If the weapon is not on the whitelist
+				if whitelist[weapon.Name] == nil then
+					print(weapon.Name .. " is not whitelisted")
+					hasWeapons = true
+					table.insert(entWeapons, weapon.Name)
+				end
+			end
+
 			Star_Trek.Transporter:TransportObject(cycleClass or "base", ent, pos, isBuffer, false, function(transporterCycle)
 				Star_Trek.Transporter:ApplyPadEffect(transporterCycle, sourcePattern.Pad, targetPattern.Pad)
 
@@ -123,6 +139,14 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 				if state == 2 then
 					if success then
 						Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Rematerialising ".. scanData.Name .. "...")
+
+						if hasWeapons then
+							interfaceEnt:EmitSound("star_trek.lcars_alert14")
+							for _, weapon in pairs(entWeapons) do
+								Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Weapon detected on " .. scanData.Name .. ": " .. weapon, Star_Trek.LCARS.ColorRed)
+							end
+						end
+
 					end
 				end
 			end)
