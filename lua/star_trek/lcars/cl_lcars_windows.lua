@@ -97,7 +97,7 @@ function Star_Trek.LCARS:RTDrawWindow(window, animPos)
 
 	render.PushRenderTarget(window.RT)
 	cam.Start2D()
-		render.Clear(0, 0, 0, 255, true, true)
+		render.Clear(0, 0, 0, 0, true, true)
 		window:OnDraw(mousePos or Vector(-width / 2, -height / 2), animPos)
 	cam.End2D()
 	render.PopRenderTarget()
