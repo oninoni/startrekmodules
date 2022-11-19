@@ -69,8 +69,8 @@ function SELF:OnDraw(pos, animPos)
 	for i = 1, 16 do
 		local yPos = -hd2 + (i-1) * hd16 + 1
 
-		draw.RoundedBox(0, -wd6 - wd64 / 2, yPos, wd64, hd16 - 2, colorBlue)
-		draw.RoundedBox(0,  wd6 - wd64 / 2, yPos, wd64, hd16 - 2, colorBlue)
+		draw.RoundedBox(0, wd2 + -wd6 - wd64 / 2, hd2 + yPos, wd64, hd16 - 2, colorBlue)
+		draw.RoundedBox(0, wd2 + wd6 - wd64 / 2, hd2 + yPos, wd64, hd16 - 2, colorBlue)
 	end
 
 	if self.TargetState ~= nil and self.TargetState ~= self.State then
@@ -81,6 +81,6 @@ function SELF:OnDraw(pos, animPos)
 	local y = -(self.State / height) * (height - hd16) - hd16 / 2
 
 	for i = 1, 3 do
-		draw.RoundedBox(0, (i-2) * wd3 -wd6 + wd64, y, wd3 - 2 * wd64, hd2-y, colorYellow)
+		draw.RoundedBox(0, wd2 + (i-2) * wd3 -wd6 + wd64, hd2 + y, wd3 - 2 * wd64, hd2-y, colorYellow)
 	end
 end
