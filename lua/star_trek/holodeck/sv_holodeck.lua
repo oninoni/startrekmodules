@@ -78,6 +78,11 @@ function Star_Trek.Holodeck:CompressPlayers(programmId)
 	local outer = ents.FindByName(outerName)[1]
 	local inner = ents.FindByName(innerName)[1]
 
+	-- Temporary fix for map problem.
+	if programmId == 1 and not IsValid(outer) then
+		outer = ents.FindByName("holoProgrammCompress4")[1]
+	end
+
 	if not IsValid(outer) then return end
 	if not IsValid(inner) then return end
 
