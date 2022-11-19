@@ -17,8 +17,12 @@
 ---------------------------------------
 
 function Star_Trek.Replicator:GetReplicatorList(ent)
-	local categories = table.Copy(Star_Trek.Replicator.Categories)
+	local override = hook.Run("Star_Trek.Replicator.GetReplicatorList", ent)
+	if override then
+		return override
+	end
 
+	local categories = table.Copy(Star_Trek.Replicator.Categories)
 	for _, category in pairs(categories) do
 		local name = category.Name
 		if category.Disabled then

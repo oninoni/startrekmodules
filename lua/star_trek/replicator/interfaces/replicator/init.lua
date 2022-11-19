@@ -41,22 +41,19 @@ function SELF:Open(ent)
 				local selected = windowData.Selected
 				local categoryData = windowData.Categories[selected]
 				if istable(categoryData) then
-					local pos, angle = Star_Trek.LCARS:GetInterfacePosAngleGlobal(ent)
-					pos = pos + angle:Up() * -7
-					pos = pos + angle:Right() * 6
-
 					if istable(Star_Trek.Logs) then
 						Star_Trek.Logs:AddEntry(ent, ply, "Replicating " .. buttonData.Name)
 					end
 
-					Star_Trek.Replicator:CreateObject(buttonData.Data, pos, ent:GetAngles())
+					local pos = ent:LocalToWorld(ent.ReplicatePos or Vector(5, 0, -8))
+					local ang = ent:LocalToWorldAngles(ent.ReplicateAng or Angle(0, 0, 0))
+					Star_Trek.Replicator:CreateObject(buttonData.Data, pos, ang)
 				end
 
 				interfaceData:Close()
 			else
 				if categoryId == categoryCount + 1 then
-					local pos, angle = Star_Trek.LCARS:GetInterfacePosAngleGlobal(ent)
-					pos = pos + angle:Right() * 6
+					local pos = ent:LocalToWorld(ent.ReplicatePos or Vector(5, 0, -8))
 
 					local targets = ents.FindInSphere(pos, 20)
 					local cleanEntities = {}
