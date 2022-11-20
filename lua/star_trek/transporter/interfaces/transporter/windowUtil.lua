@@ -322,13 +322,9 @@ function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip)
 				continue
 			end
 
-			local name = "Unknown Pattern"
-			if ent:IsPlayer() or ent:IsNPC() then
-				name = "Organic Pattern"
-			end
-			local className = ent:GetClass()
-			if className == "prop_physics" then
-				name = "Pattern"
+			local success, scanData = Star_Trek.Sensors:ScanEntity(ent)
+			if success then
+				name = scanData.Name
 			end
 
 			table.insert(buttons, {
