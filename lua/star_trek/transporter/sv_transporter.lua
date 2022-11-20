@@ -83,7 +83,7 @@ function Star_Trek.Transporter:RemoveWeapons(interfaceEnt, ply, scanData)
 	local weaponsFound = false
 
 	for _, weapon in pairs(ply:GetWeapons()) do
-		if table.HasValue(Star_Trek.Transporter.WeaonIgnoreList, weapon:GetClass()) then
+		if table.HasValue(Star_Trek.Transporter.WeaponIgnoreList, weapon:GetClass()) then
 			continue
 		end
 

@@ -16,7 +16,7 @@
 --        Transporter | Config       --
 ---------------------------------------
 
-Star_Trek.Transporter.WeaonIgnoreList = {
+Star_Trek.Transporter.WeaponIgnoreList = {
     "weapon_physgun",
     "gmod_tool",
     "gmod_camera",
