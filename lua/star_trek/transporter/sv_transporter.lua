@@ -79,7 +79,7 @@ function Star_Trek.Transporter:CanBeamTo(ent, pos)
 	return true
 end
 
-function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatterns, targetPatterns, cycleClass, noBuffer)
+function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatterns, targetPatterns, cycleClass, noBuffer, allowWeapons)
 	if not istable(sourcePatterns) then return end
 
 	Star_Trek.Logs:AddEntry(interfaceEnt, ply, "")
@@ -115,20 +115,21 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 			if success then
 				Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Dematerialising " .. scanData.Name .. "...")
 			end
-
-			--[[WEAPONS SCANNING CODE]]--
-			local whitelist = table.Copy(Star_Trek.Transporter.WeaponsWhitelist)
-
-			value, scanData = Star_Trek.Sensors:ScanEntity(ent)
-			weapons = scanData.Weapons
+			
 			hasWeapons = false
-			entWeapons = {}
-			for _, weapon in pairs(weapons) do
-				-- If the weapon is not on the whitelist
-				if whitelist[weapon.Name] == nil then
-					print(weapon.Name .. " is not whitelisted")
-					hasWeapons = true
-					table.insert(entWeapons, weapon.Name)
+
+			if not allowWeapons and ent:IsPlayer() then
+				--[[WEAPONS SCANNING CODE]]--
+				local whitelist = table.Copy(Star_Trek.Transporter.WeaponsWhitelist)
+
+				weapons = ent:GetWeapons()
+				entWeapons = {}
+				for _, weapon in pairs(weapons) do
+					-- If the weapon is not on the whitelist
+					if whitelist[weapon:GetClass()] == nil then
+						hasWeapons = true
+						table.insert(entWeapons, weapon:GetClass()) 
+					end
 				end
 			end
 
@@ -143,7 +144,11 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 						if hasWeapons then
 							interfaceEnt:EmitSound("star_trek.lcars_alert14")
 							for _, weapon in pairs(entWeapons) do
-								Star_Trek.Logs:AddEntry(interfaceEnt, ply, "WARNING: Weapon detected on " .. scanData.Name .. ": " .. weapon, Star_Trek.LCARS.ColorRed)
+								Star_Trek.Logs:AddEntry(interfaceEnt, ply, "WARNING: Weapon detected on " .. scanData.Name .. ": " .. weapon .. ", Sending weapon to buffer...", Star_Trek.LCARS.ColorRed)
+								entWeapon = ents.Create(weapon)
+								entWeapon:Spawn()
+								table.insert(Star_Trek.Transporter.Buffer.Entities, entWeapon)
+								ent:StripWeapon(weapon)
 							end
 						end
 

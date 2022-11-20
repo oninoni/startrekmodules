@@ -1,9 +1,7 @@
 Star_Trek.Transporter.WeaponsWhitelist = {
 
-    ["Physics Gun"] = true
-
-
-
-
+    ["weapon_physgun"] = true,
+    ["gmod_tool"] = true,
+    ["gmod_camera"] = true,
 
 }

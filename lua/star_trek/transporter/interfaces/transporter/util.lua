@@ -144,10 +144,10 @@ end)
 -- @param Table targetMenuTable
 -- @param? Boolean wideField
 -- @param? Function callback
-function SELF:Energize(ply, sourceMenuTable, targetMenuTable, wideField, callback)
+function SELF:Energize(ply, sourceMenuTable, targetMenuTable, wideField, allowWeapons ,callback)
 	local sourcePatterns = self:GetPatternData(sourceMenuTable, wideField)
 	local targetPatterns = self:GetPatternData(targetMenuTable, false)
-	Star_Trek.Transporter:ActivateTransporter(self.Ent, ply, sourcePatterns, targetPatterns, self.CycleClass, self.NoBuffer)
+	Star_Trek.Transporter:ActivateTransporter(self.Ent, ply, sourcePatterns, targetPatterns, self.CycleClass, self.NoBuffer, allowWeapons)
 
 	if isfunction(callback) then
 		callback(sourcePatterns, targetPatterns)
@@ -184,14 +184,19 @@ function SELF:TriggerTransporter(ply, sourceMenuTable, targetMenuTable)
 		delayDematerialisation = targetMenuTable:GetUtilButtonState()
 	end
 
+	local allowWeapons = true 
+	if isfunction(targetMenuTable.GetWeaponsButtonState) then
+		allowWeapons = targetMenuTable:GetWeaponsButtonState()
+	end
+
 	if delayDematerialisation then
 		timer.Simple(DEMAT_DELAY, function()
-			self:Energize(ply, sourceMenuTable, targetMenuTable, wideField, function(sourcePatterns, targetPatterns)
+			self:Energize(ply, sourceMenuTable, targetMenuTable, wideField, allowWeapons, function(sourcePatterns, targetPatterns)
 				if sourcePatterns.IsBuffer then self:UpdateBufferMenu(sourceMenuTable) end
 			end)
 		end)
 	else
-		self:Energize(ply, sourceMenuTable, targetMenuTable, wideField, function(sourcePatterns, targetPatterns)
+		self:Energize(ply, sourceMenuTable, targetMenuTable, wideField, allowWeapons ,function(sourcePatterns, targetPatterns)
 			if sourcePatterns.IsBuffer then self:UpdateBufferMenu(sourceMenuTable) end
 		end)
 	end
