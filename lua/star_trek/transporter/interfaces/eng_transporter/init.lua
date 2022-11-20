@@ -28,7 +28,7 @@ SELF.AdvancedMode = false
 function SELF:Open(ent)
 	local success, windows = self:OpenInternal(
 		{
-			Pos = Vector(-12, 3, -14.25),
+			Pos = Vector(-12, 4, -14.25),
 			Ang = Angle(0, 0, 0),
 			Width = 580,
 		},
@@ -42,9 +42,9 @@ function SELF:Open(ent)
 			Ang = Angle(0, 0, 0),
 		},
 		{
-			Pos = Vector(-12, -9, -14.25),
+			Pos = Vector(-12, -8, -14.25),
 			Ang = Angle(0, 0, 0),
-			Width = 580, Height = 255,
+			Width = 580, Height = 280,
 		}
 	)
 	if not success then
