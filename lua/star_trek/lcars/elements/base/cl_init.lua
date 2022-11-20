@@ -60,7 +60,7 @@ function SELF:GenerateTexture()
 
 	self.Name = "LCARS_E_" .. self.Id .. "_" .. self.Width .. "_" .. self.Height
 	self.Texture = GetRenderTargetEx(self.Name, self.Width, self.Height,
-	RT_SIZE_DEFAULT, MATERIAL_RT_DEPTH_SHARED, 1, 0, IMAGE_FORMAT_DEFAULT)
+	RT_SIZE_NO_CHANGE, MATERIAL_RT_DEPTH_SEPARATE, bit.bor(1, 256), 0, IMAGE_FORMAT_BGRA8888)
 
 	self.Material = CreateMaterial(self.Name, "UnlitGeneric", {
 		["$basetexture"] = self.Texture:GetName(),
