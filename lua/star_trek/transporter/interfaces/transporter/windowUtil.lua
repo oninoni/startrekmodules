@@ -65,6 +65,18 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip)
 		menuTable.UtilButtonId = n + 2
 		n = n + 1
 
+		local weaponButtonData = {}
+		if menuTable.Target then
+			weaponButtonData.Name = "Allow Weapons"
+			weaponButtonData.Color = Star_Trek.LCARS.ColorOrange
+		else
+			weaponButtonData.Name = "Purge Buffer"
+			weaponButtonData.Color =  Star_Trek.LCARS.ColorRed
+		end
+		buttons [n + 2] = weaponButtonData
+		menuTable.WeaponButtonId = n + 2
+		n = n + 1
+
 		function menuTable:GetUtilButtonState()
 			return self.MenuWindow.Buttons[#self.MenuWindow.Buttons - 2].SelectedCustom or false
 		end
@@ -74,30 +86,18 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip)
 		end
 	end
 
+
 	local actionButtonData = {}
 	if menuTable.Target then
-		actionButtonData.Name = "Allow Weapons"
-		actionButtonData.Color = Star_Trek.LCARS.ColorOrange
+		actionButtonData.Name = "Disable Console"
+		actionButtonData.Color = Star_Trek.LCARS.ColorRed
 	else
 		actionButtonData.Name = "Swap Sides"
 		actionButtonData.Color = Star_Trek.LCARS.ColorOrange
 	end
 	buttons[n + 2] = actionButtonData
 	menuTable.ActionButtonId = n + 2
-	n = n + 1
-
-	local weaponButtonData = {}
-	if menuTable.Target then
-		weaponButtonData.Name = "Disable Console"
-		weaponButtonData.Color = Star_Trek.LCARS.ColorRed
-	else
-		weaponButtonData.Name = "Purge Buffer"
-		weaponButtonData.Color =  Star_Trek.LCARS.ColorRed
-	end
-	buttons [n + 2] = weaponButtonData
-	menuTable.WeaponButtonId = n + 2
-
-
+	
 	local height = table.maxn(buttons) * 35 + 80
 	local transporterType = menuTable.Target and "Target" or "Source"
 	local name = "Transporter " .. transporterType
