@@ -90,13 +90,13 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip)
 	if menuTable.Target then
 		weaponButtonData.Name = "Disable Console"
 		weaponButtonData.Color = Star_Trek.LCARS.ColorRed
-	else 
+	else
 		weaponButtonData.Name = "Purge Buffer"
-		weaponButtonData.Color =  Star_Trek.LCARS.ColorRed	
+		weaponButtonData.Color =  Star_Trek.LCARS.ColorRed
 	end
 	buttons [n + 2] = weaponButtonData
 	menuTable.WeaponButtonId = n + 2
-	
+
 
 	local height = table.maxn(buttons) * 35 + 80
 	local transporterType = menuTable.Target and "Target" or "Source"
@@ -149,7 +149,7 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip)
 					buttonData.SelectedCustom = not (buttonData.SelectedCustom or false)
 					if buttonData.SelectedCustom then
 						buttonData.Color = Star_Trek.LCARS.ColorRed
-					else 
+					else
 						buttonData.Color = Star_Trek.LCARS.ColorOrange
 					end
 
@@ -163,9 +163,15 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip)
 				end
 
 				if buttonData.Name == "Purge Buffer" then
+					Star_Trek.Logs:AddEntry(self.Ent, ply, "WARNING: Purging Buffer!", Star_Trek.LCARS.ColorRed)
 					for _,ent in pairs(Star_Trek.Transporter.Buffer.Entities) do
 						ent.BufferQuality = 0
+						local success1, scanData = Star_Trek.Sensors:ScanEntity(ent)
+						if success1 then
+							Star_Trek.Logs:AddEntry(self.Ent, ply, "Purging: " .. scanData.Name , Star_Trek.LCARS.ColorRed)
+						end
 					end
+					Star_Trek.Logs:AddEntry(self.Ent, ply, "Purge Complete", Star_Trek.LCARS.ColorRed)
 				end
 
 				if buttonData.Name == "Disable Console" then
