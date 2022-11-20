@@ -85,7 +85,7 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 	Star_Trek.Logs:AddEntry(interfaceEnt, ply, "")
 	Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Initialising Transporter...")
 	Star_Trek.Logs:AddEntry(interfaceEnt, ply, table.Count(sourcePatterns) .. " Pattern Sources Detected.")
-	Star_Trek.Logs:AddEntry(interfaceEnt, ply, table.Count(sourcePatterns) .. " Pattern Targets Detected.")	
+	Star_Trek.Logs:AddEntry(interfaceEnt, ply, table.Count(sourcePatterns) .. " Pattern Targets Detected.")
 
 	for _, sourcePattern in pairs(sourcePatterns) do
 		local ent = sourcePattern.Ent
@@ -167,12 +167,12 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 		end
 
 		if noBuffer then
-			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Buffer Usage Prevented!")
+			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Buffer Usage Prevented!", Star_Trek.LCARS.ColorOrange)
 			continue
 		end
 
 		if isBuffer then
-			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Buffer Recursion Prevented!")
+			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Buffer Recursion Prevented!", Star_Trek.LCARS.ColorOrange)
 			continue
 		end
 
@@ -180,7 +180,7 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 		table.insert(Star_Trek.Transporter.Buffer.Entities, ent)
 		ent.BufferQuality = 160
 		if istable(ent) then
-			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Warning: Remote Transporter Request has no target. Aborting!")
+			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "WARNING: Remote Transporter Request has no target. Aborting!", Star_Trek.LCARS.ColorRed)
 			continue
 		end
 		local success, scanData = Star_Trek.Sensors:ScanEntity(ent)
@@ -191,22 +191,20 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 			Star_Trek.Transporter:ApplyPadEffect(transporterCycle, sourcePattern.Pad)
 		end)
 
-		Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Warning: No Free Target Position Available! Storing in Buffer!")
-		
-		if success then
-			if scanData.Alive then
-				Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Warning: ".. scanData.Name .. " has been transported to the Buffer!")
-				local timerName = "Star_Trek.Transporter.BufferAlert." .. interfaceEnt:EntIndex()
+		Star_Trek.Logs:AddEntry(interfaceEnt, ply, "WARNING: No Free Target Position Available! Storing in Buffer!", Star_Trek.LCARS.ColorRed)
 
-				if timer.Exists(timerName) then
-					continue
-				end
+		if success and scanData.Alive then
+			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "WARNING: " .. scanData.Name .. " has been transported to the Buffer!", Star_Trek.LCARS.ColorRed)
+			local timerName = "Star_Trek.Transporter.BufferAlert." .. interfaceEnt:EntIndex()
 
-				-- 5x Alert Sound
-				timer.Create(timerName, 1, 5, function()
-					interfaceEnt:EmitSound("star_trek.lcars_alert14")
-				end)
+			if timer.Exists(timerName) then
+				continue
 			end
+
+			-- 5x Alert Sound
+			timer.Create(timerName, 1, 5, function()
+				interfaceEnt:EmitSound("star_trek.lcars_alert14")
+			end)
 		end
 	end
 end
