@@ -112,10 +112,17 @@ function SELF:SetCategories(categories, categoryButtonHeight)
 end
 
 function SELF:SetCategory(category)
+	local oldCategoryButtonData = self.Categories[self.Selected]
+	if istable(oldCategoryButtonData) then
+		oldCategoryButtonData.Selected = false
+	end
+
 	self.Selected = category
 
 	local categoryButtonData = self.Categories[self.Selected]
 	if istable(categoryButtonData) then
+		categoryButtonData.Selected = true
+
 		self:SetButtons(categoryButtonData.Buttons)
 	end
 end

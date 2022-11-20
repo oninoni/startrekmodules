@@ -81,11 +81,8 @@ function SELF:OnCreate(windowData)
 		padData.X = (-(padData.X - avPos.x) - self.PadRadius) * self.Scale
 		padData.Y = ( (padData.Y - avPos.y) - self.PadRadius) * self.Scale
 
-		if self.HFlip then
-			padData.X = padData.X - self.Frame.CornerRadius
-		else
-			padData.X = padData.X + self.Frame.CornerRadius
-		end
+		padData.X = padData.X + self.Area1X + self.Area1Width / 2
+		padData.Y = padData.Y + self.Area1Y + self.Area1Height / 2
 
 		local successButton, button = self:GenerateElement("pad_button", self.Id .. "_" .. id, self.ScaledPadRadius * 2, self.ScaledPadRadius * 2,
 			id,

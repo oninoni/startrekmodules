@@ -47,7 +47,7 @@ function Star_Trek.LCARS:LoadWindowData(id, windowData, pos, ang)
 
 	local rtName = "LCARS_W_" .. window.Id .. "_" .. window.WWidth .. "_" .. window.WHeight
 	window.RT = GetRenderTargetEx(rtName, window.WWidth, window.WHeight,
-	RT_SIZE_DEFAULT, MATERIAL_RT_DEPTH_SHARED, 1, 0, IMAGE_FORMAT_DEFAULT)
+	RT_SIZE_NO_CHANGE, MATERIAL_RT_DEPTH_SEPARATE, bit.bor(1, 256), 0, IMAGE_FORMAT_BGRA8888)
 
 	window.RTMaterial = CreateMaterial(rtName, "UnlitGeneric", {
 		["$basetexture"] = window.RT:GetName(),
@@ -97,7 +97,7 @@ function Star_Trek.LCARS:RTDrawWindow(window, animPos)
 
 	render.PushRenderTarget(window.RT)
 	cam.Start2D()
-		render.Clear(0, 0, 0, 255, true, true)
+		render.Clear(0, 0, 0, 0, true, true)
 		window:OnDraw(mousePos or Vector(-width / 2, -height / 2), animPos)
 	cam.End2D()
 	render.PopRenderTarget()
