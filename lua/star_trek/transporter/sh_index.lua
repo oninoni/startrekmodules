@@ -16,7 +16,7 @@
 --        Transporter | Index        --
 ---------------------------------------
 
-Star_Trek:RequireModules("util", "sections", "lcars")
+Star_Trek:RequireModules("util", "sections", "lcars", "sensors")
 
 Star_Trek.Transporter = Star_Trek.Transporter or {}
 
@@ -30,6 +30,8 @@ if SERVER then
 
 	AddCSLuaFile("sh_transporter_pads.lua")
 
+	include("sv_config.lua")
+
 	include("resources/sh_sounds.lua")
 	include("resources/sh_particles.lua")
 	include("sh_loader.lua")
@@ -42,7 +44,6 @@ if SERVER then
 
 	include("sv_transporter_pattern.lua")
 	include("sv_transporter.lua")
-	include("sv_config.lua")
 end
 
 if CLIENT then

@@ -1,7 +1,25 @@
-Star_Trek.Transporter.WeaponsWhitelist = {
+---------------------------------------
+---------------------------------------
+--         Star Trek Modules         --
+--                                   --
+--            Created by             --
+--       Jan 'Oninoni' Ziegler       --
+--                                   --
+-- This software can be used freely, --
+--    but only distributed by me.    --
+--                                   --
+--    Copyright © 2022 Jan Ziegler   --
+---------------------------------------
+---------------------------------------
 
-    ["weapon_physgun"] = true,
-    ["gmod_tool"] = true,
-    ["gmod_camera"] = true,
+---------------------------------------
+--        Transporter | Config       --
+---------------------------------------
 
+Star_Trek.Transporter.WeaonIgnoreList = {
+    "weapon_physgun",
+    "gmod_tool",
+    "gmod_camera",
+    "weapon_fists",
+    "weapon_medkit",
 }
