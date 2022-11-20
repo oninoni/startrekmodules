@@ -143,7 +143,7 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 						if hasWeapons then
 							interfaceEnt:EmitSound("star_trek.lcars_alert14")
 							for _, weapon in pairs(entWeapons) do
-								Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Weapon detected on " .. scanData.Name .. ": " .. weapon, Star_Trek.LCARS.ColorRed)
+								Star_Trek.Logs:AddEntry(interfaceEnt, ply, "WARNING: Weapon detected on " .. scanData.Name .. ": " .. weapon, Star_Trek.LCARS.ColorRed)
 							end
 						end
 
