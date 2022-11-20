@@ -90,13 +90,13 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip)
 	if menuTable.Target then
 		weaponButtonData.Name = "Disable Console"
 		weaponButtonData.Color = Star_Trek.LCARS.ColorRed
-	else 
+	else
 		weaponButtonData.Name = "Purge Buffer"
-		weaponButtonData.Color =  Star_Trek.LCARS.ColorRed	
+		weaponButtonData.Color =  Star_Trek.LCARS.ColorRed
 	end
 	buttons [n + 2] = weaponButtonData
 	menuTable.WeaponButtonId = n + 2
-	
+
 
 	local height = table.maxn(buttons) * 35 + 80
 	local transporterType = menuTable.Target and "Target" or "Source"
@@ -149,7 +149,7 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip)
 					buttonData.SelectedCustom = not (buttonData.SelectedCustom or false)
 					if buttonData.SelectedCustom then
 						buttonData.Color = Star_Trek.LCARS.ColorRed
-					else 
+					else
 						buttonData.Color = Star_Trek.LCARS.ColorOrange
 					end
 
