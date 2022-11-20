@@ -164,10 +164,15 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip)
 				end
 
 				if buttonData.Name == "Purge Buffer" then
+					Star_Trek.Logs:AddEntry(self.Ent, ply, "WARNING: Purging Buffer!", Star_Trek.LCARS.ColorRed)
 					for _,ent in pairs(Star_Trek.Transporter.Buffer.Entities) do
 						ent.BufferQuality = 0
+						local success1, scanData = Star_Trek.Sensors:ScanEntity(ent)
+						if success1 then
+							Star_Trek.Logs:AddEntry(self.Ent, ply, "Purging: " .. scanData.Name , Star_Trek.LCARS.ColorRed)
+						end
 					end
-					Star_Trek.Logs:AddEntry(self.Ent, ply, "WARNING: Buffer purged!", Star_Trek.LCARS.ColorRed)
+					Star_Trek.Logs:AddEntry(self.Ent, ply, "Purge Complete", Star_Trek.LCARS.ColorRed)
 				end
 
 				if buttonData.Name == "Disable Console" then
