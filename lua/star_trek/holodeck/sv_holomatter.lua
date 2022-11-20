@@ -155,6 +155,10 @@ hook.Add("wp-teleport", "Star_Trek.Holodeck.Disintegrate", function(self, ent)
 end)
 
 hook.Add("Star_Trek.Transporter.PreTransportObject", "Star_Trek.Holodeck.Disintegrate", function(cycleType, ent, targetPos, skipDemat, skipRemat, callback)
+	if not IsValid(ent) then
+		return
+	end
+
 	if ent.HoloMatter then
 		Star_Trek.Holodeck:Disintegrate(ent)
 		return
