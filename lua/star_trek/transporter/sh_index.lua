@@ -42,6 +42,7 @@ if SERVER then
 
 	include("sv_transporter_pattern.lua")
 	include("sv_transporter.lua")
+	include("sv_config.lua")
 end
 
 if CLIENT then
