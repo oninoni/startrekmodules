@@ -68,11 +68,12 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip)
 		function menuTable:GetUtilButtonState()
 			return self.MenuWindow.Buttons[#self.MenuWindow.Buttons - 2].SelectedCustom or false
 		end
-
-		function menuTable:GetWeaponsButtonState()
-			return not self.MenuWindow.Buttons[#self.MenuWindow.Buttons - 1].SelectedCustom or false
-		end
 	end
+
+	function menuTable:GetWeaponsButtonState()
+		return not self.MenuWindow.Buttons[#self.MenuWindow.Buttons - 1].SelectedCustom or false
+	end
+
 
 	local actionButtonData = {}
 	if menuTable.Target then
