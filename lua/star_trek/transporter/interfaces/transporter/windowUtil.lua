@@ -82,7 +82,6 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip)
 		end
 
 		function menuTable:GetWeaponsButtonState()
-			print(#self.MenuWindow.Buttons)
 			return not self.MenuWindow.Buttons[#self.MenuWindow.Buttons - 1].SelectedCustom or false
 		end
 	end
@@ -99,8 +98,6 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip)
 	buttons[n + 2] = actionButtonData
 	menuTable.ActionButtonId = n + 2
 	
-
-
 	local height = table.maxn(buttons) * 35 + 80
 	local transporterType = menuTable.Target and "Target" or "Source"
 	local name = "Transporter " .. transporterType
@@ -149,7 +146,6 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip)
 				end
 
 				if buttonData.Name == "Remove Weapons" or buttonData.Name == "Allow Weapons" then
-					print(buttonId)
 					buttonData.SelectedCustom = not (buttonData.SelectedCustom or false)
 					if buttonData.SelectedCustom then
 						buttonData.Color = Star_Trek.LCARS.ColorRed
