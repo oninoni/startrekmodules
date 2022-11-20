@@ -109,9 +109,6 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip)
 		width,
 		height,
 		function(windowData, interfaceData, ply, buttonId, buttonData)
-			for key, value in pairs(interfaceData) do
-				print(key, value)
-			end
 
 			if buttonId > realN then -- Custom Buttons
 				if buttonData.Name == "Wide Beam" or buttonData.Name == "Narrow Beam" then
@@ -166,13 +163,9 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip)
 				end
 
 				if buttonData.Name == "Purge Buffer" then
-					
-					
 					for _,ent in pairs(Star_Trek.Transporter.Buffer.Entities) do
 						ent.BufferQuality = 0
 					end
-
-
 				end
 
 				if buttonData.Name == "Disable Console" then
