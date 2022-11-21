@@ -43,13 +43,10 @@ function Star_Trek.Sensors:ScanInternal(deck, sectionIds, scanLife, scanObjects,
 
 	local objects = Star_Trek.Sections:GetInSections(deck, sectionIds, function(object)
 		local ent = object.Entity
-
 		local removeEntity = hook.Run("Star_Trek.Sensors.FilterEntity", ent)
 		if removeEntity then return true end
-
 		local success, scanData = Star_Trek.Sensors:ScanEntity(ent)
 		if not success then return true end
-
 		object.ScanData = scanData
 		object.SectionName = Star_Trek.Sections:GetSectionName(object.Deck, object.SectionId)
 
@@ -58,9 +55,14 @@ function Star_Trek.Sensors:ScanInternal(deck, sectionIds, scanLife, scanObjects,
 			return
 		end
 
-		-- Prevent Entities with parents that are not weapons.
-		if IsValid(ent:GetParent())  then return true end
-
+		-- Prevent Entities with parents that are not weapons.	
+		if IsValid(ent:GetParent()) then
+			if (ent:GetParent():GetClass() == "prop_vehicle_prisoner_pod") then
+				return false
+			else
+			return true
+			end
+		end
 		if scanData.Alive then
 			if not scanLife then return true end
 			return
