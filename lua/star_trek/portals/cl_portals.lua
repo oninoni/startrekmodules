@@ -49,7 +49,7 @@ hook.Add("wp-shouldrender", "Star_Trek.HidePortalInDoors", function(portal, exit
 		--don't render if the view is behind the portal
 		local behind = wp.IsBehind( camOrigin, portal:GetPos(), portal:GetForward() )
 		if behind then return false end
-		local lookingAt = wp.IsLookingAt( portal, camOrigin, camAngle, camFOV )
+		local lookingAt = wp.IsLookingAt( portal, portal:GetPos(), camOrigin, camAngle, camFOV )
 		if not lookingAt then return false end
 
 		return true
