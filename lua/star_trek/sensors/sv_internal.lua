@@ -56,13 +56,11 @@ function Star_Trek.Sensors:ScanInternal(deck, sectionIds, scanLife, scanObjects,
 		end
 
 		-- Prevent Entities with parents that are not weapons.	
-		if IsValid(ent:GetParent()) then
-			if (ent:GetParent():GetClass() == "prop_vehicle_prisoner_pod") then
-				return false
-			else
+		local parent = ent:GetParent()
+		if IsValid(parent) and not parent:IsVehicle() then
 			return true
-			end
 		end
+
 		if scanData.Alive then
 			if not scanLife then return true end
 			return
