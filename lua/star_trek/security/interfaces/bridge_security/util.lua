@@ -55,12 +55,14 @@ function SELF:GetModeButtons(mode)
 			[2] = "Yellow Alert",
 			[3] = "Intruder Alert",
 			[4] = "Blue Alert",
-			[6] = "Disable Alert",
+			[5] = "Abandon Ship",
+			[7] = "Disable Alert",
 		}
 		actionColors = {
 			[1] = Star_Trek.LCARS.ColorRed,
 			[2] = Star_Trek.LCARS.ColorOrange,
-			[6] = Star_Trek.LCARS.ColorOrange,
+			[5] = Star_Trek.LCARS.ColorRed,
+			[7] = Star_Trek.LCARS.ColorOrange,
 		}
 	end
 
@@ -297,6 +299,11 @@ function SELF:ActionButtonPressed(windowData, ply, buttonId, buttonData)
 
 			Star_Trek.Logs:AddEntry(self.Ent, ply, "")
 			Star_Trek.Logs:AddEntry(self.Ent, ply, "BLUE ALERT!")
+		elseif buttonName == "Abandon Ship" then
+			Star_Trek.Alert:Enable("abandon")
+
+			Star_Trek.Logs:AddEntry(self.Ent, ply, "")
+			Star_Trek.Logs:AddEntry(self.Ent, ply, "ABANDON SHIP!")	
 		elseif buttonName == "Disable Alert" then
 			Star_Trek.Alert:Disable()
 

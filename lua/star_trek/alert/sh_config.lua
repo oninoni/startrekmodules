@@ -40,6 +40,11 @@ Star_Trek.Alert.AlertTypes = {
 		Color = Color(0, 0, 255),
 		BridgeDim = true,
 	},
+	abandon = {
+		Sound = "star_trek.abandon_ship",
+		Color = Color(255, 0, 0),
+		BridgeDim = true,
+	},
 }
 
 Star_Trek.Alert.OffFrame = 1
