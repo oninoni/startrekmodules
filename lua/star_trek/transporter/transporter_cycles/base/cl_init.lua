@@ -149,6 +149,7 @@ function SELF:RenderScreenspaceEffect()
 	end
 
 	local colorFade = stateData.ColorFade
+	if colorFade == nil then return end
 
 	render.PushRenderTarget(self.RT1)
 		render.Clear(0,0,0,255)
