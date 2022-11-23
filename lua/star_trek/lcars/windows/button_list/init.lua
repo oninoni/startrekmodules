@@ -110,7 +110,6 @@ function SELF:OnPress(interfaceData, ply, buttonId, callback)
 		local mode = self.Buttons[firstButton].Selected
 		for i = firstButton, lastButton do
 			local button = self.Buttons[i]
-			hook.Run("Star_Trek.LCARS.ShiftClick", button, mode)
 			button.Selected = mode
 		end
 		shouldUpdate = true

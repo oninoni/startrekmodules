@@ -26,11 +26,6 @@ function SELF:OnCreate(deck, hFlip, objects)
 	end
 
 	self:SetDeck(deck, objects)
-
-	hook.Add("Star_Trek.LCARS.ShiftClick", "Star_Trek.Security.MassSelect", function(buttonData, mode)
-		self:SetSectionActive(buttonData.Data, mode)
-	end)
-
 	return self
 end
 
