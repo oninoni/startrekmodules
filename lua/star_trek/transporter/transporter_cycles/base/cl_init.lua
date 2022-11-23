@@ -149,7 +149,6 @@ function SELF:RenderScreenspaceEffect()
 	end
 
 	local colorFade = stateData.ColorFade
-	if colorFade == nil then return end
 
 	render.PushRenderTarget(self.RT1)
 		render.Clear(0,0,0,255)
@@ -167,7 +166,9 @@ function SELF:RenderScreenspaceEffect()
 	render.PopRenderTarget()
 
 	local fade
-	if colorFade > 0 then
+	if stateData.TPToBuffer then
+		fade = 1
+	elseif colorFade > 0 then
 		fade = math.min(1, diff / stateData.Duration)
 	else
 		fade = math.max(0, 1 - diff / stateData.Duration)
