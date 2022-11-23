@@ -27,6 +27,10 @@ function SELF:OnCreate(deck, hFlip, objects)
 
 	self:SetDeck(deck, objects)
 
+	hook.Add("Star_Trek.LCARS.ShiftClick", "Star_Trek.Security.MassSelect", function(buttonData, mode)
+		self:SetSectionActive(buttonData.Data, mode)
+	end)
+
 	return self
 end
 
@@ -123,7 +127,6 @@ end
 
 function SELF:GetSelected()
 	local data = {}
-
 	for sectionId, sectionData in pairs(self.Sections) do
 		data[sectionId] = sectionData.Selected
 	end
@@ -152,6 +155,6 @@ end
 
 function SELF:OnPress(interfaceData, ply, buttonId, callback)
 	local shouldUpdate = false
-
 	return shouldUpdate
 end
+

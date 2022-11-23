@@ -243,7 +243,6 @@ function Star_Trek.LCARS:PlayerButtonDown(ply, button)
 						continue
 					end
 				end
-
 				local buttonId = window:OnPress(pos, interface.AnimPos)
 
 				if buttonId then

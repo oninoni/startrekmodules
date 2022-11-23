@@ -102,10 +102,25 @@ function SELF:OnPress(interfaceData, ply, buttonId, callback)
 		shouldUpdate = true
 	end
 
+	if self.Toggle and self.PreviousButton ~= buttonId and ply:KeyDown(IN_SPEED) then
+		local firstButton = math.min(self.PreviousButton, buttonId)
+		local lastButton = math.max(self.PreviousButton, buttonId)
+
+		--For getting whether or not you are mass selecting or mass deselecting
+		local mode = self.Buttons[firstButton].Selected
+		for i = firstButton, lastButton do
+			local button = self.Buttons[i]
+			hook.Run("Star_Trek.LCARS.ShiftClick", button, mode)
+			button.Selected = mode
+		end
+		shouldUpdate = true
+	end
+
 	if isfunction(callback) and callback(self, interfaceData, ply, buttonId, buttonData) then
 		shouldUpdate = true
 	end
 
+	self.PreviousButton = buttonId
 	return shouldUpdate
 end
 
