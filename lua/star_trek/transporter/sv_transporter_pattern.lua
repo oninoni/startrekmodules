@@ -225,6 +225,9 @@ function Star_Trek.Transporter:GetPatterns(patternObjects, isTarget, wideField)
 		local pattern
 
 		if IsEntity(patternObject) then
+			if patternObject:IsPlayer() and patternObject:GetVehicle() ~= NULL then
+				patternObject:ExitVehicle()
+			end
 			pattern = self:GetPatternFromEntity(patternObject, isTarget, wideField)
 		elseif isvector(patternObject) then
 			pattern = self:GetPatternFromVector(patternObject, isTarget, wideField)

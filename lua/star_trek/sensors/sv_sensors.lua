@@ -23,7 +23,6 @@ function Star_Trek.Sensors:ScanEntity(ent)
 	end
 
 	local scanData = {}
-
 	hook.Run("Star_Trek.Sensors.PreScanEntity", ent, scanData)
 
 	-- Check for Entities with non-zero health

@@ -185,8 +185,7 @@ function Star_Trek.Sections:GetInSections(deck, sectionIds, filterCallback, allo
 			for _, ent in pairs(entities) do
 				if table.HasValue(objects, ent) then continue end
 				if not allowMap and ent:MapCreationID() > -1 then continue end
-				if not allowParent and IsValid(ent:GetParent()) then continue end
-
+				if not allowParent and IsValid(ent:GetParent()) and not ent:GetParent():IsVehicle()  then continue end
 				local object = {}
 				object.Entity = ent
 

@@ -132,7 +132,7 @@ end
 
 -- Prevent Noclipped players from being listed.
 hook.Add("Star_Trek.Transporter.CheckLifeforms", "Star_Trek.Transporter.PreventAdmins", function(ply)
-	if ply:GetMoveType() == MOVETYPE_NOCLIP then
+	if ply:GetMoveType() == MOVETYPE_NOCLIP and not ply:GetParent():IsVehicle() then
 		return false
 	end
 end)
