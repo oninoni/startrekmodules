@@ -45,8 +45,15 @@ function SELF:Open(ent)
 						Star_Trek.Logs:AddEntry(ent, ply, "Replicating " .. buttonData.Name)
 					end
 
-					local pos = ent:LocalToWorld(ent.ReplicatePos or Vector(5, 0, -8))
-					local ang = ent:LocalToWorldAngles(ent.ReplicateAng or Angle(0, 0, 0))
+					local entPos = ent:GetPos()
+					local entAng = ent:GetAngles()
+
+					local moveDir = ent:GetKeyValues()["movedir"]
+					if isvector(moveDir) then
+						entAng = moveDir:Angle()
+					end
+
+					local pos, ang = LocalToWorld(ent.ReplicatePos or Vector(-5, 0, -8), ent.ReplicateAng or Angle(0, 0, 0), entPos, entAng)
 					Star_Trek.Replicator:CreateObject(buttonData.Data, pos, ang)
 				end
 
