@@ -26,6 +26,7 @@ function SELF:OnCreate(deck, hFlip, objects)
 	end
 
 	self:SetDeck(deck, objects)
+
 	return self
 end
 

@@ -287,6 +287,11 @@ function SELF:ActionButtonPressed(windowData, ply, buttonId, buttonData)
 
 			Star_Trek.Logs:AddEntry(self.Ent, ply, "")
 			Star_Trek.Logs:AddEntry(self.Ent, ply, "YELLOW ALERT!")
+		elseif buttonName == "Intruder Alert" then
+			Star_Trek.Alert:Enable("intruder")
+
+			Star_Trek.Logs:AddEntry(self.Ent, ply, "")
+			Star_Trek.Logs:AddEntry(self.Ent, ply, "INTRUDER ALERT!")
 		elseif buttonName == "Blue Alert" then
 			Star_Trek.Alert:Enable("blue")
 
