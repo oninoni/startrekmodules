@@ -308,6 +308,10 @@ function SELF:CreateMainWindow(pos, angle, width, height, menuTable, hFlip)
 				continue
 			end
 
+			if table.HasValue(Star_Trek.Transporter.Buffer.Entities, ply) then
+				return
+			end
+
 			table.insert(buttons, {
 				Name = ply:GetName(),
 				Data = ply,

@@ -93,8 +93,13 @@ function SELF:GetPatternData(menuTable, wideField)
 		end
 	elseif modeName == "Crew" then
 		for _, button in pairs(mainWindow.Buttons) do
+			local ply = button.Data
+			if table.HasValue(Star_Trek.Transporter.Buffer.Entities, ply) then
+				continue
+			end
+
 			if button.Selected then
-				table.insert(patternObjects, button.Data)
+				table.insert(patternObjects, ply)
 			end
 		end
 	elseif modeName == "Buffer" then
