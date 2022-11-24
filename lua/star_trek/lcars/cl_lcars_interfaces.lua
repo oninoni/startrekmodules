@@ -228,8 +228,8 @@ function Star_Trek.LCARS:PlayerButtonDown(ply, button)
 					},
 				})
 
-				--debugoverlay.Line(eyePos, forwardTrace.HitPos, 10, Color(255, 0, 0), true)
-				--debugoverlay.Line(worldPos, backwardsTrace.HitPos, 10, Color(255, 0, 0), true)
+				-- debugoverlay.Line(eyePos, forwardTrace.HitPos, 10, Color(255, 0, 0), true)
+				-- debugoverlay.Line(worldPos, backwardsTrace.HitPos, 10, Color(255, 0, 0), true)
 
 				local forwardsDistance = eyePos:Distance(forwardTrace.HitPos)
 				local backwardsDistance = worldPos:Distance(backwardsTrace.HitPos)

@@ -155,4 +155,3 @@ function SELF:OnPress(interfaceData, ply, buttonId, callback)
 
 	return shouldUpdate
 end
-
