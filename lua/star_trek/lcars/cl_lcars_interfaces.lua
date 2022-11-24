@@ -361,7 +361,6 @@ hook.Add("PostDrawTranslucentRenderables", "Star_Trek.LCARS.Draw", function(isDr
 		end
 
 		surface.SetAlphaMultiplier(1)
-
 		for _, window in pairs(interface.Windows) do
 			render.OverrideBlend(false)
 

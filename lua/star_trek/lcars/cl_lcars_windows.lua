@@ -126,13 +126,13 @@ function Star_Trek.LCARS:DrawWindow(window, animPos, drawCursor)
 		surface.SetMaterial(window.RTMaterial)
 		surface.DrawTexturedRectUV(-width / 2, -height / 2, width, height, 0, 0, 1, 1)
 
---		if drawCursor and window.MouseActive then
---			local mousePos = window.LastPos
---
---			surface.SetDrawColor(255, 255, 255, 255)
---			surface.SetMaterial(Material("sprites/arrow"))
---			surface.DrawTexturedRect(mousePos[1] - 15, mousePos[2] - 15, 30, 30)
---		end
+		if drawCursor and window.MouseActive then
+			local mousePos = window.LastPos
+
+			surface.SetDrawColor(255, 255, 255, 255)
+			surface.SetMaterial(Material("sprites/arrow"))
+			surface.DrawTexturedRect(mousePos[1] - width / 2 - 15, mousePos[2] - height / 2 - 15, 30, 30)
+		end
 	cam.End3D2D()
 
 	if isfunction(window.OnDraw3D) then
