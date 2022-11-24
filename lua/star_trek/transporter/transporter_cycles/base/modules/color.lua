@@ -77,10 +77,10 @@ function SELF:ApplyColors()
 	if istable(lastStateData) then
 		local lastColorFade = lastStateData.ColorFade
 		if isnumber(lastColorFade) then
-			if lastColorFade > 0 then
-				targetAlpha = 0
-			else
+			if lastColorFade < 0 then
 				targetAlpha = 255
+			else
+				targetAlpha = 0
 			end
 		end
 	end

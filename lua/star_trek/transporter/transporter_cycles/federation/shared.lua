@@ -47,7 +47,7 @@ SELF.States = {
 		RenderMode = RENDERMODE_TRANSTEXTURE,
 
 		TPToBuffer = true,
-		ColorFade = 1,
+		ColorFade = 0,
 	},
 	[3] = { -- Remat
 		Duration = 3,

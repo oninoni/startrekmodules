@@ -167,7 +167,7 @@ function SELF:RenderScreenspaceEffect()
 	render.PopRenderTarget()
 
 	local fade
-	if stateData.TPToBuffer then
+	if colorFade == 0 then
 		fade = 1
 	elseif colorFade > 0 then
 		fade = math.min(1, diff / stateData.Duration)

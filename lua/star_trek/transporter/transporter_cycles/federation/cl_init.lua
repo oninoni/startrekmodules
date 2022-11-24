@@ -55,8 +55,6 @@ function SELF:Render()
 	local stateData = self:GetStateData()
 	if not istable(stateData) then return end
 
-	if not isnumber(stateData.ColorFade) or stateData.ColorFade == 0 then return end
-
 	local ent = self.Entity
 
 	local diff = CurTime() - self.StateTime
