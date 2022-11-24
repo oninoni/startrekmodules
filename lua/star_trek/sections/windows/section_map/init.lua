@@ -123,6 +123,7 @@ end
 
 function SELF:GetSelected()
 	local data = {}
+
 	for sectionId, sectionData in pairs(self.Sections) do
 		data[sectionId] = sectionData.Selected
 	end
@@ -151,6 +152,7 @@ end
 
 function SELF:OnPress(interfaceData, ply, buttonId, callback)
 	local shouldUpdate = false
+
 	return shouldUpdate
 end
 
