@@ -62,6 +62,8 @@ end
 function Star_Trek.Transporter:GetPatternFromEntity(ent, isTarget, wideField)
 	local pattern = {}
 
+	if not IsValid(ent) then return end
+
 	local pos = ent:GetPos()
 
 	if not isTarget then -- Source
