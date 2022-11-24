@@ -143,6 +143,22 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 
 			if isBuffer then
 				table.RemoveByValue(Star_Trek.Transporter.Buffer.Entities, ent)
+
+				-- Remove the item from the buffer list in the window
+				interfaceData = Star_Trek.LCARS.ActiveInterfaces[interfaceEnt]
+				for key,windowData in pairs(interfaceData.Windows) do
+					if windowData.TitleShort ~= nil and windowData.TitleShort == "Buffer" then
+						buttons = table.Copy(windowData.Buttons)
+						for key, button in pairs (windowData.Buttons) do
+							if button.Data == ent then
+								table.remove(buttons, key)
+							end
+						end
+						windowData:ClearMainButtons()
+						windowData:SetButtons(buttons)
+						windowData:Update()
+					end
+				end
 			end
 
 			local success, scanData = Star_Trek.Sensors:ScanEntity(ent)

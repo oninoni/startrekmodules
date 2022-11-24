@@ -45,8 +45,12 @@ function SELF:OpenInternal(menuPos, menuAng, menuWidth, actionPos, actionAng, ac
 		sectionHeight,
 		function(windowData, interfaceData, ply, categoryId, buttonId, buttonData)
 			if isnumber(buttonId) then
-				mapWindow:SetSectionActive(buttonData.Data, buttonData.Selected)
-				mapWindow:Update()
+				for _,button in pairs(windowData.Buttons) do
+					if button.Data ~= nil then
+						mapWindow:SetSectionActive(button.Data, button.Selected)
+						mapWindow:Update()
+					end
+				end
 			else
 				mapWindow:SetDeck(categoryId)
 				mapWindow:Update()
