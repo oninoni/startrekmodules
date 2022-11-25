@@ -385,6 +385,11 @@ function Star_Trek.Sections:Setup()
 		if deck == 11 and sectionId == 400 and h == 258 then
 			max.z = max.z - 64
 		end
+		-- Fixing security overlapping with corridor
+		local w = max.x - min.x
+		if deck == 4 and sectionId == 400 and w == 514 then
+			min.x = min.x + 4
+		end
 
 		local areaData = {}
 		areaData.Min = min
