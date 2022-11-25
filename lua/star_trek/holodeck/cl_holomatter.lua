@@ -42,6 +42,7 @@ net.Receive("Star_Trek.Holodeck.Disintegrate", function()
 			ent:SetColor(ColorAlpha(ent:GetColor(), alpha))
 
 			for _, child in pairs(ent:GetChildren()) do
+				if child:IsPlayer() then continue end
 				child:SetRenderMode(RENDERMODE_TRANSALPHA)
 				child:SetColor(ColorAlpha(child:GetColor(), alpha))
 			end
