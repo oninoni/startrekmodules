@@ -192,6 +192,8 @@ function SELF:DrawButtonList(pos, animPos, buttons)
 		button.Hovered = self:IsButtonHovered(x, y, x + button.ElementWidth, y + button.ElementHeight, pos)
 
 		local alpha = self:GetButtonAlpha(y, areaY, areaYEnd, button.ElementHeight)
+		if alpha == 0 then continue end
+
 		surface.SetDrawColor(255, 255, 255, alpha * animPos)
 
 		button:Render(x, y)

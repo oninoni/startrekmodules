@@ -19,6 +19,8 @@
 if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
 local SELF = WINDOW
 
+local SCROLL_EXPONENT = 1.5
+
 function SELF:OnCreate(windowData)
 	self.Padding = self.Padding or 1
 	self.FrameType = self.FrameType or "frame"
@@ -31,8 +33,9 @@ function SELF:OnCreate(windowData)
 	self.TextTopAlpha = self.Area1Y + 20
 	self.TextBotAlpha = self.Area1YEnd - 10
 
-	self.Offset = self.Offset or self.Area1Y
-	self.OffsetDirection = false
+	local h = self.Area1Height / 4
+	self.TextTopOffset = self.Area1Y + h
+	self.TextBotOffset = self.Area1YEnd - h
 
 	self.FallbackColor = windowData.FallbackColor
 	self.Active = windowData.Active
@@ -40,7 +43,16 @@ function SELF:OnCreate(windowData)
 	self.TextHeight = self.TextHeight or 20
 	self.TextFont = self.TextFont or "LCARSText"
 
+	local oldMaxOffset = self.MaxOffset or 0
 	self:ProcessText(windowData.Lines)
+	if oldMaxOffset ~= self.MaxOffset then
+		self.OffsetTarget = -(self.MaxOffset - self.Area1Height)
+	else
+		self.OffsetTarget = nil
+	end
+
+	self.Offset = self.Offset or self.OffsetTarget or 0
+	self.OffsetDirection = false
 
 	return true
 end
@@ -76,10 +88,11 @@ function SELF:CheckLine(words, subLines)
 end
 
 function SELF:ProcessText(lines)
-	self.Lines = {}
-
 	-- Prep Font for recursion.
 	surface.SetFont(self.TextFont)
+
+	self.Lines = {}
+	table.insert(self.Lines, {Text = ""})
 
 	for _, line in pairs(lines or {}) do
 		local text = line.Text
@@ -96,8 +109,7 @@ function SELF:ProcessText(lines)
 		end
 	end
 
-	self.MaxN = table.maxn(self.Lines)
-	self.MaxOffset = -((self.MaxN + 1) * self.TextHeight) + self.HD2
+	self.MaxOffset = (table.maxn(self.Lines) + 1) * self.TextHeight
 end
 
 function SELF:OnPress(pos, animPos)
@@ -108,18 +120,23 @@ function SELF:OnPress(pos, animPos)
 end
 
 function SELF:OnDraw(pos, animPos)
+	local offsetTarget = self.Offset
 	if self.Active then
-		local offsetTarget = Star_Trek.LCARS:GetButtonOffset(self.Area1Y + 8, self.Area1Height - 16, 20, self.MaxN, pos[2])
-		self.Offset = Lerp(0.005, self.Offset, offsetTarget)
+		local y = pos.y
+		if y < self.TextTopOffset then
+			offsetTarget = math.min(0, self.Offset + math.pow(self.TextTopOffset - y, SCROLL_EXPONENT))
+		elseif y > self.TextBotOffset then
+			offsetTarget = math.max(self.Offset - math.pow(y - self.TextBotOffset, SCROLL_EXPONENT), -(self.MaxOffset - self.Area1Height))
+		end
 	else
-		local offsetTarget = Star_Trek.LCARS:GetButtonOffset(self.Area1Y + 8, self.Area1Height - 16, 20, self.MaxN, self.HD2)
-		self.Offset = Lerp(0.005, self.Offset, offsetTarget)
+		if isnumber(self.OffsetTarget) then
+			offsetTarget = self.OffsetTarget
+		end
 	end
-
-	--draw.RoundedBox(0, 0, self.Area1Y, 10, self.Area1Height, Color(255, 0, 0))
+	self.Offset = Lerp(0.01, self.Offset, offsetTarget)
 
 	for i, line in pairs(self.Lines) do
-		local y = self.Offset + i * self.TextHeight
+		local y = self.Area1Y + self.Offset + i * self.TextHeight
 
 		local textAlpha = 255
 		if y < self.TextTopAlpha or y > self.TextBotAlpha then
@@ -132,6 +149,7 @@ function SELF:OnDraw(pos, animPos)
 			textAlpha = math.min(math.max(0, 255 - textAlpha * 10), 255)
 		end
 		textAlpha = math.min(textAlpha, 255 * animPos)
+		if textAlpha == 0 then continue end
 
 		local align = line.Align
 		if align == TEXT_ALIGN_LEFT then
