@@ -97,7 +97,7 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip)
 	end
 	buttons[n + 2] = actionButtonData
 	menuTable.ActionButtonId = n + 2
-	
+
 	local height = table.maxn(buttons) * 35 + 80
 	local transporterType = menuTable.Target and "Target" or "Source"
 	local name = "Transporter " .. transporterType
@@ -171,6 +171,7 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip)
 							Star_Trek.Logs:AddEntry(self.Ent, ply, "Purging: " .. scanData.Name , Star_Trek.LCARS.ColorRed)
 						end
 					end
+
 					Star_Trek.Logs:AddEntry(self.Ent, ply, "Purge Complete", Star_Trek.LCARS.ColorRed)
 				end
 

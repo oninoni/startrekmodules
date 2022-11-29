@@ -121,6 +121,7 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 	Star_Trek.Logs:AddEntry(interfaceEnt, ply, table.Count(sourcePatterns) .. " Pattern Sources Detected.")
 	Star_Trek.Logs:AddEntry(interfaceEnt, ply, table.Count(sourcePatterns) .. " Pattern Targets Detected.")
 
+	local updateBuffer = false
 	for _, sourcePattern in pairs(sourcePatterns) do
 		local ent = sourcePattern.Ent
 
@@ -144,21 +145,7 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 			if isBuffer then
 				table.RemoveByValue(Star_Trek.Transporter.Buffer.Entities, ent)
 
-				-- Remove the item from the buffer list in the window
-				interfaceData = Star_Trek.LCARS.ActiveInterfaces[interfaceEnt]
-				for key,windowData in pairs(interfaceData.Windows) do
-					if windowData.TitleShort ~= nil and windowData.TitleShort == "Buffer" then
-						buttons = table.Copy(windowData.Buttons)
-						for key, button in pairs (windowData.Buttons) do
-							if button.Data == ent then
-								table.remove(buttons, key)
-							end
-						end
-						windowData:ClearMainButtons()
-						windowData:SetButtons(buttons)
-						windowData:Update()
-					end
-				end
+				updateBuffer = true
 			end
 
 			local success, scanData = Star_Trek.Sensors:ScanEntity(ent)
@@ -230,5 +217,9 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 				interfaceEnt:EmitSound("star_trek.lcars_alert14")
 			end)
 		end
+	end
+
+	if updateBuffer then
+		hook.Run("Star_Trek.Transporter.UpdateBuffer", ent, interfaceEnt)
 	end
 end
