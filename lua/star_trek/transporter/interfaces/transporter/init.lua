@@ -163,3 +163,21 @@ end
 function Star_Trek.LCARS:OpenTransporterMenu()
 	Star_Trek.LCARS:OpenInterface(TRIGGER_PLAYER, CALLER, "transporter")
 end
+
+hook.Add("Star_Trek.Transporter.UpdateBuffer", "Star_Trek.Transporter.BufferWindowUpdate", function(purgedEnt, interfaceEnt)
+	-- Remove the item from the buffer list in the window
+	interfaceData = Star_Trek.LCARS.ActiveInterfaces[interfaceEnt]
+	for _,windowData in pairs(interfaceData.Windows) do
+		if windowData.TitleShort ~= nil and windowData.TitleShort == "Buffer" then
+			buttons = table.Copy(windowData.Buttons)
+			for key, button in pairs (windowData.Buttons) do
+				if button.Data == purgedEnt then
+					table.remove(buttons, key)
+				end
+			end
+			windowData:ClearMainButtons()
+			windowData:SetButtons(buttons)
+			windowData:Update()
+		end
+	end
+end)

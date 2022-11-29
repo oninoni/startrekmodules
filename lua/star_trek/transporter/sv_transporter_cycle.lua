@@ -195,7 +195,6 @@ timer.Create("Star_Trek.Transporter.BufferThink", 1, 0, function()
 			else
 				SafeRemoveEntity(ent)
 			end
-			--return
 		end
 
 		ent.BufferQuality = ent.BufferQuality - 1
@@ -212,15 +211,13 @@ timer.Create("Star_Trek.Transporter.BufferThink", 1, 0, function()
 	for _, ent in pairs(removeFromBuffer) do
 		table.RemoveByValue(Star_Trek.Transporter.Buffer.Entities, ent)
 		ent.BufferQuality = nil
-	
-		interfaceEnt = nil;
-		for key,val in pairs(Star_Trek.LCARS.ActiveInterfaces) do
-			for _,window in pairs(val.Windows) do
-				if window.TitleShort == "Source" then
-					interfaceEnt = val.Ent
-				end
+	end
+
+	if #removeFromBuffer > 0 then
+		for _, interfaceData in pairs(Star_Trek.LCARS.ActiveInterfaces) do
+			if isstring(interfaceData.CycleClass) then
+				hook.Run("Star_Trek.Transporter.UpdateBuffer", ent, interfaceData.Ent)
 			end
 		end
-		hook.Run("Star_Trek.Transporter.UpdateBuffer", ent, interfaceEnt)
 	end
 end)
