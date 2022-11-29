@@ -49,6 +49,26 @@ hook.Add("Star_Trek.Sections.Loaded", "Star_Trek.Transporter.DetectLocations", f
 	end
 end)
 
+hook.Add("Star_Trek.Transporter.UpdateBuffer", "Star_Trek.Transporter.BufferWindowUpdate", function(purgedEnt, interfaceEnt)
+
+	-- Remove the item from the buffer list in the window
+	interfaceData = Star_Trek.LCARS.ActiveInterfaces[interfaceEnt]
+	for _,windowData in pairs(interfaceData.Windows) do
+		if windowData.TitleShort ~= nil and windowData.TitleShort == "Buffer" then
+			buttons = table.Copy(windowData.Buttons)
+			for key, button in pairs (windowData.Buttons) do
+				if button.Data == purgedEnt then
+					table.remove(buttons, key)
+				end
+			end
+			windowData:ClearMainButtons()
+			windowData:SetButtons(buttons)
+			windowData:Update()
+		end
+	end
+
+end)
+
 function Star_Trek.Transporter:CanBeamTo(ent, pos)
 	local min, max = ent:GetRotatedAABB(ent:OBBMins(), ent:OBBMaxs())
 	max.z = max.z - min.z
@@ -144,21 +164,7 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 			if isBuffer then
 				table.RemoveByValue(Star_Trek.Transporter.Buffer.Entities, ent)
 
-				-- Remove the item from the buffer list in the window
-				interfaceData = Star_Trek.LCARS.ActiveInterfaces[interfaceEnt]
-				for key,windowData in pairs(interfaceData.Windows) do
-					if windowData.TitleShort ~= nil and windowData.TitleShort == "Buffer" then
-						buttons = table.Copy(windowData.Buttons)
-						for key, button in pairs (windowData.Buttons) do
-							if button.Data == ent then
-								table.remove(buttons, key)
-							end
-						end
-						windowData:ClearMainButtons()
-						windowData:SetButtons(buttons)
-						windowData:Update()
-					end
-				end
+				hook.Run("Star_Trek.Transporter.UpdateBuffer", ent, interfaceEnt)
 			end
 
 			local success, scanData = Star_Trek.Sensors:ScanEntity(ent)
