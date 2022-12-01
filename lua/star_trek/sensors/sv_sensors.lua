@@ -77,6 +77,15 @@ function Star_Trek.Sensors:ScanEntity(ent)
 
 	-- Check Weapons
 	if ent:IsWeapon() then
+		if table.HasValue(Star_Trek.Sensors.WeaponBlackList, ent:GetClass()) then
+			return false, "Blacklisted Weapon"
+		end
+
+		local override = hook.Run("Star_Trek.Sensors.BlockWeaponScan", ent)
+		if override then
+			return false, "Blacklisted Weapon"
+		end
+
 		local weaponTables = list.Get("Weapon")
 		if istable(weaponTables) then
 			local weaponTable = weaponTables[ent:GetClass()]
@@ -173,12 +182,7 @@ end)
 hook.Add("Star_Trek.Sensors.ScanPlayer", "Sensors.CheckWeapons", function(ent, scanData)
 	scanData.Weapons = {}
 
-	local weaponBlacklist = {}
-	hook.Run("Star_Trek.Sensors.BlacklistWeapons", weaponBlacklist)
-
 	for _, weapon in pairs(ent:GetWeapons()) do
-		if table.HasValue(weaponBlacklist, weapon:GetClass()) then continue end
-
 		local success, wepScanData = Star_Trek.Sensors:ScanEntity(weapon)
 		if not success then
 			continue
@@ -208,5 +212,11 @@ hook.Add("Star_Trek.Sensors.ScanEntity", "Sensors.CheckMass", function(ent, scan
 				scanData.Mass = scanData.Mass + phys:GetMass()
 			end
 		end
+	end
+end)
+
+hook.Add("Star_Trek.Sensors.ScanWeapon", "Sensors.CheckHarmless", function(ent, scanData)
+	if table.HasValue(Star_Trek.Sensors.HarmlessWeapons, ent:GetClass()) then
+		scanData.HarmlessWeapon = true
 	end
 end)

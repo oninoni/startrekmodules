@@ -30,8 +30,6 @@ if SERVER then
 
 	AddCSLuaFile("sh_transporter_pads.lua")
 
-	include("sv_config.lua")
-
 	include("resources/sh_sounds.lua")
 	include("resources/sh_particles.lua")
 	include("sh_loader.lua")

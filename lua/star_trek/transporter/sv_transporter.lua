@@ -83,29 +83,24 @@ function Star_Trek.Transporter:RemoveWeapons(interfaceEnt, ply, scanData)
 	local weaponsFound = false
 
 	for _, weapon in pairs(ply:GetWeapons()) do
-		if table.HasValue(Star_Trek.Transporter.WeaponIgnoreList, weapon:GetClass()) then
-			continue
-		end
 
-		local override = hook.Run("Star_Trek.Transporter.IgnoreWeapon", ply, weapon)
-		if override then
-			continue
-		end
-
-		weaponsFound = true
 		local success, weaponScanData = Star_Trek.Sensors:ScanEntity(weapon)
 		if success then
+			if weaponScanData.HarmlessWeapon then continue end
+
 			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "WARNING: Weapon detected on " .. scanData.Name .. ": " .. weaponScanData.Name .. ", Sending weapon to buffer...", Star_Trek.LCARS.ColorRed)
-		end
 
-		ply:DropWeapon(weapon, ply:GetPos(), Vector(0, 0, 0))
-		local phys = weapon:GetPhysicsObject()
-		if IsValid(phys) then
-			phys:EnableMotion(false)
-		end
+			ply:DropWeapon(weapon, ply:GetPos(), Vector(0, 0, 0))
+			local phys = weapon:GetPhysicsObject()
+			if IsValid(phys) then
+				phys:EnableMotion(false)
+			end
 
-		table.insert(Star_Trek.Transporter.Buffer.Entities, weapon)
-		weapon.BufferQuality = 160
+			table.insert(Star_Trek.Transporter.Buffer.Entities, weapon)
+			weapon.BufferQuality = 160
+
+			weaponsFound = true
+		end
 	end
 
 	if weaponsFound then
