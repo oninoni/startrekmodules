@@ -164,15 +164,23 @@ function Star_Trek.LCARS:OpenTransporterMenu()
 	Star_Trek.LCARS:OpenInterface(TRIGGER_PLAYER, CALLER, "transporter")
 end
 
-hook.Add("Star_Trek.Transporter.UpdateBuffer", "Star_Trek.Transporter.BufferWindowUpdate", function(purgedEnt, interfaceEnt)
+hook.Add("Star_Trek.Transporter.UpdateBuffer", "Star_Trek.Transporter.BufferWindowUpdate", function(interfaceEnt)
 	-- Remove the item from the buffer list in the window
 	interfaceData = Star_Trek.LCARS.ActiveInterfaces[interfaceEnt]
 	for _,windowData in pairs(interfaceData.Windows) do
 		if windowData.TitleShort ~= nil and windowData.TitleShort == "Buffer" then
-			buttons = table.Copy(windowData.Buttons)
-			for key, button in pairs (windowData.Buttons) do
-				if button.Data == purgedEnt then
-					table.remove(buttons, key)
+			buttons = {}
+			for _, button in pairs (windowData.Buttons) do
+				if table.HasValue(Star_Trek.Transporter.Buffer.Entities, button.Data) then
+					table.insert(buttons, button)
+				end
+			end
+			--Updating the colors because to be alternated because they do something weird.
+			for key, val in pairs(buttons) do
+				if key % 2 ~= 0 then
+					val.Color = Star_Trek.LCARS.ColorBlue
+				else 
+					val.Color = Star_Trek.LCARS.ColorLightBlue
 				end
 			end
 			windowData:ClearMainButtons()
