@@ -83,29 +83,24 @@ function Star_Trek.Transporter:RemoveWeapons(interfaceEnt, ply, scanData)
 	local weaponsFound = false
 
 	for _, weapon in pairs(ply:GetWeapons()) do
-		if table.HasValue(Star_Trek.Transporter.WeaponIgnoreList, weapon:GetClass()) then
-			continue
-		end
 
-		local override = hook.Run("Star_Trek.Transporter.IgnoreWeapon", ply, weapon)
-		if override then
-			continue
-		end
-
-		weaponsFound = true
 		local success, weaponScanData = Star_Trek.Sensors:ScanEntity(weapon)
 		if success then
+			if weaponScanData.HarmlessWeapon then continue end
+
 			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "WARNING: Weapon detected on " .. scanData.Name .. ": " .. weaponScanData.Name .. ", Sending weapon to buffer...", Star_Trek.LCARS.ColorRed)
-		end
 
-		ply:DropWeapon(weapon, ply:GetPos(), Vector(0, 0, 0))
-		local phys = weapon:GetPhysicsObject()
-		if IsValid(phys) then
-			phys:EnableMotion(false)
-		end
+			ply:DropWeapon(weapon, ply:GetPos(), Vector(0, 0, 0))
+			local phys = weapon:GetPhysicsObject()
+			if IsValid(phys) then
+				phys:EnableMotion(false)
+			end
 
-		table.insert(Star_Trek.Transporter.Buffer.Entities, weapon)
-		weapon.BufferQuality = 160
+			table.insert(Star_Trek.Transporter.Buffer.Entities, weapon)
+			weapon.BufferQuality = 160
+
+			weaponsFound = true
+		end
 	end
 
 	if weaponsFound then
@@ -122,6 +117,8 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 	Star_Trek.Logs:AddEntry(interfaceEnt, ply, table.Count(sourcePatterns) .. " Pattern Targets Detected.")
 
 	local updateBuffer = false
+	local interference = false;
+	local cause;
 	for _, sourcePattern in pairs(sourcePatterns) do
 		local ent = sourcePattern.Ent
 
@@ -139,6 +136,11 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 
 			local pos = targetPattern.Pos
 			if not targetPattern.AllowBeam and not sourcePattern.AllowBeam and not self:CanBeamTo(ent, pos) then
+				continue
+			end
+
+			interference, cause = hook.Run("Star_Trek.Transporter.DetectInterference", sourcePattern, targetPattern)	
+			if interference then
 				continue
 			end
 
@@ -173,6 +175,17 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 		end
 
 		if successfulTransport then
+			continue
+		end
+
+		if interference then
+			if cause == "target" then
+				Star_Trek.Logs:AddEntry(interfaceEnt, ply, "ERROR: Cannot lock onto target location. Aborting...", Star_Trek.LCARS.ColorRed)
+				interfaceEnt:EmitSound("star_trek.lcars_error")
+			elseif cause == "source" then
+				Star_Trek.Logs:AddEntry(interfaceEnt, ply, "ERROR: Cannot lock onto source pattern. Aborting...", Star_Trek.LCARS.ColorRed)
+				interfaceEnt:EmitSound("star_trek.lcars_error")
+			end
 			continue
 		end
 

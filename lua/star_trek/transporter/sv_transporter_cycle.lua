@@ -183,6 +183,45 @@ hook.Add("EntityRemoved", "Star_Trek.Transporter.RemoveReset", function(ent)
 	Star_Trek.Transporter:CleanUp(ent)
 end)
 
+hook.Add("Star_Trek.Transporter.DetectInterference", "Star_Trek.Transporter.CheckShielded", function(sourcePattern, targetPattern)
+	targetPos = targetPattern.Pos
+	sourcePos = sourcePattern.Ent:GetPos()
+	sourceSuccess, sourceDeck, sourceSecId = Star_Trek.Sections:DetermineSection(sourcePos)
+	targetSuccess, targetDeck, targetSecId = Star_Trek.Sections:DetermineSection(targetPos)
+	targetSectionSuccess, targetSection = Star_Trek.Sections:GetSection(targetDeck, targetSecId)
+	sourceSectionSuccess, sourceSection = Star_Trek.Sections:GetSection(sourceDeck, sourceSecId)
+
+	if not sourceSuccess and targetSuccess and targetSectionSuccess and sourceSectionSuccess then return false end
+
+	targetFields = targetSection.ForceFields
+	sourceFields = sourceSection.ForceFields
+	fieldEnts = ents.FindByClass("force_field")
+	numTargetFields = #targetFields
+	numSourceFields = #sourceFields
+	numActiveTarget = 0
+	numActiveSource = 0
+
+	for _, active in pairs(fieldEnts) do
+		for _, sourceField in pairs(sourceFields) do
+			if active:GetPos() == sourceField.Pos then
+				numActiveSource = numActiveSource + 1
+			end
+		end
+		for _, targetField in pairs(targetFields) do
+			if active:GetPos() == targetField.Pos then
+				numActiveTarget = numActiveTarget + 1
+			end
+		end
+	end
+	if numActiveTarget == numTargetFields then
+		return true, "target"
+	elseif numActiveSource == numSourceFields then
+		return true, "source"
+	else
+		return false
+	end
+end)
+
 timer.Create("Star_Trek.Transporter.BufferThink", 1, 0, function()
 	local removeFromBuffer = {}
 
