@@ -13,13 +13,18 @@
 ---------------------------------------
 
 ---------------------------------------
---        Transporter | Config       --
+--          Sensors | Config         --
 ---------------------------------------
 
-Star_Trek.Transporter.WeaponIgnoreList = {
-    "weapon_physgun",
-    "gmod_tool",
-    "gmod_camera",
-    "weapon_fists",
-    "weapon_medkit",
+Star_Trek.Sensors.WeaponBlackList = {
+	"weapon_fists"
+}
+
+Star_Trek.Sensors.HarmlessWeapons = {
+	"gmod_camera",
+	"weapon_medkit",
+
+	"weapon_bugbait",
+	"weapon_crowbar",
+	"weapon_crossbow",
 }
