@@ -196,20 +196,33 @@ hook.Add("Star_Trek.Transporter.DetectInterference", "Star_Trek.Transporter.Chec
 	targetFields = targetSection.ForceFields
 	sourceFields = sourceSection.ForceFields
 	fieldEnts = ents.FindByClass("force_field")
-	numTargetFields = #targetFields
-	numSourceFields = #sourceFields
+	numTargetFields = -1
+	numSourceFields = -1
+
+	--There are no fields if they are in an area without a section or something idk
+	if sourceFields ~= nil then
+		numSourceFields = #sourceFields
+	end
+	if targetFields ~= nil then
+		numTargetFields = #targetFields
+	end
+
 	numActiveTarget = 0
 	numActiveSource = 0
 
 	for _, active in pairs(fieldEnts) do
-		for _, sourceField in pairs(sourceFields) do
-			if active:GetPos() == sourceField.Pos then
-				numActiveSource = numActiveSource + 1
+		if numSourceFields ~= -1 then
+			for _, sourceField in pairs(sourceFields) do
+				if active:GetPos() == sourceField.Pos then
+					numActiveSource = numActiveSource + 1
+				end
 			end
 		end
-		for _, targetField in pairs(targetFields) do
-			if active:GetPos() == targetField.Pos then
-				numActiveTarget = numActiveTarget + 1
+		if numTargetFields ~= -1 then
+			for _, targetField in pairs(targetFields) do
+				if active:GetPos() == targetField.Pos then
+					numActiveTarget = numActiveTarget + 1
+				end
 			end
 		end
 	end
