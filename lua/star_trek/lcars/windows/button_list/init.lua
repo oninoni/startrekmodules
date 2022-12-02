@@ -102,7 +102,7 @@ function SELF:OnPress(interfaceData, ply, buttonId, callback)
 		shouldUpdate = true
 	end
 
-	if self.Toggle and self.PreviousButton ~= buttonId and ply:KeyDown(IN_SPEED) then
+	if self.Toggle and self.PreviousButton ~= nil and self.PreviousButton ~= buttonId and ply:KeyDown(IN_SPEED) then
 		local firstButton = math.min(self.PreviousButton, buttonId)
 		local lastButton = math.max(self.PreviousButton, buttonId)
 
