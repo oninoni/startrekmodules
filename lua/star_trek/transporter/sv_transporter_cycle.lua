@@ -216,7 +216,7 @@ timer.Create("Star_Trek.Transporter.BufferThink", 1, 0, function()
 	if #removeFromBuffer > 0 then
 		for _, interfaceData in pairs(Star_Trek.LCARS.ActiveInterfaces) do
 			if isstring(interfaceData.CycleClass) then
-				hook.Run("Star_Trek.Transporter.UpdateBuffer", ent, interfaceData.Ent)
+				hook.Run("Star_Trek.Transporter.UpdateBuffer", interfaceData.Ent)
 			end
 		end
 	end

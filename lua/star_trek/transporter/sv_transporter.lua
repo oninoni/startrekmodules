@@ -142,7 +142,6 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 
 				updateBuffer = true
 			end
-
 			local success, scanData = Star_Trek.Sensors:ScanEntity(ent)
 			if success then
 				Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Dematerialising " .. scanData.Name .. "...")
@@ -184,7 +183,6 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 		-- Beam into Buffer
 		table.insert(Star_Trek.Transporter.Buffer.Entities, ent)
 		ent.BufferQuality = 160
-
 		if istable(ent) then
 			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "WARNING: Remote Transporter Request has no target. Aborting!", Star_Trek.LCARS.ColorRed)
 			continue
@@ -198,7 +196,6 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 		end)
 
 		Star_Trek.Logs:AddEntry(interfaceEnt, ply, "WARNING: No Free Target Position Available! Storing in Buffer!", Star_Trek.LCARS.ColorRed)
-
 		if success and scanData.Alive then
 			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "WARNING: " .. scanData.Name .. " has been transported to the Buffer!", Star_Trek.LCARS.ColorRed)
 			local timerName = "Star_Trek.Transporter.BufferAlert." .. interfaceEnt:EntIndex()
@@ -213,8 +210,7 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 			end)
 		end
 	end
-
 	if updateBuffer then
-		hook.Run("Star_Trek.Transporter.UpdateBuffer", ent, interfaceEnt)
+		hook.Run("Star_Trek.Transporter.UpdateBuffer", interfaceEnt)
 	end
 end
