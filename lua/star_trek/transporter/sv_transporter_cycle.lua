@@ -195,6 +195,7 @@ timer.Create("Star_Trek.Transporter.BufferThink", 1, 0, function()
 			else
 				SafeRemoveEntity(ent)
 			end
+			continue
 		end
 
 		ent.BufferQuality = ent.BufferQuality - 1
