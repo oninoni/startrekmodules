@@ -187,7 +187,7 @@ timer.Create("Star_Trek.Transporter.BufferThink", 1, 0, function()
 	local removeFromBuffer = {}
 
 	for _, ent in pairs(Star_Trek.Transporter.Buffer.Entities) do
-		if ent.BufferQuality <= 0 then
+		if not isnumber(ent.BufferQuality) or ent.BufferQuality <= 0 then
 			table.insert(removeFromBuffer, ent)
 
 			if ent:IsPlayer() then
@@ -195,6 +195,8 @@ timer.Create("Star_Trek.Transporter.BufferThink", 1, 0, function()
 			else
 				SafeRemoveEntity(ent)
 			end
+
+			continue
 		end
 
 		ent.BufferQuality = ent.BufferQuality - 1
