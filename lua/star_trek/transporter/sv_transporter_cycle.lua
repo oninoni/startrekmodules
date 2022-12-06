@@ -239,7 +239,7 @@ timer.Create("Star_Trek.Transporter.BufferThink", 1, 0, function()
 	local removeFromBuffer = {}
 
 	for _, ent in pairs(Star_Trek.Transporter.Buffer.Entities) do
-		if ent.BufferQuality <= 0 then
+		if not isnumber(ent.BufferQuality) or ent.BufferQuality <= 0 then
 			table.insert(removeFromBuffer, ent)
 
 			if ent:IsPlayer() then
@@ -247,6 +247,8 @@ timer.Create("Star_Trek.Transporter.BufferThink", 1, 0, function()
 			else
 				SafeRemoveEntity(ent)
 			end
+
+			continue
 		end
 
 		ent.BufferQuality = ent.BufferQuality - 1
@@ -268,7 +270,7 @@ timer.Create("Star_Trek.Transporter.BufferThink", 1, 0, function()
 	if #removeFromBuffer > 0 then
 		for _, interfaceData in pairs(Star_Trek.LCARS.ActiveInterfaces) do
 			if isstring(interfaceData.CycleClass) then
-				hook.Run("Star_Trek.Transporter.UpdateBuffer", ent, interfaceData.Ent)
+				hook.Run("Star_Trek.Transporter.UpdateBuffer", interfaceData.Ent)
 			end
 		end
 	end
