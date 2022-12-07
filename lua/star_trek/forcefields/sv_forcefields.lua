@@ -184,6 +184,33 @@ Star_Trek.Control:Register("force_fields", "Forcefields", function(value, deck, 
 	end
 end)
 
+function Star_Trek.Security:CheckIsolatedPos(pos)
+	local success, deck, sectionId = Star_Trek.Sections:DetermineSection(pos)
+	if not success then
+		return false
+	end
+
+	local _, sectionData = Star_Trek.Sections:GetSection(deck, sectionId)
+
+	for _, forceFieldData in pairs(sectionData.ForceFields) do
+		if not IsValid(forceFieldData.Entity) then
+
+			return false
+		end
+	end
+
+	return true, Star_Trek.Sections:GetSectionName(deck, sectionId)
+end
+
+hook.Add("Star_Trek.Transporter.BlockBeamTo", "Star_Trek.Transporter.CheckForcefields", function(pos)
+	local isIsolated, sectionName = Star_Trek.Security:CheckIsolatedPos(pos)
+	if isIsolated then
+		return true, sectionName .. " is locked down using forcefields."
+	end
+
+	return false
+end)
+
 -------------
 --- Setup ---
 -------------
