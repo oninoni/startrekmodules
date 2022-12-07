@@ -49,7 +49,21 @@ hook.Add("Star_Trek.Sections.Loaded", "Star_Trek.Transporter.DetectLocations", f
 	end
 end)
 
+function Star_Trek.Transporter:CanBeamPos(pos)
+	local override, error = hook.Run("Star_Trek.Transporter.BlockBeamTo", pos)
+	if override then
+		return false, error
+	end
+
+	return true
+end
+
 function Star_Trek.Transporter:CanBeamTo(ent, pos)
+	local canBeam, error = Star_Trek.Transporter:CanBeamPos(pos)
+	if not canBeam then
+		return false, error
+	end
+
 	local min, max = ent:GetRotatedAABB(ent:OBBMins(), ent:OBBMaxs())
 	max.z = max.z - min.z
 	min.z = 0
@@ -67,12 +81,12 @@ function Star_Trek.Transporter:CanBeamTo(ent, pos)
 	})
 
 	if trace.Hit then
-		return false
+		return false, "Location Occupied!"
 	end
 
 	for _, transporterCycle in pairs(self.ActiveCycles) do
 		if transporterCycle.TargetPos:Distance(pos) < 16 then
-			return false
+			return false, "Transport in Progress at Location!"
 		end
 	end
 
@@ -108,6 +122,25 @@ function Star_Trek.Transporter:RemoveWeapons(interfaceEnt, ply, scanData)
 	end
 end
 
+function Star_Trek.Transporter:SoundAlert(interfaceEnt, count)
+	local timerName = "Star_Trek.Transporter.BufferAlert." .. interfaceEnt:EntIndex()
+
+	if timer.Exists(timerName) then
+		return
+	end
+
+	interfaceEnt:EmitSound("star_trek.lcars_alert14")
+
+	if count <= 1 then
+		return
+	end
+
+	-- 5x Alert Sound
+	timer.Create(timerName, 1, count - 1, function()
+		interfaceEnt:EmitSound("star_trek.lcars_alert14")
+	end)
+end
+
 function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatterns, targetPatterns, cycleClass, noBuffer, allowWeapons)
 	if not istable(sourcePatterns) then return end
 
@@ -117,12 +150,24 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 	Star_Trek.Logs:AddEntry(interfaceEnt, ply, table.Count(sourcePatterns) .. " Pattern Targets Detected.")
 
 	local updateBuffer = false
-	local interference = false;
-	local cause;
+	local errors = {}
 	for _, sourcePattern in pairs(sourcePatterns) do
 		local ent = sourcePattern.Ent
 
 		if IsEntity(ent) and not IsValid(ent) then
+			continue
+		end
+
+		local sourceSuccess, sourceError = self:CanBeamPos(ent:GetPos())
+		if not sourceSuccess then
+			local sourceErrorText = "Source location cannot be locked on: " .. sourceError
+			if not table.HasValue(errors, sourceErrorText) then
+				table.insert(errors, sourceErrorText)
+				Star_Trek.Logs:AddEntry(interfaceEnt, ply, "ERROR: " .. sourceErrorText, Star_Trek.LCARS.ColorRed)
+
+				Star_Trek.Transporter:SoundAlert(interfaceEnt, 2)
+			end
+
 			continue
 		end
 
@@ -135,12 +180,16 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 			end
 
 			local pos = targetPattern.Pos
-			if not targetPattern.AllowBeam and not sourcePattern.AllowBeam and not self:CanBeamTo(ent, pos) then
-				continue
-			end
+			local targetSuccess, targetError = self:CanBeamTo(ent, pos)
+			if not targetSuccess then
+				local targetErrorText = "Target location cannot be locked on: " .. targetError
+				if not table.HasValue(errors, targetErrorText) then
+					table.insert(errors, targetErrorText)
+					Star_Trek.Logs:AddEntry(interfaceEnt, ply, "ERROR: " .. targetErrorText, Star_Trek.LCARS.ColorRed)
 
-			interference, cause = hook.Run("Star_Trek.Transporter.DetectInterference", sourcePattern, targetPattern)	
-			if interference then
+					Star_Trek.Transporter:SoundAlert(interfaceEnt, 2)
+				end
+
 				continue
 			end
 
@@ -177,17 +226,6 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 			continue
 		end
 
-		if interference then
-			if cause == "target" then
-				Star_Trek.Logs:AddEntry(interfaceEnt, ply, "ERROR: Cannot lock onto target location. Aborting...", Star_Trek.LCARS.ColorRed)
-				interfaceEnt:EmitSound("star_trek.lcars_error")
-			elseif cause == "source" then
-				Star_Trek.Logs:AddEntry(interfaceEnt, ply, "ERROR: Cannot lock onto source pattern. Aborting...", Star_Trek.LCARS.ColorRed)
-				interfaceEnt:EmitSound("star_trek.lcars_error")
-			end
-			continue
-		end
-
 		if noBuffer then
 			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Buffer Usage Prevented!", Star_Trek.LCARS.ColorOrange)
 			continue
@@ -216,18 +254,11 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 		Star_Trek.Logs:AddEntry(interfaceEnt, ply, "WARNING: No Free Target Position Available! Storing in Buffer!", Star_Trek.LCARS.ColorRed)
 		if success and scanData.Alive then
 			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "WARNING: " .. scanData.Name .. " has been transported to the Buffer!", Star_Trek.LCARS.ColorRed)
-			local timerName = "Star_Trek.Transporter.BufferAlert." .. interfaceEnt:EntIndex()
 
-			if timer.Exists(timerName) then
-				continue
-			end
-
-			-- 5x Alert Sound
-			timer.Create(timerName, 1, 5, function()
-				interfaceEnt:EmitSound("star_trek.lcars_alert14")
-			end)
+			Star_Trek.Transporter:SoundAlert(interfaceEnt, 5)
 		end
 	end
+
 	if updateBuffer then
 		hook.Run("Star_Trek.Transporter.UpdateBuffer", interfaceEnt)
 	end
