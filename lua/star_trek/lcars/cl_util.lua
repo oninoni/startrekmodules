@@ -23,17 +23,19 @@
 function Star_Trek.LCARS:Get3D2DMousePos(window)
 	local x, y = input.GetCursorPos()
 
-	local xOffset, yOffset = hook.Run("Star_Trek.LCARS.GetMouseOffset", window)
-	if xOffset and yOffset then
-		x = x + xOffset
-		y = y + yOffset
-	end
-
 	local rayDir = gui.ScreenToVector(x, y)
 
 	local pos = util.IntersectRayWithPlane(self.EyePos or LocalPlayer():EyePos(), rayDir, window.WPosG, window.WAngG:Up())
 	pos = WorldToLocal(pos or Vector(), Angle(), window.WPosG, window.WAngG)
 	pos = Vector(pos[1] * window.WScale + window.WD2, pos[2] * -window.WScale + window.HD2, 0)
+
+	local xOffset, yOffset = hook.Run("Star_Trek.LCARS.GetMouseOffset", window)
+	print(pos, xOffset, yOffset)
+	if xOffset and yOffset then
+		pos.x = pos.x + xOffset
+		pos.y = pos.y + yOffset
+	end
+	print(pos)
 
 	local overriddenPos = hook.Run("Star_Trek.LCARS.Get3D2DMousePos", window, pos)
 	if isvector(overriddenPos) then
