@@ -380,14 +380,23 @@ function Star_Trek.Sections:Setup()
 			math.Round(max.z, 0)
 		)
 
-		-- Fixing engineering overlapping with jeffries
+		local w = max.x - min.x
 		local h = max.z - min.z
+
+		-- Fixing engineering overlapping with jeffries
 		if deck == 11 and sectionId == 400 and h == 258 then
 			max.z = max.z - 64
 		end
 		-- Fixing security overlapping with corridor
-		local w = max.x - min.x
 		if deck == 4 and sectionId == 400 and w == 514 then
+			min.x = min.x + 4
+		end
+		-- Fixing sickbay overlapping with corridor
+		if deck == 6 and sectionId == 1500 and w == 306 then
+			min.x = min.x + 4
+		end
+		-- Fixing sickbay lab overlapping with corridor
+		if deck == 6 and sectionId == 1502 and w == 482 then
 			min.x = min.x + 4
 		end
 
