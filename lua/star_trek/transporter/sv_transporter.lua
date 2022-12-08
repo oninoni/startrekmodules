@@ -160,10 +160,11 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 
 		local sourceSuccess, sourceError = self:CanBeamPos(ent:GetPos())
 		if not sourceSuccess then
-			local sourceErrorText = "Source location cannot be locked on: " .. sourceError
+			local sourceErrorText = "Source location cannot be locked on!"
 			if not table.HasValue(errors, sourceErrorText) then
 				table.insert(errors, sourceErrorText)
 				Star_Trek.Logs:AddEntry(interfaceEnt, ply, "ERROR: " .. sourceErrorText, Star_Trek.LCARS.ColorRed)
+				Star_Trek.Logs:AddEntry(interfaceEnt, ply, sourceError, Star_Trek.LCARS.ColorRed)
 
 				Star_Trek.Transporter:SoundAlert(interfaceEnt, 2)
 			end
@@ -182,11 +183,11 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 			local pos = targetPattern.Pos
 			local targetSuccess, targetError = self:CanBeamTo(ent, pos)
 			if not targetSuccess then
-				local targetErrorText = "Target location cannot be locked on: " .. targetError
+				local targetErrorText = "Target location cannot be locked on!"
 				if not table.HasValue(errors, targetErrorText) then
 					table.insert(errors, targetErrorText)
 					Star_Trek.Logs:AddEntry(interfaceEnt, ply, "ERROR: " .. targetErrorText, Star_Trek.LCARS.ColorRed)
-
+					Star_Trek.Logs:AddEntry(interfaceEnt, ply, targetError .. targetErrorText, Star_Trek.LCARS.ColorRed)
 					Star_Trek.Transporter:SoundAlert(interfaceEnt, 2)
 				end
 
