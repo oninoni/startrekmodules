@@ -43,13 +43,7 @@ function SELF:OnCreate(windowData)
 	self.TextHeight = self.TextHeight or 20
 	self.TextFont = self.TextFont or "LCARSText"
 
-	local oldMaxOffset = self.MaxOffset or 0
 	self:ProcessText(windowData.Lines)
-	if oldMaxOffset ~= self.MaxOffset then
-		self.OffsetTarget = -(self.MaxOffset - self.Area1Height)
-	else
-		self.OffsetTarget = nil
-	end
 
 	self.Offset = self.Offset or self.OffsetTarget or 0
 	self.OffsetDirection = false
@@ -88,11 +82,12 @@ function SELF:CheckLine(words, subLines)
 end
 
 function SELF:ProcessText(lines)
+	local oldMaxOffset = self.MaxOffset or 0
+
 	-- Prep Font for recursion.
 	surface.SetFont(self.TextFont)
 
 	self.Lines = {}
-	table.insert(self.Lines, {Text = ""})
 
 	for _, line in pairs(lines or {}) do
 		local text = line.Text
@@ -110,6 +105,11 @@ function SELF:ProcessText(lines)
 	end
 
 	self.MaxOffset = (table.maxn(self.Lines) + 1) * self.TextHeight
+	if oldMaxOffset ~= self.MaxOffset then
+		self.OffsetTarget = -(self.MaxOffset - self.Area1Height)
+	else
+		self.OffsetTarget = nil
+	end
 end
 
 function SELF:OnPress(pos, animPos)
