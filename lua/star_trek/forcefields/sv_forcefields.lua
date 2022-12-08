@@ -193,8 +193,11 @@ function Star_Trek.Security:CheckIsolatedPos(pos)
 	local _, sectionData = Star_Trek.Sections:GetSection(deck, sectionId)
 
 	for _, forceFieldData in pairs(sectionData.ForceFields) do
-		if not IsValid(forceFieldData.Entity) then
+		if forceFieldData.AlwaysOn then
+			continue
+		end
 
+		if not IsValid(forceFieldData.Entity) then
 			return false
 		end
 	end
