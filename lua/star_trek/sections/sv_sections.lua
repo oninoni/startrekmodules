@@ -187,6 +187,11 @@ function Star_Trek.Sections:GetInSections(deck, sectionIds, filterCallback, allo
 				if not allowMap and ent:MapCreationID() > -1 then continue end
 				if not allowParent and IsValid(ent:GetParent()) and not ent:GetParent():IsVehicle()  then continue end
 				local object = {}
+
+				if isInArea(ent:GetPos(), areaData.Min, areaData.Max) then
+					object.StrictInside = true
+				end
+
 				object.Entity = ent
 
 				object.Deck = deck
@@ -386,18 +391,6 @@ function Star_Trek.Sections:Setup()
 		-- Fixing engineering overlapping with jeffries
 		if deck == 11 and sectionId == 400 and h == 258 then
 			max.z = max.z - 64
-		end
-		-- Fixing security overlapping with corridor
-		if deck == 4 and sectionId == 400 and w == 514 then
-			min.x = min.x + 4
-		end
-		-- Fixing sickbay overlapping with corridor
-		if deck == 6 and sectionId == 1500 and w == 306 then
-			min.x = min.x + 4
-		end
-		-- Fixing sickbay lab overlapping with corridor
-		if deck == 6 and sectionId == 1502 and w == 482 then
-			min.x = min.x + 4
 		end
 
 		local areaData = {}

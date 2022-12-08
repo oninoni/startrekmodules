@@ -292,10 +292,15 @@ hook.Add("Star_Trek.Sections.Loaded", "Star_Trek.ForceFields.DetectForceFields",
 		for sectionId, sectionData in pairs(deckData.Sections) do
 			sectionData.ForceFields = {}
 			local objects = Star_Trek.Sections:GetInSection(deck, sectionId, function(object)
+				if not object.StrictInside then
+					return true
+				end
+
 				local ent = object.Entity
 				if ent:GetName() ~= "lcars_forcefield" then
 					return true
 				end
+
 			end, true)
 
 			for _, object in pairs(objects) do
