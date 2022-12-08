@@ -148,7 +148,7 @@ hook.Add("PlayerCanPickupWeapon", "Star_Trek.Transporter.PreventPickup", functio
 	end
 end)
 
-function Star_Trek.Transporter:CleanUp(ent, forceRemat)
+function Star_Trek.Transporter:CleanUp(ent)
 	local transporterCycle = Star_Trek.Transporter.ActiveCycles[ent]
 	if istable(transporterCycle) then
 		Star_Trek.Transporter:EndTransporterCycle(transporterCycle)
@@ -161,18 +161,18 @@ function Star_Trek.Transporter:CleanUp(ent, forceRemat)
 		table.RemoveByValue(Star_Trek.Transporter.Buffer.Entities, ent)
 		ent.BufferQuality = nil
 
-		if forceRemat then
-			Star_Trek.Transporter:TransportObject("base", ent, ent:GetPos(), true, false)
-		end
+		Star_Trek.Transporter:TransportObject("base", ent, ent:GetPos(), true, false)
 	end
 end
 
 hook.Add("PlayerDeath", "Star_Trek.Transporter.BufferReset", function(ply)
-	Star_Trek.Transporter:CleanUp(ply, true)
+	Star_Trek.Transporter:CleanUp(ply)
 end)
 
 hook.Add("PlayerSpawn", "Star_Trek.Transporter.BufferReset", function(ply)
-	Star_Trek.Transporter:CleanUp(ply)
+	timer.Simple(0, function()
+		Star_Trek.Transporter:CleanUp(ply)
+	end)
 end)
 
 hook.Add("PlayerDisconnected", "Star_Trek.Transporter.DisconnectReset", function(ply)

@@ -35,9 +35,6 @@ function SELF:Initialize()
 end
 
 function SELF:End()
-	local stateData = self:GetStateData()
-	if istable(stateData) then return end
-
 	local ent = self.Entity
 	if IsValid(ent) then
 		self:ResetCollisionGroups()

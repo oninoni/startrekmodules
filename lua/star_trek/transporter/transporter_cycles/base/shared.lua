@@ -45,7 +45,7 @@ SELF.BufferColor = Color(255, 255, 255)
 -- Data of the states being processed.
 SELF.States = {
 	[1] = { -- Demat
-		Duration = 1,
+		Duration = 0,
 
 		CollisionGroup = COLLISION_GROUP_DEBRIS,
 		RenderMode = RENDERMODE_TRANSTEXTURE,
@@ -60,7 +60,7 @@ SELF.States = {
 		ColorFade = 1,
 	},
 	[2] = { -- Demat Done (Buffer)
-		Duration = 1,
+		Duration = 0,
 
 		RenderMode = RENDERMODE_TRANSTEXTURE,
 
@@ -68,7 +68,7 @@ SELF.States = {
 		ColorFade = 0,
 	},
 	[3] = { -- Remat
-		Duration = 1,
+		Duration = 0,
 
 		RenderMode = RENDERMODE_TRANSTEXTURE,
 
