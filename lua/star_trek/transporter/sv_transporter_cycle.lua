@@ -60,12 +60,12 @@ function Star_Trek.Transporter:TransportObject(cycleType, ent, targetPos, skipDe
 	return true, transporterCycle
 end
 
-function Star_Trek.Transporter:EndTransporterCycle(transporterCycle)
+function Star_Trek.Transporter:EndTransporterCycle(transporterCycle, force)
 	if not istable(transporterCycle) then
 		return false, "No Transporter Cycle given!"
 	end
 
-	transporterCycle:End()
+	transporterCycle:End(force)
 
 	net.Start("Star_Trek.Transporter.End")
 		net.WriteEntity(transporterCycle.Entity)
@@ -151,7 +151,7 @@ end)
 function Star_Trek.Transporter:CleanUp(ent)
 	local transporterCycle = Star_Trek.Transporter.ActiveCycles[ent]
 	if istable(transporterCycle) then
-		Star_Trek.Transporter:EndTransporterCycle(transporterCycle)
+		Star_Trek.Transporter:EndTransporterCycle(transporterCycle, true)
 		Star_Trek.Transporter.ActiveCycles[ent] = nil
 	end
 

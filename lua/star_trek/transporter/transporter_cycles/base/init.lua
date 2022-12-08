@@ -34,7 +34,10 @@ function SELF:Initialize()
 	end
 end
 
-function SELF:End()
+function SELF:End(force)
+	local stateData = self:GetStateData()
+	if not force and istable(stateData) then return end
+
 	local ent = self.Entity
 	if IsValid(ent) then
 		self:ResetCollisionGroups()
@@ -48,14 +51,6 @@ function SELF:End()
 			phys:Wake()
 		end
 	end
-end
-
--- Aborts the transporter cycle and brings the entity back to its normal state.
--- This will dump the player into the transporter buffer!
-function SELF:Abort()
-	self:End()
-
-	self:SetPos(self.BufferPos)
 end
 
 -- Applies the current state to the transporter cycle.
