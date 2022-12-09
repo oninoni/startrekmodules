@@ -42,6 +42,11 @@ function Star_Trek.Replicator:GetReplicatorList(ent)
 end
 
 function Star_Trek.Replicator:CreateObject(data, pos, angle)
+	local override, error = hook.Run("Star_Trek.Replicator.BlockReplicate", pos)
+	if override then
+		return false, error
+	end
+
 	local class = "prop_physics"
 	local model = data
 
@@ -153,5 +158,26 @@ end)
 hook.Add("Star_Trek.Tricorder.AnalyseScanData", "Replicator.Output", function(ent, owner, scanData)
 	if scanData.Replicated then
 		Star_Trek.Logs:AddEntry(ent, owner, "Replicated Matter", Star_Trek.LCARS.ColorRed, TEXT_ALIGN_LEFT)
+	end
+end)
+
+-- Register the replicator control type.
+Star_Trek.Control:Register("replicator", "Replicator")
+
+hook.Add("Star_Trek.Replicator.BlockReplicate", "Star_Trek.Replicator.BlockControl", function(pos)
+	local success, deck, sectionId = Star_Trek.Sections:DetermineSection(pos)
+	if not success then
+		return
+	end
+
+	local sectionName = Star_Trek.Sections:GetSectionName(deck, sectionId)
+	local status = Star_Trek.Control:GetStatus("replicator", deck, sectionId)
+	print(status)
+	if status == Star_Trek.Control.INACTIVE then
+		return true, "The replicators in " .. sectionName .. " are disabled."
+	end
+
+	if status == Star_Trek.Control.INOPERATIVE then
+		return true, "The replicators in " .. sectionName .. " are damaged."
 	end
 end)

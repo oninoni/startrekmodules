@@ -54,7 +54,12 @@ function SELF:Open(ent)
 					end
 
 					local pos, ang = LocalToWorld(ent.ReplicatePos or Vector(-5, 0, -8), ent.ReplicateAng or Angle(0, 0, 0), entPos, entAng)
-					Star_Trek.Replicator:CreateObject(buttonData.Data, pos, ang)
+					local replicateSuccess, replicateError = Star_Trek.Replicator:CreateObject(buttonData.Data, pos, ang)
+					if not replicateSuccess then
+						Star_Trek.Logs:AddEntry(ent, ply, "ERROR: " .. replicateError, Star_Trek.LCARS.ColorRed)
+
+						ent:EmitSound("star_trek.lcars_error")
+					end
 				end
 
 				interfaceData:Close()
