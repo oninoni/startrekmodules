@@ -210,8 +210,6 @@ hook.Add("Star_Trek.Transporter.BlockBeamTo", "Star_Trek.Transporter.CheckForcef
 	if isIsolated then
 		return true, sectionName .. " is locked down using forcefields."
 	end
-
-	return false
 end)
 
 -------------

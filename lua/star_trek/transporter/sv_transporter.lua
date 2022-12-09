@@ -263,3 +263,24 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 		hook.Run("Star_Trek.Transporter.UpdateBuffer", interfaceEnt)
 	end
 end
+
+-- Register the transporter emitter control type.
+Star_Trek.Control:Register("transporter", "Transporter Emitters")
+
+-- Block beaming to areas with disabled or broken emitters.
+hook.Add("Star_Trek.Transporter.BlockBeamTo", "Star_Trek.Transporter.BlockControl", function(pos)
+	local success, deck, sectionId = Star_Trek.Sections:DetermineSection(pos)
+	if not success then
+		return false
+	end
+
+	local sectionName = Star_Trek.Sections:GetSectionName(deck, sectionId)
+	local status = Star_Trek.Control:GetStatus("transporter", deck, sectionId)
+	if status == Star_Trek.Control.INACTIVE then
+		return true, "The transporter emitters in " .. sectionName .. " are disabled ."
+	end
+
+	if status == Star_Trek.Control.INOPERATIVE then
+		return true, "The transporter emitters in " .. sectionName .. " are damaged."
+	end
+end)
