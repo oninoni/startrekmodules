@@ -16,7 +16,7 @@
 --          Holodeck | Index         --
 ---------------------------------------
 
-Star_Trek:RequireModules("util", "lcars")
+Star_Trek:RequireModules("util", "lcars", "control")
 
 Star_Trek.Holodeck = Star_Trek.Holodeck or {}
 

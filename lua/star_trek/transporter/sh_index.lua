@@ -16,7 +16,7 @@
 --        Transporter | Index        --
 ---------------------------------------
 
-Star_Trek:RequireModules("util", "sections", "lcars", "sensors")
+Star_Trek:RequireModules("util", "sections", "lcars", "sensors", "control")
 
 Star_Trek.Transporter = Star_Trek.Transporter or {}
 

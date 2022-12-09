@@ -277,7 +277,7 @@ hook.Add("Star_Trek.Transporter.BlockBeamTo", "Star_Trek.Transporter.BlockContro
 	local sectionName = Star_Trek.Sections:GetSectionName(deck, sectionId)
 	local status = Star_Trek.Control:GetStatus("transporter", deck, sectionId)
 	if status == Star_Trek.Control.INACTIVE then
-		return true, "The transporter emitters in " .. sectionName .. " are disabled ."
+		return true, "The transporter emitters in " .. sectionName .. " are disabled."
 	end
 
 	if status == Star_Trek.Control.INOPERATIVE then
