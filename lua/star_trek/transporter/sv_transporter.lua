@@ -271,7 +271,7 @@ Star_Trek.Control:Register("transporter", "Transporter Emitters")
 hook.Add("Star_Trek.Transporter.BlockBeamTo", "Star_Trek.Transporter.BlockControl", function(pos)
 	local success, deck, sectionId = Star_Trek.Sections:DetermineSection(pos)
 	if not success then
-		return false
+		return
 	end
 
 	local sectionName = Star_Trek.Sections:GetSectionName(deck, sectionId)
