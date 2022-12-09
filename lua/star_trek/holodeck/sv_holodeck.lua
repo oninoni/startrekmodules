@@ -28,6 +28,11 @@ function Star_Trek.Holodeck:Activate(holodeckId, programmId)
 
 	local areaName = "holoProgrammCompress" .. programmId
 	local areaEnt = ents.FindByName(areaName)[1]
+
+	if programmId == 1 and not IsValid(areaEnt) then
+		areaEnt = ents.FindByName("holoProgrammCompress4")[1]
+	end
+
 	if not IsValid(areaEnt) then return end
 
 	local boundsLow, boundsHigh = areaEnt:GetCollisionBounds()
@@ -167,3 +172,70 @@ function Star_Trek.Util:CompressPlayers(outerName, innerName)
 		Star_Trek:Message("Unmatching Holodeck Compression Names:", outerName, innerName)
 	end
 end
+
+function Star_Trek.Holodeck:DisableManually(holodeckId)
+	local holodeckData = self.Active[holodeckId]
+	if not istable(holodeckData) then
+		return
+	end
+
+	local programmId = holodeckData.ProgrammId
+	local programmEnt = ents.FindByName("holoProgrammButton" .. programmId)[1]
+
+	programmEnt:Fire("FireUser1")
+	Star_Trek.Holodeck:Deactivate(programmId)
+end
+
+-- Register the holo emitter control type.
+Star_Trek.Control:Register("holo", "Holo Emitters", function(value, deck, sectionId)
+	-- Shutdown gracefully, if made inactive.
+	if value == Star_Trek.Control.INACTIVE then
+		if not isnumber(deck) then
+			Star_Trek.Holodeck:DisableManually(1)
+			Star_Trek.Holodeck:DisableManually(2)
+
+			return
+		end
+
+		if deck == 6 then
+			if not isnumber(sectionId) then
+				Star_Trek.Holodeck:DisableManually(1)
+				Star_Trek.Holodeck:DisableManually(2)
+
+				return
+			end
+
+			if sectionId == 300 then
+				Star_Trek.Holodeck:DisableManually(1)
+
+				return
+			end
+
+			if sectionId == 400 then
+				Star_Trek.Holodeck:DisableManually(2)
+
+				return
+			end
+		end
+	end
+end)
+
+-- Disable Holodeck Controls when inoperative
+hook.Add("Star_Trek.LCARS.BasicButtonOverride", "Star_Trek.Holodeck.OverrideControls", function(ent, buttons)
+	local name = ent:GetName()
+	if not (string.StartWith(name, "holoDeckButton") or string.StartWith(name, "holoProgrammButton")) then
+		return
+	end
+
+	local success, deck, sectionId = Star_Trek.Sections:DetermineSection(ent:GetPos())
+	if not success then
+		return
+	end
+
+	local status = Star_Trek.Control:GetStatus("holo", deck, sectionId)
+	if status ~= Star_Trek.Control.ACTIVE then
+		for _, buttonData in pairs(buttons) do
+			buttonData.Disabled = true
+		end
+	end
+end)

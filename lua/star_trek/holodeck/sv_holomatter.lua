@@ -170,14 +170,14 @@ hook.Add("Star_Trek.Transporter.PreTransportObject", "Star_Trek.Holodeck.Disinte
 end)
 
 -- Record entity door data.
-hook.Add("Star_Trek.Sensors.ScanEntity", "Holodeck.Check", function(ent, scanData)
+hook.Add("Star_Trek.Sensors.ScanEntity", "Star_Trek.Holodeck.Check", function(ent, scanData)
 	if ent.HoloMatter then
 		scanData.HoloMatter = true
 	end
 end)
 
 -- Output the door data on a tricorder
-hook.Add("Star_Trek.Tricorder.AnalyseScanData", "Holodeck.Output", function(ent, owner, scanData)
+hook.Add("Star_Trek.Tricorder.AnalyseScanData", "Star_Trek.Holodeck.Output", function(ent, owner, scanData)
 	if scanData.HoloMatter then
 		Star_Trek.Logs:AddEntry(ent, owner, "Holographic Matter", Star_Trek.LCARS.ColorRed, TEXT_ALIGN_LEFT)
 	end
