@@ -148,6 +148,7 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 	Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Initialising Transporter...")
 	Star_Trek.Logs:AddEntry(interfaceEnt, ply, table.Count(sourcePatterns) .. " Pattern Sources Detected.")
 	Star_Trek.Logs:AddEntry(interfaceEnt, ply, table.Count(sourcePatterns) .. " Pattern Targets Detected.")
+	Star_Trek.Logs:AddEntry(interfaceEnt, ply, "")
 
 	local updateBuffer = false
 	local errors = {}
@@ -163,7 +164,8 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 			local sourceErrorText = "Source location cannot be locked on: " .. sourceError
 			if not table.HasValue(errors, sourceErrorText) then
 				table.insert(errors, sourceErrorText)
-				Star_Trek.Logs:AddEntry(interfaceEnt, ply, "ERROR: " .. sourceErrorText, Star_Trek.LCARS.ColorRed)
+				Star_Trek.Logs:AddEntry(interfaceEnt, ply, "ERROR: Source location cannot be locked on: ", Star_Trek.LCARS.ColorRed)
+				Star_Trek.Logs:AddEntry(interfaceEnt, ply, sourceError, Star_Trek.LCARS.ColorOrange)
 
 				Star_Trek.Transporter:SoundAlert(interfaceEnt, 2)
 			end
@@ -185,7 +187,8 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 				local targetErrorText = "Target location cannot be locked on: " .. targetError
 				if not table.HasValue(errors, targetErrorText) then
 					table.insert(errors, targetErrorText)
-					Star_Trek.Logs:AddEntry(interfaceEnt, ply, "ERROR: " .. targetErrorText, Star_Trek.LCARS.ColorRed)
+					Star_Trek.Logs:AddEntry(interfaceEnt, ply, "ERROR: Target location cannot be locked on: ", Star_Trek.LCARS.ColorRed)
+					Star_Trek.Logs:AddEntry(interfaceEnt, ply, targetError, Star_Trek.LCARS.ColorOrange)
 
 					Star_Trek.Transporter:SoundAlert(interfaceEnt, 2)
 				end
@@ -222,17 +225,19 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 			break
 		end
 
+		Star_Trek.Logs:AddEntry(interfaceEnt, ply, "")
+
 		if successfulTransport then
 			continue
 		end
 
 		if noBuffer then
-			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Buffer Usage Prevented!", Star_Trek.LCARS.ColorOrange)
+			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "WARNING: Buffer Usage Prevented!", Star_Trek.LCARS.ColorOrange)
 			continue
 		end
 
 		if isBuffer then
-			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Buffer Recursion Prevented!", Star_Trek.LCARS.ColorOrange)
+			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "WARNING: Buffer Recursion Prevented!", Star_Trek.LCARS.ColorOrange)
 			continue
 		end
 
@@ -240,7 +245,7 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 		table.insert(Star_Trek.Transporter.Buffer.Entities, ent)
 		ent.BufferQuality = 160
 		if istable(ent) then
-			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "WARNING: Remote Transporter Request has no target. Aborting!", Star_Trek.LCARS.ColorRed)
+			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "WARNING: Remote Transporter Request has no target. Aborting!", Star_Trek.LCARS.ColorOrange)
 			continue
 		end
 		local success, scanData = Star_Trek.Sensors:ScanEntity(ent)
@@ -251,9 +256,9 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 			Star_Trek.Transporter:ApplyPadEffect(transporterCycle, sourcePattern.Pad)
 		end)
 
-		Star_Trek.Logs:AddEntry(interfaceEnt, ply, "WARNING: No Free Target Position Available! Storing in Buffer!", Star_Trek.LCARS.ColorRed)
+		Star_Trek.Logs:AddEntry(interfaceEnt, ply, "WARNING: No Free Target Position Available! Storing in Buffer!", Star_Trek.LCARS.ColorOrange)
 		if success and scanData.Alive then
-			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "WARNING: " .. scanData.Name .. " has been transported to the Buffer!", Star_Trek.LCARS.ColorRed)
+			Star_Trek.Logs:AddEntry(interfaceEnt, ply, "ERROR: " .. scanData.Name .. " has been transported to the Buffer!", Star_Trek.LCARS.ColorRed)
 
 			Star_Trek.Transporter:SoundAlert(interfaceEnt, 5)
 		end
