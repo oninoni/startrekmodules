@@ -172,7 +172,6 @@ hook.Add("Star_Trek.Replicator.BlockReplicate", "Star_Trek.Replicator.BlockContr
 
 	local sectionName = Star_Trek.Sections:GetSectionName(deck, sectionId)
 	local status = Star_Trek.Control:GetStatus("replicator", deck, sectionId)
-	print(status)
 	if status == Star_Trek.Control.INACTIVE then
 		return true, "The replicators in " .. sectionName .. " are disabled."
 	end
