@@ -31,6 +31,18 @@ local SELF = ELEMENT
 -- @param String titleShort
 -- @param? Boolean hFlip
 function SELF:DrawFrame(x, y, width, height, color1, color2, title, titleShort, hFlip)
+	self:DrawSwept(x, y                                 , width, color1, hFlip,  true, textWidth)
+	self:DrawSwept(x, y + height - self.CornerRadius * 2, width, color2, hFlip, false)
+
+	local frameStartOffset = self.CornerRadius * 2
+	self:DrawSweptSide(x, y, width, height - frameStartOffset, color1, color2, titleShort, hFlip, frameStartOffset)
+	if hFlip == WINDOW_BORDER_BOTH then
+		self:DrawSweptSide(x, y, width, height - frameStartOffset, color1, color2, titleShort, false, frameStartOffset)
+	end
+
+	--[[
+	--
+
 	local titleUpper = string.upper(title)
 
 	surface.SetFont("LCARSMed")
@@ -39,17 +51,14 @@ function SELF:DrawFrame(x, y, width, height, color1, color2, title, titleShort, 
 		textWidth = textWidth + 2
 	end
 
-	self:DrawSwept(x, y                                 , width, color1, hFlip,  true, textWidth)
-	self:DrawSwept(x, y + height - self.CornerRadius * 2, width, color2, hFlip, false)
-
-	if hFlip then
+	if hFlip == WINDOW_BORDER_RIGHT then
 		draw.SimpleText(titleUpper, "LCARSMed", x + math.ceil(width * 0.05) - self.BorderWidth + 1, y + self.StripHeight / 2, nil,  TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
 	else
 		draw.SimpleText(titleUpper, "LCARSMed", x + math.floor(width * 0.95)                      , y + self.StripHeight / 2, nil, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
 	end
 
 	local posOffset = 0
-	if hFlip then
+	if hFlip == WINDOW_BORDER_RIGHT then
 		posOffset = width - self.CornerRadius * 2
 	end
 
@@ -75,4 +84,6 @@ function SELF:DrawFrame(x, y, width, height, color1, color2, title, titleShort, 
 	color2)
 
 	draw.SimpleText(titleShort, "LCARSSmall", x + posOffset + self.CornerRadius, y + frameStartOffset, Star_Trek.LCARS.ColorBlack, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+	]]
+
 end

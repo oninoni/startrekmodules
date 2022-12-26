@@ -30,6 +30,10 @@ local SELF = ELEMENT
 -- @param? Boolean vFlip
 -- @param? Number holeSize
 function SELF:DrawSweptShape(x, y, width, border, color, hFlip, vFlip, holeSize)
+	if not isbool(hFlip) then
+		hFlip = (hFlip == WINDOW_BORDER_RIGHT) or (hFlip == WINDOW_BORDER_BOTH)
+	end
+
 	hFlip = hFlip or false
 	vFlip = vFlip or false
 	holeSize = holeSize or 0
@@ -217,6 +221,55 @@ end
 -- @param? Boolean vFlip
 -- @param? Number holeSize
 function SELF:DrawSwept(x, y, width, color, hFlip, vFlip, holeSize)
-	self:DrawSweptShape(x, y, width,                  0, Star_Trek.LCARS.ColorBlack, hFlip, vFlip, holeSize)
-	self:DrawSweptShape(x, y, width, self.BorderWidth,                      color, hFlip, vFlip, holeSize)
+	if hFlip == 2 then
+		local offset = self.CornerRadius * 2
+
+		self:DrawSweptShape(x + offset, y, width - offset,                0, Star_Trek.LCARS.ColorBlack,  true, vFlip, holeSize)
+		self:DrawSweptShape(          x, y, width - offset,                0, Star_Trek.LCARS.ColorBlack, false, vFlip, holeSize)
+
+		self:DrawSweptShape(x + offset, y, width - offset, self.BorderWidth,                      color,  true, vFlip, holeSize)
+		self:DrawSweptShape(          x, y, width - offset, self.BorderWidth,                      color, false, vFlip, holeSize)
+	else
+		self:DrawSweptShape(x, y, width,                0, Star_Trek.LCARS.ColorBlack, hFlip, vFlip, holeSize)
+		self:DrawSweptShape(x, y, width, self.BorderWidth,                      color, hFlip, vFlip, holeSize)
+	end
+end
+
+function SELF:DrawSweptSide(x, y, width, height, color2, color3, text, hFlip, frameStartOffset)
+	local posOffset = 0
+	if hFlip == WINDOW_BORDER_RIGHT or hFlip == WINDOW_BORDER_BOTH then
+		posOffset = width - self.CornerRadius * 2
+	end
+
+	local remainingHeight = height - frameStartOffset
+
+	draw.RoundedBox(0,
+		x + posOffset,
+		y + frameStartOffset,
+		self.CornerRadius * 2, remainingHeight,
+	Star_Trek.LCARS.ColorBlack)
+
+	if IsColor(color3) then
+		draw.RoundedBox(0,
+			x + posOffset + self.BorderWidth,
+			y + frameStartOffset + self.BorderWidth,
+			self.CornerRadius * 2 - self.BorderWidth * 2, remainingHeight / 2 - self.BorderWidth,
+		color2)
+
+		draw.RoundedBox(0,
+			x + posOffset + self.BorderWidth,
+			y + frameStartOffset + self.BorderWidth + remainingHeight / 2,
+			self.CornerRadius * 2 - self.BorderWidth * 2, remainingHeight / 2 - self.BorderWidth,
+		color3)
+	else
+		draw.RoundedBox(0,
+			x + posOffset + self.BorderWidth,
+			y + frameStartOffset + self.BorderWidth,
+			self.CornerRadius * 2 - self.BorderWidth * 2, remainingHeight - self.BorderWidth * 2,
+		color2)
+	end
+
+	if isstring(text) then
+		draw.SimpleText(text, "LCARSSmall", x + posOffset + self.CornerRadius, y + frameStartOffset, Star_Trek.LCARS.ColorBlack, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+	end
 end

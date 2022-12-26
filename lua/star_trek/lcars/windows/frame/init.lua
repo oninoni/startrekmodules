@@ -22,7 +22,11 @@ local SELF = WINDOW
 function SELF:OnCreate(title, titleShort, hFlip)
 	self.Title 		= title or ""
 	self.TitleShort = titleShort or ""
-	self.HFlip 		= hFlip or false
+
+	if not isnumber(hFlip) then
+		hFlip = (hFlip or false) and WINDOW_BORDER_RIGHT or WINDOW_BORDER_LEFT
+	end
+	self.HFlip = hFlip or WINDOW_BORDER_LEFT
 
 	self.Color1 = Star_Trek.LCARS.ColorOrange
 	self.Color2 = Star_Trek.LCARS.ColorBlue

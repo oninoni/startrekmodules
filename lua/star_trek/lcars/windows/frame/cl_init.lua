@@ -19,6 +19,21 @@
 if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
 local SELF = WINDOW
 
+function SELF:GenerateXArea()
+	if self.HFlip == WINDOW_BORDER_LEFT then
+		self.Area1X = 2 * self.Frame.CornerRadius + self.Padding
+		self.Area1XEnd = self.WWidth - self.Padding
+	elseif self.HFlip == WINDOW_BORDER_RIGHT then
+		self.Area1X = self.Padding
+		self.Area1XEnd = self.WWidth - 2 * self.Frame.CornerRadius - self.Padding
+	elseif self.HFlip == WINDOW_BORDER_BOTH then
+		self.Area1X = 2 * self.Frame.CornerRadius + self.Padding
+		self.Area1XEnd = self.WWidth - 2 * self.Frame.CornerRadius - self.Padding
+	end
+
+	self.Area1Width = self.Area1XEnd - self.Area1X
+end
+
 function SELF:OnCreate(windowData)
 	local successBase = SELF.Base.OnCreate(self, windowData)
 	if not successBase then
@@ -28,7 +43,7 @@ function SELF:OnCreate(windowData)
 	self.Padding = self.Padding or 0
 	self.FrameType = self.FrameType or windowData.FrameType or "frame"
 
-	self.HFlip = windowData.HFlip
+	self.HFlip = windowData.HFlip or WINDOW_BORDER_LEFT
 
 	if self.FrameType == "frame" then
 		local success, frame = self:GenerateElement(self.FrameType, self.Id .. "_Frame", self.WWidth, self.WHeight,
@@ -38,9 +53,7 @@ function SELF:OnCreate(windowData)
 		if not success then return false end
 		self.Frame = frame
 
-		self.Area1X = 2 * (self.HFlip and 0 or self.Frame.CornerRadius + self.Padding)
-		self.Area1Width = self.WWidth - 2 * self.Frame.CornerRadius - self.Padding
-		self.Area1XEnd = self.Area1X + self.Area1Width
+		self:GenerateXArea()
 
 		self.Area1Y = self.Frame.StripHeight + self.Padding
 		self.Area1YEnd = self.WHeight - self.Area1Y
@@ -55,9 +68,7 @@ function SELF:OnCreate(windowData)
 		if not success then return false end
 		self.Frame = frame
 
-		self.Area1X = 2 * (self.HFlip and 0 or self.Frame.CornerRadius + self.Padding)
-		self.Area1Width = self.WWidth - 2 * self.Frame.CornerRadius - self.Padding
-		self.Area1XEnd = self.Area1X + self.Area1Width
+		self:GenerateXArea()
 
 		self.Area1Y = self.Frame.StripHeight + 2 * self.Frame.CornerRadius + self.Padding + self.Frame.FrameOffset
 		self.Area1YEnd = self.WHeight
@@ -77,9 +88,7 @@ function SELF:OnCreate(windowData)
 		if not success then return false end
 		self.Frame = frame
 
-		self.Area1X = 2 * (self.HFlip and 0 or self.Frame.CornerRadius + self.Padding)
-		self.Area1Width = self.WWidth - 2 * self.Frame.CornerRadius - self.Padding
-		self.Area1XEnd = self.Area1X + self.Area1Width
+		self:GenerateXArea()
 
 		self.Area2Y = self.Frame.StripHeight + 2 * self.Frame.CornerRadius + self.Padding + self.Frame.FrameOffset
 		self.Area2Height = self.SubMenuHeight - 2 * self.Padding
