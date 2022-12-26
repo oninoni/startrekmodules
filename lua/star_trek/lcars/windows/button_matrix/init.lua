@@ -123,6 +123,7 @@ function SELF:AddSelectorToRow(buttonRowData, name, values, defaultId, callback)
 		local valueData = values[valueId]
 		buttonRowData.ValueButton.Name = valueData.Name or "MISSING"
 		buttonRowData.ValueButton.Data = valueData.Data
+		buttonRowData.ValueButton.Color = valueData.Color or Star_Trek.LCARS.ColorOrange
 
 		buttonRowData.Selected = valueId
 	end
@@ -154,7 +155,7 @@ function SELF:AddSelectorToRow(buttonRowData, name, values, defaultId, callback)
 	end)
 
 	self:AddButtonToRow(buttonRowData, name .. ":", nil, nil, nil, true)
-	buttonRowData.ValueButton = self:AddButtonToRow(buttonRowData, "", nil, nil, nil, true)
+	buttonRowData.ValueButton = self:AddButtonToRow(buttonRowData, "", nil, Star_Trek.LCARS.ColorOrange)
 
 	buttonRowData.NextButton = self:AddButtonToRow(buttonRowData, ">"     , nil, nil, nil, false, false, function(ply, buttonData)
 		buttonRowData:SetValue(buttonRowData.Selected + 1)
