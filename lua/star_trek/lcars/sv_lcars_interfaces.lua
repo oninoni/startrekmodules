@@ -46,6 +46,11 @@ function Star_Trek.LCARS:OpenInterface(ply, triggerEntity, interfaceName, ...)
 		return false, ent
 	end
 
+	local override = hook.Run("Star_Trek.LCARS.PreOpenInterface", ent, interfaceName)
+	if override then
+		return true
+	end
+
 	if istable(self.ActiveInterfaces[ent]) then
 		return true
 	end

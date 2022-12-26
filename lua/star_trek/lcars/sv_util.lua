@@ -138,3 +138,26 @@ hook.Add("PlayerLeaveVehicle", "", function(ply, veh)
 	net.Start("Star_Trek.LCARS.EnableEButton")
 	net.Send(ply)
 end)
+
+------------------------
+--     Mouse Panel    --
+------------------------
+
+util.AddNetworkString("Star_Trek.LCARS.EnableScreenClicker")
+function Star_Trek.LCARS:SetScreenClicker(ply, enabled, showCursor)
+	if enabled == (self.ScreenClickerEnabled or false) then
+		return
+	end
+
+	self.ScreenClickerEnabled = enabled
+	net.Start("Star_Trek.LCARS.EnableScreenClicker")
+		net.WriteBool(enabled)
+		net.WriteBool(showCursor or false)
+	net.Send(ply)
+end
+
+function Star_Trek.LCARS:ToggleScreenClicker(ply, showCursor)
+	local enabled = self.ScreenClickerEnabled or false
+
+	self:SetScreenClicker(ply, not enabled, showCursor)
+end

@@ -38,30 +38,51 @@ end
 function SELF:SetupCategoryRow(categories)
 	local categoryRows = {}
 
+	local totalCount = #categories
+
 	local categoryCopy = table.Copy(categories)
 	while true do
 		local rowData = {}
 		table.insert(categoryRows, rowData)
 
-		if #categoryCopy >= 4 then
-			table.insert(rowData, table.remove(categoryCopy, 1))
-			table.insert(rowData, table.remove(categoryCopy, 1))
-			table.insert(rowData, table.remove(categoryCopy, 1))
-			table.insert(rowData, table.remove(categoryCopy, 1))
-		elseif #categoryCopy == 3 then
-			table.insert(rowData, table.remove(categoryCopy, 1))
-			table.insert(rowData, table.remove(categoryCopy, 1))
-			table.insert(rowData, table.remove(categoryCopy, 1))
-			table.insert(rowData, {
-				Name = "",
-				Color = Star_Trek.LCARS.ColorGrey,
-				Disabled = true,
-			})
-		elseif #categoryCopy == 2 then
-			table.insert(rowData, table.remove(categoryCopy, 1))
-			table.insert(rowData, table.remove(categoryCopy, 1))
-		elseif #categoryCopy == 1 then
-			table.insert(rowData, table.remove(categoryCopy, 1))
+		if totalCount <= 4 then
+			if #categoryCopy >= 2 then
+				table.insert(rowData, table.remove(categoryCopy, 1))
+				table.insert(rowData, table.remove(categoryCopy, 1))
+			elseif #categoryCopy == 1 then
+				table.insert(rowData, table.remove(categoryCopy, 1))
+				table.insert(rowData, {
+					Name = "",
+					Color = Star_Trek.LCARS.ColorGrey,
+					Disabled = true,
+				})
+			end
+		else
+			if #categoryCopy >= 4 then
+				table.insert(rowData, table.remove(categoryCopy, 1))
+				table.insert(rowData, table.remove(categoryCopy, 1))
+				table.insert(rowData, table.remove(categoryCopy, 1))
+				table.insert(rowData, table.remove(categoryCopy, 1))
+			elseif #categoryCopy == 3 then
+				table.insert(rowData, table.remove(categoryCopy, 1))
+				table.insert(rowData, table.remove(categoryCopy, 1))
+				table.insert(rowData, table.remove(categoryCopy, 1))
+				table.insert(rowData, {
+					Name = "",
+					Color = Star_Trek.LCARS.ColorGrey,
+					Disabled = true,
+				})
+			elseif #categoryCopy == 2 then
+				table.insert(rowData, table.remove(categoryCopy, 1))
+				table.insert(rowData, table.remove(categoryCopy, 1))
+			elseif #categoryCopy == 1 then
+				table.insert(rowData, table.remove(categoryCopy, 1))
+				table.insert(rowData, {
+					Name = "",
+					Color = Star_Trek.LCARS.ColorGrey,
+					Disabled = true,
+				})
+			end
 		end
 
 		if #categoryCopy <= 0 then

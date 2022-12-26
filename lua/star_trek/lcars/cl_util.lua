@@ -140,3 +140,30 @@ net.Receive("Star_Trek.LCARS.EnableEButton", function()
 
 	ply.DisableEButton = nil
 end)
+
+------------------------
+--     Mouse Panel    --
+------------------------
+
+function Star_Trek.LCARS:SetScreenClicker(enabled, showCursor)
+	gui.EnableScreenClicker(enabled)
+
+	if IsValid(self.Panel) then
+		self.Panel:Remove()
+	end
+
+	if enabled then
+		self.Panel = vgui.Create("DPanel")
+		self.Panel:SetSize(ScrW(), ScrH())
+		function self.Panel:Paint(ww, hh)
+		end
+
+		if not showCursor then
+			self.Panel:SetCursor("blank")
+		end
+	end
+end
+
+net.Receive("Star_Trek.LCARS.EnableScreenClicker", function()
+	Star_Trek.LCARS:SetScreenClicker(net.ReadBool(), net.ReadBool())
+end)

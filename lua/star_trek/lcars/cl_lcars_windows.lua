@@ -122,7 +122,6 @@ function Star_Trek.LCARS:DrawWindow(window, animPos, drawCursor)
 	end
 
 	cam.Start3D2D(wPos, wAng, 1 / wScale)
-
 		surface.SetMaterial(window.RTMaterial)
 		surface.DrawTexturedRectUV(-width / 2, -height / 2, width, height, 0, 0, 1, 1)
 
