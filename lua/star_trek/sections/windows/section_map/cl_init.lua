@@ -41,7 +41,7 @@ function SELF:OnCreate(windowData)
 	end
 	self.MapElement = mapElement
 
-	self.Objects = windowData.Objects
+	self.Objects = windowData.Objects or {}
 	self.LastObjectTime = CurTime()
 
 	return self
