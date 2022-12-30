@@ -70,16 +70,15 @@ function Star_Trek.LCARS:ApplyWindow(interfaceData, windowId, windowData)
 		return
 	end
 
-	local offsetPos = interfaceData.OffsetPos or Vector()
-	local offsetAng = interfaceData.OffsetAng or Angle()
+	windowData.Id = windowId
+	windowData.Interface = interfaceData
 
 	if windowData.AppliedOffset then
 		return
 	end
 
-	windowData.Id = windowId
-	windowData.Interface = interfaceData
-
+	local offsetPos = interfaceData.OffsetPos or Vector()
+	local offsetAng = interfaceData.OffsetAng or Angle()
 	if isvector(offsetPos) and isangle(offsetAng) then
 		local newPosOrig, newAngOrig = LocalToWorld(offsetPos, offsetAng, ent:GetPos(), ent:GetAngles())
 		local newPosWorld, newAngWorld = LocalToWorld(windowData.WindowPos, windowData.WindowAngles, newPosOrig, newAngOrig)
