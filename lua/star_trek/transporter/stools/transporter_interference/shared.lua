@@ -14,13 +14,13 @@
 ---------------------------------------
 
 ---------------------------------------
---     Server | Inhibitor STool      --
+--     Server | Interference STool   --
 ---------------------------------------
 
 if not istable(TOOL) then Star_Trek:LoadAllModules() return end
 
 TOOL.Category = "ST:RP"
-TOOL.Name = "Transporter Inhibtor-Tool"
+TOOL.Name = "Transporter Interference-Tool"
 TOOL.ConfigName = ""
 local sliderEntry
 
@@ -30,44 +30,44 @@ if (CLIENT) then
 		{ name = "right" },
 	}
 
-	language.Add("tool.transporter_inhibitor.name", "Transporter inhibitor-Tool")
-	language.Add("tool.transporter_inhibitor.desc", "Places down a point in which a inhibitor-beacon is spawned, preventing transport in or out of the configured radius.")
-	language.Add("tool.transporter_inhibitor.left", "Place inhibitor")
-	language.Add("tool.transporter_inhibitor.right", "Remove Closest inhibitor")
+	language.Add("tool.transporter_interference.name", "Transporter Interference-Tool")
+	language.Add("tool.transporter_interference.desc", "Places down a point in which a interference-beacon is spawned, preventing transport in or out of the configured radius.")
+	language.Add("tool.transporter_interference.left", "Place interference")
+	language.Add("tool.transporter_interference.right", "Remove Closest interference")
 
-    net.Receive("Star_Trek.inhibitorTool.Create", function()
+    net.Receive("Star_Trek.interferenceTool.Create", function()
 		local hitPos = net.ReadVector()
 
-		net.Start("Star_Trek.inhibitorTool.Create")
+		net.Start("Star_Trek.interferenceTool.Create")
 			net.WriteVector(hitPos)
 			net.WriteFloat(sliderEntry:GetValue())
 		net.SendToServer()
 	end)
 
-    local inhibitors = {}
-    net.Receive("Star_Trek.inhibitorTool.Sync", function()
-		inhibitors = net.ReadTable()
+    local interferences = {}
+    net.Receive("Star_Trek.interferenceTool.Sync", function()
+		interferences = net.ReadTable()
 	end)
 
 
-    local function renderinhibitor(pos, radius)
+    local function renderinterference(pos, radius)
         render.DrawWireframeSphere(pos, radius, 32, 32, Color(255, 0, 0))
     end
 
-    hook.Add( "HUDPaint", "Transporterinhibitor.Render", function()
+    hook.Add( "HUDPaint", "Transporterinterference.Render", function()
         local toolSwep = LocalPlayer():GetActiveWeapon()
         if not IsValid(toolSwep) or toolSwep:GetClass() ~= "gmod_tool" then
             return
         end
 
         local toolTable = LocalPlayer():GetTool()
-        if not istable(toolTable) or toolTable.Mode ~= "transporter_inhibitor" then
+        if not istable(toolTable) or toolTable.Mode ~= "transporter_interference" then
             return
         end
 
         cam.Start3D()
-            for _, inhibitorData in pairs(inhibitors or {}) do
-                renderinhibitor(inhibitorData.Pos, inhibitorData.Radius)
+            for _, interferenceData in pairs(interferences or {}) do
+                renderinterference(interferenceData.Pos, interferenceData.Radius)
             end
         cam.End3D()
     end )
@@ -76,27 +76,27 @@ end
 
 if SERVER then
 
-    util.AddNetworkString("Star_Trek.inhibitorTool.Sync")
+    util.AddNetworkString("Star_Trek.interferenceTool.Sync")
 	function TOOL:Sync()
-		net.Start("Star_Trek.inhibitorTool.Sync")
-			net.WriteTable(Star_Trek.Transporter.Inhibitors)
+		net.Start("Star_Trek.interferenceTool.Sync")
+			net.WriteTable(Star_Trek.Transporter.Interferences)
 		net.Send(self:GetOwner())
 	end
 
-    util.AddNetworkString("Star_Trek.inhibitorTool.Create")
-    net.Receive("Star_Trek.inhibitorTool.Create", function(len, ply)
+    util.AddNetworkString("Star_Trek.interferenceTool.Create")
+    net.Receive("Star_Trek.interferenceTool.Create", function(len, ply)
         local hitPos = net.ReadVector()
         local radius = net.ReadFloat()
 
         local tool = ply:GetTool()
-        if tool.Mode ~= "transporter_inhibitor" then return end
+        if tool.Mode ~= "transporter_interference" then return end
 
-        local inhibitorData = {
+        local interferenceData = {
             Pos = hitPos, 
             Radius = radius
         }
 
-        table.insert(Star_Trek.Transporter.Inhibitors, inhibitorData)
+        table.insert(Star_Trek.Transporter.Interferences, interferenceData)
 
         tool:Sync()
     
@@ -117,7 +117,7 @@ function TOOL:LeftClick( trace )
 	local owner = self:GetOwner()
 	if not IsValid(owner) then return true end
 
-	net.Start("Star_Trek.inhibitorTool.Create")
+	net.Start("Star_Trek.interferenceTool.Create")
 		net.WriteVector(hitPos)
 	net.Send(owner)
 
@@ -136,8 +136,8 @@ function TOOL:RightClick( trace )
 
 	local closest = nil
 	local closestDistance = math.huge
-    for i, inhibitor in pairs(Star_Trek.Transporter.Inhibitors) do
-        local pos = inhibitor.Pos 
+    for i, interference in pairs(Star_Trek.Transporter.Interferences) do
+        local pos = interference.Pos 
         local distance = pos:Distance(hitPos)
         if distance < closestDistance then
             closest = i
@@ -146,7 +146,7 @@ function TOOL:RightClick( trace )
     end
 
     if closest ~= nil then
-        table.remove(Star_Trek.Transporter.Inhibitors, closest)
+        table.remove(Star_Trek.Transporter.Interferences, closest)
     end
 
     self:Sync()
@@ -156,8 +156,8 @@ function TOOL:BuildCPanel(panel)
     if SERVER then return end
 
     self:AddControl("Header", {
-		Text = "#tool.transporter_inhibitor.name",
-		Description = "Select the radius of your inhibitor field:"
+		Text = "#tool.transporter_interference.name",
+		Description = "Select the radius of your interference field:"
 	})
 
     sliderEntry = vgui.Create("DNumSlider") 

@@ -39,7 +39,7 @@ if SERVER then
 
 	include("sh_transporter_pads.lua")
 	include("sv_transporter_external.lua")
-	include("sv_transporter_inhibitors.lua")
+	include("sv_transporter_interference.lua")
 
 	include("sv_transporter_pattern.lua")
 	include("sv_transporter.lua")
