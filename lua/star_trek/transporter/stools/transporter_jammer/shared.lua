@@ -3,10 +3,11 @@
 --         Star Trek Modules         --
 --                                   --
 --            Created by             --
---       Jan 'Oninoni' Ziegler       --
+--              Jarkyc               --
 --                                   --
 -- This software can be used freely, --
---    but only distributed by me.    --
+--    but only distributed by        --
+--     Jan 'Oninoni' Ziegler.        --
 --                                   --
 --    Copyright © 2022 Jan Ziegler   --
 ---------------------------------------
