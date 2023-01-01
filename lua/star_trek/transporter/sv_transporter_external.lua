@@ -17,7 +17,6 @@
 ---------------------------------------
 
 Star_Trek.Transporter.Externals = Star_Trek.Transporter.Externals or {}
-Star_Trek.Transporter.Jammers = Star_Trek.Transporter.Jammers or {} 
 
 -- Request all External Makers available to the interface.
 --
