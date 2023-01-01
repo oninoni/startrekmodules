@@ -164,7 +164,7 @@ function TOOL:BuildCPanel(panel)
 
     sliderEntry = vgui.Create("DNumSlider") 
     sliderEntry:SetMin(0)
-    sliderEntry:SetMax(1000)
+    sliderEntry:SetMax(5000)
     sliderEntry:SetValue(1)
 
     self:AddItem(sliderEntry)
