@@ -17,6 +17,7 @@
 ---------------------------------------
 
 Star_Trek.Transporter.Externals = Star_Trek.Transporter.Externals or {}
+Star_Trek.Transporter.Jammers = Star_Trek.Transporter.Jammers or {} 
 
 -- Request all External Makers available to the interface.
 --
@@ -81,3 +82,14 @@ function Star_Trek.Transporter:GetTransporterRooms(interface, skipNetworked)
 
 	return pads
 end
+
+concommand.Add("test", function()
+
+	print("Jammers: ")
+	for _, jam in pairs(Star_Trek.Transporter.Jammers) do
+		for key, val in pairs(jam) do
+			print(key, val)
+		end
+	end
+
+end)
