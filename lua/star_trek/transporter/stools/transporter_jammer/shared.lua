@@ -108,7 +108,6 @@ if SERVER then
 end
 
 function TOOL:LeftClick( trace )
-    print("Left click")
 
     if (CLIENT) then return true end
 
@@ -137,8 +136,6 @@ function TOOL:RightClick( trace )
 
 	local closest = nil
 	local closestDistance = math.huge
-
-    print("Right Click")
     for i, jammer in pairs(Star_Trek.Transporter.Jammers) do
         local pos = jammer.Pos 
         local distance = pos:Distance(hitPos)

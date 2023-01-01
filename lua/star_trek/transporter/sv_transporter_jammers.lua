@@ -5,7 +5,6 @@ hook.Add("Star_Trek.Transporter.BlockBeamTo", "Star_Trek.Transporter.CheckForceJ
         jammerPos = data.Pos
         jammerRadius = data.Radius  
         distance = pos:Distance(jammerPos)
-        print(distance <= jammerRadius)
         if distance <= jammerRadius then
             return true, "Unabled to lock onto target. Interference detected."
         end
