@@ -19,11 +19,10 @@
 if not istable(TOOL) then Star_Trek:LoadAllModules() return end
 
 TOOL.Category = "ST:RP"
-TOOL.Name = "External Transporter Location-Tool"
+TOOL.Name = "Transporter External-Location-Tool"
 TOOL.ConfigName = ""
 
 local textEntry
-
 
 if (CLIENT) then
 	TOOL.Information = {
@@ -32,7 +31,7 @@ if (CLIENT) then
 		{ name = "reload" }
 	}
 
-	language.Add("tool.external_transporter.name", "External Transporter Location-Tool")
+	language.Add("tool.external_transporter.name", "Transporter External-Location-Tool")
 	language.Add("tool.external_transporter.desc", "Allows placement of locations for the transporter. Every positions allows 7 people to beam down. Please leave enough space around them!")
 	language.Add("tool.external_transporter.left", "Place Transporter Beam Location")
 	language.Add("tool.external_transporter.right", "Remove Closest Transporter Beam Location")

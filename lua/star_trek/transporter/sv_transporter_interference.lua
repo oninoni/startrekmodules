@@ -1,3 +1,21 @@
+---------------------------------------
+---------------------------------------
+--         Star Trek Modules         --
+--                                   --
+--            Created by             --
+--       Jan 'Oninoni' Ziegler       --
+--                                   --
+-- This software can be used freely, --
+--    but only distributed by me.    --
+--                                   --
+--    Copyright © 2022 Jan Ziegler   --
+---------------------------------------
+---------------------------------------
+
+---------------------------------------
+-- Transporter Interference | Server --
+---------------------------------------
+
 Star_Trek.Transporter.Interferences = Star_Trek.Transporter.Interferences or {} 
 
 hook.Add("Star_Trek.Transporter.BlockBeamTo", "Star_Trek.Transporter.CheckForInterfereneces", function(pos)
