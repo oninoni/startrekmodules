@@ -233,6 +233,8 @@ net.Receive("Star_Trek.LCARS.Pressed", function(len, ply)
 	local windowId = net.ReadInt(32)
 	local buttonId = net.ReadInt(32)
 
+	if not ply:Alive() then return end
+
 	local ent = ents.GetByIndex(id)
 	if not IsValid(ent) then
 		return

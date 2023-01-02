@@ -154,7 +154,7 @@ end)
 function Star_Trek.LCARS:PlayerButtonDown(ply, button)
 	if not ((button == KEY_E and not ply.DisableEButton) or button == MOUSE_LEFT or button == MOUSE_RIGHT) then return end
 
-	if !ply:Alive() then return end
+	if not ply:Alive() then return end
 
 	for id, interface in pairs(Star_Trek.LCARS.ActiveInterfaces) do
 		if not interface.IVis then
