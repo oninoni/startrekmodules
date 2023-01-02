@@ -21,9 +21,11 @@ Star_Trek:RequireModules("util")
 Star_Trek.WarpCore = Star_Trek.WarpCore or {}
 
 if SERVER then
+	AddCSLuaFile("cl_warpcore.lua")
+
 	include("sv_warpcore.lua")
 end
 
 if CLIENT then
-	return
+	include("cl_warpcore.lua")
 end
