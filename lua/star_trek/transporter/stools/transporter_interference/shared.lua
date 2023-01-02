@@ -23,6 +23,7 @@ TOOL.Category = "ST:RP"
 TOOL.Name = "Transporter Interference-Tool"
 TOOL.ConfigName = ""
 local sliderEntry
+local typeof
 
 if (CLIENT) then
 	TOOL.Information = {
@@ -41,6 +42,8 @@ if (CLIENT) then
 		net.Start("Star_Trek.interferenceTool.Create")
 			net.WriteVector(hitPos)
 			net.WriteFloat(sliderEntry:GetValue())
+            local option, _ = typeof:GetSelected() 
+            net.WriteString(option)
 		net.SendToServer()
 	end)
 
@@ -87,13 +90,14 @@ if SERVER then
     net.Receive("Star_Trek.interferenceTool.Create", function(len, ply)
         local hitPos = net.ReadVector()
         local radius = net.ReadFloat()
-
+        local option = net.ReadString()
         local tool = ply:GetTool()
         if tool.Mode ~= "transporter_interference" then return end
 
         local interferenceData = {
             Pos = hitPos, 
-            Radius = radius
+            Radius = radius,
+            Type = option
         }
 
         table.insert(Star_Trek.Transporter.Interferences, interferenceData)
@@ -166,4 +170,23 @@ function TOOL:BuildCPanel(panel)
     sliderEntry:SetValue(1)
 
     self:AddItem(sliderEntry)
+
+    self:AddControl("Header", {
+		Text = "Interference Type",
+		Description = "Select the type of interference"
+	})
+
+    typeof = vgui.Create("DComboBox")
+    typeof:AddChoice("Unknown")
+    typeof:AddChoice("Magnesite")
+    typeof:AddChoice("Thoron Radiation")
+    typeof:AddChoice("Dampening Field")
+    typeof:AddChoice("Ionic")
+    typeof:AddChoice("Hyperonic Radiation")
+    typeof:AddChoice("Electromagnetic")
+    typeof:AddChoice("Trinimbic")
+    typeof:ChooseOptionID(1)
+
+    self:AddItem(typeof)
+
 end

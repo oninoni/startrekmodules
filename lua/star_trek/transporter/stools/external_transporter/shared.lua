@@ -24,6 +24,7 @@ TOOL.ConfigName = ""
 
 local textEntry
 
+
 if (CLIENT) then
 	TOOL.Information = {
 		{ name = "left" },
@@ -241,4 +242,6 @@ function TOOL:BuildCPanel()
 	textEntry = vgui.Create("DTextEntry")
 
 	self:AddItem(textEntry)
+
+
 end

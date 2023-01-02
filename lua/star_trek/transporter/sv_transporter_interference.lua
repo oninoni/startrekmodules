@@ -6,7 +6,7 @@ hook.Add("Star_Trek.Transporter.BlockBeamTo", "Star_Trek.Transporter.CheckForInt
         interferenceRadius = data.Radius  
         distance = pos:Distance(interferencePos)
         if distance <= interferenceRadius then
-            return true, "Unabled to lock onto target. Interference detected."
+            return true, "Unabled to lock onto target. " .. data.Type .. " Interference detected."
         end
     end
 end)
