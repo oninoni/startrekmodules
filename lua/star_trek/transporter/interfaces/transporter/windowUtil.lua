@@ -171,6 +171,8 @@ function SELF:CreateMenuWindow(pos, angle, width, menuTable, hFlip)
 							Star_Trek.Logs:AddEntry(self.Ent, ply, "PURGING: " .. scanData.Name , Star_Trek.LCARS.ColorRed)
 						end
 					end
+				
+					self.Ent:EmitSound("star_trek.lcars_purge_beep")
 
 					Star_Trek.Logs:AddEntry(self.Ent, ply, "Purge Complete", Star_Trek.LCARS.ColorRed)
 				end
