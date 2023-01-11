@@ -69,3 +69,12 @@ sound.Add({
 	pitch = 100,
 	sound = "oninoni/startrek/lcars/lcars_confirm_long2.wav",
 })
+
+sound.Add({
+	name= "star_trek.lcars_purge_beep",
+	channel = CHAN_AUTO,
+	volume = .8,
+	level = 70,
+	pitch = 100,
+	sound = "oninoni/startrek/lcars/lcars_purge_beep.wav",
+})
