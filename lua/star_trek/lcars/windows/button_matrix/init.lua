@@ -70,15 +70,16 @@ function SELF:CreateMainButtonRow(height)
 			Height = 32,
 			Buttons = {}
 		}
+
+		self:AddButtonToRow(flipRowData, "Previous", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function() end)
+		local posButton = self:AddButtonToRow(flipRowData, "", nil, Star_Trek.LCARS.ColorOrangem, nil, true, false, function() end)
+		posButton.ButtonId = 1000
+		self:AddButtonToRow(flipRowData, "Next", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function() end)
+
 		pages = self.MainButtonPages
 		if #self.MainButtonPages == 0 then			--If there are no pages yet
 			local firstPage = {}
-			self:AddButtonToRow(flipRowData, "Previous", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function() end)
-			local posButton = self:AddButtonToRow(flipRowData, "", nil, Star_Trek.LCARS.ColorOrangem, nil, true, false, function() end) -- Put the buttons at the top of the first page
-			posButton.ButtonId = 1000
-			self:AddButtonToRow(flipRowData, "Next", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function() end)
-
-			table.insert(firstPage, flipRowData)
+			table.insert(firstPage, flipRowData)  -- Put the buttons at the top of the first page
 			table.insert(firstPage, buttonRowData)
 			table.insert(self.MainButtonPages, firstPage)
 		else									--If pages already exist 
@@ -88,12 +89,7 @@ function SELF:CreateMainButtonRow(height)
 				stackedHeight = stackedHeight + rowData.Height
 			end
 			if stackedHeight >= self.MaxListHeight then  		-- If you cannot fit any more buttons on the page
-				self:AddButtonToRow(flipRowData, "Previous", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function() end)
-
-				local posButton = self:AddButtonToRow(flipRowData, "", nil, Star_Trek.LCARS.ColorOrangem, nil, true, false, function() end)	-- These page turning buttons go at the very bottom of the last page before creating a new one.
-				posButton.ButtonId = 1000
-				self:AddButtonToRow(flipRowData, "Next", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function() end)
-				table.insert(latestPage, flipRowData)
+				table.insert(latestPage, flipRowData)			-- These page turning buttons go at the very bottom of the last page before creating a new one.
 				local newPage = {}								-- Create a new page and put the row in there instead
 				table.insert(newPage, flipRowData)				-- Anotha page turning button. This time at the Top. Because we do this on creation, we don't need to cover that funk edge case we covered in the client data portion :)
 				table.insert(newPage, buttonRowData)
