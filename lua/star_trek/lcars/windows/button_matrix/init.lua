@@ -19,7 +19,7 @@
 if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
 local SELF = WINDOW
 
-function SELF:OnCreate(title, titleShort, hFlip)
+function SELF:OnCreate(title, titleShort, hFlip, maxListHeight)
 	local success = SELF.Base.OnCreate(self, title, titleShort, hFlip)
 	if not success then
 		return false
@@ -29,6 +29,9 @@ function SELF:OnCreate(title, titleShort, hFlip)
 
 	self.MainButtons = {}
 	self.SecondaryButtons = {}
+	self.MainButtonPages = {}
+	self.PageNum = 1
+	self.MaxListHeight = maxListHeight
 
 	return true
 end
@@ -55,7 +58,55 @@ function SELF:ClearSecondaryButtons()
 	self.SecondaryButtons = {}
 end
 
-function SELF:CreateButtonRow(buttonList, height)
+
+function SELF:CreateMainButtonRow(height)
+
+	local buttonRowData = {}
+	buttonRowData.Height = height
+	buttonList = self.MainButtons
+
+	if self.MaxListHeight ~= nil then
+		pages = self.MainButtonPages
+		if #self.MainButtonPages == 0 then			--If there are no pages yet
+			local firstPage = {}
+			table.insert(firstPage, buttonRowData)
+			table.insert(self.MainButtonPages, firstPage)
+		else									--If pages already exist 
+			stackedHeight = 0
+			latestPage = self.MainButtonPages[#self.MainButtonPages]
+			for _, rowData in pairs(latestPage) do
+				stackedHeight = stackedHeight + rowData.Height
+			end
+			if stackedHeight >= self.MaxListHeight then  		-- If you cannot fit any more buttons on the page
+				local flipRowData = {
+					Height = 32,
+					Buttons = {}
+				}
+				self:AddButtonToRow(flipRowData, "Previous Page", nil, Star_Trek.LCARS.ColorOrange, false, false, function() end)
+				self:AddButtonToRow(flipRowData, "Next Page", nil, Star_Trek.LCARS.ColorOrange, false, false, function() end)
+				table.insert(latestPage, flipRowData)
+				local newPage = {}								-- Create a new page and put the row in there instead
+				table.insert(newPage, buttonRowData)
+				table.insert(self.MainButtonPages, newPage)		-- Make sure to actually register that new page
+			else
+				table.insert(latestPage, buttonRowData)			-- Otherwise there is no need to do anything special
+			end
+
+		end
+	else
+		table.insert(buttonList, buttonRowData)
+	end
+	buttonRowData.ColorOffset = table.Count(buttonList) % 2
+
+	buttonRowData.Buttons = {}
+
+	return buttonRowData
+end
+
+function SELF:CreateSecondaryButtonRow(height)
+
+	buttonList = self.SecondaryButtons
+
 	local buttonRowData = {}
 
 	buttonRowData.Height = height
@@ -66,14 +117,6 @@ function SELF:CreateButtonRow(buttonList, height)
 	buttonRowData.Buttons = {}
 
 	return buttonRowData
-end
-
-function SELF:CreateMainButtonRow(height)
-	return self:CreateButtonRow(self.MainButtons, height)
-end
-
-function SELF:CreateSecondaryButtonRow(height)
-	return self:CreateButtonRow(self.SecondaryButtons, height)
 end
 
 function SELF:AddButtonToRow(buttonRowData, name, number, color, activeColor, disabled, toggle, callback)
@@ -175,34 +218,50 @@ end
 function SELF:GetButtonClientData(buttonList)
 	local clientButtonList = {}
 
+	if buttonList == self.MainButtons and #self.MainButtonPages ~= 0 then
+		buttonList = self.MainButtonPages[self.PageNum]						-- Retrieve the currently selected page
+
+		if not self:ContainsButton(buttonList) then -- There is a chance the last page doesn't get page flip buttons because it doesn't trigger the new page system created at the top of the file
+			local buttonRowData = {}				-- Instead, we will just create it here, and do it only once by checking if the buttons happen to already exist
+			buttonRowData.Height = 32
+			buttonRowData.Buttons = {}
+
+			self:AddButtonToRow(buttonRowData, "Previous Page", nil, Star_Trek.LCARS.ColorOrange, false, false, function() end)
+			self:AddButtonToRow(buttonRowData, "Next Page", nil, Star_Trek.LCARS.ColorOrange, false, false, function() end)
+
+			table.insert(buttonList, buttonRowData)
+
+		end
+	end
+
 	for _, buttonRowData in pairs(buttonList) do
 		local clientButtonRowData = {
 			Height = buttonRowData.Height,
 
 			Buttons = {}
 		}
+			for _, buttonData in pairs(buttonRowData.Buttons) do
+				local clientButtonData = {
+					ButtonId = buttonData.ButtonId,
+					Name = buttonData.Name,
+					Disabled = buttonData.Disabled,
+					Selected = buttonData.Selected,
 
-		for _, buttonData in pairs(buttonRowData.Buttons) do
-			local clientButtonData = {
-				ButtonId = buttonData.ButtonId,
-				Name = buttonData.Name,
-				Disabled = buttonData.Disabled,
-				Selected = buttonData.Selected,
+					Color = buttonData.Color,
+					ActiveColor = buttonData.ActiveColor,
 
-				Color = buttonData.Color,
-				ActiveColor = buttonData.ActiveColor,
+					Number = buttonData.Number,
+				}
 
-				Number = buttonData.Number,
-			}
+				table.insert(clientButtonRowData.Buttons, clientButtonData)
+			end
 
-			table.insert(clientButtonRowData.Buttons, clientButtonData)
-		end
+			table.insert(clientButtonList, clientButtonRowData)
 
-		table.insert(clientButtonList, clientButtonRowData)
 	end
-
 	return clientButtonList
 end
+
 
 function SELF:OnPress(interfaceData, ply, buttonId)
 	local buttonData = self.Buttons[buttonId]
@@ -223,6 +282,16 @@ function SELF:OnPress(interfaceData, ply, buttonId)
 		interfaceData.Ent:EmitSound("star_trek.lcars_beep")
 	end
 
+	local name = buttonData.Name
+
+	if self.MaxListHeight == nil then return true end
+
+	if name == "Next Page" then
+		self:TurnPageForwards()
+	elseif name == "Previous Page" then
+		self:TurnPageBackwards()
+	end
+
 	return true
 end
 
@@ -233,4 +302,26 @@ function SELF:GetClientData()
 	clientData.SecondaryButtons = self:GetButtonClientData(self.SecondaryButtons)
 
 	return clientData
+end
+
+function SELF:TurnPageForwards()
+	local maxPages = #self.MainButtonPages
+	if self.PageNum == maxPages then self.PageNum = 1
+	else self.PageNum = self.PageNum + 1 end
+	self:GetButtonClientData(self.MainButtonPages[self.PageNum])
+end
+
+function SELF:TurnPageBackwards()
+	if self.PageNum == 1 then self.PageNum = #self.MainButtonPages
+	else self.PageNum = self.PageNum - 1 end
+	self:GetButtonClientData(self.MainButtonPages[self.PageNum])
+end
+
+function SELF:ContainsButton(buttonList)
+	for _, row in pairs(buttonList) do
+		for _, button in pairs(row.Buttons) do
+			if button.Name == "Next Page" or button.Name == "Previous Page" then return true end
+		end
+	end
+	return false
 end
