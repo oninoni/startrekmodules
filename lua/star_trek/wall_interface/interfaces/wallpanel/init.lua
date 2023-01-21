@@ -33,9 +33,17 @@ function SELF:Open(ent)
 	local w = 24
 	local h = height
 	local x = -width / 2 + w / 2 + 0.5
+
+	local pos
+	if ent:GetName() == "gb31" then
+		pos = Vector(x, 0, -4)
+	else
+		pos = Vector(x, 0, 0)
+	end
+
 	local success, window = Star_Trek.LCARS:CreateWindow(
 		"button_matrix",
-		Vector(x, 0, 0),
+		pos,
 		Angle(),
 		scale,
 		w * scale,
@@ -69,9 +77,16 @@ function SELF:Open(ent)
 	end)
 
 	local w2 = width - w - 1
+
+	local pos2
+	if ent:GetName() == "gb31" then
+		pos2 = Vector((width - w2) / 2, 0, -4)
+	else
+		pos2 = Vector((width - w2) / 2, 0, 0)
+	end
 	local success2, mainWindow = Star_Trek.LCARS:CreateWindow(
 		"log_entry",
-		Vector((width - w2) / 2, 0, 0),
+		pos2,
 		Angle(),
 		scale,
 		(w2 - 1) * scale,
