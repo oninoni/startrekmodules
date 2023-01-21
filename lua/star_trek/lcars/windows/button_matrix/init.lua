@@ -66,9 +66,19 @@ function SELF:CreateMainButtonRow(height)
 	buttonList = self.MainButtons
 
 	if self.MaxListHeight ~= nil then
+		local flipRowData = {
+			Height = 32,
+			Buttons = {}
+		}
 		pages = self.MainButtonPages
 		if #self.MainButtonPages == 0 then			--If there are no pages yet
 			local firstPage = {}
+			self:AddButtonToRow(flipRowData, "Previous", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function() end)
+			local posButton = self:AddButtonToRow(flipRowData, "", nil, Star_Trek.LCARS.ColorOrangem, nil, true, false, function() end) -- Put the buttons at the top of the first page
+			posButton.ButtonId = 1000
+			self:AddButtonToRow(flipRowData, "Next", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function() end)
+
+			table.insert(firstPage, flipRowData)
 			table.insert(firstPage, buttonRowData)
 			table.insert(self.MainButtonPages, firstPage)
 		else									--If pages already exist 
@@ -78,14 +88,14 @@ function SELF:CreateMainButtonRow(height)
 				stackedHeight = stackedHeight + rowData.Height
 			end
 			if stackedHeight >= self.MaxListHeight then  		-- If you cannot fit any more buttons on the page
-				local flipRowData = {
-					Height = 32,
-					Buttons = {}
-				}
-				self:AddButtonToRow(flipRowData, "Previous Page", nil, Star_Trek.LCARS.ColorOrange, false, false, function() end)
-				self:AddButtonToRow(flipRowData, "Next Page", nil, Star_Trek.LCARS.ColorOrange, false, false, function() end)
+				self:AddButtonToRow(flipRowData, "Previous", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function() end)
+
+				local posButton = self:AddButtonToRow(flipRowData, "", nil, Star_Trek.LCARS.ColorOrangem, nil, true, false, function() end)	-- These page turning buttons go at the very bottom of the last page before creating a new one.
+				posButton.ButtonId = 1000
+				self:AddButtonToRow(flipRowData, "Next", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function() end)
 				table.insert(latestPage, flipRowData)
 				local newPage = {}								-- Create a new page and put the row in there instead
+				table.insert(newPage, flipRowData)				-- Anotha page turning button. This time at the Top. Because we do this on creation, we don't need to cover that funk edge case we covered in the client data portion :)
 				table.insert(newPage, buttonRowData)
 				table.insert(self.MainButtonPages, newPage)		-- Make sure to actually register that new page
 			else
@@ -226,9 +236,11 @@ function SELF:GetButtonClientData(buttonList)
 			buttonRowData.Height = 32
 			buttonRowData.Buttons = {}
 
-			self:AddButtonToRow(buttonRowData, "Previous Page", nil, Star_Trek.LCARS.ColorOrange, false, false, function() end)
-			self:AddButtonToRow(buttonRowData, "Next Page", nil, Star_Trek.LCARS.ColorOrange, false, false, function() end)
+			self:AddButtonToRow(buttonRowData, "Previous", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function() end)
+			local posButton = self:AddButtonToRow(buttonRowData, "", nil, Star_Trek.LCARS.ColorOrangem, nil, true, false, function() end)
+			posButton.ButtonId = 1000
 
+			self:AddButtonToRow(buttonRowData, "Next", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function() end)
 			table.insert(buttonList, buttonRowData)
 
 		end
@@ -252,6 +264,10 @@ function SELF:GetButtonClientData(buttonList)
 
 					Number = buttonData.Number,
 				}
+
+				if clientButtonData.ButtonId == 1000 then
+					clientButtonData.Name = self.PageNum .. "/" .. #self.MainButtonPages	-- Dynamically update the display bar 
+				end
 
 				table.insert(clientButtonRowData.Buttons, clientButtonData)
 			end
@@ -286,9 +302,9 @@ function SELF:OnPress(interfaceData, ply, buttonId)
 
 	if self.MaxListHeight == nil then return true end
 
-	if name == "Next Page" then
+	if name == "Next" then
 		self:TurnPageForwards()
-	elseif name == "Previous Page" then
+	elseif name == "Previous" then
 		self:TurnPageBackwards()
 	end
 
@@ -320,7 +336,7 @@ end
 function SELF:ContainsButton(buttonList)
 	for _, row in pairs(buttonList) do
 		for _, button in pairs(row.Buttons) do
-			if button.Name == "Next Page" or button.Name == "Previous Page" then return true end
+			if button.Name == "Next" or button.Name == "Previous" then return true end
 		end
 	end
 	return false
