@@ -13,7 +13,7 @@
 ---------------------------------------
 
 ---------------------------------------
---    Interference Tool | Server     --
+--    Interference Tool | Shared     --
 ---------------------------------------
 
 if not istable(TOOL) then Star_Trek:LoadAllModules() return end
