@@ -70,11 +70,7 @@ function SELF:CreateMainButtonRow(height)
 			Height = 32,
 			Buttons = {}
 		}
-
-		self:AddButtonToRow(flipRowData, "Previous", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function() end)
-		local posButton = self:AddButtonToRow(flipRowData, "", nil, Star_Trek.LCARS.ColorOrangem, nil, true, false, function() end)
-		posButton.ButtonId = 1000
-		self:AddButtonToRow(flipRowData, "Next", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function() end)
+		self:AddNavButtonsToRow(flipRowData)
 
 		pages = self.MainButtonPages
 		if #self.MainButtonPages == 0 then			--If there are no pages yet
@@ -221,22 +217,25 @@ function SELF:AddSelectorToRow(buttonRowData, name, values, defaultId, callback)
 	buttonRowData:SetValue(defaultId)
 end
 
+function SELF:AddNavButtonsToRow(buttonRowData, page)
+		self:AddButtonToRow(buttonRowData, "Previous", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function() end)
+		local posButton = self:AddButtonToRow(buttonRowData, "", nil, Star_Trek.LCARS.ColorOrangem, nil, true, false, function() end)
+		posButton.ButtonId = 1000
+		self:AddButtonToRow(buttonRowData, "Next", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function() end)
+end
+
 function SELF:GetButtonClientData(buttonList)
 	local clientButtonList = {}
 
 	if buttonList == self.MainButtons and #self.MainButtonPages ~= 0 then
 		buttonList = self.MainButtonPages[self.PageNum]						-- Retrieve the currently selected page
 
-		if not self:ContainsButton(buttonList) then -- There is a chance the last page doesn't get page flip buttons because it doesn't trigger the new page system created at the top of the file
-			local buttonRowData = {}				-- Instead, we will just create it here, and do it only once by checking if the buttons happen to already exist
-			buttonRowData.Height = 32
+		if buttonList[#buttonList].Buttons[1].Name ~= "Previous" then 	-- Most of the time the nav bar at the bottom is only generated if the page is full, so here we generate it on the very
+			local buttonRowData = {}				 					-- last file at the very bottom because it wouldn't do it otherwise and I don't feel like rewriting an entire system and hurting my brain
+			buttonRowData.Height = 32									-- With trying to fuck with data structures even more :)
 			buttonRowData.Buttons = {}
 
-			self:AddButtonToRow(buttonRowData, "Previous", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function() end)
-			local posButton = self:AddButtonToRow(buttonRowData, "", nil, Star_Trek.LCARS.ColorOrangem, nil, true, false, function() end)
-			posButton.ButtonId = 1000
-
-			self:AddButtonToRow(buttonRowData, "Next", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function() end)
+			self:AddNavButtonsToRow(buttonRowData)
 			table.insert(buttonList, buttonRowData)
 
 		end
@@ -327,13 +326,4 @@ function SELF:TurnPageBackwards()
 	if self.PageNum == 1 then self.PageNum = #self.MainButtonPages
 	else self.PageNum = self.PageNum - 1 end
 	self:GetButtonClientData(self.MainButtonPages[self.PageNum])
-end
-
-function SELF:ContainsButton(buttonList)
-	for _, row in pairs(buttonList) do
-		for _, button in pairs(row.Buttons) do
-			if button.Name == "Next" or button.Name == "Previous" then return true end
-		end
-	end
-	return false
 end
