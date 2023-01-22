@@ -34,8 +34,10 @@ function Star_Trek.Holodeck:Disintegrate(ent, inverted)
 	ent:SetRenderMode(RENDERMODE_TRANSALPHA)
 	ent:EmitSound("star_trek.hologram_failure")
 
+
+	local color = ent:GetColor()
+
 	if inverted then
-		local color = ent:GetColor()
 		ent:SetColor(ColorAlpha(color, 0))
 	end
 
