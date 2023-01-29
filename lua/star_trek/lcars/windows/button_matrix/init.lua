@@ -19,7 +19,7 @@
 if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
 local SELF = WINDOW
 
-function SELF:OnCreate(title, titleShort, hFlip)
+function SELF:OnCreate(title, titleShort, hFlip, maxListHeight)
 	local success = SELF.Base.OnCreate(self, title, titleShort, hFlip)
 	if not success then
 		return false
@@ -27,8 +27,11 @@ function SELF:OnCreate(title, titleShort, hFlip)
 
 	self.Buttons = {}
 
-	self.MainButtons = {}
-	self.SecondaryButtons = {}
+	self.MaxListHeight = maxListHeight
+	self.PageSelectorHeight = 32 -- TODO: Changeable?
+
+	self:ClearMainButtons()
+	self:ClearSecondaryButtons()
 
 	return true
 end
@@ -40,14 +43,20 @@ function SELF:ClearButtonsInternal(buttonList)
 		end
 	end
 
-	for i, buttonData in pairs(self.Buttons) do
+	for i, buttonData in pairs(self.Buttons or {}) do
 		buttonData.ButtonId = i
 	end
 end
 
 function SELF:ClearMainButtons()
 	self:ClearButtonsInternal(self.MainButtons)
+
 	self.MainButtons = {}
+
+	if isnumber(self.MaxListHeight) then
+		self.Page = 1
+		self.Pages = {{}}
+	end
 end
 
 function SELF:ClearSecondaryButtons()
@@ -55,25 +64,48 @@ function SELF:ClearSecondaryButtons()
 	self.SecondaryButtons = {}
 end
 
-function SELF:CreateButtonRow(buttonList, height)
+function SELF:CreateMainButtonRow(height, noPage)
 	local buttonRowData = {}
-
 	buttonRowData.Height = height
 
-	table.insert(buttonList, buttonRowData)
-	buttonRowData.ColorOffset = table.Count(buttonList) % 2
+	if isnumber(self.MaxListHeight) and not noPage then
+		local currentPage = self.Pages[#self.Pages]
+
+		local currentHeight = currentPage.Height or 0
+		local newHeight = currentHeight + height
+
+		local availableHeight = self.MaxListHeight - 2 * self.PageSelectorHeight
+		if newHeight > availableHeight then -- New Page!
+			newHeight = height
+
+			currentPage = {}
+			table.insert(self.Pages, currentPage)
+		end
+
+		currentPage.Rows = currentPage.Rows or {}
+		table.insert(currentPage.Rows, buttonRowData)
+
+		currentPage.Height = newHeight
+	end
+
+	table.insert(self.MainButtons, buttonRowData)
+	buttonRowData.ColorOffset = table.Count(self.MainButtons) % 2
 
 	buttonRowData.Buttons = {}
 
 	return buttonRowData
 end
 
-function SELF:CreateMainButtonRow(height)
-	return self:CreateButtonRow(self.MainButtons, height)
-end
-
 function SELF:CreateSecondaryButtonRow(height)
-	return self:CreateButtonRow(self.SecondaryButtons, height)
+	local buttonRowData = {}
+	buttonRowData.Height = height
+
+	table.insert(self.SecondaryButtons, buttonRowData)
+	buttonRowData.ColorOffset = table.Count(self.SecondaryButtons) % 2
+
+	buttonRowData.Buttons = {}
+
+	return buttonRowData
 end
 
 function SELF:AddButtonToRow(buttonRowData, name, number, color, activeColor, disabled, toggle, callback)
@@ -172,6 +204,23 @@ function SELF:AddSelectorToRow(buttonRowData, name, values, defaultId, callback)
 	buttonRowData:SetValue(defaultId)
 end
 
+function SELF:AddPageSelectorToRow(buttonRowData)
+	if not isnumber(self.MaxListHeight) then return end
+
+	local values = {}
+	for i, page in ipairs(self.Pages) do
+		values[i] = {
+			Name = tostring(i),
+			Data = i
+		}
+	end
+
+	self:AddSelectorToRow(buttonRowData, "Page", values, self.Page, function(ply, buttonData, value)
+		local newPage = value.Data
+		self.Page = newPage
+	end)
+end
+
 function SELF:GetButtonClientData(buttonList)
 	local clientButtonList = {}
 
@@ -200,7 +249,6 @@ function SELF:GetButtonClientData(buttonList)
 
 		table.insert(clientButtonList, clientButtonRowData)
 	end
-
 	return clientButtonList
 end
 
@@ -229,7 +277,28 @@ end
 function SELF:GetClientData()
 	local clientData = SELF.Base.GetClientData(self)
 
-	clientData.MainButtons = self:GetButtonClientData(self.MainButtons)
+	local mainButtons = self.MainButtons
+	if isnumber(self.MaxListHeight) then
+		local pagedMainButtons = {}
+
+		local pageSelectorRow = {}
+		pageSelectorRow.Height = self.PageSelectorHeight
+		pageSelectorRow.Buttons = {}
+		self:AddPageSelectorToRow(pageSelectorRow)
+
+		table.insert(pagedMainButtons, pageSelectorRow)
+
+		local currentPage = self.Pages[self.Page]
+		for _, rowData in ipairs(currentPage.Rows) do
+			table.insert(pagedMainButtons, rowData)
+		end
+
+		table.insert(pagedMainButtons, pageSelectorRow)
+
+		mainButtons = pagedMainButtons
+	end
+
+	clientData.MainButtons = self:GetButtonClientData(mainButtons)
 	clientData.SecondaryButtons = self:GetButtonClientData(self.SecondaryButtons)
 
 	return clientData
