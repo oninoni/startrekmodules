@@ -27,13 +27,13 @@ function SELF:OnCreate(title, titleShort, hFlip, maxListHeight)
 
 	self.Buttons = {}
 
-	self.MainButtons = {}
-	self.SecondaryButtons = {}
+	self:ClearMainButtons()
+	self:ClearSecondaryButtons()
 
 	self.MaxListHeight = maxListHeight or 300 -- TODO: Remove
 
-	self.PageNum = 1
-	self.MainButtonPages = {}
+	self.Page = 1
+	self.PageSelectorHeight = 32 -- TODO: Changeable?
 
 	return true
 end
@@ -45,14 +45,18 @@ function SELF:ClearButtonsInternal(buttonList)
 		end
 	end
 
-	for i, buttonData in pairs(self.Buttons) do
+	for i, buttonData in pairs(self.Buttons or {}) do
 		buttonData.ButtonId = i
 	end
 end
 
 function SELF:ClearMainButtons()
 	self:ClearButtonsInternal(self.MainButtons)
+
 	self.MainButtons = {}
+
+	self.Page = 1
+	self.Pages = {{}}
 end
 
 function SELF:ClearSecondaryButtons()
@@ -60,47 +64,29 @@ function SELF:ClearSecondaryButtons()
 	self.SecondaryButtons = {}
 end
 
-function SELF:CreateMainButtonRow(height)
+function SELF:CreateMainButtonRow(height, noPage)
 	local buttonRowData = {}
 	buttonRowData.Height = height
 
+	if isnumber(self.PageSelectorHeight) and not noPage then
+		local currentPage = self.Pages[#self.Pages]
 
+		local currentHeight = currentPage.Height or 0
+		local newHeight = currentHeight + height
 
+		local availableHeight = self.MaxListHeight - 2 * self.PageSelectorHeight
+		if newHeight > availableHeight then -- New Page!
+			newHeight = height
 
-
-	--[[
-	if self.MaxListHeight ~= nil then
-		local flipRowData = {
-			Height = 32,
-			Buttons = {}
-		}
-		self:AddNavButtonsToRow(flipRowData)
-
-		pages = self.MainButtonPages
-		if #self.MainButtonPages == 0 then			--If there are no pages yet
-			local firstPage = {}
-			table.insert(firstPage, flipRowData)  -- Put the buttons at the top of the first page
-			table.insert(firstPage, buttonRowData)
-			table.insert(self.MainButtonPages, firstPage)
-		else									--If pages already exist 
-			stackedHeight = 0
-			latestPage = self.MainButtonPages[#self.MainButtonPages]
-			for _, rowData in pairs(latestPage) do
-				stackedHeight = stackedHeight + rowData.Height
-			end
-			if stackedHeight >= self.MaxListHeight then  		-- If you cannot fit any more buttons on the page
-				table.insert(latestPage, flipRowData)			-- These page turning buttons go at the very bottom of the last page before creating a new one.
-				local newPage = {}								-- Create a new page and put the row in there instead
-				table.insert(newPage, flipRowData)				-- Anotha page turning button. This time at the Top. Because we do this on creation, we don't need to cover that funk edge case we covered in the client data portion :)
-				table.insert(newPage, buttonRowData)
-				table.insert(self.MainButtonPages, newPage)		-- Make sure to actually register that new page
-			else
-				table.insert(latestPage, buttonRowData)			-- Otherwise there is no need to do anything special
-			end
-
+			currentPage = {}
+			table.insert(self.Pages, currentPage)
 		end
+
+		currentPage.Rows = currentPage.Rows or {}
+		table.insert(currentPage.Rows, buttonRowData)
+
+		currentPage.Height = newHeight
 	end
-	]]
 
 	table.insert(self.MainButtons, buttonRowData)
 	buttonRowData.ColorOffset = table.Count(self.MainButtons) % 2
@@ -218,33 +204,25 @@ function SELF:AddSelectorToRow(buttonRowData, name, values, defaultId, callback)
 	buttonRowData:SetValue(defaultId)
 end
 
---[[
-function SELF:AddNavButtonsToRow(buttonRowData, page)
-		self:AddButtonToRow(buttonRowData, "Previous", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function() end)
-		local posButton = self:AddButtonToRow(buttonRowData, "", nil, Star_Trek.LCARS.ColorOrangem, nil, true, false, function() end)
-		posButton.ButtonId = 1000
-		self:AddButtonToRow(buttonRowData, "Next", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function() end)
+function SELF:AddPageSelectorToRow(buttonRowData)
+	if not isnumber(self.MaxListHeight) then return end
+
+	local values = {}
+	for i, page in ipairs(self.Pages) do
+		values[i] = {
+			Name = tostring(i),
+			Data = i
+		}
+	end
+
+	self:AddSelectorToRow(buttonRowData, "Page", values, self.Page, function(ply, buttonData, value)
+		local newPage = value.Data
+		self.Page = newPage
+	end)
 end
-]]
 
 function SELF:GetButtonClientData(buttonList)
 	local clientButtonList = {}
-
-	--[[
-	if buttonList == self.MainButtons and #self.MainButtonPages ~= 0 then
-		buttonList = self.MainButtonPages[self.PageNum]						-- Retrieve the currently selected page
-
-		if buttonList[#buttonList].Buttons[1].Name ~= "Previous" then 	-- Most of the time the nav bar at the bottom is only generated if the page is full, so here we generate it on the very
-			local buttonRowData = {}				 					-- last file at the very bottom because it wouldn't do it otherwise and I don't feel like rewriting an entire system and hurting my brain
-			buttonRowData.Height = 32									-- With trying to fuck with data structures even more :)
-			buttonRowData.Buttons = {}
-
-			self:AddNavButtonsToRow(buttonRowData)
-			table.insert(buttonList, buttonRowData)
-
-		end
-	end
-	]]
 
 	for _, buttonRowData in pairs(buttonList) do
 		local clientButtonRowData = {
@@ -265,11 +243,6 @@ function SELF:GetButtonClientData(buttonList)
 
 				Number = buttonData.Number,
 			}
-
-			--[[
-			if clientButtonData.ButtonId == 1000 then
-				clientButtonData.Name = self.PageNum .. "/" .. #self.MainButtonPages	-- Dynamically update the display bar 
-			end]]
 
 			table.insert(clientButtonRowData.Buttons, clientButtonData)
 		end
@@ -298,41 +271,35 @@ function SELF:OnPress(interfaceData, ply, buttonId)
 		interfaceData.Ent:EmitSound("star_trek.lcars_beep")
 	end
 
-	--[[
-	local name = buttonData.Name
-
-	if self.MaxListHeight == nil then return true end
-
-	if name == "Next" then
-		self:TurnPageForwards()
-	elseif name == "Previous" then
-		self:TurnPageBackwards()
-	end
-	]]
-
 	return true
 end
 
 function SELF:GetClientData()
 	local clientData = SELF.Base.GetClientData(self)
 
-	clientData.MainButtons = self:GetButtonClientData(self.MainButtons)
+	local mainButtons = self.MainButtons
+	if isnumber(self.MaxListHeight) then
+		local pagedMainButtons = {}
+
+		local pageSelectorRow = {}
+		pageSelectorRow.Height = self.PageSelectorHeight
+		pageSelectorRow.Buttons = {}
+		self:AddPageSelectorToRow(pageSelectorRow)
+
+		table.insert(pagedMainButtons, pageSelectorRow)
+
+		local currentPage = self.Pages[self.Page]
+		for _, rowData in ipairs(currentPage.Rows) do
+			table.insert(pagedMainButtons, rowData)
+		end
+
+		table.insert(pagedMainButtons, pageSelectorRow)
+
+		mainButtons = pagedMainButtons
+	end
+
+	clientData.MainButtons = self:GetButtonClientData(mainButtons)
 	clientData.SecondaryButtons = self:GetButtonClientData(self.SecondaryButtons)
 
 	return clientData
 end
-
---[[
-function SELF:TurnPageForwards()
-	local maxPages = #self.MainButtonPages
-	if self.PageNum == maxPages then self.PageNum = 1
-	else self.PageNum = self.PageNum + 1 end
-	self:GetButtonClientData(self.MainButtonPages[self.PageNum])
-end
-
-function SELF:TurnPageBackwards()
-	if self.PageNum == 1 then self.PageNum = #self.MainButtonPages
-	else self.PageNum = self.PageNum - 1 end
-	self:GetButtonClientData(self.MainButtonPages[self.PageNum])
-end
-]]
