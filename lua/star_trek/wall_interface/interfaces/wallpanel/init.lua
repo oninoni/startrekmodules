@@ -22,11 +22,6 @@ local SELF = INTERFACE
 SELF.BaseInterface = "base"
 
 function SELF:Open(ent)
-
-	if ent:GetName() == "gb31" then
-		self.InterfacePos = Vector(4, 0, 0)
-	end
-
 	local keyValues = ent.LCARSKeyData
 
 	local scale = keyValues["lcars_scale"] or 15
@@ -90,7 +85,12 @@ function SELF:Open(ent)
 		return false, mainWindow
 	end
 
-	return true, {window, mainWindow}, Vector(0, 0.5, 0.6)
+	local offset = Vector(0, 0.5, 0.6)
+	if ent:GetName() == "gb31" then
+		offset = offset + Vector(0, 0, -4)
+	end
+
+	return true, {window, mainWindow}, offset
 end
 
 -- Wrap for use in Map.
