@@ -27,13 +27,11 @@ function SELF:OnCreate(title, titleShort, hFlip, maxListHeight)
 
 	self.Buttons = {}
 
+	self.MaxListHeight = maxListHeight
+	self.PageSelectorHeight = 32 -- TODO: Changeable?
+
 	self:ClearMainButtons()
 	self:ClearSecondaryButtons()
-
-	self.MaxListHeight = maxListHeight or 300 -- TODO: Remove
-
-	self.Page = 1
-	self.PageSelectorHeight = 32 -- TODO: Changeable?
 
 	return true
 end
@@ -55,8 +53,10 @@ function SELF:ClearMainButtons()
 
 	self.MainButtons = {}
 
-	self.Page = 1
-	self.Pages = {{}}
+	if isnumber(self.MaxListHeight) then
+		self.Page = 1
+		self.Pages = {{}}
+	end
 end
 
 function SELF:ClearSecondaryButtons()
