@@ -29,9 +29,11 @@ function SELF:OnCreate(title, titleShort, hFlip, maxListHeight)
 
 	self.MainButtons = {}
 	self.SecondaryButtons = {}
-	self.MainButtonPages = {}
+
+	self.MaxListHeight = maxListHeight or 300 -- TODO: Remove
+
 	self.PageNum = 1
-	self.MaxListHeight = maxListHeight
+	self.MainButtonPages = {}
 
 	return true
 end
@@ -58,13 +60,15 @@ function SELF:ClearSecondaryButtons()
 	self.SecondaryButtons = {}
 end
 
-
 function SELF:CreateMainButtonRow(height)
-
 	local buttonRowData = {}
 	buttonRowData.Height = height
-	buttonList = self.MainButtons
 
+
+
+
+
+	--[[
 	if self.MaxListHeight ~= nil then
 		local flipRowData = {
 			Height = 32,
@@ -95,10 +99,11 @@ function SELF:CreateMainButtonRow(height)
 			end
 
 		end
-	else
-		table.insert(buttonList, buttonRowData)
 	end
-	buttonRowData.ColorOffset = table.Count(buttonList) % 2
+	]]
+
+	table.insert(self.MainButtons, buttonRowData)
+	buttonRowData.ColorOffset = table.Count(self.MainButtons) % 2
 
 	buttonRowData.Buttons = {}
 
@@ -106,15 +111,11 @@ function SELF:CreateMainButtonRow(height)
 end
 
 function SELF:CreateSecondaryButtonRow(height)
-
-	buttonList = self.SecondaryButtons
-
 	local buttonRowData = {}
-
 	buttonRowData.Height = height
 
-	table.insert(buttonList, buttonRowData)
-	buttonRowData.ColorOffset = table.Count(buttonList) % 2
+	table.insert(self.SecondaryButtons, buttonRowData)
+	buttonRowData.ColorOffset = table.Count(self.SecondaryButtons) % 2
 
 	buttonRowData.Buttons = {}
 
@@ -217,16 +218,19 @@ function SELF:AddSelectorToRow(buttonRowData, name, values, defaultId, callback)
 	buttonRowData:SetValue(defaultId)
 end
 
+--[[
 function SELF:AddNavButtonsToRow(buttonRowData, page)
 		self:AddButtonToRow(buttonRowData, "Previous", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function() end)
 		local posButton = self:AddButtonToRow(buttonRowData, "", nil, Star_Trek.LCARS.ColorOrangem, nil, true, false, function() end)
 		posButton.ButtonId = 1000
 		self:AddButtonToRow(buttonRowData, "Next", nil, Star_Trek.LCARS.ColorOrange, nil, false, false, function() end)
 end
+]]
 
 function SELF:GetButtonClientData(buttonList)
 	local clientButtonList = {}
 
+	--[[
 	if buttonList == self.MainButtons and #self.MainButtonPages ~= 0 then
 		buttonList = self.MainButtonPages[self.PageNum]						-- Retrieve the currently selected page
 
@@ -240,6 +244,7 @@ function SELF:GetButtonClientData(buttonList)
 
 		end
 	end
+	]]
 
 	for _, buttonRowData in pairs(buttonList) do
 		local clientButtonRowData = {
@@ -247,32 +252,32 @@ function SELF:GetButtonClientData(buttonList)
 
 			Buttons = {}
 		}
-			for _, buttonData in pairs(buttonRowData.Buttons) do
-				local clientButtonData = {
-					ButtonId = buttonData.ButtonId,
-					Name = buttonData.Name,
-					Disabled = buttonData.Disabled,
-					Selected = buttonData.Selected,
 
-					Color = buttonData.Color,
-					ActiveColor = buttonData.ActiveColor,
+		for _, buttonData in pairs(buttonRowData.Buttons) do
+			local clientButtonData = {
+				ButtonId = buttonData.ButtonId,
+				Name = buttonData.Name,
+				Disabled = buttonData.Disabled,
+				Selected = buttonData.Selected,
 
-					Number = buttonData.Number,
-				}
+				Color = buttonData.Color,
+				ActiveColor = buttonData.ActiveColor,
 
-				if clientButtonData.ButtonId == 1000 then
-					clientButtonData.Name = self.PageNum .. "/" .. #self.MainButtonPages	-- Dynamically update the display bar 
-				end
+				Number = buttonData.Number,
+			}
 
-				table.insert(clientButtonRowData.Buttons, clientButtonData)
-			end
+			--[[
+			if clientButtonData.ButtonId == 1000 then
+				clientButtonData.Name = self.PageNum .. "/" .. #self.MainButtonPages	-- Dynamically update the display bar 
+			end]]
 
-			table.insert(clientButtonList, clientButtonRowData)
+			table.insert(clientButtonRowData.Buttons, clientButtonData)
+		end
 
+		table.insert(clientButtonList, clientButtonRowData)
 	end
 	return clientButtonList
 end
-
 
 function SELF:OnPress(interfaceData, ply, buttonId)
 	local buttonData = self.Buttons[buttonId]
@@ -293,6 +298,7 @@ function SELF:OnPress(interfaceData, ply, buttonId)
 		interfaceData.Ent:EmitSound("star_trek.lcars_beep")
 	end
 
+	--[[
 	local name = buttonData.Name
 
 	if self.MaxListHeight == nil then return true end
@@ -302,6 +308,7 @@ function SELF:OnPress(interfaceData, ply, buttonId)
 	elseif name == "Previous" then
 		self:TurnPageBackwards()
 	end
+	]]
 
 	return true
 end
@@ -315,6 +322,7 @@ function SELF:GetClientData()
 	return clientData
 end
 
+--[[
 function SELF:TurnPageForwards()
 	local maxPages = #self.MainButtonPages
 	if self.PageNum == maxPages then self.PageNum = 1
@@ -327,3 +335,4 @@ function SELF:TurnPageBackwards()
 	else self.PageNum = self.PageNum - 1 end
 	self:GetButtonClientData(self.MainButtonPages[self.PageNum])
 end
+]]

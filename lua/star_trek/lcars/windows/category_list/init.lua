@@ -19,8 +19,8 @@
 if not istable(WINDOW) then Star_Trek:LoadAllModules() return end
 local SELF = WINDOW
 
-function SELF:OnCreate(categories, title, titleShort, hFlip, toggle, buttonHeight, categoryButtonHeight)
-	local success = SELF.Base.OnCreate(self, {}, title, titleShort, hFlip, toggle, buttonHeight)
+function SELF:OnCreate(categories, title, titleShort, hFlip, toggle, buttonHeight, categoryButtonHeight, maxListHeight)
+	local success = SELF.Base.OnCreate(self, {}, title, titleShort, hFlip, toggle, buttonHeight, maxListHeight)
 	if not success then
 		return false
 	end
