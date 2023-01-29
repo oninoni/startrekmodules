@@ -3,18 +3,17 @@
 --         Star Trek Modules         --
 --                                   --
 --            Created by             --
---              Jarkyc               --
+--       Jan 'Oninoni' Ziegler       --
 --                                   --
 -- This software can be used freely, --
---    but only distributed by        --
---     Jan 'Oninoni' Ziegler.        --
+--    but only distributed by me.    --
 --                                   --
 --    Copyright © 2022 Jan Ziegler   --
 ---------------------------------------
 ---------------------------------------
 
 ---------------------------------------
---    Server | Interference STool    --
+--    Interference Tool | Shared     --
 ---------------------------------------
 
 if not istable(TOOL) then Star_Trek:LoadAllModules() return end
@@ -42,7 +41,7 @@ if (CLIENT) then
 		net.Start("Star_Trek.interferenceTool.Create")
 			net.WriteVector(hitPos)
 			net.WriteFloat(sliderEntry:GetValue())
-		   local option, _ = typeof:GetSelected() 
+		   local option, _ = typeof:GetSelected()
 	        net.WriteString(option)
 		net.SendToServer()
 	end)
