@@ -68,7 +68,7 @@ function SELF:CreateMainButtonRow(height, noPage)
 	local buttonRowData = {}
 	buttonRowData.Height = height
 
-	if isnumber(self.PageSelectorHeight) and not noPage then
+	if isnumber(self.MaxListHeight) and not noPage then
 		local currentPage = self.Pages[#self.Pages]
 
 		local currentHeight = currentPage.Height or 0
