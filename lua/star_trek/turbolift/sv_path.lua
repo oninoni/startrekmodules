@@ -40,6 +40,8 @@ local sides = "LRBF"
 -- @param Number targetDeck
 -- @return String travelPath
 function Star_Trek.Turbolift:GetPath(sourceDeck, targetDeck)
+	sourceDeck = sourceDeck or 0
+
 	local deckDiff = math.abs(targetDeck - sourceDeck)
 	if deckDiff == 0 then -- Same Deck Travel
 		-- Calculating time with Advantage! :D

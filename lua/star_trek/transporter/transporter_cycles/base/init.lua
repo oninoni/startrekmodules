@@ -42,6 +42,7 @@ function SELF:End(force)
 	if IsValid(ent) then
 		self:ResetCollisionGroups()
 		self:ResetRenderModes()
+		self:ResetColors()
 
 		ent:DrawShadow(true)
 		self:ApplyMovement(true)
