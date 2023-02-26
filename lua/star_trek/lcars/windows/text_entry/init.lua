@@ -54,8 +54,8 @@ end
 
 function SELF:AddLine(text, color, align)
 	table.insert(self.Lines, {
-		Text = text,
-		Color = color,
+		Text = text or "[MISSING]",
+		Color = color or Star_Trek.LCARS.ColorWhite,
 		Align = align,
 	})
 end

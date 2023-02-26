@@ -70,7 +70,8 @@ function SELF:SetButtons(buttons, buttonHeight)
 			button.Name or "MISSING",
 			button.RandomNumber,
 			color, button.ActiveColor or Star_Trek.LCARS.ColorOrange,
-			button.Disabled or false, self.Toggle or false)
+			button.Disabled or false, self.Toggle or false,
+			button.Callback)
 
 		buttonData.Data = button.Data
 

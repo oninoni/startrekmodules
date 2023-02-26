@@ -92,9 +92,8 @@ function Star_Trek.LCARS:RTDrawWindow(window, animPos)
 	else
 		window.MouseActive = false
 	end
-	local override = hook.Run("Star_Trek.LCARS.MouseActive", pos, window)
+	local override = hook.Run("Star_Trek.LCARS.MouseActive", window, pos)
 	if override ~= nil then
-		print(override)
 		window.MouseActive = override
 	end
 

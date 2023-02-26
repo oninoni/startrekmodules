@@ -150,6 +150,7 @@ function Star_Trek.LCARS:SetScreenClicker(enabled, showCursor)
 
 	if IsValid(self.Panel) then
 		self.Panel:Remove()
+		self.Panel = nil
 	end
 
 	if enabled then
