@@ -20,6 +20,8 @@
 --       Opening      --
 ------------------------
 
+Star_Trek.LCARS.WaitingInterfaces = Star_Trek.LCARS.WaitingInterfaces or {}
+
 -- Open a given interface and loads the data for all windows.
 --
 -- @param Number id
@@ -28,6 +30,13 @@
 -- @return? Table interface
 function Star_Trek.LCARS:OpenInterface(id, interfaceData)
 	local ent = ents.GetByIndex(id)
+
+	-- If the entity is not valid, wait for it to be created.
+	if not IsValid(ent) then
+		self.WaitingInterfaces[id] = interfaceData
+
+		return false, "Waiting for Entity"
+	end
 
 	local interface = {
 		Ent = ent,
@@ -73,6 +82,19 @@ net.Receive("Star_Trek.LCARS.Open", function()
 	Star_Trek.LCARS:OpenInterface(id, interfaceData)
 end)
 
+-- If an entity is created, check if it has an interface, that was waiting for it.
+hook.Add("NetworkEntityCreated", "Star_Trek.LCARS.CreateWaitingInterface", function(ent)
+	local id = ent:EntIndex()
+
+	local interfaceData = Star_Trek.LCARS.WaitingInterfaces[id]
+	if not istable(interfaceData) then return end
+
+	Star_Trek.LCARS:OpenInterface(id, interfaceData)
+
+	Star_Trek.LCARS.WaitingInterfaces[id] = nil
+end)
+
+-- Request the interface data from the server.
 hook.Add("InitPostEntity", "Star_Trek.LCARS.RequestSync", function()
 	if game.SinglePlayer() then return end
 
@@ -101,6 +123,7 @@ end
 -- Receive the network message, to close an interface.
 net.Receive("Star_Trek.LCARS.Close", function()
 	local id = net.ReadInt(32)
+	print("Close", id)
 
 	Star_Trek.LCARS:CloseInterface(id)
 end)
@@ -196,6 +219,10 @@ function Star_Trek.LCARS:PlayerButtonDown(ply, button)
 
 		for i, window in pairs(interface.Windows) do
 			if not window.WVis then
+				continue
+			end
+
+			if not window.MouseActive then
 				continue
 			end
 
