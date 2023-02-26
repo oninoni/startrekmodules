@@ -118,7 +118,12 @@ function SELF:OnDraw(pos, animPos)
 	for i, padData in pairs(self.Pads) do
 		local x, y = padData.X, padData.Y
 
-		padData.Element.Hovered = self:IsPadHovered(x, y, pos)
+		if self.MouseActive then
+			padData.Element.Hovered = self:IsPadHovered(x, y, pos)
+		else
+			padData.Element.Hovered = false
+		end
+
 		padData.Element:Render(x, y)
 	end
 

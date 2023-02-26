@@ -85,14 +85,22 @@ function Star_Trek.LCARS:RTDrawWindow(window, animPos)
 	local width = window.WWidth
 	local height = window.WHeight
 	local pos = Star_Trek.LCARS:Get3D2DMousePos(window)
+
 	if pos[1] > 0 and pos[1] < width
 	and pos[2] > 0 and pos[2] < height then
-		window.LastPos = pos
 		window.MouseActive = true
 	else
 		window.MouseActive = false
 	end
+	local override = hook.Run("Star_Trek.LCARS.MouseActive", pos, window)
+	if override ~= nil then
+		print(override)
+		window.MouseActive = override
+	end
 
+	if window.MouseActive then
+		window.LastPos = pos
+	end
 	local mousePos = window.LastPos
 
 	render.PushRenderTarget(window.RT)
