@@ -27,11 +27,3 @@ function SELF:OnCreate(windowData)
 
 	return true
 end
-
-function SELF:OnPress(pos, animPos)
-	return SELF.Base.OnPress(self, pos, animPos)
-end
-
-function SELF:OnDraw(pos, animPos)
-	SELF.Base.OnDraw(self, pos, animPos)
-end

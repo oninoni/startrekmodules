@@ -189,7 +189,11 @@ function SELF:DrawButtonList(pos, animPos, buttons)
 		local x = button.X
 		local y = button.Y + yOffset
 
-		button.Hovered = self:IsButtonHovered(x, y, x + button.ElementWidth, y + button.ElementHeight, pos)
+		if self.MouseActive then
+			button.Hovered = self:IsButtonHovered(x, y, x + button.ElementWidth, y + button.ElementHeight, pos)
+		else
+			button.Hovered = false
+		end
 
 		local alpha = self:GetButtonAlpha(y, areaY, areaYEnd, button.ElementHeight)
 		if alpha == 0 then continue end
