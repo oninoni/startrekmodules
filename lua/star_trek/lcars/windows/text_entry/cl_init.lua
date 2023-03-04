@@ -55,27 +55,31 @@ function SELF:CheckLine(words, subLines)
 	subLines = subLines or {}
 
 	local newLine = ""
-	local newLinePrev = ""
-	local lastWord = ""
-	while surface.GetTextSize(newLine) < self.Area1Width - 16 do
-		newLinePrev = newLine
-		newLine = newLine .. words[1] .. " "
-		lastWord = words[1]
-		table.remove(words, 1)
+	local line = ""
+	local lastWordId
+	for id, word in ipairs(words) do
+		newLine = newLine .. " " .. word
 
-		if table.Count(words) == 0 then
-			newLinePrev = newLine
+		local length = surface.GetTextSize(newLine)
+		if length > self.Area1Width - 32 then
+			lastWordId = id
+
 			break
 		end
+
+		line = newLine
 	end
 
-	if newLinePrev ~= newLine then
-		table.insert(words, 1, lastWord)
-	end
-	table.insert(subLines, string.sub(newLinePrev, 1, #newLinePrev - 1))
+	table.insert(subLines, line)
 
-	if table.Count(words) > 0 then
-		self:CheckLine(words, subLines)
+	-- Recursion
+	if isnumber(lastWordId) then
+		local newWords = {}
+		for i = lastWordId, #words do
+			table.insert(newWords, words[i])
+		end
+
+		self:CheckLine(newWords, subLines)
 	end
 
 	return subLines

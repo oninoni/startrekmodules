@@ -43,7 +43,7 @@ function Star_Trek.Sections:GetClientData()
 end
 
 util.AddNetworkString("Star_Trek.Sections.Sync")
-function Star_Trek.Sections:Sync()
+function Star_Trek.Sections:Sync(ply)
 	local clientDecks = Star_Trek.Sections:GetClientData()
 
 	if IsValid(ply) and ply:IsPlayer() then
