@@ -58,7 +58,11 @@ function SELF:CheckLine(words, subLines)
 	local line = ""
 	local lastWordId
 	for id, word in ipairs(words) do
-		newLine = newLine .. " " .. word
+		if newLine ~= "" then
+			newLine = newLine .. " "
+		end
+
+		newLine = newLine .. word
 
 		local length = surface.GetTextSize(newLine)
 		if length > self.Area1Width - 32 then
