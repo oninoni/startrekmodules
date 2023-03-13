@@ -50,6 +50,8 @@ hook.Add("Star_Trek.Sections.Loaded", "Star_Trek.Transporter.DetectLocations", f
 end)
 
 function Star_Trek.Transporter:CanBeamPos(pos)
+	if istable(pos) then return true end
+
 	local override, error = hook.Run("Star_Trek.Transporter.BlockBeamTo", pos)
 	if override then
 		return false, error
@@ -59,10 +61,14 @@ function Star_Trek.Transporter:CanBeamPos(pos)
 end
 
 function Star_Trek.Transporter:CanBeamTo(ent, pos)
+	if istable(pos) then return true end
+
 	local canBeam, error = Star_Trek.Transporter:CanBeamPos(pos)
 	if not canBeam then
 		return false, error
 	end
+
+	if istable(ent) then return true end
 
 	local min, max = ent:GetRotatedAABB(ent:OBBMins(), ent:OBBMaxs())
 	max.z = max.z - min.z
@@ -155,11 +161,16 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 	for _, sourcePattern in pairs(sourcePatterns) do
 		local ent = sourcePattern.Ent
 
-		if IsEntity(ent) and not IsValid(ent) then
-			continue
+		local sourcePos = ent
+		if IsEntity(ent) then
+			if not IsValid(ent) then
+				continue
+			end
+
+			sourcePos = ent:GetPos()
 		end
 
-		local sourceSuccess, sourceError = self:CanBeamPos(ent:GetPos())
+		local sourceSuccess, sourceError = self:CanBeamPos(sourcePos)
 		if not sourceSuccess then
 			local sourceErrorText = "Source location cannot be locked on: " .. sourceError
 			if not table.HasValue(errors, sourceErrorText) then
@@ -213,7 +224,7 @@ function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatt
 				if state == 2 and success then
 					Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Rematerialising " .. scanData.Name .. "...")
 
-					if not allowWeapons and ent:IsPlayer() then
+					if not allowWeapons and IsEntity(ent) and ent:IsPlayer() then
 						Star_Trek.Transporter:RemoveWeapons(interfaceEnt, ent, scanData)
 					end
 				end
