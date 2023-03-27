@@ -51,10 +51,14 @@ function SELF:SetSelected(data)
 end
 
 function SELF:Update()
+	if not self.Interface then return end
+
 	self.Interface:UpdateWindow(self.Id, self)
 end
 
 function SELF:Close()
+	if not self.Interface then return end
+
 	self.Interface:Close()
 end
 

@@ -116,7 +116,7 @@ function SELF:OnPress(interfaceData, ply, buttonId, callback)
 		shouldUpdate = true
 	end
 
-	if isfunction(callback) and callback(self, interfaceData, ply, buttonId, buttonData) then
+	if not buttonData.PageSelector and isfunction(callback) and callback(self, interfaceData, ply, buttonId, buttonData) then
 		shouldUpdate = true
 	end
 

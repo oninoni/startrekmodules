@@ -65,6 +65,13 @@ function SELF:ClearSecondaryButtons()
 end
 
 function SELF:CreateMainButtonRow(height, noPage)
+	local pageSelectorRow = self.PageSelectorRow
+	if istable(pageSelectorRow) then
+		self:ClearButtonsInternal(pageSelectorRow.Buttons)
+
+		self.PageSelectorRow = nil
+	end
+
 	local buttonRowData = {}
 	buttonRowData.Height = height
 
@@ -186,7 +193,7 @@ function SELF:AddSelectorToRow(buttonRowData, name, values, defaultId, callback)
 		end
 	end)
 
-	self:AddButtonToRow(buttonRowData, name .. ":", nil, nil, nil, true)
+	buttonRowData.TextButton = self:AddButtonToRow(buttonRowData, name .. ":", nil, nil, nil, true)
 	buttonRowData.ValueButton = self:AddButtonToRow(buttonRowData, "", nil, Star_Trek.LCARS.ColorOrange)
 
 	buttonRowData.NextButton = self:AddButtonToRow(buttonRowData, ">"     , nil, nil, nil, false, false, function(ply, buttonData)
@@ -214,11 +221,17 @@ function SELF:AddPageSelectorToRow(buttonRowData)
 			Data = i
 		}
 	end
+	PrintTable(values)
 
 	self:AddSelectorToRow(buttonRowData, "Page", values, self.Page, function(ply, buttonData, value)
 		local newPage = value.Data
 		self.Page = newPage
 	end)
+
+	buttonRowData.PrevButton.PageSelector = true
+	buttonRowData.TextButton.PageSelector = true
+	buttonRowData.ValueButton.PageSelector = true
+	buttonRowData.NextButton.PageSelector = true
 end
 
 function SELF:GetButtonClientData(buttonList)
@@ -281,15 +294,20 @@ function SELF:GetClientData()
 	if isnumber(self.MaxListHeight) then
 		local pagedMainButtons = {}
 
-		local pageSelectorRow = {}
-		pageSelectorRow.Height = self.PageSelectorHeight
-		pageSelectorRow.Buttons = {}
-		self:AddPageSelectorToRow(pageSelectorRow)
+		local pageSelectorRow = self.PageSelectorRow
+		if not istable(pageSelectorRow) then
+			pageSelectorRow = {}
+			pageSelectorRow.Height = self.PageSelectorHeight
+			pageSelectorRow.Buttons = {}
+			self:AddPageSelectorToRow(pageSelectorRow)
+
+			self.PageSelectorRow = pageSelectorRow
+		end
 
 		table.insert(pagedMainButtons, pageSelectorRow)
 
 		local currentPage = self.Pages[self.Page]
-		for _, rowData in ipairs(currentPage.Rows) do
+		for _, rowData in ipairs(currentPage.Rows or {}) do
 			table.insert(pagedMainButtons, rowData)
 		end
 
