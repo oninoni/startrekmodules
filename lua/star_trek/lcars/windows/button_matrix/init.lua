@@ -221,7 +221,6 @@ function SELF:AddPageSelectorToRow(buttonRowData)
 			Data = i
 		}
 	end
-	PrintTable(values)
 
 	self:AddSelectorToRow(buttonRowData, "Page", values, self.Page, function(ply, buttonData, value)
 		local newPage = value.Data

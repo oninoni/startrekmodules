@@ -123,7 +123,6 @@ end
 -- Receive the network message, to close an interface.
 net.Receive("Star_Trek.LCARS.Close", function()
 	local id = net.ReadInt(32)
-	print("Close", id)
 
 	Star_Trek.LCARS:CloseInterface(id)
 end)
