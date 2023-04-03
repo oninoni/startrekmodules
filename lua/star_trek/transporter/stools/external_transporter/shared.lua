@@ -203,7 +203,7 @@ function TOOL:RightClick(tr)
 	self:Sync()
 end
 
--- Remove Data
+-- Override Closest Transporter Beam Location Name
 function TOOL:Reload(tr)
 	if (CLIENT) then return true end
 
@@ -215,6 +215,9 @@ function TOOL:Reload(tr)
 
 	local closest = nil
 	local closestDistance = math.huge
+
+	-- Check if there are points to edit
+	if table.IsEmpty(Star_Trek.Transporter.Externals) then return end
 
 	for i, externalData in pairs(Star_Trek.Transporter.Externals) do
 		local pos = externalData.Pos
