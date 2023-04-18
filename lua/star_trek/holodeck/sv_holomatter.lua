@@ -20,7 +20,7 @@
 --
 -- @param Entity ent
 util.AddNetworkString("Star_Trek.Holodeck.Disintegrate")
-function Star_Trek.Holodeck:Disintegrate(ent, inverted)
+function Star_Trek.Holodeck:Disintegrate(ent, inverted, callback)
 	if not IsValid(ent) then
 		return
 	end
@@ -49,6 +49,10 @@ function Star_Trek.Holodeck:Disintegrate(ent, inverted)
 			ent:SetColor(color)
 		else
 			ent:Remove()
+		end
+
+		if isfunction(callback) then
+			callback()
 		end
 	end)
 end
