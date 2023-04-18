@@ -52,7 +52,21 @@ function ENT:Draw()
 
 	render.SetMaterial( wp.matDummy )
 	render.SetColorModulation( 1, 1, 1 )
-	render.DrawQuadEasy( self:GetPos() -( self:GetForward() * 5 ), self:GetForward(), self:GetWidth(), self:GetHeight(), Color(0,0,0), self:GetAngles().roll )
+
+	-- Draw inverted Quad to have the viewscreen be fully hidden.
+	render.DrawQuadEasy(self:GetPos() - self:GetForward() * 5, self:GetForward(), self:GetWidth(), self:GetHeight(), Color(0,0,0), 0 )
+
+	render.DrawQuadEasy(self:GetPos() + self:GetForward() * 5 + self:GetRight() * self:GetWidth() / 2,
+		- self:GetRight(), 20, self:GetHeight(), Color(0,0,0), 0 )
+
+	render.DrawQuadEasy(self:GetPos() + self:GetForward() * 5 - self:GetRight() * self:GetWidth() / 2,
+		self:GetRight(), 20, self:GetHeight(), Color(0,0,0), 0 )
+
+	render.DrawQuadEasy(self:GetPos() + self:GetForward() * 0 + self:GetUp() * self:GetHeight() / 2,
+		- self:GetUp(), self:GetWidth(), 10, Color(0,0,0), 0 )
+
+	render.DrawQuadEasy(self:GetPos() + self:GetForward() * 0 - self:GetUp() * self:GetHeight() / 2,
+		self:GetUp(), self:GetWidth(), 10, Color(0,0,0), 0 )
 
 	if shouldrender then
 		render.SetStencilCompareFunction( STENCIL_EQUAL )
