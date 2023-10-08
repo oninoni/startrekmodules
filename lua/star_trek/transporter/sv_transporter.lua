@@ -150,6 +150,16 @@ end
 function Star_Trek.Transporter:ActivateTransporter(interfaceEnt, ply, sourcePatterns, targetPatterns, cycleClass, noBuffer, allowWeapons)
 	if not istable(sourcePatterns) then return end
 
+	-- Check if entities should be transported.
+	local newSourcePatterns = {}
+	for _, sourcePattern in pairs(sourcePatterns) do
+		-- Check if the entity should be ignored. If the hook returns true, the entity will be ignored.
+		if not hook.Run("Star_Trek.Transporter.IgnoreTransportEntity", sourcePattern.Ent) then
+			table.insert(newSourcePatterns, sourcePattern)
+		end
+	end
+	sourcePatterns = newSourcePatterns
+
 	Star_Trek.Logs:AddEntry(interfaceEnt, ply, "")
 	Star_Trek.Logs:AddEntry(interfaceEnt, ply, "Initialising Transporter...")
 	Star_Trek.Logs:AddEntry(interfaceEnt, ply, table.Count(sourcePatterns) .. " Pattern Sources Detected.")
