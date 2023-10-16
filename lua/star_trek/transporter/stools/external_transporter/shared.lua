@@ -133,7 +133,7 @@ if SERVER then
 
 		table.insert(Star_Trek.Transporter.Externals, externalData)
 
-		tool:Sync()
+		hook.Run("Star_Trek.Transporter.ExternalsChanged")
 	end)
 
 	util.AddNetworkString("Star_Trek.TransporterTool.Edit")
@@ -147,13 +147,23 @@ if SERVER then
 		local externalData = Star_Trek.Transporter.Externals[id]
 		externalData.Name = name
 
-		tool:Sync()
+		hook.Run("Star_Trek.Transporter.ExternalsChanged")
 	end)
 
 	function TOOL:Deploy()
 		self:Sync()
 	end
 end
+
+hook.Add("Star_Trek.Transporter.ExternalsChanged", "Star_Trek.TransporterTool.ExternalsChanged", function()
+	-- sync every player that has the tool open
+	for _, ply in ipairs(player.GetAll()) do
+		local tool = ply:GetTool()
+		if tool.Mode == "external_transporter" then
+			tool:Sync()
+		end
+	end
+end)
 
 function TOOL:LeftClick(tr)
 	if (CLIENT) then return true end
@@ -169,8 +179,6 @@ function TOOL:LeftClick(tr)
 	net.Send(owner)
 
 	hook.Run("Star_Trek.Transporter.ExternalsChanged")
-
-	self:Sync()
 end
 
 function TOOL:RightClick(tr)
@@ -199,8 +207,6 @@ function TOOL:RightClick(tr)
 
 		hook.Run("Star_Trek.Transporter.ExternalsChanged")
 	end
-
-	self:Sync()
 end
 
 -- Override Closest Transporter Beam Location Name
@@ -228,9 +234,11 @@ function TOOL:Reload(tr)
 		end
 	end
 
+
 	net.Start("Star_Trek.TransporterTool.Edit")
 		net.WriteInt(closest, 32)
 	net.Send(owner)
+	
 end
 
 function TOOL:BuildCPanel()
@@ -244,6 +252,5 @@ function TOOL:BuildCPanel()
 	textEntry = vgui.Create("DTextEntry")
 
 	self:AddItem(textEntry)
-
-
 end
+
