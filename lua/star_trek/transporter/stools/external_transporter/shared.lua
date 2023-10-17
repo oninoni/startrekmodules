@@ -159,6 +159,7 @@ hook.Add("Star_Trek.Transporter.ExternalsChanged", "Star_Trek.TransporterTool.Ex
 	-- sync every player that has the tool open
 	for _, ply in ipairs(player.GetAll()) do
 		local tool = ply:GetTool()
+		if tool == nil then continue end
 		if tool.Mode == "external_transporter" then
 			tool:Sync()
 		end
