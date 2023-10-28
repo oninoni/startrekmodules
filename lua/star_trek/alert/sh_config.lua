@@ -31,9 +31,9 @@ Star_Trek.Alert.AlertTypes = {
 		BridgeDim = false,
 	},
 	intruder = {
-		Sound = "star_trek.blue_alert",
+		Sound = "star_trek.intruder_alert",
 		Color = Color(255, 0, 0),
-		BridgeDim = false,
+		BridgeDim = true,
 	},
 	blue = {
 		Sound = "star_trek.blue_alert",
