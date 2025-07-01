@@ -50,7 +50,7 @@ function ENT:Draw()
 		render.SetStencilCompareFunction( STENCIL_ALWAYS )
 	end
 
-	render.SetMaterial( wp.matDummy )
+	render.SetMaterial( wp.matBlack )
 	render.SetColorModulation( 1, 1, 1 )
 
 	-- Draw inverted Quad to have the viewscreen be fully hidden.
