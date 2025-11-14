@@ -192,22 +192,18 @@ function Star_Trek.Security:CheckIsolatedPos(pos)
 
 	local _, sectionData = Star_Trek.Sections:GetSection(deck, sectionId)
 
-	-- If there are no force fields, the section is not isolated.
-	if table.Count(sectionData.ForceFields) == 0 then
-		return false
-	end
-
 	for _, forceFieldData in pairs(sectionData.ForceFields) do
 		if forceFieldData.AlwaysOn then
 			continue
 		end
 
-		if not IsValid(forceFieldData.Entity) then
-			return false
+		-- Only block if at least one force field is active.
+		if IsValid(forceFieldData.Entity) then
+			return true, Star_Trek.Sections:GetSectionName(deck, sectionId)
 		end
 	end
 
-	return true, Star_Trek.Sections:GetSectionName(deck, sectionId)
+	return false
 end
 
 hook.Add("Star_Trek.Transporter.BlockBeamTo", "Star_Trek.Transporter.CheckForcefields", function(pos)
